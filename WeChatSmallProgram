@@ -1,0 +1,53 @@
+--------------------------------------------------------------------------------------------------
+微信小程序与h5对应标签
+view-div
+text-h1~h6/span/p
+icon-i
+checkbox-input
+radio-input
+view bindtap='chooseImage'-input type='file'
+picker range=''-select
+navigator-a
+image-img
+--------------------------------------------------------------------------------------------------
+页面间通讯 getCurrentPages方法
+data:{
+    myData:{}
+},
+onLoad: function (options) {
+  //getCurrentPages方法直接调用页面栈        
+  let pages = getCurrentPages();
+  //pages[pages.length - 2] 上一个页面实例
+  //pages[pages.length - 1] 当前页面实例
+  myData = pages[pages.length - 2].data.myData;
+}
+--------------------------------------------------------------------------------------------------
+微信小程序wx:key作用
+http://www.wxappclub.com/topic/536
+为for循环提供唯一标识
+--------------------------------------------------------------------------------------------------
+微信小程序。bind事件如bindtap绑定不会阻止冒泡事件向上冒泡，catch事件如catchtap绑定可以阻止冒泡事件向上冒泡。
+--------------------------------------------------------------------------------------------------
+微信小程序中e.currentTarget和e.target区别//触发父与子元素的区别
+//https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html
+一般都用e.currentTarget不会错。
+--------------------------------------------------------------------------------------------------
+swiper swiper-item布局。swiper里只能放swiper-item。放了就能用了，swiper-item自动宽高100%，不需要设置额外属性。
+--------------------------------------------------------------------------------------------------
+微信小程序自身iconfont水平垂直居中。
+.icon{width:30rpx;height:30rpx;background:#71a3f1;border-radius: 50%;color:#fff;position: relative;text-align:center;line-height:30rpx;}
+.icon:before{position: absolute;top:0rpx;left:0;right:0;bottom:0;}
+父级和伪类得写两套。text-align和行高，加垂直居中术。才能实现。
+--------------------------------------------------------------------------------------------------
+微信小程序。scroll-view
+1.scroll-view view水平布局和一般的盒模型不一样。
+父元素scroll-view必须设置white-space: nowrap。
+子元素view必须设置display:inline-block。
+2.scroll-view view垂直布局和一般盒模型一样。
+但是必须给scroll-view一个高度，固定值或百分比都行，不给的话无法上下滑动。
+--------------------------------------------------------------------------------------------------
+微信小程序
+wx.createSelectorQuery()等两类方法
+获取的是节点位置信息的查询请求
+query.select('#the-id').boundingClientRect()//这段代码的意思是选择Id=the-id的节点，获取节点位置信息的查询请求
+--------------------------------------------------------------------------------------------------
