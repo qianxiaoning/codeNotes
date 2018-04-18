@@ -1,0 +1,83 @@
+--------------------------------------------------------------------
+flex布局
+/*flex布局*/
+.flex{display: flex;display: -webkit-flex;}
+/*水平轴是主轴 垂直轴是交叉轴*/
+/*单根主轴方向*/
+.fd-r{flex-direction: row;}
+.fd-rr{flex-direction: row-reverse;}
+.fd-c{flex-direction: column;}
+.fd-cr{flex-direction: column-reverse;}
+/*单根换行*/
+.fw-n{flex-wrap: nowrap;}
+.fw-w{flex-wrap: wrap;}
+.fw-wr{flex-wrap: wrap-reverse;}
+/*单根主轴对齐方式*/
+.jc-fs{justify-content: flex-start;}
+.jc-fe{justify-content: flex-end;}
+.jc-c{justify-content: center;}
+.jc-sb{justify-content: space-between;}
+.jc-fs{justify-content: space-around;}
+/*单根交叉轴对齐方式*/
+.ai-fs{align-items: flex-start;}
+.ai-fe{align-items: flex-end;}
+.ai-c{align-items: center;}
+.ai-b{align-items: baseline;}
+.ai-s{align-items: stretch;}
+/*多根交叉轴对齐方式*/
+/*父层配合fd-r,fw-w。子层配合width:100%。使用*/ 
+.ac-fs{align-content: flex-start;}
+.ac-fe{align-content: flex-end;}
+.ac-c{align-content: center;}
+.ac-sb{align-content: space-between;}
+.ac-sa{align-content: space-around;}
+.ac-s{align-content: stretch;} 
+/*item属性*/
+/*项目宽高分配比例*/
+.fg-1{flex-grow: 1;} 
+--------------------------------------------------------------------
+子元素设height:100%是获取不到靠兄弟元素撑开的，未设具体高度的父级的高度的。
+普通布局
+block属性的div设height:auto是div自身高度
+flex布局
+flex属性的div设height:auto可以自动获取未设具体高度的父级高度（被兄弟子元素撑开的父级）。
+--------------------------------------------------------------------
+边框内阴影 inset
+box-shadow: 0px 4px 14px #eaeaea inset;
+--------------------------------------------------------------------
+css权重
+类，属性选择器和伪类选择器 权重相同都是10
+class，属性选择器[type=text]，伪类选择器比如 :hover,:focus等
+--------------------------------------------------------------------
+黄金分割
+0.618 约 w/h 5/3
+--------------------------------------------------------------------
+cursor光标
+/*放大光标*/
+.plus{cursor:zoom-in;}
+/*缩小光标*/
+.reduce{cursor:zoom-out;}
+--------------------------------------------------------------------
+禁止被选中
+-webkit-user-select:none;
+-moz-user-select:none;
+-ms-user-select:none;
+user-select:none; 
+--------------------------------------------------------------------
+//通过样式opacity和z-index来控制dom隐藏的另一种方式
+$(instance.rArrow).css({'opacity':'0','z-index':'-1'});
+避免和样式表里的display属性冲突
+-------------------------------------------------------------------- 
+图片绝对居中术
+<div>
+    <img src=''/>
+</div>
+div{position:relative;}
+img{position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;max-height:100%;max-width:100%;}
+-------------------------------------------------------------------- 
+三角形 向上
+.triangle-up{ width: 0; height: 0;
+border-left: 50px solid transparent;//左半宽
+border-right: 50px solid transparent;//右半宽
+border-bottom: 100px solid red;//高度 }
+-------------------------------------------------------------------- 
