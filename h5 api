@@ -1,0 +1,21 @@
+window.localStorage.setItem('a',[1,2,3]);
+ window.localStorage.getItem('a');得到字符串'1,2,3'
+ window.localStorage存取对象
+ window.localStorage.setItem('a',JSON.stringify({a:1}));
+JSON.parse(window.localStorage.getItem('a'));
+--------------------------------------------------------------------------------------------------
+不同浏览器的localstorage和cookie都是不同的，独立的。 
+不同域名的localstorage和cookie也是不共通的。
+--------------------------------------------------------------------------------------------------
+不刷新修改网页url地址栏
+window.history.pushState(state, title, url);//将当前URL和history.state加入到history中，并用新的state和URL替换当前。不会造成页面刷新。
+window.history.replaceState(state, title, url);//用新的state和URL替换当前。不会造成页面刷新。
+//两个方法的主要区别：pushState()是在history栈中添加一个新的条目，replaceState()是替换当前的记录值。
+//当浏览器触发返回和前进history.go和history.back时，由于使用pushState修改了history，会触发popstate事件，获取state方法：
+window.onpopstate = function(e) { 
+    console.log(e.state); 
+};
+//pushState()方法不会导致hashchange事件被激活
+//源域名不能改，后面的参数可以改
+示例：window.history.replaceState({},null,'https://www.baidu.com/s');
+--------------------------------------------------------------------------------------------------
