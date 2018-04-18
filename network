@@ -1,0 +1,89 @@
+
+------------------------------------------------------------------------------------------
+访问域名访问的是公网ip
+再从公网ip映射到内网ip，在内网ip文件夹里放东西
+------------------------------------------------------------------------------------------
+云服务器
+国内阿里云，腾讯云
+包年月，按量收费
+包年月不能销毁服务器
+国外Vultr
+包年月，不用时可以销毁服务器，就不计费了。
+------------------------------------------------------------------------------------------ 
+被墙 中国国家防火墙 gfw
+域名-dns服务器-解析到你是访问国外的ip-返回不允许访问的页面
+翻墙
+vpn和ss都属于网络连接类型，而ssh、ssl都是连接协议
+1.修改本机host文件
+某些国外大网站可以直接ip地址访问。修改了本地host文件，域名就不走网络供应商的dns服务器了。
+2.谷歌gae翻墙 利用谷歌服务器通过http协议。vpn通过特定协议。
+3.vpn构建专有网络 走专用通道（利用PPTP、L2TP、OpenVPN隧道协议，ssh等建），加密的通道，但是流量大，有特征。在ip层
+全局的  所有的联网程序都将自动使用VPN
+走著名的第三方http代理服务器，流量大，http传输，请求头易被识别，容易被封。
+自己购买国外vps，然后自己搭建vpn，可行，构建。（较难）
+4.ss/ssr 转发流量，不关心协议，在tcp层
+而建立好SSH隧道后，需要程序设定使用隧道才会使用隧道联网
+shadowsocks 是将原来 ssh 创建的 Socks5 协议拆开成 server 端和 client 端
+利用sock5协议，流量小。（简单）
+ss教程 https://www.flyzy2005.com/fan-qiang/shadowsocks/build-shadowsocks-on-vps/
+-------------------------	
+ubuntu linux操作系统
+Xshell连接Linux
+ip
+name
+记住name
+密码
+记住密码
+-------------------------	
+apt-get update
+apt-get install python-pip
+pip install --upgrade pip
+pip install setuptools
+此时如果出现ImportError: cannot import name main的错误
+reboot	
+pip install setuptools
+pip install shadowsocks
+vim /etc/shadowsocks.json
+{
+    "server":"自己的服务器ip",
+    "server_port":1024,
+    "local_address": "127.0.0.1",
+    "local_port":1080,
+    "password":"myPS",
+    "timeout":300,
+    "method":"aes-256-cfb"
+}
+:wq
+chmod 755 /etc/shadowsocks.json	
+apt-get install python-m2crypto
+ssserver -c /etc/shadowsocks.json -d start	
+vim /etc/rc.local
+在exit 0前面加上
+ssserver -c /etc/shadowsocks.json -d start
+--------------------------------------
+bbr加速	
+uname -a
+<4.9
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.10.2/linux-image-4.10.2-041002-generic_4.10.2-041002.201703120131_amd64.deb
+dpkg -i linux-image-4.10.2-041002-generic_4.10.2-041002.201703120131_amd64.deb
+update-grub
+reboot
+sudo bash -c 'echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf'
+sudo bash -c 'echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf'	
+sysctl -p
+sysctl net.ipv4.tcp_available_congestion_control
+返回结果为：net.ipv4.tcp_available_congestion_control = bbr cubic reno，那么BBR开启成功
+-----------------------------
+客户端
+ip自己的服务器ip
+端口1024
+密码myPS
+勾选启动系统代理，在系统代理模式中选择PAC模式。
+-----------------------------
+vultr快照功能
+Snapshots
+------------------------------------------------------------------------------------------ 
+
+
+
+
