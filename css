@@ -81,3 +81,6 @@ border-left: 50px solid transparent;//左半宽
 border-right: 50px solid transparent;//右半宽
 border-bottom: 100px solid red;//高度 }
 -------------------------------------------------------------------- 
+清除浮动 基于bt4
+.clearfix::after{display: block;content: " ";clear: both;}
+-------------------------------------------------------------------- 
