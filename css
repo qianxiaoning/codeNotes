@@ -88,3 +88,11 @@ border-bottom: 100px solid red;//高度 }
 比如
 .a{--aaa:red;background:var(--aaa);}检测可行
 -------------------------------------------------------------------- 
+css3 背景渐变
+线性渐变
+background: linear-gradient(red, blue);
+径向渐变
+background: radial-gradient(red, green, blue);
+添加角度
+background: linear-gradient(90deg, red, blue);
+-------------------------------------------------------------------- 
