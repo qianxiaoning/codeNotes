@@ -89,7 +89,7 @@ border-bottom: 100px solid red;//高度 }
 .a{--aaa:red;background:var(--aaa);}检测可行
 -------------------------------------------------------------------- 
 css3 背景渐变
-线性渐变
+线性渐变（上下）
 background: linear-gradient(red, blue);
 径向渐变
 background: radial-gradient(red, green, blue);
