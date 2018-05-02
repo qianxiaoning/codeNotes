@@ -20,6 +20,9 @@ $ git config --global user.name "John Doe"
 $ git config --global user.email johndoe@example.com
 Freenode IRC 服务器（ irc.freenode.net ）的 #git 或 #github 频道
 linux国外技术聊天室
+创建文件
+在其它文件夹下创建文件qqq
+$ echo '其他'>qqq
 ---------------------------------------------
 git基本操作
 使用 Git 来获取 Git 的升级
@@ -38,5 +41,66 @@ $ git help config
 $ git config --help
 $ man git-config（未成功）
 ---------------------------------------------
-
+取得 Git 项目仓库
+第一种是在现有项目或目录下导入所有文件到 Git 中。
+$ git init
+跟踪文件
+通过 git add 命令来实现对指定文件的跟踪，然后执行 git commit 提交
+git add 命令使用文件或目录的路径作为参数；如果参数是目录的路径，该命令将递归地跟踪该目录下的所有文件
+$ git add *.c
+$ git add LICENSE
+添加备注
+$ git commit -m 'initial project version'
+$ git add添加内容到下一次提交中，新建的文件，或者修改的文件
+$ git commit提交到本地暂存。
+第二种是从一个服务器克隆一个现有的 Git 仓库。
+$ git clone https://github.com/libgit2/libgit2
+自定义本地仓库的名字
+$ git clone https://github.com/libgit2/libgit2 myName
+检查当前文件状态
+$ git status
+git status -s 命令或 git status --short 命令
+$ git status -s
+ M README  M 有两个可以出现的位置 出现在右边的 M 表示该文件被修改了但是还没放入暂存区
+MM Rakefile  在工作区被修改并提交到暂存区后又在工作区中被修改了，所以在暂存区和工作区都有该文件被修改了的记录。
+M  lib/simplegit.rb 出现在靠左边的 M 表示该文件被修改了并放入了暂存区
+A  lib/git.rb  新添加到暂存区中的文件
+?? LICENSE.txt    新添加的未跟踪文件
+创建一个名为 .gitignore 的文件，列出要忽略的文件模式
+$ cat .gitignore
+*.[oa] 忽略所有以 .o 或 .a 结尾的文件。一般这类对象文件和存档文件都是编译过程中出现的
+*~ 忽略所有以波浪符（~）结尾的文件，许多文本编辑软件（比如 Emacs）都用这样的文件名保存副本
+.gitignore用glob 模式
+星号（*）匹配零个或多个任意字符；
+[abc] 匹配任何一个列在方括号中的字符（这个例子要么匹配一个 a，要么匹配一个 b，要么匹配一个 c）；
+问号（?）只匹配一个任意字符；
+如果在方括号中使用短划线分隔两个字符，表示所有在这两个字符范围内的都可以匹配（比如 [0-9] 表示匹配所有 0 到 9 的数字）。
+使用两个星号（*) 表示匹配任意中间目录，比如`a/**/z` 可以匹配 a/z, a/b/z 或 `a/b/c/z`等。
+查看具体修改了什么地方
+$ git diff
+查看已暂存的将要添加到下次提交里的内容
+git diff --staged
+提交更新 至本地暂存
+$ git commit
+编辑完，按esc，英文:，wq保存并退出
+git add类似添加按钮，git commit类似提交按钮
+$ git commit -m 直接添加备注，不打开vim编辑器
+$ git commit -m "Story 182: Fix benchmarks for speed"
+跳过使用暂存区域
+$ git commit -a
+会自动把所有已经跟踪过的文件暂存起来一并提交，从而跳过 git add 步骤
+移除文件
+从 Git 中移除某个文件，从暂存区域移除
+$ rm p 物理删除
+$ git rm p移除
+如果删除之前修改过并且已经放到暂存区域
+必须$ git rm -f p 强制删除
+从暂存区移除入放弃跟踪（物理保留）
+$ git rm --cached p
+移动文件（即重命名）
+$ git mv a aa 相当于
+$ mv README.md README 物理改名
+$ git rm README.md 从暂存区删除
+$ git add README 添加入暂存区
+查看提交历史
 -------------------------------------------------------------------------------------------------
