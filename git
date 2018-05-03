@@ -44,7 +44,20 @@ $ git config --help
 $ man git-config（未成功）
 ---------------------------------------------
 取得 Git 项目仓库
-第一种是在现有项目或目录下导入所有文件到 Git 中。
+一、第一种是在本地现有项目或目录下导入所有文件到 Git 并传入github远端仓库。
+先在git上建立远程仓库，注意不选Initialize this repository选项
+在本地计算机上运行$ ssh-keygen -t rsa -C "qianno.1@qq.com"
+在C:\Users\Administrator\.ssh上会生成id_rsa私钥和id_rsa.pub公钥文件
+把id_rsa.pub公钥文件放入github-settings-ssh and gpg keys-添加新的标题和key就行了。另（ssh是对电脑的，gpg是对人的。）
+在本地项目设置远端的仓库地址 $ git remote add origin git@github.com:qianxiaoning/test3.git
+修改$ git remote set-url origin git@github.com:qianxiaoning/test3.git
+推到远端$ git push -u origin master
+二、第二种是从git服务器克隆一个现有的 Git 仓库到本地。
+$ git clone https://github.com/libgit2/libgit2
+自定义本地仓库的名字
+$ git clone https://github.com/libgit2/libgit2 myName
+推到远端$ git push
+
 $ git init
 跟踪文件
 通过 git add 命令来实现对指定文件的跟踪，然后执行 git commit 提交
@@ -55,10 +68,6 @@ $ git add LICENSE
 $ git commit -m 'initial project version'
 $ git add添加内容到下一次提交中，新建的文件，或者修改的文件
 $ git commit提交到本地暂存。
-第二种是从一个服务器克隆一个现有的 Git 仓库。
-$ git clone https://github.com/libgit2/libgit2
-自定义本地仓库的名字
-$ git clone https://github.com/libgit2/libgit2 myName
 检查当前文件状态
 $ git status
 git status -s 命令或 git status --short 命令
@@ -70,14 +79,17 @@ A  lib/git.rb  新添加到暂存区中的文件
 ?? LICENSE.txt    新添加的未跟踪文件
 创建一个名为 .gitignore 的文件，列出要忽略的文件模式
 $ cat .gitignore
+---------------------------------
 *.[oa] 忽略所有以 .o 或 .a 结尾的文件。一般这类对象文件和存档文件都是编译过程中出现的
 *~ 忽略所有以波浪符（~）结尾的文件，许多文本编辑软件（比如 Emacs）都用这样的文件名保存副本
+---------------------------------
 .gitignore用glob 模式
 星号（*）匹配零个或多个任意字符；
 [abc] 匹配任何一个列在方括号中的字符（这个例子要么匹配一个 a，要么匹配一个 b，要么匹配一个 c）；
 问号（?）只匹配一个任意字符；
 如果在方括号中使用短划线分隔两个字符，表示所有在这两个字符范围内的都可以匹配（比如 [0-9] 表示匹配所有 0 到 9 的数字）。
 使用两个星号（*) 表示匹配任意中间目录，比如`a/**/z` 可以匹配 a/z, a/b/z 或 `a/b/c/z`等。
+---------------------------------
 查看具体修改了什么地方
 $ git diff
 查看已暂存的将要添加到下次提交里的内容
@@ -105,4 +117,103 @@ $ mv README.md README 物理改名
 $ git rm README.md 从暂存区删除
 $ git add README 添加入暂存区
 查看提交历史
+$ git log
+提交的内容差异 最近两次
+$ git log -p -2
+等等
+撤消操作
+重新提交
+$ git commit --amend
+忘记了暂存某些需要的修改
+$ git commit -m 'initial commit'
+$ git add forgotten_file
+$ git commit --amend
+取消暂存的文件
+$ git reset HEAD CONTRIBUTING.md
+撤消对文件的修改
+$ git checkout -- CONTRIBUTING.md
+远程仓库
+$ git remote //origin - 这是 Git 给你克隆的仓库服务器的默认名字
+显示需要读写远程仓库使用的 Git 保存的简写与其对应的 URL
+$ git remote -v
+添加远程仓库
+git remote add <shortname> <url>
+$ git remote add pb https://github.com/paulboone/ticgit
+从远程仓库中抓取与拉取
+$ git fetch [remote-name]
+执行完成后，你将会拥有那个远程仓库中所有分支的引用，可以随时合并或查看。
+fetch相当于先pull再push
+推送到远程仓库
+git push [remote-name] [branch-name]
+$ git push origin master
+查看远程仓库
+git remote show [remote-name]
+远程仓库的重命名
+$ git remote rename pb paul
+远程仓库的移除
+$ git remote rm paul
+打标签
+列出标签
+$ git tag
+创建标签
+附注标签
+$ git tag -a v1.4
+-m添加备注
+$ git tag -a v1.4 -m 'my version 1.4'
+git show 命令可以看到标签信息与对应的提交信息
+$ git show v1.4
+轻量标签
+$ git tag v1.4-lw
+$ git show v1.4-lw
+共享标签 到远端
+git push origin [tagname]
+或$ git push origin --tags推所有标签
+检出标签
+git checkout -b [branchname] [tagname]
+$ git checkout -b version2 v2.0.0
+Git 别名
+$ git config --global alias.ci commit
+当要输入 git commit 时，只需要输入 git ci
+想要执行外部命令，而不是一个 Git 子命令。 如果是那样的话，可以在命令前面加入 ! 符号。
+$ git config --global alias.visual '!gitk'
+分支创建
+$ git branch dev
+查看各个分支当前所指的对象
+$ git log --oneline --decorate
+分支切换
+$ git checkout dev
+分支的新建与合并
+新建一个分支并同时切换到那个分支上
+$ git checkout -b iss53
+$ git branch iss53
+$ git checkout iss53
+切换到dev分支
+$ git checkout dev
+将hotfix分支合并回你的 dev 分支（不影响hotfix分支，只改变dev分支）
+$ git merge hotfix
+删除分支
+$ git branch -d hotfix
+强制删除分支
+$ git branch -D hotfix
+遇到冲突时的分支合并
+$ git merge dev
+Auto-merging b
+CONFLICT (content): Merge conflict in b
+Automatic merge failed; fix conflicts and then commit the result.
+使用 git status 命令来查看冲突未合并（unmerged）状态的文件
+Unmerged paths://未合并文件路径
+  (use "git add <file>..." to mark resolution)
+
+        both modified:   b//相同的修改，位于b文件
+//下面是b文件
+bbb
+<<<<<<< HEAD //head为当前分支
+aa
+ee
+======= //冲突间隔
+qq
+ee
+>>>>>>> dev //dev分支
+手动编辑合并
+图形化工具来解决冲突
 -------------------------------------------------------------------------------------------------
