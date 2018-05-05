@@ -1,13 +1,32 @@
 -------------------------------------------------------------------------------------------------
-cmd,git cmd,git bash,git gui
+指令
+创建文件
+在'其它'文件夹下创建文件qqq
+$ echo '其他'>qqq
+-------------------------------------------------------------------------------------------------
+git的不同种类
+指令版
 cmd中不能运行git命令，除非安装配置时选择第二个
 git cmd可以运行git命令
 git bash在cmd中加入了几个实用的linux命令以及git自己的命令
-
-git gui
-获取SSH pub KEY
+gui界面版
+git gui,git extensions,TortoiseGit,Sourcetree
+git gui获取SSH pub KEY
 git gui-help-show ssh key添加到github里的settings-ssh and gpg keys里
 -------------------------------------------------------------------------------------------------
+git概念原理
+CVS、Subversion、Perforce、Bazaar 等等，将它们保存的信息看作是一组基本文件和每个文件随时间逐步累积的差异
+git把数据看作是对小型文件系统的一组快照
+git三种状态
+已修改（modified），commit本地已暂存（staged），push到远端 已提交（committed）
+定制你的 Git 环境。 每台计算机上只需要配置一次
+安装完 Git 应该做的第一件事就是设置你的用户名称与邮件地址。
+这样做很重要，因为每一个 Git 的提交都会使用这些信息，并且它会写入到你的每一次提交中，不可更改：
+$ git config --global user.name "John Doe"
+$ git config --global user.email johndoe@example.com
+Freenode IRC 服务器（ irc.freenode.net ）的 #git 或 #github 频道
+linux国外技术聊天室
+
 git版本快速切换靠的是git快照机制
 参考：如何理解git的快照？ https://www.zhihu.com/question/27680108
 http://hanfu.space/%E6%8A%80%E6%9C%AF/2015/08/26/git-tutorial/
@@ -20,7 +39,7 @@ git拉取规则
 改一期，本地pc-qxn拉远端master，推远端pc-qxn，推远端master，登本地dev，拉取最新dev,选择pc-qxn节点右击选择“和分支合并”选择pc-qxn，合并本地pc-qxn，然后推送远端dev。
 改二期，登本地dev，拉远端dev，推远端dev。
 -------------------------------------------------------------------------------------------------
-git快捷入手
+git快捷入手（核心）
 一、安装对应操作系统git
  一、下载
   官网下载
@@ -47,24 +66,18 @@ $ git config --global user.email "email@example.com"
    $ pwd用于显示当前目录，尽量防止出现中文
   二、git init初始化
  二、从github上拉取仓库
-  计算机对应目录
+  在计算机对应目录
   $ git clone git@github.com:name/myProject.git
--------------------------------------------------------------------------------------------------
-git概念原理
-CVS、Subversion、Perforce、Bazaar 等等，将它们保存的信息看作是一组基本文件和每个文件随时间逐步累积的差异
-git把数据看作是对小型文件系统的一组快照
-git三种状态
-已修改（modified），commit本地已暂存（staged），push到远端 已提交（committed）
-定制你的 Git 环境。 每台计算机上只需要配置一次
-安装完 Git 应该做的第一件事就是设置你的用户名称与邮件地址。
-这样做很重要，因为每一个 Git 的提交都会使用这些信息，并且它会写入到你的每一次提交中，不可更改：
-$ git config --global user.name "John Doe"
-$ git config --global user.email johndoe@example.com
-Freenode IRC 服务器（ irc.freenode.net ）的 #git 或 #github 频道
-linux国外技术聊天室
-创建文件
-在其它文件夹下创建文件qqq
-$ echo '其他'>qqq
+五、编辑本地仓库
+六、编辑完，准备提交（重点，可能需要界面操作）
+ 一、add到暂存区
+  $ git add .添加所有文件
+ 0、编写.ignore文件
+ 二、从暂存区commit提交到本地仓库
+  $ git commit -m 'xxx'
+ 三、从远端仓库pull代码
+ 四、push到远端仓库
+七、提交完结束工作
 -------------------------------------------------------------------------------------------------
 git基本操作（手册）
 使用 Git 来获取 Git 的升级
