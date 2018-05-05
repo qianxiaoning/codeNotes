@@ -1,23 +1,54 @@
 -------------------------------------------------------------------------------------------------
-cmd,git cmd和git bash
+cmd,git cmd,git bash,git gui
 cmd中不能运行git命令，除非安装配置时选择第二个
 git cmd可以运行git命令
 git bash在cmd中加入了几个实用的linux命令以及git自己的命令
 
 git gui
 获取SSH pub KEY
-git gui-help-show ssh key添加到github里的settings-ssh keys里
+git gui-help-show ssh key添加到github里的settings-ssh and gpg keys里
 -------------------------------------------------------------------------------------------------
 git版本快速切换靠的是git快照机制
 参考：如何理解git的快照？ https://www.zhihu.com/question/27680108
 http://hanfu.space/%E6%8A%80%E6%9C%AF/2015/08/26/git-tutorial/
 -------------------------------------------------------------------------------------------------
-git仓库里的new pull request按钮是，别人fork了你的仓库，对你提了一些修改，希望你能拉取合并的。
+github界面
+github仓库里的new pull request按钮是，别人fork了你的仓库，对你提了一些修改，希望你能拉取合并的。
 -------------------------------------------------------------------------------------------------
 git拉取规则
 针对项目一期，二期修改的
 改一期，本地pc-qxn拉远端master，推远端pc-qxn，推远端master，登本地dev，拉取最新dev,选择pc-qxn节点右击选择“和分支合并”选择pc-qxn，合并本地pc-qxn，然后推送远端dev。
 改二期，登本地dev，拉远端dev，推远端dev。
+-------------------------------------------------------------------------------------------------
+git快捷入手
+一、安装对应操作系统git
+ 一、下载
+  官网下载
+ 二、升级
+  $ git clone git://git.kernel.org/pub/scm/git/git.git
+二、设置用户名和email
+$ git config --global user.name "Your Name"
+$ git config --global user.email "email@example.com"
+三、本地仓库与github仓库的关联
+ 一、使电脑和github建立传输协议
+  一、https
+   https每次都要输入账户、密码，不方便。
+  二、ssh（对电脑）
+   本地电脑运行
+   $ ssh-keygen -t rsa -C "email@example.com"
+   C:\Users\Administrator\.ssh上会生成id_rsa私钥和id_rsa.pub公钥文件
+   把id_rsa.pub公钥复制入github-settings-ssh and gpg keys里
+  三、gpg（对人的）
+四、建立本地git仓库
+ 一、直接在本地先建git仓库
+  一、创建项目文件夹
+   $ mkdir myProject
+   $ cd myProject
+   $ pwd用于显示当前目录，尽量防止出现中文
+  二、git init初始化
+ 二、从github上拉取仓库
+  计算机对应目录
+  $ git clone git@github.com:name/myProject.git
 -------------------------------------------------------------------------------------------------
 git概念原理
 CVS、Subversion、Perforce、Bazaar 等等，将它们保存的信息看作是一组基本文件和每个文件随时间逐步累积的差异
@@ -34,8 +65,8 @@ linux国外技术聊天室
 创建文件
 在其它文件夹下创建文件qqq
 $ echo '其他'>qqq
----------------------------------------------
-git基本操作
+-------------------------------------------------------------------------------------------------
+git基本操作（手册）
 使用 Git 来获取 Git 的升级
 $ git clone git://git.kernel.org/pub/scm/git/git.git
 设置你的用户名称与邮件地址
@@ -51,7 +82,7 @@ $ git config --list 命令来列出所有 Git 当时能找到的配置
 $ git help config
 $ git config --help
 $ man git-config（未成功）
----------------------------------------------
+
 取得 Git 项目仓库
 一、第一种是在本地现有项目或目录下导入所有文件到 Git 并传入github远端仓库。
 先在git上建立远程仓库，注意不选Initialize this repository选项
@@ -89,17 +120,17 @@ A  lib/git.rb  新添加到暂存区中的文件
 ?? LICENSE.txt    新添加的未跟踪文件
 创建一个名为 .gitignore 的文件，列出要忽略的文件模式
 $ cat .gitignore
----------------------------------
+
 *.[oa] 忽略所有以 .o 或 .a 结尾的文件。一般这类对象文件和存档文件都是编译过程中出现的
 *~ 忽略所有以波浪符（~）结尾的文件，许多文本编辑软件（比如 Emacs）都用这样的文件名保存副本
----------------------------------
+
 .gitignore用glob 模式
 星号（*）匹配零个或多个任意字符；
 [abc] 匹配任何一个列在方括号中的字符（这个例子要么匹配一个 a，要么匹配一个 b，要么匹配一个 c）；
 问号（?）只匹配一个任意字符；
 如果在方括号中使用短划线分隔两个字符，表示所有在这两个字符范围内的都可以匹配（比如 [0-9] 表示匹配所有 0 到 9 的数字）。
 使用两个星号（*) 表示匹配任意中间目录，比如`a/**/z` 可以匹配 a/z, a/b/z 或 `a/b/c/z`等。
----------------------------------
+
 查看具体修改了什么地方
 $ git diff
 查看已暂存的将要添加到下次提交里的内容
