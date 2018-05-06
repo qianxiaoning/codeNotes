@@ -18,7 +18,7 @@ git概念原理
 CVS、Subversion、Perforce、Bazaar 等等，将它们保存的信息看作是一组基本文件和每个文件随时间逐步累积的差异
 git把数据看作是对小型文件系统的一组快照
 git三种状态
-已修改（modified），commit本地已暂存（staged），push到远端 已提交（committed）
+工作区->工作区已修改（modified）->add到暂存区->commit本地已暂存（staged），push到远端 已提交（committed）
 定制你的 Git 环境。 每台计算机上只需要配置一次
 安装完 Git 应该做的第一件事就是设置你的用户名称与邮件地址。
 这样做很重要，因为每一个 Git 的提交都会使用这些信息，并且它会写入到你的每一次提交中，不可更改：
@@ -73,7 +73,19 @@ $ git config --global user.email "email@example.com"
  一、add到暂存区
   $ git add .添加所有文件
  0、编写.ignore文件
- 二、从暂存区commit提交到本地仓库
+ 0、查看状态$ git status
+ 0、查看未add的修改$ git diff
+ 0、查看已add的修改$ git diff --staged
+ 0、历史记录$ git log
+ 0、版本回退$ git reset --hard HEAD^上个版本HEAD^，上上个版本HEAD^^，往上100个版本HEAD~100
+ $ git reset --hard 3628164,$ git reset --hard [commit id]
+ $ git reflog查看命令历史,想恢复到新版本$ git reset --hard 3628164
+ add前
+ git checkout -- readme.txt可以丢弃工作区的修改
+ add后，又改动
+ git checkout -- readme.txt可以回到刚add完的状态
+ $ git checkout -- readme.txt让这个文件回到最近一次git commit或git add时的状态
+ 二、从暂存区commit提交到本地仓库，-m写备注
   $ git commit -m 'xxx'
  三、从远端仓库pull代码
  四、push到远端仓库
