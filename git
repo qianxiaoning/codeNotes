@@ -77,7 +77,9 @@ $ git config --global user.email "email@example.com"
  0、查看未add的修改$ git diff
  0、查看已add的修改$ git diff --staged
  0、历史记录$ git log
- 0、版本回退$ git reset --hard HEAD^上个版本HEAD^，上上个版本HEAD^^，往上100个版本HEAD~100
+ 
+ 版本回退
+ 0、版本回退
  $ git reset --hard 3628164,$ git reset --hard [commit id]
  $ git reflog查看命令历史,想恢复到新版本$ git reset --hard 3628164
  add前
@@ -85,6 +87,9 @@ $ git config --global user.email "email@example.com"
  add后，又改动
  git checkout -- readme.txt可以回到刚add完的状态
  $ git checkout -- readme.txt让这个文件回到最近一次git commit或git add时的状态
+ $ git reset HEAD readme.txt可以把add区的修改回退到工作区
+ commit后回退$ git reset --hard HEAD^上个版本HEAD^，上上个版本HEAD^^，往上100个版本HEAD~100
+ 
  二、从暂存区commit提交到本地仓库，-m写备注
   $ git commit -m 'xxx'
  三、从远端仓库pull代码
