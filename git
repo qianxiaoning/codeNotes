@@ -3,6 +3,7 @@
 创建文件
 在'其它'文件夹下创建文件qqq
 $ echo '其他'>qqq
+$ ls 查看文件夹目录
 -------------------------------------------------------------------------------------------------
 git的不同种类
 指令版
@@ -71,24 +72,98 @@ $ git config --global user.email "email@example.com"
 五、编辑本地仓库
 六、编辑完，准备提交（重点，可能需要界面操作）
  一、add到暂存区
+ 0、编写.gitignore文件，win创建时.gitignore.
   $ git add .添加所有文件
- 0、编写.ignore文件
  0、查看状态$ git status
  0、查看未add的修改$ git diff
  0、查看已add的修改$ git diff --staged
  0、历史记录$ git log
  
  版本回退
- 0、版本回退
+ 0、恢复
  $ git reset --hard 3628164,$ git reset --hard [commit id]
  $ git reflog查看命令历史,想恢复到新版本$ git reset --hard 3628164
  add前
  git checkout -- readme.txt可以丢弃工作区的修改
  add后，又改动
  git checkout -- readme.txt可以回到刚add完的状态
- $ git checkout -- readme.txt让这个文件回到最近一次git commit或git add时的状态
+ $ git checkout -- readme.txt让这个文件回到最近一次git commit或git add时的状态，比如工作区删错了从版本库恢复
  $ git reset HEAD readme.txt可以把add区的修改回退到工作区
  commit后回退$ git reset --hard HEAD^上个版本HEAD^，上上个版本HEAD^^，往上100个版本HEAD~100
+ 删除文件
+ $ git rm test.txt
+ $ git commit -m "remove test.txt"
+ 删除分支
+ $ git branch -d dev
+ 强制删除分支
+  $ git branch -D dev
+ 拉取与推送
+ 查看远程库
+ $ git remote
+ $ git remote -v
+ 设置远程库
+ $ git remote add origin git@github.com:michaelliao/learngit.git
+ $ git remote set-url origin git@github.com:qianxiaoning/test3.git
+  删除远程库
+  git remote rm origin
+ 远程库为空时，第一次推送
+ $ git push -u origin master
+ 以后
+ $ git push origin master
+ $ git push origin <name>
+ 在本地创建和远程分支对应的分支
+ $ git checkout -b dev origin/dev
+ 拉取
+ $ git pull
+ $ git pull origin <name>
+ 建立本地分支和远程分支的关联
+ $ git branch --set-upstream dev origin/dev
+ 切换分支
+ 切换$ git branch dev
+ 创建并切换$ git checkout -b dev
+ 查看当前分支$ git branch
+ 分支合并
+ $ git checkout master
+ $ git merge dev
+ 合并冲突
+<<<<<<< HEAD
+Creating a new branch is quick & simple.
+=======分隔
+Creating a new branch is quick AND simple.
+>>>>>>> feature1
+ 手动解决
+ git log --graph分支合并图
+ gui解决
+ fast forward快速合并
+ $ git merge --no-ff -m "merge with no-ff" dev手动合并
+ 代码储藏
+ $ git stash
+ $ git stash list储藏列表
+ $ git stash pop恢复并删除备份
+标签
+打标签
+$ git tag v1.0
+$ git tag v0.9 6224937
+$ git tag v0.9 <commit id>
+查看所有标签
+$ git tag
+查看具体标签
+$ git show v0.9
+带有说明的标签-a标签名
+$ git tag -a v0.1 -m "version 0.1 released" 3628164
+ 删除标签
+ $ git tag -d v0.1
+ 删除远程标签
+ $ git push origin :refs/tags/v0.9
+ 推送标签
+ $ git push origin v1.0
+ 推送所有标签
+ $ git push origin --tags
+ 自定义配置别名
+ st表示status
+ $ git config --global alias.st status
+ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+
  
  二、从暂存区commit提交到本地仓库，-m写备注
   $ git commit -m 'xxx'
