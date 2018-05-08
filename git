@@ -111,17 +111,19 @@ $ git config --global user.email "email@example.com"
  以后
  $ git push origin master
  $ git push origin <name>
- 在本地创建和远程分支对应的分支
+ 本地没有时，拉远程分支
  $ git checkout -b dev origin/dev
  拉取
  $ git pull
  $ git pull origin <name>
- 建立本地分支和远程分支的关联
+ pull之前建立本地分支和远程分支的关联
  $ git branch --set-upstream dev origin/dev
  切换分支
  切换$ git branch dev
  创建并切换$ git checkout -b dev
- 查看当前分支$ git branch
+ 查看当前本地分支$ git branch
+ 查看当前本地和远端分支$ git branch -a
+ 远端新增分支，需要本地$ git fetch刷新一下，才能看到远端新增分支
  分支合并
  $ git checkout master
  $ git merge dev
@@ -288,7 +290,6 @@ $ git remote add pb https://github.com/paulboone/ticgit
 从远程仓库中抓取与拉取
 $ git fetch [remote-name]
 执行完成后，你将会拥有那个远程仓库中所有分支的引用，可以随时合并或查看。
-fetch相当于先pull再push
 推送到远程仓库
 git push [remote-name] [branch-name]
 $ git push origin master
