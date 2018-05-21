@@ -39,16 +39,33 @@ iphone superwingy & Shadowrocket & Wingy
 ss自建教程
 ubuntu linux操作系统
 Ubuntu 16.04
-如从快照恢复
-Server Type选Snapshot
 Enable IPv6打勾
-
 Xshell连接Linux
 ip
 name
 记住name
 密码
 记住密码
+
+如从快照恢复
+Server Type选Snapshot
+输入快照密码
+或者重置密码：
+vultr控制面板-view console-右上角按钮send CtrlAltDel-启动中按esc-
+第一项按e-在linux /boot/行尾输入 init=/bin/bash-(mount -rw -o remount /或mount -o remount,rw /)-
+输入passwd-输入新密码，新密码输入不可见，没发现任何复制粘贴方法
+重置完密码可能需要restart服务器，或者新建xshell会话填账号、密码
+
+通过vim /etc/shadowsocks.json修改ip地址和端口号时
+需要ssserver -c /etc/shadowsocks.json -d restart重启ss服务器
+再通过cat /var/log/shadowsocks.log查看日志文件时，最新的ip和端口号会显示在最后一行'info starting server at xxx'。日志开头起是最初的ip和端口设置。
+-----------------------------
+检测
+重启ss服务器
+ssserver -c /etc/shadowsocks.json -d restart
+得到started则没问题
+显示服务器日志文件
+cat /var/log/shadowsocks.log
 -------------------------	
 apt-get update
 apt-get install python-pip
@@ -97,13 +114,6 @@ ip自己的服务器ip
 -----------------------------
 vultr快照功能
 Snapshots
------------------------------
-检测
-重启ss服务器
-ssserver -c /etc/shadowsocks.json -d restart
-得到started则没问题
-显示服务器日志文件
-cat /var/log/shadowsocks.log
 ------------------------------------------------------------------------------------------ 
 局域网服务器上的根文件夹可以右击：映射网络驱动器 到本地z盘，这样本地可以快捷点开，相当于快捷方式。
 ------------------------------------------------------------------------------------------ 
