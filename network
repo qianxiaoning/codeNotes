@@ -67,6 +67,7 @@ ssserver -c /etc/shadowsocks.json -d restart
 显示服务器日志文件
 cat /var/log/shadowsocks.log
 -------------------------	
+从头部署
 apt-get update
 apt-get install python-pip
 pip install --upgrade pip
