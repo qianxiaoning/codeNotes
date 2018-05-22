@@ -39,10 +39,13 @@ iphone superwingy & Shadowrocket & Wingy
 ss自建教程
 ubuntu linux操作系统
 Ubuntu 16.04
+server size选最小
 Enable IPv6打勾
 
 如从快照恢复
 Server Type选Snapshot
+server size选最小
+Enable IPv6打勾
 在xshell中修改输入快照密码
 或者重置密码：
 vultr控制面板-view console-右上角按钮send CtrlAltDel-启动中按esc-
