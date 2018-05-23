@@ -1,59 +1,4 @@
 -------------------------------------------------------------------------------------------------
-指令
-创建文件
-在'其它'文件夹下创建文件qqq
-$ echo '其他'>qqq
-$ ls 查看文件夹目录
--------------------------------------------------------------------------------------------------
-bash快捷键
-ctrl+u删除光标左边
-ctrl+k删除光标右边
-ctrl+w删除一个单词
--------------------------------------------------------------------------------------------------
-git的不同种类
-指令版
-cmd中不能运行git命令，除非安装配置时选择第二个
-git cmd可以运行git命令
-git bash在cmd中加入了几个实用的linux命令以及git自己的命令
-gui界面版
-git gui,git extensions,TortoiseGit,Sourcetree
-git gui获取SSH pub KEY
-git gui-help-show ssh key添加到github里的settings-ssh and gpg keys里
--------------------------------------------------------------------------------------------------
-git概念原理
-CVS、Subversion、Perforce、Bazaar 等等，将它们保存的信息看作是一组基本文件和每个文件随时间逐步累积的差异
-git把数据看作是对小型文件系统的一组快照
-git三种状态
-工作区->工作区已修改（modified）->add到暂存区->commit本地已暂存（staged），push到远端 已提交（committed）
-定制你的 Git 环境。 每台计算机上只需要配置一次
-安装完 Git 应该做的第一件事就是设置你的用户名称与邮件地址。
-这样做很重要，因为每一个 Git 的提交都会使用这些信息，并且它会写入到你的每一次提交中，不可更改：
-$ git config --global user.name "John Doe"
-$ git config --global user.email johndoe@example.com
-Freenode IRC 服务器（ irc.freenode.net ）的 #git 或 #github 频道
-linux国外技术聊天室
-
-git版本快速切换靠的是git快照机制
-参考：如何理解git的快照？ https://www.zhihu.com/question/27680108
-http://hanfu.space/%E6%8A%80%E6%9C%AF/2015/08/26/git-tutorial/
-pull引起冲突
-当本地，远端，基础都不一样时$ git pull会冲突
--------------------------------------------------------------------------------------------------
-github界面
-github仓库里的new pull request按钮是，别人fork了你的仓库，对你提了一些修改，希望你能拉取合并的。
--------------------------------------------------------------------------------------------------
-git拉取规则
-针对项目一期，二期修改的
-改一期，本地pc-qxn拉远端master，推远端pc-qxn，推远端master，登本地dev，拉取最新dev,选择pc-qxn节点右击选择“和分支合并”选择pc-qxn，合并本地pc-qxn，然后推送远端dev。
-改二期，登本地dev，拉远端dev，推远端dev。
--------------------------------------------------------------------------------------------------
-git多人协作
-一、仓库合作
- settings-collaborators-输入用户名添加-对方bellNotice-accept invitation
-二、创建组织organization
- 创建好后把组织地址发给被邀请的人，如https://github.com/qxnTestOrganization，对方跳转url点击接收邀请。
-三、发起pull request
--------------------------------------------------------------------------------------------------
 git快捷入手（核心）
 一、安装对应操作系统git
  一、下载
@@ -75,118 +20,192 @@ $ git config --global user.email "email@example.com"
   三、gpg（对人的）
 四、建立本地git仓库
  一、直接在本地先建git仓库
-  一、创建项目文件夹
+  一、在github上创建一个不Initialize初始化的仓库
+  二、在本地创建项目文件夹
    $ mkdir myProject
    $ cd myProject
-   $ pwd用于显示当前目录，尽量防止出现中文
-  二、git init初始化
+   （$ pwd用于显示当前目录，尽量防止出现中文）
+  三、git init初始化，编写.gitignore文件，win创建时.gitignore.
+  四、添加提交文件到本地
+   $ git add .&&$ git commit -m'd'
+  五、设置和修改远端库
+   $ git remote add origin git@github.com:qianxiaoning/a.git
+   $ git remote set-url origin git@github.com:qianxiaoning/a.git
+  六、推master分支到远端
+   $ git push -u origin master
  二、从github上拉取仓库
-  在计算机对应目录
+  一、github上Initialize初始化
+  二、在计算机对应目录
   $ git clone git@github.com:name/myProject.git
-五、编辑本地仓库
-六、编辑完，准备提交（重点，可能需要界面操作）
- 一、add到暂存区
- 0、编写.gitignore文件，win创建时.gitignore.
-  $ git add .添加所有文件
- 0、查看状态$ git status
- 0、查看未add的修改$ git diff
- 0、查看已add的修改$ git diff --staged
- 0、历史记录$ git log
+  ------------------------
+  如果是gitlab
+   管理员：
+    一、在公司服务器内网建立一个gitlab账号，帮组员注册账号、密码、邮箱随便写
+    二、添加组员ssh公钥入公司gitlab账号，分配组员权限。
+   组员：
+    一、获得gitlab账号，密码。$ ssh-keygen -t rsa -C "email@example.com"获得id_rsa.pub添加入gitlab组织ssh keys中
+    二、配置git工具的用户名和邮箱等配置文件？
+    三、$ git clone git@gitlab.com:qianxiaoning/qxnTest.git
+  ------------------------ 
+五、建立远端和本地的需要分支
+ 一、$ git clone后即获得本地master分支
+ 二、本地dev分支
+  一、远端没有dev分支时，在本地建dev，推到远端
+   $ git checkout master
+   建立切换到dev分支
+   $ git checkout -b dev
+   推dev分支到远端
+   $ git push -u origin dev
+  二、远端有dev分支时，从远端拉
+   （如是远端新增的分支则$ git fetch刷新一下，才能看到远端新增的分支）
+   从远端拉dev到本地
+   $ git checkout -b dev origin/dev
+   建立本地dev和远程dev的关联，方便以后pull
+   $ git branch --set-upstream dev origin/dev
+ 三、至此远端和本地都有master和dev了
+六、工作需求（重点，可能需要界面操作）
+ 一、维护原先功能
+  大纲：登dev，拉dev，改dev，推dev。测试完后，登master，拉master，于master合并dev，推master，打master标签推master标签
+  1、登dev
+  $ git checkout dev
+  2、拉dev
+  $ git pull 
+  3、改dev
+  4、把改动提交到本地
+  $ git add .&&$ git commit -m 'd'
+  5、推dev
+  $ git pull/冲突合并/$ git push
+  6、测试完后登master
+  $ git checkout master
+  7、拉master
+  $ git pull
+  8、于master合并dev
+  $ git merge dev
+  9、冲突解决
+  10、推master
+  $ git push
+  11、打master标签推master标签
+  $ git tag v1.0
+  $ git push origin v1.0
+ 二、制作新功能
+  大纲：在dev上新建newTip分支，改newTip，推newTip。测试完后，登master，拉master，于master合并newTip，推master，
+ 打master标签推master标签，删除newTip分支
+  1、在dev上新建newTip分支
+  $ git checkout dev
+  $ git checkout -b newTip
+  2、改newTip
+  3、推newTip至本地
+  $ git add .&&$ git commit -m 'd'
+  4、推newTip（第一次推送远端加-u）
+  $ git push -u origin newTip
+  5、测试完后登master
+  $ git checkout master
+  6、拉master
+  $ git pull
+  7、于master合并newTip
+  $ git merge newTip
+  8、冲突解决
+  9、推master
+  $ git push
+  10、打master标签推master标签
+  $ git tag v1.0
+  $ git push origin v1.0
+  11、删除新功能分支
+  $ git branch -d newTip
+七、工作结束
+-------------------------------------------------------------------------------------------------
+廖雪峰git操作总结
+ 查看状态$ git status
+ 查看未add的修改$ git diff
+ 查看已add的修改$ git diff --staged
+ 历史记录$ git log
  
  版本回退
- 0、恢复
- $ git reset --hard 3628164,$ git reset --hard [commit id]
- $ git reflog查看命令历史,想恢复到新版本$ git reset --hard 3628164
- add前
- git checkout -- readme.txt可以丢弃工作区的修改
- add后，又改动
- git checkout -- readme.txt可以回到刚add完的状态
- $ git checkout -- readme.txt让这个文件回到最近一次git commit或git add时的状态，比如工作区删错了从版本库恢复
- $ git reset HEAD readme.txt可以把add区的修改回退到工作区
- commit后回退$ git reset --hard HEAD^上个版本HEAD^，上上个版本HEAD^^，往上100个版本HEAD~100
+  恢复
+   $ git reset --hard 3628164,$ git reset --hard [commit id]
+   $ git reflog查看命令历史,想恢复到新版本$ git reset --hard 3628164
+  add前
+   git checkout -- readme.txt可以丢弃工作区的修改
+  add后，又改动
+   git checkout -- readme.txt可以回到刚add完的状态
+  $ git checkout -- readme.txt让这个文件回到最近一次git commit或git add时的状态，比如工作区删错了从版本库恢复
+  $ git reset HEAD readme.txt可以把add区的修改回退到工作区
+  commit后回退$ git reset --hard HEAD^上个版本HEAD^，上上个版本HEAD^^，往上100个版本HEAD~100
  删除文件
- $ git rm test.txt
- $ git commit -m "remove test.txt"
+  $ git rm test.txt
+  $ git commit -m "remove test.txt"
  删除分支
- $ git branch -d dev
+  $ git branch -d dev
  强制删除分支
   $ git branch -D dev
- 拉取与推送
  查看远程库
- $ git remote
- $ git remote -v
- 设置远程库
- $ git remote add origin git@github.com:michaelliao/learngit.git
- $ git remote set-url origin git@github.com:qianxiaoning/test3.git
-  删除远程库
+  $ git remote
+  $ git remote -v
+ 设置与修改远程库
+  $ git remote add origin git@github.com:michaelliao/learngit.git
+  $ git remote set-url origin git@github.com:qianxiaoning/test3.git
+ 删除远程库
   git remote rm origin
  远程库为空时，第一次推送
- $ git push -u origin master
+  $ git push -u origin master
  以后
- $ git push origin master
- $ git push origin <name>
+  $ git push origin master
+  $ git push origin <name>
  本地没有时，拉远程分支
- $ git checkout -b dev origin/dev
+  $ git checkout -b dev origin/dev
  拉取
- $ git pull
- $ git pull origin <name>
+  $ git pull
+  $ git pull origin <name>
  pull之前建立本地分支和远程分支的关联
- $ git branch --set-upstream dev origin/dev
+  $ git branch --set-upstream dev origin/dev
  切换分支
- 切换$ git branch dev
- 创建并切换$ git checkout -b dev
+  切换$ git branch dev
+  创建并切换$ git checkout -b dev
  查看当前本地分支$ git branch
  查看当前本地和远端分支$ git branch -a
  远端新增分支，需要本地$ git fetch刷新一下，才能看到远端新增分支
  分支合并
- $ git checkout master
- $ git merge dev
+  $ git checkout master
+  $ git merge dev
  合并冲突
-<<<<<<< HEAD
-Creating a new branch is quick & simple.
-=======分隔
-Creating a new branch is quick AND simple.
->>>>>>> feature1
+  <<<<<<< HEAD
+  Creating a new branch is quick & simple.
+  =======分隔
+  Creating a new branch is quick AND simple.
+  >>>>>>> feature1
  手动解决
- git log --graph分支合并图
+  git log --graph分支合并图
  gui解决
  fast forward快速合并
  $ git merge --no-ff -m "merge with no-ff" dev手动合并
  代码储藏
- $ git stash
- $ git stash list储藏列表
- $ git stash pop恢复并删除备份
-标签
-打标签
-$ git tag v1.0
-$ git tag v0.9 6224937
-$ git tag v0.9 <commit id>
-查看所有标签
-$ git tag
-查看具体标签
-$ git show v0.9
-带有说明的标签-a标签名
-$ git tag -a v0.1 -m "version 0.1 released" 3628164
+  $ git stash
+  $ git stash list储藏列表
+  $ git stash pop恢复并删除备份
+ 标签
+  打标签
+   $ git tag v1.0
+   $ git tag v0.9 6224937
+   $ git tag v0.9 <commit id>
+ 查看所有标签
+  $ git tag
+ 查看具体标签
+  $ git show v0.9
+ 带有说明的标签-a标签名
+  $ git tag -a v0.1 -m "version 0.1 released" 3628164
  删除标签
- $ git tag -d v0.1
+  $ git tag -d v0.1
  删除远程标签
- $ git push origin :refs/tags/v0.9
+  $ git push origin :refs/tags/v0.9
  推送标签
- $ git push origin v1.0
+  $ git push origin v1.0
  推送所有标签
- $ git push origin --tags
+  $ git push origin --tags
  自定义配置别名
- st表示status
- $ git config --global alias.st status
- git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
-
- 
- 二、从暂存区commit提交到本地仓库，-m写备注
-  $ git commit -m 'xxx'
- 三、从远端仓库pull代码
- 四、push到远端仓库
-七、提交完结束工作
--------------------------------------------------------------------------------------------------
+  st表示status
+  $ git config --global alias.st status
+  git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit" 
+---------------------------------------------
 git基本操作（手册）
 使用 Git 来获取 Git 的升级
 $ git clone git://git.kernel.org/pub/scm/git/git.git
@@ -422,4 +441,63 @@ $ git rebase master
 用变基解决变基
 服务器上的 Git - 协议
 等等
+-------------------------------------------------------------------------------------------------
+指令
+创建文件
+在'其它'文件夹下创建文件qqq
+$ echo '其他'>qqq
+$ ls 查看文件夹目录
+$ touch README.md 添加一个文件
+-------------------------------------------------------------------------------------------------
+bash快捷键
+ctrl+u删除光标左边
+ctrl+k删除光标右边
+ctrl+w删除一个单词
+-------------------------------------------------------------------------------------------------
+git的不同种类
+指令版
+cmd中不能运行git命令，除非安装配置时选择第二个
+git cmd可以运行git命令
+git bash在cmd中加入了几个实用的linux命令以及git自己的命令
+gui界面版
+git gui,git extensions,TortoiseGit,Sourcetree
+git gui获取SSH pub KEY
+git gui-help-show ssh key添加到github里的settings-ssh and gpg keys里
+-------------------------------------------------------------------------------------------------
+git概念原理
+CVS、Subversion、Perforce、Bazaar 等等，将它们保存的信息看作是一组基本文件和每个文件随时间逐步累积的差异
+git把数据看作是对小型文件系统的一组快照
+git三种状态
+工作区->工作区已修改（modified）->add到暂存区->commit本地已暂存（staged），push到远端 已提交（committed）
+定制你的 Git 环境。 每台计算机上只需要配置一次
+安装完 Git 应该做的第一件事就是设置你的用户名称与邮件地址。
+这样做很重要，因为每一个 Git 的提交都会使用这些信息，并且它会写入到你的每一次提交中，不可更改：
+$ git config --global user.name "John Doe"
+$ git config --global user.email johndoe@example.com
+Freenode IRC 服务器（ irc.freenode.net ）的 #git 或 #github 频道
+linux国外技术聊天室
+
+git版本快速切换靠的是git快照机制
+参考：如何理解git的快照？ https://www.zhihu.com/question/27680108
+http://hanfu.space/%E6%8A%80%E6%9C%AF/2015/08/26/git-tutorial/
+
+pull引起冲突
+当本地，远端，基础都不一样时$ git pull会冲突
+
+$ git pull和$ git push简写都只会拉推对应远端分支，不会拉推所有
+-------------------------------------------------------------------------------------------------
+github界面
+github仓库里的new pull request按钮是，别人fork了你的仓库，对你提了一些修改，希望你能拉取合并的。
+-------------------------------------------------------------------------------------------------
+git拉取规则
+针对项目一期，二期修改的
+改一期，本地pc-qxn拉远端master，推远端pc-qxn，推远端master，登本地dev，拉取最新dev,选择pc-qxn节点右击选择“和分支合并”选择pc-qxn，合并本地pc-qxn，然后推送远端dev。
+改二期，登本地dev，拉远端dev，推远端dev。
+-------------------------------------------------------------------------------------------------
+git多人协作
+一、仓库合作
+ settings-collaborators-输入用户名添加-对方bellNotice-accept invitation
+二、创建组织organization
+ 创建好后把组织地址发给被邀请的人，如https://github.com/qxnTestOrganization，对方跳转url点击接收邀请。
+三、发起pull request
 -------------------------------------------------------------------------------------------------
