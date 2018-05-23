@@ -70,9 +70,18 @@ $ git config --global user.email "email@example.com"
   $ git checkout dev
   2、拉dev
   $ git pull 
+  解决冲突：
+   一、bash等命令行工具
+    手动合并
+    <<<<<<< HEAD
+    Creating a new branch is quick & simple.
+    =======分隔
+    Creating a new branch is quick AND simple.
+    >>>>>>> feature1
+   二、gui工具合并
   3、改dev
   4、把改动提交到本地
-  $ git add .&&$ git commit -m 'd'
+  $ git add .&&git commit -m 'd'
   5、推dev
   $ git pull/冲突合并/$ git push
   6、测试完后登master
@@ -95,7 +104,7 @@ $ git config --global user.email "email@example.com"
   $ git checkout -b newTip
   2、改newTip
   3、推newTip至本地
-  $ git add .&&$ git commit -m 'd'
+  $ git add .&&git commit -m 'd'
   4、推newTip（第一次推送远端加-u）
   $ git push -u origin newTip
   5、测试完后登master
@@ -118,8 +127,7 @@ $ git config --global user.email "email@example.com"
  查看状态$ git status
  查看未add的修改$ git diff
  查看已add的修改$ git diff --staged
- 历史记录$ git log
- 
+ 历史记录$ git log 
  版本回退
   恢复
    $ git reset --hard 3628164,$ git reset --hard [commit id]
