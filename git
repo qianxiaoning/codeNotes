@@ -103,7 +103,8 @@ $ git config --global user.email "email@example.com"
       git push
    三、git gui软件
     常见的git gui软件:
-     GitHub for Desktop,Source Tree(还适用于mac),TortoiseGit,git gui,git,git Extensions,SmartGit,Tower,Fork,Gitkraken,
+     GitHub for Desktop,Source Tree(还适用于mac),TortoiseGit,git gui,git,git Extensions,SmartGit,Tower,Fork,Gitkraken,P4Merge,
+     Git-cola,Giggle,Gitg,Qgit,GitForce,Egit,GitEye,
      ide的自带工具(Xcode苹果的,Visual Studio,webstorm)
   3、改dev
   4、把改动提交到本地
