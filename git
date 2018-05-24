@@ -63,22 +63,48 @@ $ git config --global user.email "email@example.com"
    建立本地dev和远程dev的关联，方便以后pull
    $ git branch --set-upstream dev origin/dev
  三、至此远端和本地都有master和dev了
-六、工作需求（重点，可能需要界面操作）
+六、工作需求（重点）
  一、维护原先功能
   大纲：登dev，拉dev，改dev，推dev。测试完后，登master，拉master，于master合并dev，推master，打master标签推master标签
   1、登dev
   $ git checkout dev
   2、拉dev
   $ git pull 
-  解决冲突：
-   一、bash等命令行工具
-    手动合并
+  解决冲突（重点，需要界面操作）：
+   一、git pull后手动合并
     <<<<<<< HEAD
     Creating a new branch is quick & simple.
     =======分隔
     Creating a new branch is quick AND simple.
     >>>>>>> feature1
-   二、gui工具合并
+   二、git mergetool（推荐）
+    git支持的mergetool：opendiff kdiff3 tkdiff xxdiff meld tortoisemerge gvimdiff diffuse diffmerge ecmerge p4merge 
+   araxis bc codecompare emerge vimdiff
+    如vimdiff教程：
+     一、将vimdiff用作默认合并工具：
+         git config --global merge.tool vimdiff
+         git config --global mergetool.prompt false
+         或
+         git config merge.tool vimdiff
+         git config merge.conflictstyle diff3
+         git config mergetool.prompt false
+     二、配置mergetool文件，不生成.orig冲突备份文件
+      git config --global mergetool.keepBackup false
+     三、运行
+      git pull 冲突后
+      git mergetool-回车
+      进入多窗口模式
+      上面三个分别是lo:local/ba:base/re:remote
+      下面是merge窗口
+      红框是冲突区，光标留在merge区红框，选择运行:diffget lo/ba/re
+      [c和]c是上下冲突区切换，千万不能多按，容易切到select模式
+      merge区合并完成，:wqa全部保存退出
+      git commit -m'd'提交就行，不用git add了
+      git push
+   三、git gui软件
+    常见的git gui软件:
+     GitHub for Desktop,Source Tree(还适用于mac),TortoiseGit,git gui,git,git Extensions,SmartGit,Tower,Fork,Gitkraken,
+     ide的自带工具(Xcode苹果的,Visual Studio,webstorm)
   3、改dev
   4、把改动提交到本地
   $ git add .&&git commit -m 'd'
@@ -456,6 +482,12 @@ $ git rebase master
 $ echo '其他'>qqq
 $ ls 查看文件夹目录
 $ touch README.md 添加一个文件
+-------------------------------------------------------------------------------------------------
+vim快捷键
+撤销：esc状态下按u
+保存并退出：esc，:wq
+全部保存退出：esc:wqa
+强制退出：:q!
 -------------------------------------------------------------------------------------------------
 bash快捷键
 ctrl+u删除光标左边
