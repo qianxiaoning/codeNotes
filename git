@@ -25,7 +25,7 @@ $ git config --global user.email "email@example.com"
    $ mkdir myProject
    $ cd myProject
    （$ pwd用于显示当前目录，尽量防止出现中文）
-  三、git init初始化，编写.gitignore文件，win创建时.gitignore.
+  三、git init初始化，编写.gitignore文件，win创建时.gitignore.，并创建README.md文件（README.md文件里必须要有内容）
   四、添加提交文件到本地
    $ git add .&&$ git commit -m'd'
   五、设置和修改远端库
@@ -34,8 +34,9 @@ $ git config --global user.email "email@example.com"
   六、推master分支到远端
    $ git push -u origin master
  二、从github上拉取仓库
-  一、github上Initialize初始化
-  二、在计算机对应目录
+  一、github上新建仓库并Initialize初始化
+  二、在github上该仓库新建.gitignore文件
+  三、在计算机对应目录
   $ git clone git@github.com:name/myProject.git
   ------------------------
   如果是gitlab
@@ -162,7 +163,7 @@ $ git config --global user.email "email@example.com"
  版本回退
   恢复
    $ git reset --hard 3628164,$ git reset --hard [commit id]
-   $ git reflog查看命令历史,想恢复到新版本$ git reset --hard 3628164
+   $ git reflog查看命令历史获取commit-id,想恢复到新版本$ git reset --hard 3628164
   add前
    git checkout -- readme.txt可以丢弃工作区的修改
   add后，又改动
@@ -170,6 +171,9 @@ $ git config --global user.email "email@example.com"
   $ git checkout -- readme.txt让这个文件回到最近一次git commit或git add时的状态，比如工作区删错了从版本库恢复
   $ git reset HEAD readme.txt可以把add区的修改回退到工作区
   commit后回退$ git reset --hard HEAD^上个版本HEAD^，上上个版本HEAD^^，往上100个版本HEAD~100
+  push后
+  个人分支用git reset --hard HEAD^ 公共分支用$ git revert --hard HEAD^，都是版本回退，
+  reset是直接撤回原来状态，revert是复制原来状态一份到最新状态，保留原来记录。
  删除文件
   $ git rm test.txt
   $ git commit -m "remove test.txt"
@@ -531,6 +535,10 @@ pull引起冲突
 当本地，远端，基础都不一样时$ git pull会冲突
 
 $ git pull和$ git push简写都只会拉推对应远端分支，不会拉推所有
+
+如果同事把文件a删除了，并推到远端。我们又没有改过a文件，git里面没有更新的a文件记录，
+我们pull的时候就不会报冲突，会直接删除我们本地的a文件。找回只能用reset或者revert版本回退了。
+如果同事把a文件删了后，我们本地有a文件更新的改动记录，我们pull的时候就会报冲突。
 -------------------------------------------------------------------------------------------------
 github界面
 github仓库里的new pull request按钮是，别人fork了你的仓库，对你提了一些修改，希望你能拉取合并的。
