@@ -56,9 +56,27 @@ checkbox.checked = true/false;
 window.frames;得到window里的框架数组
 iframe框架 self,parent,top自身，父级，顶级
 49
-eval
-eval()可以访问和修改它外部作用域中的变量,会污染全局变量
-可以用
+js new操作符的作用
+var obj  = {};
+obj.__proto__ = Base.prototype;
+Base.call(obj);
+eval使用
+eval并不会引起xss攻击，性能确实慢一些，但是不是这么夸张
+eval()可以访问和修改它外部作用域中的变量,会污染全局变量，主要缺点
+可以用Function或new Function代替，两者一样，前者是简写。Function访问自己的局部，不影响其他上下文变量
+Function用法，Function接收多个字符串参数arg1,function：
+var message = new Function('msg','alert(msg)');
+// 等价于：
+function message(msg) {
+    alert(msg);
+}
+用Function代替eval如：
+function evil(str) {
+    return new Function('return ' + str)();
+}
+关于new关键字
+Number、String、Boolean、Date时，new返回一个实例
+Object、Array、Function、RegExp时，new和直接调用函数产生的结果等同，都是新建一个自身对象，不用new为简写。
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
