@@ -29,8 +29,9 @@ div.clientWidth/div.clientHeight 可见区域宽高（不含滚动条）
 div.offsetWidth/div.offsetHeight可见区域宽高（含滚动条）
 div.scrollWidth/div.scrollHeight全宽高（包含隐藏部分）
 div.scrollLeft/div.scrollTop被卷去的左，高
+div.clientLeft 返回元素周围边框的厚度
 clientX事件发生时鼠标位于浏览器的坐标
-offsetTop距离上方或上方控件的距离
+offsetTop距离上版面或上方存在定位控件的距离
 getElementsByName根据name获取
 doms[i].tagName获得dom节点的标签名字
 for in 遍历对象属性
