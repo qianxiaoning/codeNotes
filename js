@@ -27,12 +27,13 @@ document.onreadystatechange = function(){
 清除缓存 链接后加时间戳 href += '&time='+ new Data().getTime();
 
 dom属性
-div.clientWidth/div.clientHeight 可见区域宽高（不含滚动条）
-div.offsetWidth/div.offsetHeight可见区域宽高（含滚动条）
-div.scrollWidth/div.scrollHeight全宽高（包含隐藏部分）
-div.scrollLeft/div.scrollTop被卷去的左，高
+div.clientWidth/div.clientHeight 可见区域宽高（不含border）
+div.offsetWidth/div.offsetHeight可见区域宽高（含border）
+div.scrollWidth/div.scrollHeight全宽高（不含border含scroll隐藏部分）
+
 div.clientLeft 返回元素周围边框的厚度
-offsetTop dom距离上版面或上方存在定位控件的距离
+div.scrollLeft/div.scrollTop被卷去的左，高
+div.offsetTop dom距离上方存在定位控件的距离
 
 MouseEvent事件对象属性
 clientX//指针在点击元素（DOM）中的坐标，相对于浏览器，比如不含标题栏
@@ -321,12 +322,12 @@ setInterval和setTimeout方法返回的是个number类型的id，用以放入清
 --------------------------------------------------------------------
 window.top.document.compatMode 可显示浏览器的渲染模式
 --------------------------------------------------------------------
-ie和标准的兼容写法
+标准和ie的兼容写法
 var e = e || window.event
-document.body || document.documentElement
-xxx.currentStyle || window.getComputedStyle(xxx, null)
-var target = e.srcElement || e.target
-event.cancelBubble = true || event.stopPropagation();
+document.documentElement || document.body
+window.getComputedStyle(xxx, null) || xxx.currentStyle
+var target = e.target || e.srcElement
+event.stopPropagation(); || event.cancelBubble = true
 --------------------------------------------------------------------
 前端开发的优化问题
 用innerHTML代替DOM操作，减少DOM操作次数，优化javascript性能
