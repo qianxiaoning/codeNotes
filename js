@@ -80,7 +80,7 @@ Number、String、Boolean、Date时，new返回一个实例
 Object、Array、Function、RegExp时，new和直接调用函数产生的结果等同，都是新建一个自身对象，不用new为简写。
 
 MouseEvent事件对象属性
-clientX//指针在点击元素（DOM）中的坐标
+clientX//指针在点击元素（DOM）中的坐标，相对于浏览器，比如不含标题栏
 x//是 MouseEvent.clientX 属性的别名
 layerX//事件相对于当前层中的水平坐标
 offsetX//指针相对于目标节点内边位置的坐标
