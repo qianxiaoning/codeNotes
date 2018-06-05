@@ -56,6 +56,7 @@ checkbox.checked = true/false;
 window.frames;得到window里的框架数组
 iframe框架 self,parent,top自身，父级，顶级
 49
+
 js new操作符的作用
 var obj  = {};
 obj.__proto__ = Base.prototype;
@@ -77,6 +78,18 @@ function evil(str) {
 关于new关键字
 Number、String、Boolean、Date时，new返回一个实例
 Object、Array、Function、RegExp时，new和直接调用函数产生的结果等同，都是新建一个自身对象，不用new为简写。
+
+MouseEvent事件对象属性
+clientX//指针在点击元素（DOM）中的坐标
+x//是 MouseEvent.clientX 属性的别名
+layerX//事件相对于当前层中的水平坐标
+offsetX//指针相对于目标节点内边位置的坐标
+screenX//相对于全局（屏幕）的坐标
+pageX//指针相对于整个文档的坐标
+movementX//指针相对于最后mousemove事件位置的坐标
+composed//该事件是否会通过阴影DOM边界传播到标准DOM的属性
+detail//是1加上当前的点击次数
+which//当鼠标事件触发时，表示被按下的按钮
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
