@@ -121,6 +121,8 @@ $("div").find("p").addBack().addClass("border");
 所以Boolean({}),Boolean([])都为true Boolean(!{}),Boolean(![])都为false
 ------------------------------------------------------------------------------------------------------------------
 this的指向与改变 call,apply,bind
+call和apply调用都会立即执行。bind会生成个新的函数，下次再执行。
+如果只是单纯传参不需要调用子类，则传this即可
 Js apply()使用详解 http://blog.csdn.net/business122/article/details/8000676
 对象方法调用test.sum(); this指向对象
 函数调用sum(); this指向window
@@ -871,7 +873,8 @@ Object.create(null);创建空对象，不会继承Object类的原型，完全为
 Food.prototype = Object.create(Product.prototype);【核心】//创建只有父类原型的新对象，子类原型指针指向新对象，单继承原型属性
 Object.assign(MyClass.prototype, OtherSuperClass.prototype);//多继承原型属性
 Food.prototype.constructor = Food;//constructor指向修正【核心】
-三、寄生组合继承（类继承+寄生原型继承）
+三、寄生组合继承（类继承+寄生原型继承）【完整】
+一 + 二
 --------------------------------
 分割线 bind是创造一个新的函数，新函数有原函数的方法，但里面的this是我刚传入的
 bind:ParentClass.bind(subClassIns, arg1[, arg2[, ...]]])
@@ -879,4 +882,23 @@ bind:ParentClass.bind(subClassIns, arg1[, arg2[, ...]]])
 vue2.0的双向绑定原理与es6的Object.defineProperty();关系
 Object.defineProperty();
 -------------------------------------------------------------------- 
+js模仿jq批量绑定事件
+jq的事件都是批量绑定的，js事件只能单独绑定
+如$('.a').click();//$('.a')都会绑定
+var d = document.getElementsByClassName('a');
+a.onclick = function(){};//不可行
+js批量绑定事件
+var a = function(c){
+    var b = function(p,e){console.log(p);console.log(e);};//p参数为bind里的c参数，e参数为click的事件对象
+    for(let i=0;i<d.length;i++){
+        d[i].addEventListener('click',b.bind(this,c));//此处this指此处click的事件对象    
+    }
+};
+a(9);
+
+
+
+
+
+
 
