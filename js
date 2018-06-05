@@ -890,11 +890,13 @@ a.onclick = function(){};//不可行
 js批量绑定事件
 var a = function(c){
     var b = function(p,e){console.log(p);console.log(e);};//p参数为bind里的c参数，e参数为click的事件对象
-    for(let i=0;i<d.length;i++){
-        d[i].addEventListener('click',b.bind(this,c));//此处this指此处click的事件对象    
+    for(let i=0;i<d.length;i++){       
+        d[i].addEventListener('click',b.bind(this,c));//此处this指此处click的事件对象，c为传参     
+        //此处用bind不会立即执行。call和apply都会立即执行，不能用在addEventListener里
     }
 };
 a(9);
+-------------------------------------------------------------------- 
 
 
 
