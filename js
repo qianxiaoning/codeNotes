@@ -36,13 +36,14 @@ div.scrollLeft/div.scrollTop被卷去的左，高
 div.offsetTop dom距离上方存在定位控件的距离
 
 MouseEvent事件对象属性
-clientX//指针在点击元素（DOM）中的坐标，相对于浏览器，比如不含标题栏
-x//是 MouseEvent.clientX 属性的别名
-layerX//事件相对于当前层中的水平坐标
 offsetX//指针相对于目标节点内边位置的坐标
+clientX//指针相对于浏览器可视页面，不含标题栏
+x//是 MouseEvent.clientX 属性的别名
 screenX//相对于全局（屏幕）的坐标
 pageX//指针相对于整个文档的坐标
+
 movementX//指针相对于最后mousemove事件位置的坐标
+layerX//事件相对于当前层中的水平坐标
 
 composed//该事件是否会通过阴影DOM边界传播到标准DOM的属性
 detail//是1加上当前的点击次数
