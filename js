@@ -25,13 +25,28 @@ document.onreadystatechange = function(){
     }
 }
 清除缓存 链接后加时间戳 href += '&time='+ new Data().getTime();
+
+dom属性
 div.clientWidth/div.clientHeight 可见区域宽高（不含滚动条）
 div.offsetWidth/div.offsetHeight可见区域宽高（含滚动条）
 div.scrollWidth/div.scrollHeight全宽高（包含隐藏部分）
 div.scrollLeft/div.scrollTop被卷去的左，高
 div.clientLeft 返回元素周围边框的厚度
-clientX事件发生时鼠标位于浏览器的坐标
-offsetTop距离上版面或上方存在定位控件的距离
+offsetTop dom距离上版面或上方存在定位控件的距离
+
+MouseEvent事件对象属性
+clientX//指针在点击元素（DOM）中的坐标，相对于浏览器，比如不含标题栏
+x//是 MouseEvent.clientX 属性的别名
+layerX//事件相对于当前层中的水平坐标
+offsetX//指针相对于目标节点内边位置的坐标
+screenX//相对于全局（屏幕）的坐标
+pageX//指针相对于整个文档的坐标
+movementX//指针相对于最后mousemove事件位置的坐标
+
+composed//该事件是否会通过阴影DOM边界传播到标准DOM的属性
+detail//是1加上当前的点击次数
+which//当鼠标事件触发时，表示被按下的按钮
+
 getElementsByName根据name获取
 doms[i].tagName获得dom节点的标签名字
 for in 遍历对象属性
@@ -80,17 +95,6 @@ function evil(str) {
 Number、String、Boolean、Date时，new返回一个实例
 Object、Array、Function、RegExp时，new和直接调用函数产生的结果等同，都是新建一个自身对象，不用new为简写。
 
-MouseEvent事件对象属性
-clientX//指针在点击元素（DOM）中的坐标，相对于浏览器，比如不含标题栏
-x//是 MouseEvent.clientX 属性的别名
-layerX//事件相对于当前层中的水平坐标
-offsetX//指针相对于目标节点内边位置的坐标
-screenX//相对于全局（屏幕）的坐标
-pageX//指针相对于整个文档的坐标
-movementX//指针相对于最后mousemove事件位置的坐标
-composed//该事件是否会通过阴影DOM边界传播到标准DOM的属性
-detail//是1加上当前的点击次数
-which//当鼠标事件触发时，表示被按下的按钮
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
