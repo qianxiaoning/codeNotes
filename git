@@ -558,3 +558,12 @@ git多人协作
 github快捷键
 shift+/打开快捷键面板
 -------------------------------------------------------------------------------------------------
+git报错
+warning: LF will be replaced by CRLF in README.md.
+The file will have its original line endings in your working directory.
+换行符不同
+$ rm -rf .git  // 删除.git  
+$ git config --global core.autocrlf false  //禁用自动转换 
+$ git init    
+$ git add .  
+-------------------------------------------------------------------------------------------------
