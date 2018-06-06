@@ -1,0 +1,18 @@
+var option = {
+            tooltip: {
+            //formatter: "{b} : {c}"
+            formatter: function (params) {
+                var res = null;
+                var myseries = option.series;
+                for (var i = 0; i < myseries.length; i++) {
+                    for (var j = 0; j < myseries[i].data.length; j++) {
+                        if (myseries[i].data[j].name == params.name) {
+                            res = myseries[i].data[j].name + ' : ' + myseries[i].data[j].value ;
+                        }
+                    }
+                }
+                return res;
+            }
+        },
+        series: myarr
+    };
