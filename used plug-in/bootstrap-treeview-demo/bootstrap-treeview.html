@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!--浏览器语言环境-中文-->
+<html lang="zh-CN">
+<head>
+    <!--网站编码格式-国际编码，实用性比较强-->
+    <meta charset="UTF-8">
+    <!--让 IE 浏览器运行最新的IE渲染模式下-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--为了确保适当的绘制和触屏缩放-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--user-scalable=no 可以禁用其缩放（zooming）-->
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">-->
+    <title>treeview</title>
+    <!-- Bootstrap css-->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- 让部分国产浏览器默认采用高速模式(webkit 内核)渲染页面-->
+    <meta name="renderer" content="webkit">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.js"></script>
+    <![endif]-->
+    <style type=text/css>
+        .row div{border:1px solid red;}
+    </style>
+</head>
+<body>
+<div id="treeview1">
+
+</div>
+<div class="aaa" style="height:30rem">111</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-treeview.js"></script>
+<script type="text/javascript">
+    $(function(){
+        //去点击默认事件
+        $("a").click(function(e){
+            var e = e||window.event;
+            e.preventDefault();
+            e.returnValue = false;
+        });
+        //treeview
+        function getTree()
+        {
+            //Some logic to retrieve, or generate tree structure
+            return data;
+        }
+
+
+        var defaultData = [
+            {
+                text: "Parent 1",
+                nodes: [
+                    {
+                        text: "Child 1",
+                        nodes: [
+                            {
+                                text: "Grandchild 1"
+                            },
+                            {
+                                text: "Grandchild 2"
+                            }
+                        ]
+                    },
+                    {
+                        text: "Child 2"
+                    }
+                ]
+            },
+            {
+                text: "Parent 2"
+            },
+            {
+                text: "Parent 3"
+            },
+            {
+                text: "Parent 4"
+            },
+            {
+                text: "Parent 5"
+            }
+        ];
+        $('#treeview1').treeview({
+            text:"Node1",
+            icon:"glyphicon glyphicon-stop",
+            selectedIcon:"glyphicon glyphicon-stop",
+            color:"#000000",
+            backColor:"#FFFFFF",
+            href:"#node-1",
+            selectable:true,
+            state:
+        {
+            checked:true,
+            disabled:true,
+            expanded:true,
+            selected:true
+        },
+        tags:['available'],
+        data:defaultData
+        });
+    })
+    //
+    console.log($(".aaa").height())
+</script>
+</body>
+</html>

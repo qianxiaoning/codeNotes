@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<!--浏览器语言环境-中文-->
+<html lang="zh-CN">
+<head>
+    <!--网站编码格式-国际编码，实用性比较强-->
+    <meta charset="UTF-8">
+    <!--让 IE 浏览器运行最新的IE渲染模式下-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--为了确保适当的绘制和触屏缩放-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--user-scalable=no 可以禁用其缩放（zooming）-->
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">-->
+    <title>bootstrap3应用笔记</title>
+    <!-- Bootstrap css-->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- 让部分国产浏览器默认采用高速模式(webkit 内核)渲染页面-->
+    <meta name="renderer" content="webkit">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.js"></script>
+    <![endif]-->
+    <style type=text/css>
+        .row div{border:1px solid red;}
+    </style>
+</head>
+<body>
+<h1>全局css样式</h1><br/>
+布局容器<br/>
+<!--不能互相嵌套-->
+container<br/>
+固定宽度并支持响应式布局的容器<br/>
+<div class="container" style="border:1px solid red;">
+    ...
+</div>
+container-fluid<br/>
+用于 100% 宽度，占据全部视口（viewport）的容器<br/>
+<div class="container-fluid" style="border:1px solid red;">
+    ...
+</div>
+栅格系统<br/>
+<!--行（row）与列（col）的组合来创建页面布局-->
+<!--行（row）”必须包含在 .container （固定宽度）或 .container-fluid （100% 宽度）中-->
+<!--行（row）”在水平方向创建一组“列（col）-->
+<!--内容应当放置于“列（col）”内，并且，只有“列（col）”可以作为行（row）”的直接子元素-->
+<h3>超小屏幕 手机 (<768px)	小屏幕 平板 (≥768px)	中等屏幕 桌面显示器 (≥992px)	大屏幕 大桌面显示器 (≥1200px)</h3>
+<!--           .col-xs-	         .col-sm-	                .col-md-	               .col-lg- -->
+<!--实例：从堆叠到水平排列-->
+<div class="row">
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+    <div class="col-md-1">.col-md-1</div>
+</div>
+<div class="row">
+    <div class="col-md-8">.col-md-8</div>
+    <div class="col-md-4">.col-md-4</div>
+</div>
+<div class="row">
+    <div class="col-md-4">.col-md-4</div>
+    <div class="col-md-4">.col-md-4</div>
+    <div class="col-md-4">.col-md-4</div>
+</div>
+<div class="row">
+    <div class="col-md-6">.col-md-6</div>
+    <div class="col-md-6">.col-md-6</div>
+</div>
+实例：移动设备和桌面屏幕<br/>
+<!-- Stack the columns on mobile by making one full-width and the other half-width -->
+<div class="row">
+    <div class="col-xs-12 col-md-8">.col-xs-12 .col-md-8</div>
+    <div class="col-xs-6 col-md-4">.col-xs-6 .col-md-4</div>
+</div>
+
+<!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
+<div class="row">
+    <div class="col-xs-6 col-md-4">.col-xs-6 .col-md-4</div>
+    <div class="col-xs-6 col-md-4">.col-xs-6 .col-md-4</div>
+    <div class="col-xs-6 col-md-4">.col-xs-6 .col-md-4</div>
+</div>
+
+<!-- Columns are always 50% wide, on mobile and desktop -->
+<div class="row">
+    <div class="col-xs-6">.col-xs-6</div>
+    <div class="col-xs-6">.col-xs-6</div>
+</div>
+实例：手机、平板、桌面<br/>
+<div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-8">.col-xs-12 .col-sm-6 .col-md-8</div>
+    <div class="col-xs-6 col-md-4">.col-xs-6 .col-md-4</div>
+</div>
+<div class="row">
+    <div class="col-xs-6 col-sm-4">.col-xs-6 .col-sm-4</div>
+    <div class="col-xs-6 col-sm-4">.col-xs-6 .col-sm-4</div>
+    <!-- Optional: clear the XS cols if their content doesn't match in height -->
+    <div class="clearfix visible-xs-block"></div>
+    <div class="col-xs-6 col-sm-4">.col-xs-6 .col-sm-4</div>
+</div>
+实例：多余的列（column）将另起一行排列<br/>
+<div class="row">
+    <div class="col-xs-9">.col-xs-9</div>
+    <div class="col-xs-4">.col-xs-4<br>Since 9 + 4 = 13 &gt; 12, this 4-column-wide div gets wrapped onto a new line as one contiguous unit.</div>
+    <div class="col-xs-6">.col-xs-6<br>Subsequent columns continue along the new line.</div>
+</div>
+响应式列重置 使用 .clearfix 和 响应式工具类<br/>
+<div class="row">
+    <div class="col-xs-6 col-sm-3">.col-xs-6 .col-sm-3</div>
+    <div class="col-xs-6 col-sm-3">.col-xs-6 .col-sm-3</div>
+
+    <!-- Add the extra clearfix for only the required viewport -->
+    <div class="clearfix visible-xs-block"></div>
+
+    <div class="col-xs-6 col-sm-3">.col-xs-6 .col-sm-3</div>
+    <div class="col-xs-6 col-sm-3">.col-xs-6 .col-sm-3</div>
+</div>
+重置偏移, 后推或前拉某个列<br/>
+<div class="row">
+    <div class="col-sm-5 col-md-6">.col-sm-5 .col-md-6</div>
+    <div class="col-sm-5 col-sm-offset-2 col-md-6 col-md-offset-0">.col-sm-5 .col-sm-offset-2 .col-md-6 .col-md-offset-0</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6 col-md-5 col-lg-6">.col-sm-6 .col-md-5 .col-lg-6</div>
+    <div class="col-sm-6 col-md-5 col-md-offset-2 col-lg-6 col-lg-offset-0">.col-sm-6 .col-md-5 .col-md-offset-2 .col-lg-6 .col-lg-offset-0</div>
+</div>
+列偏移<br/>
+<div class="row">
+    <div class="col-md-4">.col-md-4</div>
+    <div class="col-md-4 col-md-offset-4">.col-md-4 .col-md-offset-4</div>
+</div>
+<div class="row">
+    <div class="col-md-3 col-md-offset-3">.col-md-3 .col-md-offset-3</div>
+    <div class="col-md-3 col-md-offset-3">.col-md-3 .col-md-offset-3</div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">.col-md-6 .col-md-offset-3</div>
+</div>
+You can also override offsets from lower grid tiers with .col-*-offset-0 classes<br/>
+<div class="row">
+    <div class="col-xs-6 col-sm-4">
+    </div>
+    <div class="col-xs-6 col-sm-4">
+    </div>
+    <div class="col-xs-6 col-xs-offset-3 col-sm-4 col-sm-offset-0">
+    </div>
+</div>
+嵌套列<br/>
+<div class="row">
+    <div class="col-sm-9">
+        Level 1: .col-sm-9
+        <div class="row">
+            <div class="col-xs-8 col-sm-6">
+                Level 2: .col-xs-8 .col-sm-6
+            </div>
+            <div class="col-xs-4 col-sm-6">
+                Level 2: .col-xs-4 .col-sm-6
+            </div>
+        </div>
+    </div>
+</div>
+列排序<br/>
+<div class="row">
+    <div class="col-md-9 col-md-push-3">.col-md-9 .col-md-push-3</div>
+    <div class="col-md-3 col-md-pull-9">.col-md-3 .col-md-pull-9</div>
+</div>
+small 标签或赋予 .small 类的元素，可以用来标记副标题<br/>
+<h1>h1. Bootstrap heading <small>Secondary text</small></h1>
+<h2>h2. Bootstrap heading <small>Secondary text</small></h2>
+<h3>h3. Bootstrap heading <small>Secondary text</small></h3>
+<h4>h4. Bootstrap heading <small>Secondary text</small></h4>
+<h5>h5. Bootstrap heading <small>Secondary text</small></h5>
+<h6>h6. Bootstrap heading <small>Secondary text</small></h6>
+内联文本元素mark<br/>
+You can use the mark tag to <mark>highlight</mark> text.<br/>
+删除的文本del<br/>
+<del>This line of text is meant to be treated as deleted text.</del><br/>
+没用的文本使用 s 标签<br/>
+<s>This line of text is meant to be treated as no longer accurate.</s><br/>
+插入的文本使用 ins 标签<br/>
+<ins>This line of text is meant to be treated as an addition to the document.</ins><br/>
+缩略语<br/>
+<abbr title="attribute">attr</abbr><br/>
+地址<br/>
+<address>
+    <strong>Twitter, Inc.</strong><br>
+    1355 Market Street, Suite 900<br>
+    San Francisco, CA 94103<br>
+    <abbr title="Phone">P:</abbr> (123) 456-7890
+</address>
+
+<address>
+    <strong>Full Name</strong><br>
+    <a href="mailto:#">first.last@example.com</a>
+</address>
+引用<br/>
+<blockquote>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+</blockquote>
+命名来源<br/>
+<blockquote>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+    <footer>Someone famous in <cite title="Source Title">Source Title</cite></footer>
+</blockquote>
+命名来源,另一种展示风格<br/>
+<blockquote class="blockquote-reverse">
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+    <footer>Someone famous in <cite title="Source Title">Source Title</cite></footer>
+</blockquote>
+内联代码<br/>
+For example, <code>&lt;section&gt;</code> should be wrapped as inline.<br/>
+用户输入<br/>
+To switch directories, type <kbd>cd</kbd> followed by the name of the directory.<br>
+To edit settings, press <kbd><kbd>ctrl</kbd> + <kbd>,</kbd></kbd><br/>
+渐变<br/>
+设置一个direction（方向）<br/>
+#gradient > .vertical(#333; #000);<br/>
+#gradient > .horizontal(#333; #000);<br/>
+#gradient > .radial(#333; #000);<br/>
+为标准的里两颜色线性渐变指定角度<br/>
+#gradient > .directional(#333; #000; 45deg);<br/>
+条纹风格的渐变，这也很容易。只要指定一个颜色，我们将该颜色半透明的条纹覆盖其上<br/>
+#gradient > .striped(#333; 45deg);<br/>
+三种颜色。利用此 mixin ，并为其设置第一种颜色、第二种颜色、第二种颜色的色标（例如 25%），还有第三种颜色<br/>
+#gradient > .vertical-three-colors(#777; #333; 25%; #000);<br/>
+#gradient > .horizontal-three-colors(#777; #333; 25%; #000);<br/>
+Clearfix -- 清除浮动<br/>
+<h1>组件</h1>
+Glyphicons 字体图标<br/>
+1.改变bootstrap.css里fonts文件夹的路径
+2.在class上加glyphicon glyphicon-
+3.将图标类应用到这个 span 标签上,内容为空或子元素的元素上<br/>
+下拉菜单<br/>
+.dropdown<br/>
+<div class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Dropdown
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        <li><a href="#">Action</a></li>
+        <li class="disabled"><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+    </ul>
+</div>
+.dropup向上弹出<br/>
+<div class="dropup">
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Dropup
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+        <li><a href="#">Action</a></li>
+        <li class="disabled"><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+    </ul>
+</div>
+分裂式按钮下拉菜单<br/>
+<!-- Split button -->
+<div class="btn-group">
+    <button type="button" class="btn btn-danger">Action</button>
+    <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu">
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+    </ul>
+</div>
+标签页<br/>
+<ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a href="#">Home</a></li>
+    <li role="presentation"><a href="#">Profile</a></li>
+    <li role="presentation"><a href="#">Messages</a></li>
+</ul>
+带下拉菜单的标签页<br/>
+<ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a href="#">Home</a></li>
+    <li role="presentation"><a href="#">Profile</a></li>
+    <li role="presentation"><a href="#">Messages</a></li>
+    <li role="presentation" class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+            Dropdown <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li class="disabled"><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+        </ul>
+    </li>
+    ...
+</ul>
+导航条<br/>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Brand</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">Link</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li><a href="#">Something else here</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">Separated link</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">One more separated link</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">Link</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li><a href="#">Something else here</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">Separated link</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+路径导航（面包屑）<br/>
+<ol class="breadcrumb">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Library</a></li>
+    <li class="active">Data</li>
+</ol>
+巨幕<br/>
+让巨幕组件的宽度与浏览器宽度一致并且没有圆角，请把此组件放在所有 .container 元素的外面，并在组件内部添加一个 .container 元素<br/>
+<div class="jumbotron">
+    <div class="container">
+        <h1>Hello, world!</h1>
+        <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+    </div>
+</div>
+进度条<br/>
+<div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+        <span class="sr-only">60% Complete</span>
+    </div>
+</div>
+带有提示标签的进度条<br/>
+<div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+        60%
+    </div>
+</div>
+在展示很低的百分比时，如果需要让文本提示能够清晰可见，可以为进度条设置 min-width 属性<br/>
+<div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">
+        0%
+    </div>
+</div>
+<div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: 2%;">
+        2%
+    </div>
+</div>
+条纹效果进度条<br/>
+<div class="progress">
+    <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+        <span class="sr-only">40% Complete (success)</span>
+    </div>
+</div>
+<div class="progress">
+    <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+        <span class="sr-only">20% Complete</span>
+    </div>
+</div>
+<div class="progress">
+    <div class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+        <span class="sr-only">60% Complete (warning)</span>
+    </div>
+</div>
+<div class="progress">
+    <div class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+        <span class="sr-only">80% Complete (danger)</span>
+    </div>
+</div>
+动画效果进度条<br/>
+<div class="progress">
+    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+        <span class="sr-only">45% Complete</span>
+    </div>
+</div>
+堆叠效果进度条<br/>
+<div class="progress">
+    <div class="progress-bar progress-bar-success" style="width: 35%">
+        <span class="sr-only">35% Complete (success)</span>
+    </div>
+    <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 20%">
+        <span class="sr-only">20% Complete (warning)</span>
+    </div>
+    <div class="progress-bar progress-bar-danger" style="width: 10%">
+        <span class="sr-only">10% Complete (danger)</span>
+    </div>
+</div>
+<h1>bootstrap3里的javascript插件</h1>
+data 属性，通过 data 属性 API 就能使用所有的 Bootstrap 插件<br/>
+关闭所有插件$(document).off('.data-api')<br/>
+关闭单个插件$(document).off('.alert.data-api')<br/>
+编程方式<br/>
+所有方法都可以接受一个可选的 option 对象作为参数，或者一个代表特定方法的字符串，或者什么也不提供（在这种情况下，插件将会以默认值初始化）<br/>
+$('#myModal').modal()                      // 以默认值初始化<br/>
+$('#myModal').modal({ keyboard: false })   // initialized with no keyboard<br/>
+$('#myModal').modal('show')                // 初始化后立即调用 show 方法<br/>
+每个插件还通过 Constructor 属性暴露了其原始的构造函数：$.fn.popover.Constructor。如果你想获取某个插件的实例，可以直接通过页面元素获取：$('[rel="popover"]').data('popover')<br/>
+避免命名空间冲突.noConflict 方法恢复其原始值<br/>
+var bootstrapButton = $.fn.button.noConflict() // return $.fn.button to previously assigned value<br/>
+$.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Bootstrap functionality<br/>
+所有以不定式形式的动词命名的事件都提供了 preventDefault 功能。这就赋予你在动作开始执行前将其停止的能力<br/>
+$('#myModal').on('show.bs.modal', function (e) {
+if (!data) return e.preventDefault() // 阻止模态框的展示
+})<br/>
+Version numbers<br/>
+$.fn.tooltip.Constructor.VERSION // => "3.3.7"<br/>
+过渡效果 transition.js<br/>
+在全局范围禁用过渡效果$.support.transition = false<br/>
+模态框 modal.js<br/>
+$('#myModal').on('shown.bs.modal', function () {
+$('#myInput').focus()
+})<br/>
+模态框实例<br/>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+    Launch demo modal
+</button>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+滚动监听 scrollspy.js???<br/>
+<style type="text/css">
+    .scrolla {position: relative;}
+</style>
+<div class="scrolla" data-spy="scroll" data-target="#navbar-example">
+<div>1111111</div>
+<div>1111111</div>
+<div>1111111</div>
+<div>1111111</div>
+<div id="navbar-example">
+    <ul class="nav nav-tabs" role="tablist">
+        <li>1111111</li>
+        <li>1111111</li>
+        <li>1111111</li>
+        <li>1111111</li>
+    </ul>
+</div>
+    <div>1111111</div>
+    <div>1111111</div>
+    <div>1111111</div>
+    <div>1111111</div>
+</div>
+<script type="text/javascript">
+   // $('.scrolla').scrollspy({ target: '#navbar-example' })
+</script>
+弹出框<br/>
+<button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">点我弹出/隐藏弹出框</button>
+<button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+    Popover on 左侧
+</button>
+
+<button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+    Popover on 顶部
+</button>
+
+<button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+sagittis lacus vel augue laoreet rutrum faucibus.">
+    Popover on 底部
+</button>
+
+<button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+    Popover on 右侧
+</button>
+<script type="text/javascript">
+   // $('#example').popover(options)
+</script>
+Carousel carousel.js<br/>
+<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+        <div class="item active">
+            <!--<img src="..." alt="...">-->
+            <div class="carousel-caption">
+                ...
+            </div>
+        </div>
+        <div class="item">
+            <!--<img src="..." alt="...">-->
+            <div class="carousel-caption">
+                ...
+            </div>
+        </div>
+        ...
+    </div>
+
+    <!-- Controls -->
+    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+Affix affix.js,附加导航<br/>
+<div class="bbb"></div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(function(){
+        //去点击默认事件
+        $("a").click(function(e){
+            var e = e||window.event;
+            e.preventDefault();
+            e.returnValue = false;
+        });
+        //load方法
+        $(".bbb").load("load_resource.html .wrap")
+    })
+</script>
+</body>
+</html>
