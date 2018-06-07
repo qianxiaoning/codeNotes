@@ -899,9 +899,12 @@ var a = function(c){
 };
 a(9);
 -------------------------------------------------------------------- 
-
-
-
+js ajax拼接字符串时可以用正则加判断条件
+如for循环中：
+data[0].cellList[i].commandNum=="01"?equip.eq(i).addClass("sel"):equip.eq(i).removeClass("sel");
+或：
+'<i class="iconfont icon-hekricon01 equip'+(cell.commandNum=="01"?" sel":"")+'"></i>'
+-------------------------------------------------------------------- 
 
 
 
