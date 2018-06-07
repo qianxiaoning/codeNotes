@@ -15,3 +15,423 @@ ui库
 二维码  
   qrcode
 -----------------------------------------------------------------
+echarts-iconTip-formatFunction
+var option = {
+            tooltip: {
+            //formatter: "{b} : {c}"
+            formatter: function (params) {
+                var res = null;
+                var myseries = option.series;
+                for (var i = 0; i < myseries.length; i++) {
+                    for (var j = 0; j < myseries[i].data.length; j++) {
+                        if (myseries[i].data[j].name == params.name) {
+                            res = myseries[i].data[j].name + ' : ' + myseries[i].data[j].value ;
+                        }
+                    }
+                }
+                return res;
+            }
+        },
+        series: myarr
+    };
+-----------------------------------------------------------------
+echarts-line-ins&markline
+// 基于准备好的dom，初始化echarts图表    
+    var myChart1 = echarts.init($('.total_energy')[1]);
+    /**
+     * 横坐标计算
+     */
+    var array  = new Array();
+    switch (data1.length)
+    {
+        case 7:
+            var array = ['星期一','星期二','星期三','星期四','星期五','星期六','星期天'];
+            break;
+        case 12:
+            array = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            break;
+        case 24:
+            array = ['0:00','1:00','2:00','3:00','4:00','5:00','6:00','7:00','8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'];
+            break;
+        default:
+            for (var i = 0; i < data1.length; i++){
+                array[i] = String(i+1);
+            }
+            break;
+    }
+
+    //分能耗表
+    var option1 = {
+        title: {
+            text: name
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['空调用电','智能插座用电','动力用电','其它用电']
+        },
+        calculable : true,
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                data : array
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value',
+                axisLabel : {
+                    formatter: '{value}'
+                },
+                name: '耗电量(kW)'
+            }
+        ],
+        series : [
+            {
+                name:'空调用电',
+                type:'line',
+                //data:[110, 101, 105, 103, 102, 103, 100, 101, 105, 103, 102, 103, 100, 101, 105, 103, 102, 103, 100, 101, 105, 103, 102, 103, 100]
+                data : data1,
+                markLine : {
+                    data:[
+                        [
+                            //xAxis,yAxis项目下标，value值
+                            {name: '空调能耗超标线', value:Number(stringList[0]).toFixed(2), xAxis:0, yAxis: Number(stringList[0]).toFixed(2)},
+                            {xAxis: array.length, yAxis:Number(stringList[0]).toFixed(2) }
+                        ],
+                    ],
+                    //超标线颜色，必须写normal分类才起作用
+                    itemStyle:{
+                        normal:{
+                            color:"red",
+                            lineStyle:{
+                                type:'solid',
+                                //width:1
+                            },
+                            label:{
+                                formatter:'空调能耗超标线  '
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                name:'智能插座用电',
+                type:'line',
+                //data:[120, 101, 105, 103, 102, 103, 100, 101, 105, 103, 102, 103, 100, 121, 105, 103, 102, 103, 100, 101, 105, 103, 102, 103, 100]
+                data : data2,
+                markLine : {
+                    data:[
+                        [
+                            //xAxis,yAxis项目下标，value值
+                            {name: '智能插座能耗超标线', value:Number(stringList[1]).toFixed(2), xAxis:0, yAxis: Number(stringList[1]).toFixed(2)},
+                            {xAxis: array.length, yAxis:Number(stringList[1]).toFixed(2) }
+                        ],
+                    ],
+                    //超标线颜色，必须写normal分类才起作用
+                    itemStyle:{
+                        normal:{
+                            color:"red",
+                            lineStyle:{
+                                type:'solid',
+                                //width:1
+                            },
+                            label:{
+                                formatter:'智能插座能耗超标线'
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                name:'动力用电',
+                type:'line',
+                //data:[160, 101, 105, 103, 102, 103, 100, 101, 105, 103, 102, 103, 100, 121, 105, 103, 102, 103, 100, 101, 105, 103, 102, 103, 160]
+                data : data3,
+                markLine : {
+                    data:[
+                        [
+                            //xAxis,yAxis项目下标，value值
+                            {name: '动力用电能耗超标线', value:Number(stringList[2]).toFixed(2), xAxis:0, yAxis: Number(stringList[1]).toFixed(2)},
+                            {xAxis: array.length, yAxis:Number(stringList[2]).toFixed(2) }
+                        ],
+                    ],
+                    //超标线颜色，必须写normal分类才起作用
+                    itemStyle:{
+                        normal:{
+                            color:"red",
+                            lineStyle:{
+                                type:'solid',
+                                //width:1
+                            },
+                            label:{
+                                formatter:'动力用电超标线'
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                name:'其它用电',
+                type:'line',
+                //data:[120, 101, 105, 103, 102, 103, 100, 101, 175, 103, 102, 103, 100, 121, 105, 103, 102, 103, 100, 101, 105, 103, 190, 103, 100]
+                data : data4,
+                markLine : {
+                    data:[
+                        [
+                            //xAxis,yAxis项目下标，value值
+                            {name: '其它用电能耗超标线', value:Number(stringList[3]).toFixed(2), xAxis:0, yAxis: Number(stringList[3]).toFixed(2)},
+                            {xAxis: array.length, yAxis:Number(stringList[3]).toFixed(2) }
+                        ],
+                    ],
+                    //超标线颜色，必须写normal分类才起作用
+                    itemStyle:{
+                        normal:{
+                            color:"red",
+                            lineStyle:{
+                                type:'solid',
+                                //width:1
+                            },
+                            label:{
+                                formatter:'其它用电超标线'
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    // 为echarts对象加载数据
+    if(data1.length == 0){
+        for (var i = 0; i < 4; i++){
+            option1.series[i].markLine.data = []
+        }
+    }
+    myChart1.setOption(option1);
+-----------------------------------------------------------------
+ueditor-instru
+百度编辑器
+ueditor
+//百度编译器 页面上
+//配置
+<script type="text/javascript" charset="utf-8" src="~/Content/PCNew/plugins/ueditor/ueditor.config.js"></script>
+//主js
+<script type="text/javascript" charset="utf-8" src="~/Content/PCNew/plugins/ueditor/ueditor.all.min.js"> </script>
+//中文语言包
+<script type="text/javascript" charset="utf-8" src="~/Content/PCNew/plugins/ueditor/lang/zh-cn/zh-cn.js"></script>
+//初始化编译器
+var ue = UE.getEditor('editor');
+//调用api
+ue.ready(function () {
+    ue.setContent(res.DocEntity.DocContent);
+});
+//扩展命令
+UE.getEditor('editor').execCommand('insertHtml', text);
+-----------------------------------------------------------------
+//laydate
+function layDate(a,b) {
+    layui.use('laydate',function(){
+        var laydate = top.layui.laydate;
+        var start = {
+            format: 'YYYY-MM-DD hh:mm:ss',
+            min: '1970-01-01 23:59:59',
+            max: '2099-06-16 23:59:59', // 设定最大日期
+            istime: true,
+            istoday: false,
+            choose: function (datas) {
+                end.min = datas; //开始日选好后，重置结束日的最小日期
+                end.start = datas; //将结束日的初始值设定为开始日
+            }
+        };
+        var end = {
+            format: 'YYYY-MM-DD hh:mm:ss',
+            min: laydate.now(),
+            max: '2099-06-16 23:59:59', // 设定最大日期
+            istime: true,
+            istoday: false,
+            choose: function (datas) {
+                start.max = datas; //结束日选好后，重置开始日的最大日期
+            }
+        };
+        top.$(a).click(function(){
+            start.elem = this;
+            laydate(start);
+        });
+        top.$(b).click(function(){
+            end.elem = this;
+            laydate(end);
+        });
+    });
+}
+-----------------------------------------------------------------
+//zTree
+var zTreeObj;
+var dataObj;
+var setting;
+//  左侧树
+function getZtree(id,flag,onClick,onCheck,url,data){
+    setting = {
+        edit : {
+            enable: false,
+            editNameSelectAll: true
+        },
+        data: {
+            simpleData: {
+                enable:true,
+                idKey: "id",
+                pIdKey: "pId",
+                system:"system",
+                rootPId: ""
+            }
+        },
+        check: {
+            enable: flag
+        },
+        //回调函数
+        callback: {
+            //点击的事件回调函数
+            onClick : onClick,
+            onCheck : onCheck
+        }
+    };
+    doAjax(url,'get',data,suc);
+    function suc(res) {
+            //data赋给全局变量
+            dataObj = res;
+            zTreeObj = $.fn.zTree.init(top.$(id), setting, res);
+            //zTreeObj.getNodes 获取 zTree 的全部节点数据
+            var nodes = zTreeObj.getNodes();
+            zTreeObj.expandNode(nodes[0], true, false, true);
+    }
+}
+-----------------------------------------------------------------
+//bootstrapTable
+//初始化表格
+function tables(id, url,method,sidePagination,columns) {
+    $(id).bootstrapTable({
+            url: url,         //请求后台的URL（*）
+            method: method,                      //请求方式（*）
+            striped: true,                      //是否显示行间隔色
+            cache: false,
+            pagination: true,                   //是否显示分页（*）
+            paginationHAlign: "left",
+            paginationDetailHAlign: "right",
+            pageNumber: 1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                        //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],         //可供选择的每页的行数（*）
+            smartDisplay: false,
+            clickToSelect: true,                //是否启用点击选中行
+            uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+            sidePagination: sidePagination,
+            queryParamsType:'limit',
+            queryParams:function (params) {
+                return params;
+            },
+            sortable: true,
+            showRefresh: false,
+            showPaginationSwitch: false,
+            cardView: false,                    //是否显示详细视图
+            singleSelect: true,                   //禁止多选
+            paginationLoop: false,                   //设置为 true 启用分页条无限循环的功能
+            columns: columns,
+            // onLoadSuccess: function(){  //加载成功时执行
+            //     top.layer.msg("加载成功");
+            // },
+            onLoadError: function(){  //加载失败时执行
+                top.layer.msg("加载数据失败", {time : 1500, icon : 2});
+            }
+        }
+    );
+}
+-----------------------------------------------------------------
+//  layer弹出框
+function layers(title, area, content, suc, yes) {
+    top.layer.open({
+        type: 1,
+        title: title,  // 弹出框的标题
+        btn: ['确定', '取消'],
+        area: area,
+        offset: ['6%'],
+        resize: false,
+        move: false,
+        shadeClose: true,//是否点击遮罩关闭
+        content: content, // 弹出框的内容
+        success: suc,  // 层弹出后的成功毁掉的方法
+        yes: yes  // 确定按钮的回调方法
+    });
+}
+-----------------------------------------------------------------
+//ajax传送参数
+function doAjax(url,type,data,sucfn,beforeSend) {
+    $.ajax({
+        url: url,
+        type: type,
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8',
+        //正式data
+        // data:　JSON.stringify(data),
+        //调试data
+        data:data,
+        //用传统的方式来序列化数据 比如传数组时
+        // traditional:true,
+        error: function () {
+            top.layer.msg('操作失败');
+        },
+        // success: function (res) {
+        //     if(res.status){
+        //         sucfn();
+        //     }
+        //     else{
+        //         top.layer.msg('操作失败');
+        //     }
+        // }
+        //测试用
+        success: sucfn,
+	beforeSend:beforeSend
+    })
+}
+-----------------------------------------------------------------
+//正则
+//只判断为空
+top.$.fn.isEmpty = function(){
+    $(this).blur(function(){
+        if($(this).val()==''){
+            $(this).siblings().remove();
+            $(this).after("<p style='color:red'>内容不能为空</p>");
+            $(this).val('');
+        }
+        else{
+            $(this).siblings().remove();
+        }
+    });
+};
+-----------------------------------------------------------------
+//qrcode
+top.$(".qrc01").qrcode({
+                render: "canvas", //table方式
+                width: 100, //宽度
+                height:100, //高度
+                text: "www.baidu.apk" //任意内容
+            });
+            top.$(".qrc02").qrcode({
+                render: "canvas", //table方式
+                width: 100, //宽度
+                height:100, //高度
+                text: "135465456" //任意内容
+            });
+            //canvas转图片
+            function convertCanvasToImage(canvas) {
+                var image = new Image();
+                image.src = canvas.toDataURL("image/png");
+                $(canvas).replaceWith($(image));
+            }
+            convertCanvasToImage(top.$(".qrc01 canvas")[0]);
+            convertCanvasToImage(top.$(".qrc02 canvas")[0]);
+-----------------------------------------------------------------
+
+
+
+
+
