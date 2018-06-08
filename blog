@@ -2,7 +2,7 @@
 github自带主题
 qianxiaoning.github.io项目-settings-GitHub Pages-choose a theme
 -----------------------------------------------------
-hexo+github
+hexo+github http://www.cnblogs.com/fengxiongZz/p/7707568.html
 参照hexo官方文档
 网友教程：
 npm install hexo -g
@@ -10,13 +10,25 @@ hexo -v检查
 hexo init
 npm install
 hexo g
-hexo s，开启服务器
+hexo s，开启本地服务器
 配置_config.yml末尾，
   deploy:
   type: git
   repository: git@github.com:qianxiaoning/qianxiaoning.github.io.git
   branch: master
 新建一篇博客，hexo new post "第一篇博客
-安装一个扩展：npm install hexo-deployer-git --save"
+安装一个扩展：npm install hexo-deployer-git --save"，不行就用cnpm
 编辑器编好文章，hexo d -g，生成以及部署
-hexo s，开启服务器
+编译并上传到github
+可能要在github仓库里刷新一下页面，https://qianxiaoning.github.io才能变化
+配置主题
+比如：NexT
+git clone https://github.com/iissnan/hexo-theme-next themes/next（这里可能有子仓库关联）
+_config.yml文件配置，修改theme：next
+hexo s本地测试
+next主题_config.yml 方案：scheme: Pisces
+根_config.yml 语言设定：language: zh-Hans
+...系列配置 参考：http://www.cnblogs.com/fengxiongZz/p/7707568.html
+增加配置文件menu，新建页面hexo new page tags
+添加github导航条
+底部加上访问量
