@@ -32,3 +32,13 @@ next主题_config.yml 方案：scheme: Pisces
 增加配置文件menu，新建页面hexo new page tags
 添加github导航条
 底部加上访问量
+-----------------------------------------------------
+hexo 避免渲染
+在source根目录下添加文件
+修改根目录_config.yml
+skip_render: 
+  - "baidu_verify_BXSF5rlgK8.html"
+  - "README.md"
+hexo clean或
+hexo d
+hexo d -g
