@@ -1,0 +1,22 @@
+-----------------------------------------------------
+github自带主题
+qianxiaoning.github.io项目-settings-GitHub Pages-choose a theme
+-----------------------------------------------------
+hexo+github
+参照hexo官方文档
+网友教程：
+npm install hexo -g
+hexo -v检查
+hexo init
+npm install
+hexo g
+hexo s，开启服务器
+配置_config.yml末尾，
+  deploy:
+  type: git
+  repository: git@github.com:qianxiaoning/qianxiaoning.github.io.git
+  branch: master
+新建一篇博客，hexo new post "第一篇博客
+安装一个扩展：npm install hexo-deployer-git --save"
+编辑器编好文章，hexo d -g，生成以及部署
+hexo s，开启服务器
