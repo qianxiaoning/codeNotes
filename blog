@@ -2,6 +2,12 @@
 github自带主题
 qianxiaoning.github.io项目-settings-GitHub Pages-choose a theme
 -----------------------------------------------------
+jekyll+github http://www.pchou.info/ssgithubPage/2013-01-03-build-github-blog-page-01.html
+利用本地编辑器编写博客后维护网站其他页面
+使用Jekyll-Bootstrap在本地测试网站功能
+使用Git客户端工具上传模板和页面文件
+Git Server会用jekyll转化你的模板，并生成静态页面
+
 hexo+github http://www.cnblogs.com/fengxiongZz/p/7707568.html
 参照hexo官方文档
 网友教程：
@@ -72,9 +78,13 @@ hexo d -g
  二级域名比较适用于大型网站
  baidu.com 一级域名，tieba.baidu.com 二级域名
  实际上，www.domain.com 是域名 domain.com 的一个二级域名，只不过是一个比较特殊的二级域名罢了。
- 他的特殊就在于现在的实践中，人们在解析域名的的时候，在惯例和默认的情况下，是把domain.com这个一级域名重定向到www.domain.com这个二级域名？
+ 他的特殊就在于现在的实践中，人们在解析域名的的时候，在惯例和默认的情况下，把domain.com这个一级域名用A记录指向xxx.xxx.xxx.xxx ip地址，
+ 把www.domain.com这个二级域名cname指向domain.com这个一级域名，
+ 即是把domain.com这个一级域名重定向到www.domain.com这个二级域名
  
-
+jekyll模板转化引擎 GitHub上的一个开源项目
+基于Ruby
+jekyll对模板的解析仅仅只有一次，它的目标就是将模板一次性的转化成静态网站，而不像java，.net那些动态网站脚本语言。
 
 
 
