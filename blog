@@ -66,7 +66,9 @@ hexo d -g
   那么当您的服务器IP地址变更时，就不必麻烦的一个一个域名更改指向了。
   只需要更改做A记录的那个域名，其他域名的指向也将自动更改到新的IP地址上了。
   
- www.qianxiaoning.xyz。www是主机记录就是域名前缀。qianxiaoning是顶级域名(一级域名)。环球信息网的域名会加一，比如com是顶级，qianxiaoning是一级。
+ www.qianxiaoning.xyz。www是主机记录就是域名前缀。qianxiaoning是顶级域名(一级域名)。
+ 环球信息网的域名会加一，比如com是顶级，qianxiaoning是二级域名。
+ 
  二级域名比较适用于大型网站
  baidu.com 一级域名，tieba.baidu.com 二级域名
  实际上，www.domain.com 是域名 domain.com 的一个二级域名，只不过是一个比较特殊的二级域名罢了。
