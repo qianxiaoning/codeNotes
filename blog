@@ -2,12 +2,6 @@
 github自带主题
 qianxiaoning.github.io项目-settings-GitHub Pages-choose a theme
 -----------------------------------------------------
-jekyll+github http://www.pchou.info/ssgithubPage/2013-01-03-build-github-blog-page-01.html
-利用本地编辑器编写博客后维护网站其他页面
-使用Jekyll-Bootstrap在本地测试网站功能
-使用Git客户端工具上传模板和页面文件
-Git Server会用jekyll转化你的模板，并生成静态页面
-
 hexo+github http://www.cnblogs.com/fengxiongZz/p/7707568.html
 参照hexo官方文档
 网友教程：
@@ -45,7 +39,7 @@ github-settings添加www自定义域名
 在hexo根目录source下添加CNAME文件，填上www.qianxiaoning.xyz
 在网站首页底部写上自己的网站备案号，链接到工信部首页。（http://www.miitbeian.gov.cn ）
 hexo清理、发布
------------------------------------------------------
+
 hexo 避免渲染
 在source根目录下添加文件
 修改根目录_config.yml
@@ -55,6 +49,57 @@ skip_render:
 hexo clean或
 hexo d
 hexo d -g
+
+常用hexo命令
+hexo new "postName" #新建文章
+hexo new page "pageName" #新建页面
+hexo generate #生成静态页面至public目录
+hexo server #开启预览访问端口（默认端口4000，'ctrl + c'关闭server）
+hexo deploy #部署到GitHub
+hexo help  # 查看帮助
+hexo version  #查看Hexo的版本
+缩写：
+hexo n == hexo new
+hexo g == hexo generate
+hexo s == hexo server
+hexo d == hexo deploy
+组合命令：
+hexo s -g #生成并本地预览
+hexo d -g #生成并上传
+-----------------------------------------------------
+静态网站生成器是Jekyll，它是github创始人自己实现的一套ruby的静态网站生成器
+jekyll+github http://www.pchou.info/ssgithubPage/2013-01-03-build-github-blog-page-01.html
+利用本地编辑器编写博客后维护网站其他页面
+使用Jekyll-Bootstrap在本地测试网站功能
+使用Git客户端工具上传模板和页面文件
+Git Server会用jekyll转化你的模板，并生成静态页面
+
+jekyll模板转化引擎 GitHub上的一个开源项目
+基于Ruby
+jekyll对模板的解析仅仅只有一次，它的目标就是将模板一次性的转化成静态网站，而不像java，.net那些动态网站脚本语言。
+创建一个没有父节点的分支gh-pages。因为github规定，只有该分支中的页面，才会生成网页文件。
+$ git checkout --orphan gh-pages
+将生成出来的静态页面文件push到gh-pages分支
+保证根目录有一个index.html文件即可
+
+_config.yml：保存配置，该配置将影响jekyll构造网站的各种行为。关于配置的详细文档在这里
+_includes：该目录下的文件可以用来作为公共的内容被其他文章引用，就跟C语言include头文件的机制完全一样，jekyll在解析时会对{% include %}标记扩展成对应的在_includes文件夹中的文件
+_layouts：该目录下的文件作为主要的模板文件
+_posts：文章或网页应当放在这个目录中，但需要注意的是，文章的文件名必须是YYYY-MM-DD-title
+_site：上面提到过，这是jekyll默认的转化结果存放的目录
+assets：这个目录没有强制的要求，主要目的是存放你的资源文件，图片、样式表、脚本等。
+-----------------------------------------------------
+hugo+github 链接https://blog.coderzh.com/2015/08/29/hugo/
+-----------------------------------------------------
+Octopress+github 链接http://sonnewilling.com/blog/2013/11/14/shi-yong-octopressda-jian-ge-ren-bo-ke/
+-----------------------------------------------------
+Wordpress+自己的服务器
+服务器：goDaddy,aws,vultr,阿里云
+图片存储：网站图片外链七牛云存储
+站内搜索：百度站内搜索插件
+版本控制：Git
+优化：用Nginx来进行静态资源的压缩传输，设置缓存等，可以很大程度上提升网站访问速度。
+免费CDN：域名备案了，可以使用百度云加速
 -----------------------------------------------------
 以后可在百度打开 百度新站保护 6个月内新建站
 以后可在 百度站长平台 站长工具—>下拉打开站点属性—>主体备案号设置—>填上备案号—>审核成功后每日可提交10个链接总共可提交300个，
@@ -82,16 +127,11 @@ hexo d -g
  把www.domain.com这个二级域名cname指向domain.com这个一级域名，
  即是把domain.com这个一级域名重定向到www.domain.com这个二级域名
  
-jekyll模板转化引擎 GitHub上的一个开源项目
-基于Ruby
-jekyll对模板的解析仅仅只有一次，它的目标就是将模板一次性的转化成静态网站，而不像java，.net那些动态网站脚本语言。
+ 虚拟主机：说的直白点就是将一台服务器的的空间划分为多个虚拟空间，然后再将系统资源分配给每个空间用户。优点是价格便宜，缺点是缺少完整的主机功能，会有很多限制。
+ 虚拟专用服务器：即人们常说的 VPS，是使用软件将一台服务器分割成多个虚拟服务器，VPS 上的系统、空间以及 CPU 资源都是用户独享，运行和管理可以看做与独立服务器相同。
+ 独立服务器：选择独立服务器的网站通常是需要承接巨大的用户访问量，公司专业水准。
 
-_config.yml：保存配置，该配置将影响jekyll构造网站的各种行为。关于配置的详细文档在这里
-_includes：该目录下的文件可以用来作为公共的内容被其他文章引用，就跟C语言include头文件的机制完全一样，jekyll在解析时会对{% include %}标记扩展成对应的在_includes文件夹中的文件
-_layouts：该目录下的文件作为主要的模板文件
-_posts：文章或网页应当放在这个目录中，但需要注意的是，文章的文件名必须是YYYY-MM-DD-title
-_site：上面提到过，这是jekyll默认的转化结果存放的目录
-assets：这个目录没有强制的要求，主要目的是存放你的资源文件，图片、样式表、脚本等。
+
 
 
 
