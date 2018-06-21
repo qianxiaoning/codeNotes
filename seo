@@ -25,7 +25,8 @@ robots.txt引导蜘蛛避开无用的系统文件
 长尾关键词适于放在软文中进行优化，由两三个或更多短词组成的关键词，像“深圳seo优化好优化吗”
 301重定向之后，就可以把旧地址下原有的外部链接如数转移到新地址下
 图片等路径多用完整路径：绝对路径利于seo
+面包屑导航 让搜索引擎蜘蛛一层层的抓取，不会乱，有条理
 
-github似乎屏蔽百度蜘蛛，所以较难收录github page
+github似乎屏蔽百度蜘蛛，所以较难收录github page 参考知乎：https://www.zhihu.com/question/30898326
 网上有：使用Nginx反向代理百度爬虫 参考https://3gods.com/webmaster/Github-Pages-Baidu-Index-Nginx.html
 通过SAE的免费主机加智能DNS解决的 参考https://blog.csdn.net/xiaoyufu007/article/details/50732955
