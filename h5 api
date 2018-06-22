@@ -19,3 +19,11 @@ window.onpopstate = function(e) {
 //源域名不能改，后面的参数可以改
 示例：window.history.replaceState({},null,'https://www.baidu.com/s');
 --------------------------------------------------------------------------------------------------
+h5 datalist标签
+<input list="cars" />
+<datalist id="cars">
+	<option value="BMW">
+	<option value="Ford">
+	<option value="Volvo">
+</datalist>
+datalist标签不仅可以供用户选择，用户还可以自己输入，而且datalist还可以达到模糊匹配的效果，使用很方便。
