@@ -1,0 +1,23 @@
+安卓手机css line-height显示居中偏上解决办法
+  1. <meta name="wap-font-scale" content="no">
+  2. transform:scale(.5)
+  3.字体尽量用偶数，不要用奇数
+  4.字号高度设大一些
+  5.vertical-align: top;
+  6. table布局 在元素外再包一层，使用表格布局
+  <div class="container">     <span class="content">Jason's Word</span> </div>
+  .container {
+      display: table;
+  }
+  .content {
+      background-color: gray;
+      font-size: 10px;
+      display: table-cell;
+      vertical-align: middle;
+  }
+  7.line-height:normal
+  8.使用 flex 布局。
+  把父元素设为：
+  display: flex;
+  align-items: center;
+  justify-content: center;
