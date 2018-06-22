@@ -97,6 +97,7 @@ function evil(str) {
 Number、String、Boolean、Date时，new返回一个实例
 Object、Array、Function、RegExp时，new和直接调用函数产生的结果等同，都是新建一个自身对象，不用new为简写。
 
+DOM.select();选中文本域中的内容
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
