@@ -99,3 +99,9 @@ background: linear-gradient(90deg, red, blue);
 -------------------------------------------------------------------- 
 display:元素的框的类型
 -------------------------------------------------------------------- 
+background多图片,相隔
+<div style="background:url(image/x.png)no-repeat 0% 0%,
+url(image/x.png)no-repeat 10% 10%,
+url(image/x.png)no-repeat 20% 20%,
+url(image/x.png)no-repeat 30% 30%"></div>
+-------------------------------------------------------------------- 
