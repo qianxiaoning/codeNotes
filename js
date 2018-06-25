@@ -100,6 +100,15 @@ Object、Array、Function、RegExp时，new和直接调用函数产生的结果�
 DOM.select();选中文本域中的内容
 
 string.fontsize(size);用于按照指定的尺寸来显示字符串;参数必须是从 1 至 7 的数字
+
+reduce() 方法接收一个函数作为累加器
+array.reduce(function(total, currentValue, currentIndex, arr), initialValue)
+e.g.
+var numbers = [65, 44, 12, 4];
+function getSum(total, num) {
+    return total + num;
+}
+document.getElementById("demo").innerHTML = numbers.reduce(getSum);
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
