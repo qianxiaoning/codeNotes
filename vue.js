@@ -9,26 +9,26 @@ node install->cnpm install->webpack install->vue-cli install
 全局
 主模板主组件 pra02/src/App.vue
 new Vue({
-el:'#app',
-data:{
-a:'aaaa',
-isShow:true,
-items:[{label:'apple'},{label:'banana'}]
+    el:'#app',
+    data:{
+    a:'aaaa',
+    isShow:true,
+    items:[{label:'apple'},{label:'banana'}]
 },
 methods:{
-doSth:function(){
-console.log(this.a);
-}
+    doSth:function(){
+        console.log(this.a);
+    }
 },
 //监听值的变化
 watch:{
-'a':function(val,oldVal){
-console.log(val,oldVal);
-}
+    'a':function(val,oldVal){
+        console.log(val,oldVal);
+    }
 },
 //注册组件
 components:{
-Header,Footer,componentsA
+    Header,Footer,componentsA
 },
 //调用的时候<component-a></component-a>
 //props组件间的通信 父传子 暴露的接口
@@ -93,23 +93,23 @@ index.html页面主入口
 <component-a v-on:child-tell-me='listenToMyBoy'></component-a>
 //父js
 listenToMyBoy:function(msg){
-console.log(msg);
+    console.log(msg);
 }
 //子组件js
 methods:{
-onClickMe:function(){
-//$emit向上传递信息。 $emit第一个参数触发父组件的child-tell-me自定义事件，第二个参数传递的信息，如'aaa'
-this.$emit('child-tell-me','aaa');
-}
+    onClickMe:function(){
+    //$emit向上传递信息。 $emit第一个参数触发父组件的child-tell-me自定义事件，第二个参数传递的信息，如'aaa'
+        this.$emit('child-tell-me','aaa');
+    }
 }
 //$dispatch子组件向上传递
 //父组件<component-a v-on:child-tell-me='listenToMyBoy'></component-a>
 //用on就监听不到了
 //得在父js里用event获取
 event:{
-child-tell-me:function(msg){
-console.log(msg);
-}
+    child-tell-me:function(msg){
+        console.log(msg);
+    }
 }
 //$broadcast父组件向下传递
 //父js
@@ -117,9 +117,9 @@ console.log(msg);
 //this.$broadcast('onAddNew','ddd')
 //子组件js
 events:{
-'onAddNew':function(items){
-console.log(items);
-}
+    'onAddNew':function(items){
+        console.log(items);
+    }
 }
 $dispatch和$broadcast已被弃用
 使用vuex实现组件间通讯 http://blog.csdn.net/TONELESS/article/details/71638369
