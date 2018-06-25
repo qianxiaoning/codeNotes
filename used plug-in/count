@@ -11,7 +11,7 @@ jq表格:
 ui库
   layui,bootstrap
 富文本编辑器
-  ueditor
+  ueditor,CKeditor
 二维码  
   qrcode
 -----------------------------------------------------------------
