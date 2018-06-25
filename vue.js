@@ -2,7 +2,9 @@
 vue 2.x笔记
 node install->cnpm install->webpack install->vue-cli install
 ->vue init webpack pra02->cd pra02->cnpm install->cnpm run dev
-如果cnpm run dev失败 检查下来是vue-cli的问题，就先npm卸载vue-cli，然后参照http://www.jb51.net/article/126221.htm进行设置，可能再需要清理npm cache clean --force或者手动删除根目录的npm cache文件夹，最后目的就是要用npm安装vue-cli成功。然后vue-cli就不会有问题了，可以正常cnpm run dev启动项目了。
+如果cnpm run dev失败 检查下来是vue-cli的问题，就先npm卸载vue-cli，然后参照http://www.jb51.net/article/126221.htm进行设置，
+可能再需要清理npm cache clean --force或者手动删除根目录的npm cache文件夹，最后目的就是要用npm安装vue-cli成功。
+然后vue-cli就不会有问题了，可以正常cnpm run dev启动项目了。
 -------------------------------------------------------------------------------------------
 全局
 主模板主组件 pra02/src/App.vue
