@@ -1,5 +1,7 @@
 -------------------------------------------------------------------
 cnpm安装多个模块方法 cnpm install --save axios vuex 空格隔开就行
 -------------------------------------------------------------------
-通过node环境 依赖node_modules包的项目，node_modules不必提交到git上，如果git上有，拉取后删了通过cnpm install rimraf -g安装然后rimraf node_modules删除node_modules文件夹。再cnpm install，再运行就不会报错了。
+通过node环境 依赖node_modules包的项目，node_modules不必提交到git上。
+如果git上有，拉取后删了通过cnpm install rimraf -g安装，然后rimraf node_modules删除node_modules文件夹。
+再cnpm install，再运行就不会报错了。
 -------------------------------------------------------------------
