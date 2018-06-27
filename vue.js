@@ -219,3 +219,127 @@ js中
 let that = this;  
 that.$refs.mybox.style.color = 'red';  
 -------------------------------------------------------------------------------------------
+vue官网探索
+vue-devtools谷歌插件安装
+Vue CLI使用文档
+如要避免不必要的子组件的重渲染，你需要在所有可能的地方使用 PureComponent，或是手动实现 
+
+shouldComponentUpdate 方法。
+Vue中，组件的依赖是在渲染过程中自动追踪的，所以系统能精确知晓哪个组件确实需要被重渲染。你可
+
+以理解为每一个组件都已经自动获得了shouldComponentUpdate。
+vue的slot内容分发，父组件内容在子组件显示
+Object.freeze()停止追踪;var obj = {foo: 'bar'};Object.freeze(obj)
+实例属性与方法。它们都有前缀 vm.$data,vm.$el,$watch
+render 函数,直接写渲染 (render) 函数
+v-html 指令，编译标签
+.修饰符，<form v-on:submit.prevent="onSubmit">...</form>，.prevent 修饰符告诉 v-on 指令对于
+
+触发的事件调用 event.preventDefault()
+v-bind 缩写:,v-on 缩写@
+对于任何复杂逻辑，你都应当使用计算属性computed
+计算属性会缓存 vs 方法会每次都调用一遍
+侦听属性watch
+计算属性默认只有 getter ，不过在需要时你也可以提供一个 setter 
+当需要在数据变化时执行异步或开销较大的操作时，侦听器watch是最有用的
+使用 watch 选项允许我们执行异步操作 (访问一个 API)，限制我们执行该操作的频率，并在我们得到
+
+最终结果前，设置中间状态。这些都是计算属性无法做到的。
+除了 watch 选项之外，您还可以使用命令式的 vm.$watch API
+绑定 HTML Class
+支持对象和数组
+<div v-bind:class="{ active: isActive }"></div>
+<div v-bind:class="[activeClass, errorClass]"></div>
+绑定style内联样式
+<div v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }"></div>
+<div v-bind:style="styleObject"></div>
+data: {
+  styleObject: {
+    color: 'red',
+    fontSize: '13px'
+  }
+}
+v-bind:style自动添加webkit等前缀
+v-else
+v-else-if
+<h1 v-if="ok">Yes</h1>
+<h1 v-else>No</h1>
+<template>是不可见的包裹元素，判断多个节点时
+<template v-if="ok">
+  <h1>Title</h1>
+  <p>Paragraph 1</p>
+  <p>Paragraph 2</p>
+</template>
+用key不复用
+<input placeholder="Enter your email address" key="email-input">
+v-show和v-if
+v-for 具有比 v-if 更高的优先级
+v-for加key,<div v-for="item in items" :key="item.id"></div>
+以下数组改变非响应式
+vm.items[indexOfItem] = newValue
+vm.items.length = newLength
+方法
+Vue.set(vm.items, indexOfItem, newValue)
+vm.items.splice(newLength)
+Vue 不能检测对象属性的添加或删除
+var vm = new Vue({
+  data: {
+    userProfile: {
+      name: 'Anika'
+    }
+  }
+})
+Vue.set(vm.userProfile, 'age', 27)或vm.$set(vm.userProfile, 'age', 27)，响应式
+添加多个属性
+vm.userProfile = Object.assign({}, vm.userProfile, {
+  age: 27,
+  favoriteColor: 'Vue Green'
+})
+访问原始的 DOM 事件，用特殊变量 $event 把它传入
+<button v-on:click="warn('Form cannot be submitted yet.', $event)">Submit</button>
+尽管我们可以在方法中轻松实现这点，但更好的方式是：方法只有纯粹的数据逻辑，而不是去处理 DOM 事件细节
+.stop阻止事件继续传播
+.prevent阻止默认事件
+.capture添加事件监听器时使用事件捕获模式
+.self只当在 event.target 是当前元素自身时触发处理函数，即事件不是从内部元素触发的
+.once一次
+.passive这个事件的默认行为不会被取消，滚动事件的默认行为 (即滚动行为) 将会立即触发，而不会等待 `onScroll` 完成，能够提升移动端的性能
+按键修饰符
+<input v-on:keyup.13="submit">
+别名
+<input v-on:keyup.enter="submit">
+可以通过全局 config.keyCodes 对象自定义按键修饰符别名
+系统修饰键
+<!-- Alt + C -->
+<input @keyup.alt.67="clear">
+.exact 修饰符，多按了不行
+<!-- 有且只有 Ctrl 被按下的时候才触发 -->
+<button @click.ctrl.exact="onCtrlClick">A</button>
+鼠标按钮修饰符
+.left
+.right
+.middle
+-------------------------------------------------------------------------------------------
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
