@@ -319,6 +319,55 @@ vm.userProfile = Object.assign({}, vm.userProfile, {
 .left
 .right
 .middle
+v-model
+单个复选框，绑定到布尔值
+多个复选框，绑定到同一个数组
+select中data: {
+    selected: ''
+  }为了兼容ios，初始值为空
+选择框的选项
+<select v-model="selected">
+    <!-- 内联对象字面量 -->
+  <option v-bind:value="{ number: 123 }">123</option>
+</select>
+修饰符
+.lazy，input中change才执行，input事件不执行
+.number将用户的输入值转为数值类型
+.trim过滤用户输入的首尾空白字符
+Vue 组件
+// 定义一个名为 button-counter 的新组件
+Vue.component('button-counter', {
+  data: function () {
+    return {
+      count: 0
+    }
+  },
+  template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+})
+el是根实例特有的选项
+组件注册
+Vue.component 全局注册
+prop向子组件传递数据
+$emit 方法并传入事件的名字，向父级传递
+is 特性
+组件名，字母全小写且必须包含一个连字符
+局部注册组件
+data-date-picker="activated"特性？
+在一个组件的根元素上直接监听一个原生事件。这时，你可以使用 v-on 的 .native 修饰符
+<base-input v-on:focus.native="onFocus"></base-input>
+有了这个 $listeners 属性，你就可以配合 v-on="$listeners" 将所有的事件监听器指向这个组件的某
+
+个特定的子元素
+我们更希望那些标签的组件实例能够被在它们第一次被创建的时候缓存下来。为了解决这个问题，我们
+
+可以用一个 <keep-alive> 元素将其动态组件包裹起来
+this.$root访问根实例
+$parent访问父组件
+动画组件
+<transition name="fade">
+    <p v-if="show">hello</p>
+</transition>
+至渲染函数 & JSX
 -------------------------------------------------------------------------------------------
     
     
