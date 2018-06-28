@@ -369,10 +369,14 @@ $parent访问父组件
 </transition>
 至渲染函数 & JSX
 -------------------------------------------------------------------------------------------
-    
-    
-    
-    
+vue2.x
+vue ui框架iview,element
+状态管理:vuex
+数据请求：axios
+路由：vue-router
+vue-loader是一个webpack的loader；可以将vue文件转换为JS模块:vue-loader
+vueify： Browserify transform for Vue.js components, with scoped CSS and component hot-reloading.
+lodash：一个javascript库，侧重于基础类型的操作。jq侧重dom    
     
     
     
