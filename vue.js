@@ -367,19 +367,24 @@ $parent访问父组件
 <transition name="fade">
     <p v-if="show">hello</p>
 </transition>
-至渲染函数 & JSX
+至 渲染函数 & JSX
 -------------------------------------------------------------------------------------------
 vue2.x
-vue ui框架iview,element
+vue ui框架iview,element,MIntUi
 状态管理:vuex
 数据请求：axios
 路由：vue-router
 vue-loader是一个webpack的loader；可以将vue文件转换为JS模块:vue-loader
 vueify： Browserify transform for Vue.js components, with scoped CSS and component hot-reloading.
 lodash：一个javascript库，侧重于基础类型的操作。jq侧重dom    
-    
-    
-    
+-------------------------------------------------------------------------------------------
+项目笔记：
+    生命周期钩子，在created阶段改变数据，mounted时渲染dom，在mounted后才能对dom操作。
+    import xxx from 'xxx';引入 第三方js库，不用加文件后缀。类似以前的require();
+    组件树：#app根组件:
+                     layout:
+                            header,footer,content:
+                                                  sidebar,...    
     
     
     
