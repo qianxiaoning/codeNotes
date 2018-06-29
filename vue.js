@@ -496,7 +496,7 @@ vue包含：
                         vm.$forceUpdate
                         vm.$nextTick
                         vm.$destroy
-    指令，写在模板中，用于模板和组件数据交互的方法
+    指令，都是v-xxx，写在模板中，用于模板和组件数据交互的方法
         v-text
         v-html
         v-show
@@ -557,7 +557,7 @@ v-bind绑定class
         <template>
             <button @click='emitMyEvent'>emit</button>
         </template>
-        methonds:{
+        methods:{
             emitMyEvent(){
                 //实例方法 向上触发my-event自定义事件 还可以传递一个参数
                 this.$emit('my-event','aaa')
@@ -589,7 +589,7 @@ v-model.number//把string值转为数字
     }
 computed和methonds区别在于，computed只会根据数据变化才改变，而methods无论数据变没变都会重复执行。所以computed性能更好
 
-watch属性监听，比如：
+watch属性变化监听，比如：
     v-model='myVal'的值变化，进行的事件
     watch:{           //新旧值
         myVal:function(val,oldVal){
@@ -602,3 +602,96 @@ watch属性监听，比如：
                 this.tellUser();
             }
         }
+
+xxx.vue中template下面都有export default{}
+导出这个vue实例
+
+选项components可以简写：
+    components:{com-a,com-b}
+
+组件两种写法：
+   <com-a></com-a>
+   用is属性//也代表这是com-a组件
+   <div is='com-a'></div>
+所以v-bind:is='dynamicCom'//可以动态引入组件
+
+父子组件通讯
+    parent->child通过父组件直接在标签上赋属性，子组件props接收,pass
+    child->parent通过父组件用event绑定自定义事件，子组件调用实例方法this.$emit提交
+    例子：
+        一、父组件 告诉select组件选项数据
+            父组件
+                <select-com :option-array=[...] @my-event='a'></select-com>               
+            子组件
+                模板：<option v-for='option-array'></option>
+                js：
+                    props:['option-array']
+        二、子组件select 告诉父组件最后选了哪一项
+            子组件
+                模板：<option v-for='option-array' @click='emitMyEvent'></option>
+                js：
+                    //props接收数组和对象
+                    props:['option-array']//对象的话可以规定类型如：props:{'option-array':[Number,String]}，不符合类型会报错
+                    methods:{
+                        emitMyEvent(){
+                            //实例方法 向上触发my-event自定义事件 还可以传递一个参数
+                            this.$emit('my-event','aaa')
+                        }
+                    }
+            父组件
+                <select-com :option-array=[...] @my-event='a'></select-com>
+                js:
+                   methods:{
+                       a(params){
+                        //参数
+                       }
+                   }
+slot插槽功能，也是父组件向子组件以模板形式，传递信息的一个方式
+    应用场景，model弹出框。可以用slot插槽向弹出框中插入不同的标题、内容。                                           
+    父组件
+        <model-a>
+            <!-->
+                此处就是一个插槽                                           
+            <-->                                           
+            <p>123</p>                                           
+        </model-a>                                           
+    子组件                                           
+        <template>
+            <div>original</div>                                           
+            <slot>no content</slot> -> 插槽有内容时<p>123</p> / 插槽无内容时，会显现slot中的默认内容'no content'                                          
+        </template> 
+    向具名slot中插入信息：
+        父组件：
+            <model-a>                      
+                <!-->用solt属性为插槽命名<-->                           
+                <p slot='header'>xxx header</p>                                           
+                <p slot='footer'>xxx footer</p>                                           
+            </model-a>
+        子组件：
+            <template>
+                <slot name='header'>no header<slot>//用name属性接收具名插槽
+                <p>I am the content.</p>                                           
+                <slot name='footer'>no footer<slot>                   
+            </template>                               
+
+//动态组件                                           
+<div :is='currentCom'></div>                                           
+<router-view/>就类似动态组件                                           
+<keep-alive>//切换组件，比如选项卡时，就会被缓存起来。不用重复消耗
+    <div :is='currentCom'></div>                                          
+</keep-alive>                                           
+                                           
+父组件向内传递属性 - 动态属性
+子组件向外发布事件
+slot插槽传递模板
+                                           
+过渡动画
+    transition标签
+    <transition name='fade'>
+        <p v-show='showVariable'>xxx</p>                               
+    </transition>                                             
+    enter阶段 v-enter -> v-enter-active
+    leave阶段 v-leave -> v-leave-active                                          
+                                           
+                                           
+                                           
