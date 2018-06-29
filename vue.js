@@ -385,19 +385,220 @@ lodash：一个javascript库，侧重于基础类型的操作。jq侧重dom
                      layout:
                             header,footer,content:
                                                   sidebar,...    
+全局注册组件
+Vue.component('xx',{
+    template:'',
+    data:{
     
+    }
+});
+局部组件，子组件
+import my-header from '@/components/my-header.vue';
+new Vue({
+    components:{
+        'my-header':my-header
+    }
+});
     
+组件中data(){
+    return {
+        
+    }
+}    
+返回一个函数作用，是实现实例化，每个实例一份数据，不冲突。    
     
+vue包含：
+    全局配置：   silent
+                optionMergeStrategies
+                devtools
+                errorHandler
+                warnHandler
+                ignoredElements
+                keyCodes
+                performance
+                productionTip
+    全局api：Vue.xxx()。Vue.extend
+                                    Vue.nextTick
+                                    Vue.set
+                                    Vue.delete
+                                    Vue.directive
+                                    Vue.filter
+                                    Vue.component
+                                    Vue.use
+                                    Vue.mixin
+                                    Vue.compile
+                                    Vue.version
+    实例选项:如el,data,components。选项 / 数据
+                                            data
+                                            props
+                                            propsData
+                                            computed
+                                            methods
+                                            watch
+                                  选项 / DOM
+                                            el
+                                            template
+                                            render
+                                            renderError
+                                  选项 / 生命周期钩子
+                                            beforeCreate
+                                            created
+                                            beforeMount
+                                            mounted
+                                            beforeUpdate
+                                            updated
+                                            activated
+                                            deactivated
+                                            beforeDestroy
+                                            destroyed
+                                            errorCaptured
+                                  选项 / 资源
+                                            directives
+                                            filters
+                                            components
+                                  选项 / 组合
+                                            parent
+                                            mixins
+                                            extends
+                                            provide / inject
+                                  选项 / 其它
+                                            name
+                                            delimiters
+                                            functional
+                                            model
+                                            inheritAttrs
+                                            comments
+    实例属性/方法。都以$开头。实例属性，子组件中就是this.$xxx
+                        vm.$data
+                        vm.$props
+                        vm.$el
+                        vm.$options
+                        vm.$parent
+                        vm.$root
+                        vm.$children
+                        vm.$slots
+                        vm.$scopedSlots
+                        vm.$refs
+                        vm.$isServer
+                        vm.$attrs
+                        vm.$listeners
+                  实例方法 / 数据
+                        vm.$watch
+                        vm.$set
+                        vm.$delete
+                  实例方法 / 事件
+                        vm.$on
+                        vm.$once
+                        vm.$off
+                        vm.$emit
+                  实例方法 / 生命周期
+                        vm.$mount
+                        vm.$forceUpdate
+                        vm.$nextTick
+                        vm.$destroy
+    指令，写在模板中，用于模板和组件数据交互的方法
+        v-text
+        v-html
+        v-show
+        v-if
+        v-else
+        v-else-if
+        v-for
+        v-on支持修饰符@click.xxx = 
+        v-bind支持修饰符:class.xxx = 
+        v-model支持修饰符v-model.xxx = 
+        v-pre
+        v-cloak
+        v-once
+    内置组件 
+            component通过:is=''方法判断加载对应组件
+            transition动画效果
+            transition-group
+            keep-alive进行缓存
+            slot
+            router-view
+v-for
+<li v-for='(item,index) in list'>{{item.name}} - {{item.price}} - {{index}}</li>
+<li v-for='(value,key) in list'>{{key + value}}</li>
+组件也可以v-for循环
+                             
+引用组件方法：
+    一、import引入组件
+    二、注册组件                         
+        实例选项components:{
+                             'xxx':xxx
+                           }                
+        vue-router里直接component：xxx                            
+
+少部分数组方法不会触发数据更新
+对数据的单项修改，和改变数据长度不会触发更新                             
+手动修改：
+    import引入Vue                             
+    Vue.set(this.list,1,{
+        name:'',
+        price:222                             
+    })                             
+
+v-bind绑定class
+<a class='a' :class='b'></a>会同时存<a class='a b'></a>
+:class='b'，如果b是个对象b:{c:true,d:true},会编译成class='c d'    
+:class='b'，如果b是个数组b:[c,d],会编译成class='c d'    
+也可以混用b:[c,{d:true}]    
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+自定义事件@my-event='a'
+    父组件调用子组件
+        <child-a @my-event='a'></child-a>
+        methonds:{
+            a(param){
+                //此处param就能接收参数'aaa'
+            }
+        }
+    子组件
+        <template>
+            <button @click='emitMyEvent'>emit</button>
+        </template>
+        methonds:{
+            emitMyEvent(){
+                //实例方法 向上触发my-event自定义事件 还可以传递一个参数
+                this.$emit('my-event','aaa')
+            }
+        }
+
+标签属性绑定用V-bind,如：
+    <select v-model='selection'>
+        //此处:value='item.value'不加:，'item.value'就会编译成字符串
+        <option v-for='item in selectOptions' :value='item.value'>{{item.text}}</option>
+    </select>
+比如这样一个select组件就很有必要脱离出来，作为单独一个组件。就有很多ui框架帮你做好了
+
+v-model//input后就会改变值
+v-model.lazy//完成时才改变指，比如回车后
+v-model.number//把string值转为数字
+
+计算属性，可以替代传统的事件监听。比如：
+    v-model绑定的不允许输入数字，把它自动过滤
+    可以设置computed:{
+               //在这里进行逻辑操作
+           }
+模板里也可以直接调用方法
+    <a>{{valueHandle()}}</a>
+    methods:{
+        valueHandle(){
+        
+        }
+    }
+computed和methonds区别在于，computed只会根据数据变化才改变，而methods无论数据变没变都会重复执行。所以computed性能更好
+
+watch属性监听，比如：
+    v-model='myVal'的值变化，进行的事件
+    watch:{           //新旧值
+        myVal:function(val,oldVal){
+            //当前值，前一次值
+        }
+    }
+    场景，每次改变都要通知用户
+        watch:{
+            myVal:function(){
+                this.tellUser();
+            }
+        }
