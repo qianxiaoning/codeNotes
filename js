@@ -109,6 +109,9 @@ function getSum(total, num) {
     return total + num;
 }
 document.getElementById("demo").innerHTML = numbers.reduce(getSum);
+
+Date.now()
+获取当前日期和时间
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
