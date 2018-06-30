@@ -687,11 +687,24 @@ slot插槽传递模板
                                            
 过渡动画
     transition标签
-    <transition name='fade'>
+    <transition name='xxx'>
         <p v-show='showVariable'>xxx</p>                               
-    </transition>                                             
-    enter阶段 v-enter -> v-enter-active
-    leave阶段 v-leave -> v-leave-active                                          
+    </transition>
+    动画阶段：                                           
+        enter阶段 -> leave阶段
+        v-enter -> v-enter-active -> v-leave -> v-leave-active                                              
+        通常只设定v-enter和v-leave-active的动画。v-enter-active和v-leave采用默认状态                                           
+    根据enter和leave起类名
+    .xxx-enter-active,.xxx-leave-active{transition:all .5s;}                                           
+    .xxx-enter,.xxx-leave-active{opacity:0;}                                       
+    .yyy-enter{transform:translateY(-500px);}//到初始位置之前是在上方500px                                                                                  
+    .yyy-leave-active{transform:translateY(500px);}//初始位置之后的动画是去下方500px                                           
+                 
+                                           
+                                           
+                                           
+                                           
+                                           
                                            
                                            
                                            
