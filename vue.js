@@ -699,10 +699,27 @@ slot插槽传递模板
     .xxx-enter,.xxx-leave-active{opacity:0;}                                       
     .yyy-enter{transform:translateY(-500px);}//到初始位置之前是在上方500px                                                                                  
     .yyy-leave-active{transform:translateY(500px);}//初始位置之后的动画是去下方500px                                           
-                 
+                     
+    接收过渡状态v-show,v-if,动态组件<div :is='xxx'></div>的切换                                       
                                            
-                                           
-                                           
+    过渡模式，默认是 进入和离开同时发生。下面有两种别的方式
+    in-out：新元素先进行过渡，完成之后当前元素才过渡离开。
+    <transition mode='in-out'></transition>                                           
+    out-in：当前元素先进行过渡，完成之后新元素才过渡进入。                                       
+    
+    v-if,v-else多元素的过渡。多元素得是不同标签，或者同一标签加上key属性，才能实现过渡效果，如：
+    <transition>
+        <button v-if='show' key="1">1</button>
+        <button v-else key="2">2</button>                                           
+    </transition>                                           
+    也可以通过给同一个元素的 key 特性设置不同的状态来代替 v-if 和 v-else                                           
+    <transition>
+        <button v-bind:key="isEditing">{{ isEditing ? 'Save' : 'Edit' }}</button>
+    </transition>       
+    或：
+    <transition>
+        <button v-bind:key="docState">{{ buttonMessage }}</button>
+    </transition>
                                            
                                            
                                            
