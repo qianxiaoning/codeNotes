@@ -1040,10 +1040,23 @@ vuex状态管理
             cart.js//购物车数据
             products.js//产品数据
                                            
+布局
+    components页面公用组件，头尾复用建一个components/layout组件：
+        <template>
+            <div>
+                <div class='app-header'>header</div>
+                <div class='app-content'>
+                    <keep-alive>
+                        <router-view/>//路由首页引入index.vue
+                    </keep-alive>                    
+                </div>
+                <div class='app-footer'>footer</div>
+            </div>
+        </template>
+    pages放页面，与components同级的建一个page文件夹放页面，page/index.vue            
                                            
-                                           
-                                           
-                                           
+    <template v-for='product in productList'></template>v-for循环包裹块
+    <li v-for='item in product.list'></li>                                           
                                            
                                            
                                            
