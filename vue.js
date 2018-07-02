@@ -124,7 +124,7 @@ events:{
 $dispatch和$broadcast已被弃用
 使用vuex实现组件间通讯 http://blog.csdn.net/TONELESS/article/details/71638369
 --------------------------------------------
-简单方法
+简单方法（直接操作会有问题？）
 vuex/store.js里
 const store = new Vuex.Store({
 //定义状态
@@ -811,56 +811,234 @@ vue-cli vue脚手架工具
     cnpm install webpack -g -> npm install vue-cli -g 
     -> vue init webpack pra02 -> cd pra02 -> cnpm install -> cnpm run dev
                                            
+vue-router
+    服务器路由，切换页面时会把如：jq,app.js不必要重新加载的文件都加载一遍                                           
+    前端路由，不发生页面跳转，只请求需要的资源，节约资源加载，提示速度                                           
                                            
+    模式
+        hash模式 带'#'
+        history模式 不带'#'，利用的h5特性 window.history.pushState等特性                                           
                                            
+    vue里页面跳转不用a链接了，有两种方法：
+    一、基于router config的路由表进行，<router-view/>插槽                                                
+    二、在页面里用<router-link :to="{path:'apple'}">xxx<router-link>，代替a链接                                          
                                            
+    路由传参
+        路由中：                                           
+            path:'/apple/:color/detail/:type'//带:的是参数，这种写法必须传参，否则会找不到这个路由页面。
+            写法path:'/apple/red/detail/3'以完成参数传递，或
+            <router-link :to="{path:'apple',param:{color:'red'}}">xxx</router-link>以完成参数传递
+        组件中获取：
+            this.$router.params                                           
                                            
+    路由嵌套
+        routers:[
+            {
+                path:'/apple',
+                component:apple,
+                children:[
+                    {
+                        path:'redApple',
+                        component:redApple,                       
+                    },                                           
+                    {
+                        path:'greenApple',
+                        component:greenApple,                       
+                    }                       
+                ]                           
+            }                                           
+        ]                                          
+    子路由得在父路由组件处也要加上个<router-view/>标签，或：
+    用<router-link :to="{path:'apple/redApple'}">xxx</router-link>直接跳转
                                            
+    <router-link tag='li'></router-link>默认是a标签，加上tag可以指定为其他标签如：li
                                            
+    声明式导航<router-link/>
+    编程式导航，在js中：
+        this.$router.push('/index');//push跳转,replace删去当前页面记录并跳转,go前进后退多少步
                                            
+    导航守卫
+        router.beforeEach即将要进入，正要离开，next
+    全局后置钩子
+        router.afterEach
+    组件内的守卫
+        选项中   beforeRouteEnter
+                beforeRouteUpdate (2.2 新增)
+                beforeRouteLeave
                                            
+    路由的命名
+        如：
+        routers:[
+            {
+                path:'/apple',
+                component:apple,
+                name:'applePage'//name属性
+            }
+        ]
+        模板里可以通过name跳转
+        <router-link :to="{name:'applePage'}"></router-link>
+    命名视图：
+        父组件中
+        <router-view name='viewA'/>
+        <router-view name='viewB'/>
+        路由表中
+        {
+            path:'/apple',
+            component:{
+                viewA:apple,
+                viewB:redApple,//分别加载不同组件
+            }                
+        }
+    
+    重定向
+        路由表中：
+        routers:[
+            {
+                path:'/index',
+                redirect:'/login'
+            }
+        ]
+        
+    路由的动画过渡
+        <transition name='xxx'>
+            <keep-alive>//把切换过的页面缓存起来
+                <router-view></router-view>
+            </keep-alive>
+        </transition>
                                            
+    导航切换的时候，当前导航项class上会有'router-link-active'这个类
+    
+vuex状态管理
+    实际场景：
+        购物车：在首页增添商品到购物车，在内页购物车详情也要进行更新
+    传统做法：在首页操作后，触发事件传到另一个组件。缺点当操作频繁，反复调用组件很多，挨个依次去通知很多组件，很繁琐
+    用vuex进行状态管理：一个统一的数据中心，某一个组件进行数据更新时，就通知数据中心，数据中心数据变化触发更改调用次数据的组件
                                            
+    简单方法（直接操作会有问题？）
+    vuex/store.js里
+    const store = new Vuex.Store({
+    //定义状态
+        state:{
+            author:'Wise Wrong'
+        }
+    }) 
+    组件里取值
+    直接 this.$store.state.author 获得
+    main.js取值
+    store.state.author 获得
+    组件里赋值
+    也是直接 this.$store.state.author = 'xxx' 就行了
+    
+    显式提交 跟踪状态变化法
+    mutations法（同步）：
+    vuex/store.js里
+    const store = new Vuex.Store({
+    //定义状态
+        state:{
+            totalPrice:0
+        },
+        mutations:{
+            increase(state,price){//此处state指上面的state,price为传入的参数
+                state.totalPrice += price;
+            },
+            decrease(state,price){
+                state.totalPrice -= price;
+            }
+        }
+    }) 
+    组件里取值
+    直接 this.$store.state.totalPrice 获得
+    组件里赋值，通过methods方法触发
+    this.$store.commit('increase',a number');
+    这里使用$store.commit显式提交                                           
+                       
+    actions法（异步）：
+    store.js里加上actions选项
+    state:{
+            totalPrice:0
+        },
+        mutations:{
+            increase(state,price){//此处state指上面的state,price为传入的参数
+                state.totalPrice += price;
+            },
+            decrease(state,price){
+                state.totalPrice -= price;
+            }
+        },
+        actions:{//只能调用mutations不能访问state
+            increase(context,price){
+                context.commit('increase',price);
+            }
+        }                       
+    组件中：
+    this.$store.dispatch('increase',a number');
+    
+    区别：actions可以进行一些异步的操作，然后再去触发mutations
+         mutations里必须是同步的操作store里面的数据，不能进行异步的数据请求
+    所以和后端的api接口必须放在actions里面，如：
+    increase(context,id){//传的是一个id
+        ajax(id,function(price){
+            context.commit('increase',price);
+        })        
+    }
                                            
+    getters用来获取状态集里的数据
+    Vuex.store({
+        states:{
+        },
+        getters:{
+            getTotalPrice(state){
+                return state.totalPrice
+            }
+        },
+        mutations:{
+        },
+        actions:{
+        }
+    })                                           
+    组件中：
+    不用this.$store.state.xxx取数据了
+    可以this.$store.getters.getTotalPrice来取数据
                                            
+    modules可以区分不同模块，如：
+    const moduleA = {
+        states:{},
+        mutations:{},
+        actions:{},
+        getters:{}
+    };
+    const moduleB = {
+        states:{},
+        mutations:{},
+        actions:{},
+        getters:{}
+    };                                       
+    合成：
+    const store = new Vuex.store({
+        modules:{
+            a:modulesA,
+            b:modulesB
+        }
+    });
+    组件中取不同模块的state数据：
+    this.$store.state.a
+    this.$store.state.b
                                            
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
+    注意：
+        一、只有一个数据中心store
+        二、只能通过mutations来commit提交同步数据
+        三、通过actions来提交异步数据
+        
+    理想vuex文件结构：                                               
+    ..                                       
+    components文件夹                                       
+    store文件夹
+        index.js//统一的输出接口
+        actions.js//异步
+        mutations.js//同步
+        modules
+            cart.js//购物车数据
+            products.js//产品数据
                                            
                                            
                                            
