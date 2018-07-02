@@ -721,6 +721,168 @@ slot插槽传递模板
         <button v-bind:key="docState">{{ buttonMessage }}</button>
     </transition>
                                            
+    js动画过渡，不需要name属性
+    通过v-on事件监听进入、离开，如: v-on:before-enter="beforeEnter"
+                                  v-on:enter="enter"
+                                  v-on:after-enter="afterEnter"
+                                  v-on:enter-cancelled="enterCancelled"
+
+                                  v-on:before-leave="beforeLeave"
+                                  v-on:leave="leave"
+                                  v-on:after-leave="afterLeave"
+                                  v-on:leave-cancelled="leaveCancelled"                                           
+    通过methods来定义方法，方法里有自带参数el，就是dom元素，对dom进行样式的操作。另一个参数done，用以加在enter 和 leave 中。
+    注意：
+        1.当只用 JavaScript 过渡的时候，在 enter 和 leave 中必须使用 done 进行回调。否则，它们将被同步调用，过渡会立即完成。                                           
+        2.对于仅使用 JavaScript 过渡的元素添加 v-bind:css="false"，Vue 会跳过 CSS 的检测。这也可以避免过渡过程中 CSS 的影响。                                   
+                                           
+自定义指令        
+    局部指令 在组件里写                                                                                     
+    <div v-color="'red'"></div>                                       
+    js:
+        directives:{
+            color:function(el,binding){//binding指绑定的变量或计算表达式，.value指'red',.name指指令名等等，参见'钩子函数参数'
+                el.style.color = binding.value                                           
+            },
+            color2:function(el,binding){
+                el.style.color = binding.value                                           
+            }                                           
+        }                                           
+    全局组件 在main.js里写
+    new Vue({
+        el:'#app',
+        router,        
+        template: '<App/>',
+        components: { App },
+        directives:{
+            color:function(el,binding){//binding指绑定的变量或计算表达式，此处指'red'
+                el.style.color = binding.value                                           
+            }                                           
+        }                                           
+    });                                           
+                                           
+    钩子函数bind只调用一次,一次性的初始化设置、inserted被绑定元素插入父节点时、update所在组件的 VNode（虚拟dom） 更新时调用、
+    componentUpdated指令所在组件的 VNode 及其子 VNode 全部更新后调用、unbind只调用一次，指令与元素解绑时调用
+                                           
+    directives:{
+        //以下是简写，对应bind和update函数                                           
+        color:function(el,binding){//binding指绑定的变量或计算表达式，此处指'red'
+            el.style.color = binding.value                                           
+        }
+        //对应其他事件可以
+        color:{
+            bind(el,binding){//binding指绑定的变量或计算表达式，此处指'red'
+                el.style.color = binding.value                                           
+            },
+            inserted(el,binding){
+                                           
+            }                                           
+        }                                   
+    }                                       
+                                           
+    自定义指令的实际运用
+    当input被插入到页面的时候，直接有focus效果，就可以自定义一个指令，以便在所有input中复用                                               
+    <input type='text' v-focus/>
+    js:
+        directives:{
+            focus:{
+                //inserted阶段                                           
+                inserted(el,binding){
+                    el.focus();                                           
+                }                                           
+            }                                           
+        }                                           
+                                           
+插件                                           
+    如：vue-router,vuex,axios                                       
+    一、通过npm安装插件包                                               
+        npm install xxx --save                                           
+    二、main.js引入、注册使用
+        import axios from 'axios'//相当于以前用require.js的:var axios = require('axios');                                            
+        Vue.use(axios);                                           
+                                           
+vue的单文件组件 即.vue文件 包含template,script,style scoped。通过vue-loader和webpack实现
+                                           
+vue-cli vue脚手架工具                                           
+    本地测试服务器功能，包含热加载npm run dev                                           
+    集成打包功能，npm run build                                           
+    
+    启动：                                           
+    cnpm install webpack -g -> npm install vue-cli -g 
+    -> vue init webpack pra02 -> cd pra02 -> cnpm install -> cnpm run dev
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
                                            
                                            
                                            
