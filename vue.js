@@ -1057,24 +1057,79 @@ vuex状态管理
                                            
     <template v-for='product in productList'></template>v-for循环包裹块
     <li v-for='item in product.list'></li>                                           
+    <div v-for="(item,index) in xxxList"></div>                                      
                                            
+json-server前端模拟数据测试服务器npm包，利用proxy功能代理端口跨域。只能通过get请求数据？                                           
+express写路由做模拟数据测试服务器                                           
                                            
+在awesome-vue仓库找vue插件                                           
+
+class绑定，如：<a :class="{on:index==nowIndex}"></a>，当变量index和nowIndex相等时，加上class 'on'
+
+首页图片轮播组件，新建components/slideShow.vue组件                                   
+    用webpack，数据中图片路径要加require，如src:require('../assets/slideShow/pic1.jpg')
+    父组件：
+        <slide-show :slide='xxx'></slide-show>
+    slide子组件:
+        props:[slide]选项接收                                           
+           
+    slide子组件:
+        this.$emit('onchange',index)//在子组件把index传给父组件
+    父组件：
+        <slide-show :slide='xxx' @onchange='xxx'></slide-show>
+    
+    动画效果，两张图片同时存在，所以有两个
+        <transition name='xxx'>
+            <img v-if='isShow' :src=''/>
+        </transition>
+        <transition name='xxx'>
+            <img v-if='!isShow' :src=''/>
+        </transition>                                           
+    用v-if触发动画                                           
                                            
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
-                                           
+弹窗myDialog组件:                                               
+    <div class='popWrap'>
+        <div class='title'></div>    
+        <div class='content'>
+            <slot>empty</slot>//默认内容    
+        </div>    
+    </div>                                           
+    父组件中子组件中间的，或者用slot属性，子组件用slot标签                                           
+    layout父组件：                                           
+    引入myDialog组件
+    加上components选项
+    <div class='app-head'></div>
+    <div class='app-footer'></div>
+    <my-dialog :isShow='isShowDialog'>//里面是比较复杂的html，适合用插槽实现
+        <p>xxx</p>//插槽内容
+    </my-dialog>
+    通过父js控制弹窗显示关闭的
+        data(){
+            return {
+                isShowDialog:false
+            }
+        }
+    弹窗组件：
+        props:[isShow]
+    
+登录和注册表单也分别做成组件    
+    
+把登录得到的信息通过$emit传递给父组件layout，比如username    
+    
+增加详情子页面page/detail.vue，分左右两块，左边是导航区，右边是<router-view></router-view>子路由        
+    
+<router-link active-class='active'></router-link>当前位置属性active-class。不设该属性，则为默认router-link-active该class
+    
+路由中中介组件，不希望用户访问到，可以在路由中设置重定向redirect:'/detail/page01'    
+    
+select组件    
+    
+vue日期插件，datepicker    
+    
+    
+    
+    
+    
+    
+    
                                            
