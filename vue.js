@@ -1126,10 +1126,29 @@ select组件
     
 vue日期插件，datepicker    
     
-    
-    
-    
-    
+vue2.0数据双向绑定原理。Object.defineProperty()
+    <input type='text' id='a'/>
+    <span id='b'></span>
+    js:
+    var obj = {};
+    //添加新属性
+    Object.defineProperty(obj,'newAttr',{userName:'haha'});//给obj对象，添加新属性newAttr，默认值是'haha'
+    //get,set方法
+    Object.defineProperty(obj,'newAttr',{
+        get(){
+        
+        },
+        set(val,oldVal){//新旧值
+            $('#a').html(val);//赋新值
+            $('#b').html(val);//赋新值
+        }
+    });
+    获取obj.userName时，会触发Object.defineProperty的get方法
+    对obj.userName='lala'赋值时，会触发Object.defineProperty的set方法
+    $('#a')[0].addEventListner('keyup',function(e){
+        obj.userName = e.target.value;
+    });
+    以实现数据双向绑定
     
     
                                            
