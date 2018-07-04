@@ -1,1 +1,1 @@
-it's a codeNotes.
+it's a codeNote.
