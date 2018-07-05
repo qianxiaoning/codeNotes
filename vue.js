@@ -737,6 +737,8 @@ slot插槽传递模板
         2.对于仅使用 JavaScript 过渡的元素添加 v-bind:css="false"，Vue 会跳过 CSS 的检测。这也可以避免过渡过程中 CSS 的影响。                                   
                                            
 自定义指令        
+    无论在ng还是vue，指令的效果就相当于，提供一种变相操纵dom的方式                                           
+                                           
     局部指令 在组件里写                                                                                     
     <div v-color="'red'"></div>                                       
     js:
