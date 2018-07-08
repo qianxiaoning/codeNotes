@@ -910,7 +910,7 @@ vue-router
                                            
     导航切换的时候，当前导航项class上会有'router-link-active'这个类
     
-vuex状态管理
+vuex状态管理 state,getters,mutations,actions,modules
     实际场景：
         购物车：在首页增添商品到购物车，在内页购物车详情也要进行更新
     传统做法：在首页操作后，触发事件传到另一个组件。缺点当操作频繁，反复调用组件很多，挨个依次去通知很多组件，很繁琐
@@ -986,7 +986,7 @@ vuex状态管理
                                            
     getters用来获取状态集里的数据
     Vuex.store({
-        states:{
+        state:{
         },
         getters:{
             getTotalPrice(state){
@@ -1004,13 +1004,13 @@ vuex状态管理
                                            
     modules可以区分不同模块，如：
     const moduleA = {
-        states:{},
+        state:{},
         mutations:{},
         actions:{},
         getters:{}
     };
     const moduleB = {
-        states:{},
+        state:{},
         mutations:{},
         actions:{},
         getters:{}
