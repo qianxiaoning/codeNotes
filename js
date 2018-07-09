@@ -292,28 +292,88 @@ aAjax(needData);//调用
 同理。
 ------------------------------------------------------------------------------------------------------------------
 前端跨域
-1.CORS（Cross-Origin Resource Sharing 跨源资源共享）
+简单的跨域请求jsonp即可，复杂的cors，窗口之间JS跨域postMessage，开发环境下接口跨域用nginx反向代理或node中间件比较方便。
+1.CORS（Cross-Origin Resource Sharing 跨源资源共享）支持所有类型的HTTP请求
+相对路径需改为绝对路径
+普通跨域请求：只服务端设置Access-Control-Allow-Origin即可，前端无须设置。
 
+如果要发送Cookie，Access-Control-Allow-Origin就不能设为星号，必须指定明确的、与请求网页一致的域名。
+带cookie请求：前后端都需要设置字段，
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;//打开withCredentials属性
+另外需注意：所带cookie为跨域请求接口所在域的cookie，而非当前页。
+IE8+：IE8/9需要使用XDomainRequest对象来支持CORS
 
+2.h5的window.postMessage和onmessage
+postMessage(data,origin)
+window.postMessage(JSON.stringify(data), 'http://www.domain2.com');
+//发送 postMessage()方法允许来自不同源的脚本采用异步方式进行有限的通信，可以实现跨文本档、多窗口、跨域消息传递。
+//接收  onMessage(data, source, origin) 方法监听并接收来自postMessage传递的数据。
 
+PostMessage（异步）只把消息放入队列，不管其他程序是否处理都返回，然后继续执行，这是个异步消息投放函数。
+而SendMessage（同步）必须等待其他程序处理消息完了之后才返回，继续执行，这是个同步消息投放函数。
 
+3.jsonp跨域。只能get请求
+    js jsonp跨域方法
+    生成一个script标签，src路径上写要请求的域的资源。路径上加上?callback=前端写的一个函数名。
+    和后台约定好，获取callback这个参数名字后面的值。把要返回的json数据放入callback值(data)中。
+    通过script标签，返回的默认是一段js代码，而callback值(data)会调用前端写的callback值函数，json数据会作为参数传入callback值这个函数中。
+    获取到跨域数据
+    
+    jq jsonp跨域方法
+    通过$.ajax，要注意的是两个参数，dataType:"jsonp"，jsonp:"callback"，就能在success回调函数中取到值了。
+    其中jsonp:"callback"指约定的存放数据的函数名的参数叫"callback"。
+    而jsonpCallback这个参数指的是，指定处理jsonp数据的函数，取代jq自动生成的匿名函数，方便自己提供回调函数和错误处理。
+    
+    jsonp跨域的原理就是用了，script标签跨域调用js代码的能力。把要获取的数据作为参数传入js函数中获取
 
-jsonp跨域。
-js jsonp跨域方法
-生成一个script标签，src路径上写要请求的域的资源。路径上加上?callback=前端写的一个函数名。和后台约定好，获取callback这个参数名字后面的值。把要返回的json数据放入callback值(data)中。
-通过script标签，返回的默认是一段js代码，而callback值(data)会调用前端写的callback值函数，json数据会作为参数传入callback值这个函数中。获取到跨域数据
-jq jsonp跨域方法
-通过$.ajax，要注意的是两个参数，dataType:"jsonp"，jsonp:"callback"，就能在success回调函数中取到值了。其中jsonp:"callback"指约定的存放数据的函数名的参数叫"callback"。而jsonpCallback这个参数指的是，指定处理jsonp数据的函数，取代jq自动生成的匿名函数，方便自己提供回调函数和错误处理。
-jsonp跨域的原理就是用了，script标签跨域调用js代码的能力。把要获取的数据作为参数传入js函数中获取。
-跨域的几种方式（还未验证过）
-1.JSONP（已验证）
-2.跨域资源共享CORS
-3.iframe标签的src
 4.document.domain + iframe
-5.h5的window.postMessage
-6.window.name
-7.location.hash + iframe
-8.web sockets
+仅限主域相同，子域不同的跨域应用场景。
+两个页面都通过js强制设置document.domain为基础主域，就实现了同域。
+1.）父窗口：(www.domain.com/a.html)
+<iframe id="iframe" src="http://child.domain.com/b.html"></iframe>
+<script>
+    document.domain = 'domain.com';
+    var user = 'admin';
+</script>
+2.）子窗口：(child.domain.com/b.html)
+<script>
+    document.domain = 'domain.com';
+    // 获取父窗口中变量
+    alert('get js data from parent ---> ' + window.parent.user);
+</script>
+
+5.window.name + iframe跨域
+
+6.location.hash + iframe
+
+7.websocket
+<div>
+    user input：<input type="text">
+</div>
+<script src="./socket.io.js"></script>
+<script>
+var socket = io('http://www.domain2.com:8080');
+
+// 连接成功处理
+socket.on('connect', function() {
+    // 监听服务端消息
+    socket.on('message', function(msg) {
+        console.log('data from server: ---> ' + msg); 
+    });
+
+    // 监听服务端关闭
+    socket.on('disconnect', function() { 
+        console.log('Server socket has closed.'); 
+    });
+});
+
+document.getElementsByTagName('input')[0].onblur = function() {
+    socket.send(this.value);
+};
+</script>
+socket.io.js
+上面代码使用的是Socket.io,它很好的封装了websocket接口，提供了更简单灵活的接口，也对不支持websocket的浏览器提供了向下支持
 ------------------------------------------------------------------------------------------------------------------
 hbuilder混合开发
 安装91手机助手 运行-手机运行-在设备上运行（真机调试）
