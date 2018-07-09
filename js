@@ -129,6 +129,10 @@ b.e=3;
 b.hasOwnProperty('q');//true 检测到 继承构造函数的函数内方法
 b.hasOwnProperty('w');//false 忽略原型链继承
 b.hasOwnProperty('e');//true 检测到 自身属性
+
+get和post的参数传递
+GET把参数包含在URL中
+POST通过request body传递参数
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
