@@ -133,6 +133,20 @@ b.hasOwnProperty('e');//true 检测到 自身属性
 get和post的参数传递
 GET把参数包含在URL中
 POST通过request body传递参数
+
+浅复制（拷贝）深复制（拷贝）
+    如果堆地址指向没变就是 浅复制
+    堆地址指向一个新地址 深复制
+实现方法
+    浅复制：
+        直接复制
+        Object.assign()
+    深复制：
+        for in循环
+        转成 JSON 再转回来：var obj2 = JSON.parse(JSON.stringify(obj1));只对Number, String, Boolean, Array有效
+        递归拷贝
+        使用Object.create()方法
+        jq的$.extend
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
