@@ -647,6 +647,7 @@ xxx.vue中template下面都有export default{}
                        }
                    }
 slot插槽功能，也是父组件向子组件以模板形式，传递信息的一个方式
+    当组件中某一项需要单独定义，那么就应该使用solt。                                           
     应用场景，model弹出框。可以用slot插槽向弹出框中插入不同的标题、内容。                                           
     父组件
         <model-a>
