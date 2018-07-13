@@ -179,7 +179,7 @@ js map()
 map() 方法返回一个新数组，数组中的元素为原始数组元素调用函数处理后的值。
 array.map(function(currentValue,index,arr), thisValue)
 
-es6 箭头函数
+es6 箭头函数 默认有个返回值
 setInterval(()=>{
      console.log(this.fileList);
  }, 1000)
