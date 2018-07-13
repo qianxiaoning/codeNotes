@@ -915,94 +915,269 @@ vuex状态管理 state,getters,mutations,actions,modules
     实际场景：
         购物车：在首页增添商品到购物车，在内页购物车详情也要进行更新
     传统做法：在首页操作后，触发事件传到另一个组件。缺点当操作频繁，反复调用组件很多，挨个依次去通知很多组件，很繁琐
-    用vuex进行状态管理：一个统一的数据中心，某一个组件进行数据更新时，就通知数据中心，数据中心数据变化触发更改调用次数据的组件
-                                           
-    简单方法（直接操作会有问题？）
-    vuex/store.js里
-    const store = new Vuex.Store({
-    //定义状态
-        state:{
-            author:'Wise Wrong'
-        }
-    }) 
-    组件里取值
-    直接 this.$store.state.author 获得
-    main.js取值
-    store.state.author 获得
-    组件里赋值
-    也是直接 this.$store.state.author = 'xxx' 就行了
+    用vuex进行状态管理：一个统一的数据中心，某一个组件进行数据更新时，就通知数据中心，数据中心数据变化触发更改调用次数据的组件                                          
     
-    显式提交 跟踪状态变化法
-    mutations法（同步）：
-    vuex/store.js里
-    const store = new Vuex.Store({
-    //定义状态
-        state:{
-            totalPrice:0
-        },
-        mutations:{
-            increase(state,price){//此处state指上面的state,price为传入的参数
-                state.totalPrice += price;
-            },
-            decrease(state,price){
-                state.totalPrice -= price;
+    Vuex 和全局对象的区别：
+    1.响应式
+    2.显式地提交 (commit) mutation，以便用工具了解我们的应用。
+    
+    直接修改this.$store的值，不能commit留下记录，不利于vue tools调试。在严格模式会报错，虽然都能触发响应式。
+    
+    Store
+        const store = new Vuex.Store({
+          state: {
+            count: 0
+          },
+          mutations: {
+            increment (state) {
+              state.count++
             }
+          }
+        })
+        获取 在computed中取store.state
+        修改 在methods中store.commit触发mutation        
+            
+    state:
+        在 Vue 组件中获得 Vuex 状态
+        *写在computed里触发改变
+        子组件通过 this.$store 访问
+        computed: {
+            count () {
+              return this.$store.state.count
+            }
+          }
+        *简化写法，语法糖
+        mapState 辅助函数
+        import { mapState } from 'vuex'
+        export default {
+          // ...
+          computed: mapState({
+            // 箭头函数可使代码更简练
+            count: state => state.count
+          })
+          *或 当映射的计算属性的名称与 state 的子节点（state.count）名称相同时，我们也可以给 mapState 传一个字符串数组  
+          computed: mapState([
+              // 映射 this.count 为 store.state.count
+              'count'
+            ])  
         }
-    }) 
-    组件里取值
-    直接 this.$store.state.totalPrice 获得
-    组件里赋值，通过methods方法触发
-    this.$store.commit('increase',a number');
-    这里使用$store.commit显式提交                                           
+        *对象展开运算符
+        computed: {
+          localComputed () { /* ... */ },
+          // 使用对象展开运算符将此对象混入到外部对象中
+          ...mapState({
+            // ...
+          })
+        }  
+            
+    getters            
+    对state的初数据进行进一步处理，类似store 的计算属性，有缓存优化，有返回值
+    const store = new Vuex.Store({
+      state: {
+        todos: [
+          { id: 1, text: '...', done: true },
+          { id: 2, text: '...', done: false }
+        ]
+      },
+      //第一个参数state
+      getters: {
+        doneTodos: state => {
+          return state.todos.filter(todo => todo.done)
+        }
+      }
+    })
+    属性访问
+    store.getters.doneTodos
+    Getter 也可以接受其他 getter 作为第二个参数
+    getters: {
+      // ...
+      doneTodosCount: (state, getters) => {
+        return getters.doneTodos.length
+      }
+    }
+    方法访问
+    getters: {
+      // ...
+      getTodoById: (state) => (id) => {
+        return state.todos.find(todo => todo.id === id)
+      }
+    }
+    store.getters.getTodoById(2) // -> { id: 2, text: '...', done: false }
+    mapGetters 辅助函数
+    import { mapGetters } from 'vuex'
+    export default {
+      // ...
+      computed: {
+      // 使用对象展开运算符将 getter 混入 computed 对象中
+        ...mapGetters([
+          'doneTodosCount',
+          'anotherGetter',
+          // ...
+        ])
+      }
+    }
+    如果你想将一个 getter 属性另取一个名字，使用对象形式：
+    mapGetters({
+      // 把 `this.doneCount` 映射为 `this.$store.getters.doneTodosCount`
+      doneCount: 'doneTodosCount'
+    })            
+            
+    显式提交 跟踪状态变化法
+    mutations法（同步）类似事件：
+    每个 mutation 都有一个字符串的 事件类型 (type)'increment' 和 一个 回调函数 (handler)
+    const store = new Vuex.Store({
+      state: {
+        count: 1
+      },
+      mutations: {
+        increment (state) {
+          // 变更状态
+          state.count++
+        }
+      }
+    })
+    提交方式 ：store.commit('increment')
+
+    提交载荷，额外传参
+    第二参数对象形式
+    mutations: {
+      increment (state, payload) {
+        state.count += payload.amount
+      }
+    }
+    提交方式
+    store.commit('increment', {
+      amount: 10
+    })            
+    或对象风格的提交方式            
+    store.commit({
+      type: 'increment',
+      amount: 10
+    })
+            
+    响应规则
+    1.store 中初始化好所有所需属性
+    2.添加新属性时，你应该使用 Vue.set(obj, 'newProp', 123)
+            
+    在组件中提交 Mutation
+    import { mapMutations } from 'vuex'
+    export default {
+      // ...
+      methods: {
+        ...mapMutations([
+          'increment', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
+
+          // `mapMutations` 也支持载荷：
+          'incrementBy' // 将 `this.incrementBy(amount)` 映射为 `this.$store.commit('incrementBy', amount)`
+        ]),
+        ...mapMutations({
+          add: 'increment' // 将 `this.add()` 映射为 `this.$store.commit('increment')`
+        })
+      }
+    }                                          
                        
     actions法（异步）：
-    store.js里加上actions选项
-    state:{
-            totalPrice:0
-        },
-        mutations:{
-            increase(state,price){//此处state指上面的state,price为传入的参数
-                state.totalPrice += price;
-            },
-            decrease(state,price){
-                state.totalPrice -= price;
-            }
-        },
-        actions:{//只能调用mutations不能访问state
-            increase(context,price){
-                context.commit('increase',price);
-            }
-        }                       
+    Action 提交的是 mutation，而不是直接变更状态。
+    可以异步
+    const store = new Vuex.Store({
+      state: {
+        count: 0
+      },
+      mutations: {
+        increment (state) {
+          state.count++
+        }
+      },
+      actions: {
+        increment (context) {//此处context=>store 实例
+          context.commit('increment')
+        }
+      }
+    })
+    参数解构
+    需要调用 commit 很多次的时候
+    actions: {
+      increment ({ commit }) {
+        commit('increment')
+      }
+    }
+
+    触发
+    store.dispatch('increment')
+            
+    actions: {
+      incrementAsync ({ commit }) {
+        setTimeout(() => {
+          commit('increment')
+        }, 1000)
+      }
+    }        
+    和mutations同样的方式传参         
+    
+    mapActions 辅助函数
+    import { mapActions } from 'vuex'
+    export default {
+      // ...
+      methods: {
+        ...mapActions([
+          'increment', // 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
+
+          // `mapActions` 也支持载荷：
+          'incrementBy' // 将 `this.incrementBy(amount)` 映射为 `this.$store.dispatch('incrementBy', amount)`
+        ]),
+        ...mapActions({
+          add: 'increment' // 将 `this.add()` 映射为 `this.$store.dispatch('increment')`
+        })
+      }
+    }
+
+    组合 Action            
+    store.dispatch返回 Promise            
+    actions: {
+      actionA ({ commit }) {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            commit('someMutation')
+            resolve()
+          }, 1000)
+        })
+      }
+    }
+    现在你可以：
+    store.dispatch('actionA').then(() => {
+      // ...
+    })
+    在另外一个 action 中也可以：
+    actions: {
+      // ...
+      actionB ({ dispatch, commit }) {
+        return dispatch('actionA').then(() => {
+          commit('someOtherMutation')
+        })
+      }
+    }
+    最后，如果我们利用 async / await，我们可以如下组合 action：
+    // 假设 getData() 和 getOtherData() 返回的是 Promise
+    actions: {
+      async actionA ({ commit }) {
+        commit('gotData', await getData())
+      },
+      async actionB ({ dispatch, commit }) {
+        await dispatch('actionA') // 等待 actionA 完成
+        commit('gotOtherData', await getOtherData())
+      }
+    }                                      
     组件中：
     this.$store.dispatch('increase',a number');
-    
-    区别：actions可以进行一些异步的操作，然后再去触发mutations
-         mutations里必须是同步的操作store里面的数据，不能进行异步的数据请求
     所以和后端的api接口必须放在actions里面，如：
     increase(context,id){//传的是一个id
         ajax(id,function(price){
             context.commit('increase',price);
         })        
-    }
-                                           
-    getters用来获取状态集里的数据
-    Vuex.store({
-        state:{
-        },
-        getters:{
-            getTotalPrice(state){
-                return state.totalPrice
-            }
-        },
-        mutations:{
-        },
-        actions:{
-        }
-    })                                           
-    组件中：
-    不用this.$store.state.xxx取数据了
-    可以this.$store.getters.getTotalPrice来取数据
-                                           
+    }                
+     
+    Modules
+    允许我们将 store 分割成模块（module）。每个模块拥有自己的 state、mutation、action、getter、甚至是嵌套子模块——从上至下进行同样方式的分割    
     modules可以区分不同模块，如：
     const moduleA = {
         state:{},
@@ -1026,7 +1201,60 @@ vuex状态管理 state,getters,mutations,actions,modules
     组件中取不同模块的state数据：
     this.$store.state.a
     this.$store.state.b
-                                           
+                              
+    模块的局部状态
+    对于模块内部的 mutation 和 getter，接收的第一个参数是模块的局部状态对象state
+    对于模块内部的 action，局部状态通过 context.state 暴露出来，根节点状态则为 context.rootState
+    const moduleA = {
+      // ...
+      actions: {
+        incrementIfOddOnRootSum ({ state, commit, rootState }) {
+          if ((state.count + rootState.count) % 2 === 1) {
+            commit('increment')
+          }
+        }
+      }
+    }            
+    对于模块内部的 getter，根节点状态会作为第三个参数暴露出来：
+    const moduleA = {
+      // ...
+      getters: {
+        sumWithRootCount (state, getters, rootState) {
+          return state.count + rootState.count
+        }
+      }
+    }
+    
+    默认情况下，模块内部的 action、mutation 和 getter 是注册在全局命名空间
+    如果希望你的模块具有更高的封装度和复用性，你可以通过添加 namespaced: true 的方式使其成为带命名空间的模块。
+    当模块被注册后，它的所有 getter、action 及 mutation 都会自动根据模块注册的路径调整命名        
+    启用了命名空间的 getter 和 action 会收到局部化的 getter，dispatch 和 commit
+    
+    在带命名空间的模块内访问全局内容
+    rootState 和 rootGetter 会作为第三和第四参数传入 getter，也会通过 context 对象的属性传入 action
+    
+    通过使用 createNamespacedHelpers 创建基于某个命名空间辅助函数
+    import { createNamespacedHelpers } from 'vuex'
+    const { mapState, mapActions } = createNamespacedHelpers('some/nested/module')   
+    export default {
+      computed: {
+        // 在 `some/nested/module` 中查找
+        ...mapState({
+          a: state => state.a,
+          b: state => state.b
+        })
+      },
+      methods: {
+        // 在 `some/nested/module` 中查找
+        ...mapActions([
+          'foo',
+          'bar'
+        ])
+      }
+    }
+            
+    模块重用
+    
     注意：
         一、只有一个数据中心store
         二、只能通过mutations来commit提交同步数据
@@ -1041,8 +1269,8 @@ vuex状态管理 state,getters,mutations,actions,modules
         mutations.js//同步
         modules
             cart.js//购物车数据
-            products.js//产品数据
-                                           
+            products.js//产品数据    
+
 布局
     components页面公用组件，头尾复用建一个components/layout组件：
         <template>
