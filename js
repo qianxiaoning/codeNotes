@@ -150,6 +150,16 @@ POST通过request body传递参数
 
 es6 解构
 ...[1,2,3] 可以将数组转化为参数。代替了es5的f.apply(null,[1,2,3])
+
+Object.keys
+返回一个所有元素为字符串的数组，其元素来自于从给定的object上面可直接枚举的属性。这些属性的顺序与手动遍历该对象属性时的一致
+// simple array
+var arr = ['a', 'b', 'c'];
+console.log(Object.keys(arr)); // console: ['0', '1', '2']
+
+// array like object
+var obj = { 0: 'a', 1: 'b', 2: 'c' };
+console.log(Object.keys(obj)); // console: ['0', '1', '2']
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
