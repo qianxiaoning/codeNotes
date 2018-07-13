@@ -228,6 +228,16 @@ var arr = [1, 9 , 2, 4, 3, 8].sort((a, b) => {
     }
 })
 arr // [1, 2, 3, 4, 8, 9]
+
+Array filter() 方法
+lter() 方法返回一个新的数组，新数组中的元素是通过检查指定数组中符合条件的所有元素。
+var ages = [32, 33, 16, 40];
+function checkAdult(age) {
+    return age >= 18;
+}
+function myFunction() {
+    xxx.innerHTML = ages.filter(checkAdult);
+}
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
