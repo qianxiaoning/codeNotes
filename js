@@ -238,6 +238,52 @@ function checkAdult(age) {
 function myFunction() {
     xxx.innerHTML = ages.filter(checkAdult);
 }
+
+async await 返回的是一个promise 对象，如果要获取到promise 返回值，我们应该用then 方法
+async关键字放到函数前面，用于表示函数是一个异步函数
+async function timeout() {
+　　return 'hello world';
+}
+获取
+async function timeout() {
+    return 'hello world'
+}
+timeout().then(result => {
+    console.log(result);//结果
+})
+出错
+async function timeout(flag) {
+    if (flag) {
+        return 'hello world'
+    } else {
+        throw 'my god, failure'
+    }
+}
+console.log(timeout(true))  // 调用Promise.resolve() 返回promise 对象。
+console.log(timeout(false)); // 调用Promise.reject() 返回promise 对象。
+
+await 等后面的promise对象执行完毕，再向下执行
+function doubleAfter2seconds(num) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(2 * num)
+        }, 2000);
+    } )
+}
+async function testResult() {
+    let result = await doubleAfter2seconds(30);
+    console.log(result);
+}
+调用
+testResult();
+
+计算3个数
+async function testResult() {
+    let first = await doubleAfter2seconds(30);
+    let second = await doubleAfter2seconds(50);
+    let third = await doubleAfter2seconds(30);
+    console.log(first + second + third);
+}
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
