@@ -149,6 +149,7 @@ POST通过request body传递参数
         jq的$.extend
 
 es6 解构
+...对象展开运算符
 ...[1,2,3] 可以将数组转化为参数。代替了es5的f.apply(null,[1,2,3])
 解构赋值
 let [name,,age]=['wayou','male','secrect'];
