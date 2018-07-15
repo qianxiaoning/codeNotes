@@ -105,3 +105,36 @@ url(image/x.png)no-repeat 10% 10%,
 url(image/x.png)no-repeat 20% 20%,
 url(image/x.png)no-repeat 30% 30%"></div>
 -------------------------------------------------------------------- 
+去除inline-block元素间距方法 父元素设置font-size: 0;
+
+css的预处理器、后处理器
+css的预处理器的框架：
+    SASS、LESS和Stylus
+    使用扩展语言，编程式书写css
+    
+CSS后处理器框架：
+    还是编写css语法，但是对css进行增强处理
+    css压缩工具（clean-css）,Autoprefixer(以Can I Use上的浏览器支持数据为基础，自动处理兼容问题)
+    rework和postcss
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
