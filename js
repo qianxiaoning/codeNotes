@@ -289,6 +289,11 @@ in运算符
 如果指定的属性在指定的对象或其原型链中，则in 运算符返回true
 var trees = new Array("redwood", "bay", "cedar", "oak", "maple");
 0 in tree//true
+
+forEach
+用于调用数组的每个元素，并将元素传递给回调函数
+array.forEach(function(currentValue, index, arr), thisValue)
+[4, 9, 16, 25].forEach(function(item, index){demoP.innerHTML += index + item + "<br>";})
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
