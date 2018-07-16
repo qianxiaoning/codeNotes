@@ -15,4 +15,4 @@ linux指令
 新建并编辑文件
 echo "xxx" >> xxx.filetype
 
-cd切运行路径时，按tab键自动补全匹配文件
+cd切运行路径时，按tab键自动补全，匹配文件名
