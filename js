@@ -294,6 +294,10 @@ forEach
 用于调用数组的每个元素，并将元素传递给回调函数
 array.forEach(function(currentValue, index, arr), thisValue)
 [4, 9, 16, 25].forEach(function(item, index){demoP.innerHTML += index + item + "<br>";})
+
+Number.isInteger()
+判断一个值是否为整数，返回布尔值
+Number.isInteger(25.0) // true
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
