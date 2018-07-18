@@ -48,6 +48,13 @@ $ git config --global user.email "email@example.com"
     二、配置git工具的用户名和邮箱等配置文件？
     三、$ git clone git@gitlab.com:qianxiaoning/qxnTest.git
   ------------------------ 
+自定义别名
+$ git config --global alias.a add
+$ git config --global alias.c commit
+git a .&&c -m's'
+
+
+
 五、建立远端和本地的需要分支
  一、$ git clone后即获得本地master分支
  二、本地dev分支
