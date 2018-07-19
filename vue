@@ -1380,6 +1380,21 @@ vue2.0数据双向绑定原理。Object.defineProperty()
         obj.userName = e.target.value;
     });
     以实现数据双向绑定
+
+vuex流程
+state:{loading:false,list:[],data:{},count:0}
+getters:{data(state,getters){return state}}
+mutations:{setOne(state,res){},setList(state,res){}}
+actions:{getList({state,commit},params={}){    
+    xxx=>commit('setList', res)    
+}}
+
+state存放数据，共享数据。
+对数据赋值：actions通过接口取异步数据，然后commit提交到mutations里的方法，mutations里对state数据进行赋值。
+取数据：取computed里的mapGetters的变量，mapGetters的变量读的是state里的数据。
     
-    
-                                           
+vue通讯
+父传子，父:xxx='xxx'属性，子props，一层层往里传
+子传父，子$emit触发自定义事件，父绑定的自定义事件触发，一层层往外传
+
+$on可以接收自己$emit的自定义事件
