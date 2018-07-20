@@ -128,7 +128,7 @@ position:fixed弹窗，页面很矮时，弹窗可滚动
 内层absolute层：
     1.垂直线不能margin:auto,top:0.bottom:0，也不能top:50%,transform: translateY(-50%,-50%)方法垂直居中，这样会强制显示在页面中间，失去自身高度
     2.得top: 15%;margin-bottom: 50px;来设置上下留白，不能居中。
-    a
+    
 
 
 
