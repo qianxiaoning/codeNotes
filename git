@@ -578,4 +578,8 @@ $ git add .
 ssh -T git@github.com
 返回Hi qianxiaoning!成功 
 -------------------------------------------------------------------------------------------------
-
+$ git config --global user.name "Your Name"
+$ git config --global user.email "email@example.com"
+在公司电脑全局设置email时，会把自己项目的email地址也改变，从而使github面板能提交但是不会显示贡献值
+建议全局设置自己的email，在公司项目单独设置email
+$ git config user.email "email@example.com"
