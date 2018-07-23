@@ -298,6 +298,15 @@ array.forEach(function(currentValue, index, arr), thisValue)
 Number.isInteger()
 判断一个值是否为整数，返回布尔值
 Number.isInteger(25.0) // true
+
+ea6的export,export default,import
+export可以导多个对象 export default只能导一个匿名对象
+引用方法：
+a文件export {a,b,c};
+b文件import {a,b} from './a.js'
+
+a文件export default{...}或export default[]等等;
+b文件import xname from './a.js'
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
