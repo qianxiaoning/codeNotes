@@ -179,7 +179,15 @@ js map()
 map() 方法返回一个新数组，数组中的元素为原始数组元素调用函数处理后的值。
 array.map(function(currentValue,index,arr), thisValue)
 
-es6 箭头函数 默认有个返回值
+普通函数：this 永远指向调用它的对象，new的时候，指向new出来的对象
+箭头函数：this 
+箭头函数没有自己的 this，当在内部使用了 this时，它会指向最近一层作用域内的 this
+默认指向在定义它时所处的对象(宿主对象),而不是执行时的对象
+定义时候绑定，就是this是继承自父执行上下文
+因为没有自己的this，无法用做构造函数,call,apply等动态上下文this的情况
+(定义对象方法、定义原型方法、定义构造函数、定义事件回调函数)
+
+es6 箭头函数 相当于匿名函数 默认有个返回值
 setInterval(()=>{
      console.log(this.fileList);
  }, 1000)
@@ -307,6 +315,19 @@ b文件import {a,b} from './a.js'
 
 a文件export default{...}或export default[]等等;
 b文件import xname from './a.js'
+
+导出所有
+import * as xname from "module-name";
+
+Object.defineProperties()
+在一个对象上定义新的属性或修改现有属性，并返回该对象
+
+if...else...不写()的简写，{}层只能写一行
+if(...)
+xxx
+else
+xxx
+
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环

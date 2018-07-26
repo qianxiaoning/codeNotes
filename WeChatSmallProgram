@@ -51,3 +51,123 @@ wx.createSelectorQuery()等两类方法
 获取的是节点位置信息的查询请求
 query.select('#the-id').boundingClientRect()//这段代码的意思是选择Id=the-id的节点，获取节点位置信息的查询请求
 --------------------------------------------------------------------------------------------------
+自定义组件
+json 文件中 "component": true
+
+js文件中 
+普通页面page({})注册
+组件页面Component({})注册
+
+properties接收值
+data组件内部数据
+methods组件自定义方法
+
+使用自定义组件'usingComponents'
+json文件：
+{
+  "usingComponents": {
+    "component-tag-name": "path/to/the/custom/component"
+  }
+}
+
+slot
+自定义组件中可以放入slot标签
+父组件中可以在自定义标签中放入内容
+默认一个自定义组件一个slot
+开启多组件，以name区分 同vue
+options: {
+    multipleSlots: true // 在组件定义时的选项中启用多slot支持
+  },
+
+父子通讯，同vue，自定义标签加自定义属性
+
+:host 指定它所在节点的默认样式
+
+组件希望接受外部传入的样式类（类似于 view 组件的 hover-class 属性）。此时可以在 Component 中用 externalClasses
+Component({
+  externalClasses: ['my-class']
+})
+<!-- 组件 custom-component.wxml -->
+<custom-component class="my-class">
+
+Component构造器
+behaviors类似于mixins和traits的组件间代码复用机制
+
+this.triggerEvent类似this.$emit触发事件
+指定事件名、detail对象和事件选项
+this.triggerEvent('myevent', myEventDetail, myEventOption)
+
+组件的属性可以用于接收页面的参数，如访问页面 /pages/index/index?paramA=123&paramB=xyz ，如果声明有属性 paramA 或 paramB ，则它们会被赋值为 123 或 xyz
+
+父组件还可以通过 this.selectComponent 方法获取子组件实例对象，这样就可以直接访问组件的任意数据和方法
+
+触发自定义事件
+<component-tag-name bind:myevent="onMyEvent" />
+
+组件间关系
+<custom-ul>
+  <custom-li> item 1 </custom-li>
+  <custom-li> item 2 </custom-li>
+</custom-ul>
+在组件定义时加入 relations 定义段，可以解决相互间的复杂通信
+
+在组件中使用抽象节点
+json文件
+{
+  "componentGenerics": {
+    "selectable": true
+  }
+}
+{
+  "usingComponents": {
+    "custom-radio": "path/to/custom/radio",
+    "custom-checkbox": "path/to/custom/checkbox"
+  }
+}
+<selectable-group generic:selectable="custom-radio" />
+<selectable-group generic:selectable="custom-checkbox" />
+
+小程序开发工具也能写'debugger'打断点
+
+引用插件
+小程序管理后台的“设置-第三方服务-插件管理”中添加插件
+app.json：
+{
+  "plugins": {
+    "myPlugin": {
+      "version": "1.0.0",
+      "provider": "wxxxxxxxxxxxxxxxxx"
+    }
+  }
+}
+
+使用插件的 js 接口
+requirePlugin 方法
+
+使用插件的自定义组件
+"usingComponents": {
+    "hello-component": "plugin://myPlugin/hello-component"
+  }
+
+分包
+├── app.js
+├── app.json
+├── app.wxss
+├── packageA
+│   └── pages
+│       ├── cat
+│       └── dog
+├── packageB
+│   └── pages
+│       ├── apple
+│       └── banana
+├── pages
+│   ├── index
+│   └── logs
+└── utils
+
+ app.json subPackages 字段声明项目分包结构
+
+ 多线程 Worker
+ 双方使用 Worker.postMessage() 来发送数据，Worker.onMessage() 来接收数据，传输的数据并不是直接共享，而是被复制的。
+ app.json 中可配置 Worker

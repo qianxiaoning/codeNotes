@@ -170,11 +170,12 @@ this.$router.push(`/repayMethod?NowShouldRepaymentAmount=${this.NowShouldRepayme
 //vue的ajax vue-resource和axios
 //不简写
 this.$http({ 
-method:'GET', 
-url:'http://192.168.30.235:9999/rest/knowledge/list', 
-data:{'websiteId':2,'pageSize':20,'pageNo':1,'isTop':0}, 
-headers: {"X-Requested-With": "XMLHttpRequest"},
-emulateJSON: true }) ]).then(function(data){
+    method:'GET', 
+    url:'http://192.168.30.235:9999/rest/knowledge/list', 
+    data:{'websiteId':2,'pageSize':20,'pageNo':1,'isTop':0}, 
+    headers: {"X-Requested-With": "XMLHttpRequest"},
+    emulateJSON: true 
+}) ]).then(function(data){
 //es5写法 return{ toplist:data[0].data.knowledgeList, alllist:data[1].data.knowledgeList }
 //简写
 // 基于全局Vue对象使用http
@@ -1351,6 +1352,18 @@ class绑定，如：<a :class="{on:index==nowIndex}"></a>，当变量index和now
     
 <router-link active-class='active'></router-link>当前位置属性active-class。不设该属性，则为默认router-link-active该class
     
+路由传参
+路由表中：:代参
+    new Router({
+        routes: [
+
+        ]
+    })
+router-link中to to="/foo"不带参，:to="'varA'"   
+:to="{ name: 'user', params: { userId: 123 }}"代参
+:to="{ path: 'register', query: { plan: 'private' }}"
+带查询参数，下面的结果为 /register?plan=private
+
 路由中中介组件，不希望用户访问到，可以在路由中设置重定向redirect:'/detail/page01'    
     
 select组件    
