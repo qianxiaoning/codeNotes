@@ -134,6 +134,9 @@ get和post的参数传递
 GET把参数包含在URL中
 POST通过request body传递参数
 
+js分原始类型和引用类型
+数组和对象存在内存地址，需要深拷贝
+嵌套的数组对象也要深拷贝，所以单层for in循环不行，内层还是关联的
 浅复制（拷贝）深复制（拷贝）
     如果堆地址指向没变就是 浅复制
     堆地址指向一个新地址 深复制
@@ -142,10 +145,34 @@ POST通过request body传递参数
         直接复制
         Object.assign()
     深复制：
+        或者直接用类改写
         for in循环
-        转成 JSON 再转回来：var obj2 = JSON.parse(JSON.stringify(obj1));只对Number, String, Boolean, Array有效
+        function deepCopy(p, c) {
+    　　　　var c = c || {};
+    　　　　for (var i in p) {
+    　　　　　　if (typeof p[i] === 'object') {
+    　　　　　　　　c[i] = (p[i].constructor === Array) ? [] : {};
+    　　　　　　　　deepCopy(p[i], c[i]);
+    　　　　　　} else {
+    　　　　　　　　　c[i] = p[i];
+    　　　　　　}
+    　　　　}
+    　　　　return c;
+    　　}
+        或
+        function deepcopy(obj) {
+            var out = [],i = 0,len = obj.length;
+            for (; i < len; i++) {
+                if (obj[i] instanceof Array){
+                    out[i] = deepcopy(obj[i]);
+                }
+                else out[i] = obj[i];
+            }
+            return out;
+        }
+        转成 JSON 再转回来：var obj2 = JSON.parse(JSON.stringify(obj1));会破坏constructor对象，只对Number, String, Boolean, Array有效
         递归拷贝
-        使用Object.create()方法
+        使用Object.create()配合for in方法，单单Object.create()是浅拷贝
         jq的$.extend
 
 es6 解构
@@ -328,6 +355,130 @@ xxx
 else
 xxx
 
+工厂函数 创建类实例
+function a(myname){
+    var obj = new Object();
+    obj.name=myname;
+    obj.intro=function(){
+        console.log(this.name)
+    }
+}
+var p1 = a('aa');
+var p2 = a('bb');
+构造函数
+function a(myname){    
+    this.name=myname;
+    this.intro=function(){
+        console.log(this.name)
+    }
+}
+var p1 = new a('aa');
+var p2 = new a('bb');
+
+==和===，对于引用类型，不光比值和类型，还有比内存地址
+
+Symbol 新的数据类型 表示独一无二的值
+let s1 = Symbol('foo');//'foo'为此Symbol值的描述
+let mySymbol = Symbol();
+// 第一种写法
+let a = {};
+a[mySymbol] = 'Hello!';
+// 第二种写法
+let a = {
+  [mySymbol]: 'Hello!'
+};
+
+Class类 类和模块的内部，默认就是严格模式
+5：
+function Point(x, y) {
+  this.x = x;
+  this.y = y;
+  this.methodA=function(){
+
+  }
+}
+Point.prototype.toString = function () {
+  return '(' + this.x + ', ' + this.y + ')';
+};
+Point.prototype.toString1 = function () {
+  return '(' + this.x + ', ' + this.y + ')';
+};
+var p = new Point(1, 2);
+6：
+//定义类
+class Point {
+  //构造函数部分  
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.methodA=function(){
+
+    }    
+  }
+  //静态方法//可以被子类继承
+  static classMethod() {//调用，Point.classMethod()
+    return 'hello';
+  }
+  //原型方法
+  toString() {
+    return '(' + this.x + ', ' + this.y + ')';
+  }
+  //原型方法间不加逗号
+  toString1() {
+    return '(' + this.x + ', ' + this.y + ')';
+  }
+}
+6:
+表达式定义法
+const A = class a{
+
+}
+类名是A，a是Class内部代码用，指代当前类
+//调用时5，6一致,new 出来
+类继承
+extends
+class Point {
+}
+class ColorPoint extends Point {//子类ColorPoint
+    constructor(){
+        super();
+        this.xx...//调用super后才能调用this
+    }    
+}
+class ColorPoint extends Point {
+  constructor(x, y, color) {
+    super(x, y); // 调用父类的constructor(x, y)
+    this.color = color;
+  }
+  toString() {
+    return this.color + ' ' + super.toString(); // 调用父类的toString()
+  }
+}
+子类的constructor中必须调用super，表示父类
+super(x, y)表示构造方法，super.toString()表示原型方法
+
+es6可以为原生构造函数定义子类
+Boolean()
+Number()
+String()
+Array()
+Date()
+Function()
+RegExp()
+Error()
+Object()
+
+function a(obj={}){//参数中，等号后面是默认值
+    console.log(obj)
+};
+a()
+a({q:1})
+function a(s=''){//参数中，等号后面是默认值
+    console.log(s)
+};
+a()
+a('aa')
+
 ------------------------------------------------------------------------------------------------------------------
 jq
 each循环
@@ -463,6 +614,14 @@ __proto__隐式原型 指向其构造函数的prototype原型扩展
 构造函数只是创建实例的模板，构造函数自身的prototype属性指向原型对象，开始只有constructor一个属性，也就是这个构造函数只有这一个属性。构造函数里面的this.xxx=xxx，不属于原型，只是实例继承原型后追加的属性。
 万物皆对象，分普通对象和函数对象，只有函数对象有prototype属性，其余万物都是__proto__属性。函数对象可以看做类，类的原型只是指自身以及后面追加的原型方法。而和类里面的this.xxx=xxx，没有关系。
 总之原型和类的原型属性有关，和类里面的this附加的属性没有关系。
+
+__proto__也能用于继承
+var a={a:1}//看作是类的原型，相当于A.prototype
+var b={},c={}
+b.__proto__=a;c.__proto__=a;
+相当于b和c对象继承了a这个原型对象,（实际a并不存在A这个构造函数）
+{a:1}都存在于b和c的原型链中，不存在于对象内，对象内都是空的
+给对象b和c赋值，互不影响，但是对他们的原型链修改，就互相影响，如：b.__proto__.a=9，就互相影响
 ------------------------------------------------------------------------------------------------------------------
 //Promise机制了解
 //执行步骤 4321
