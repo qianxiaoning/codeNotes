@@ -142,9 +142,11 @@ js分原始类型和引用类型
     堆地址指向一个新地址 深复制
 实现方法
     浅复制：
-        直接复制
+        直接赋值        
+    单层深复制：
         Object.assign()
-    深复制：
+        lodash:_.assign()
+    多层深复制：
         或者直接用类改写
         for in循环
         function deepCopy(p, c) {
@@ -172,7 +174,8 @@ js分原始类型和引用类型
         }
         转成 JSON 再转回来：var obj2 = JSON.parse(JSON.stringify(obj1));会破坏constructor对象，只对Number, String, Boolean, Array有效
         递归拷贝
-        使用Object.create()配合for in方法，单单Object.create()是浅拷贝
+        使用for in配合Object.create()方法
+        lodash:_.merge()
         jq的$.extend
 
 es6 解构
@@ -188,15 +191,17 @@ function add(...x){
 console.log(add(1,2,3));//输出：6
 …x代表了所有传入add函数的参数
 
-Object.keys
+Object.keys 只对最外层
 返回一个所有元素为字符串的数组，其元素来自于从给定的object上面可直接枚举的属性。这些属性的顺序与手动遍历该对象属性时的一致
 // simple array
 var arr = ['a', 'b', 'c'];
 console.log(Object.keys(arr)); // console: ['0', '1', '2']
-
 // array like object
 var obj = { 0: 'a', 1: 'b', 2: 'c' };
 console.log(Object.keys(obj)); // console: ['0', '1', '2']
+
+Object.values() 只对最外层 
+返回值的数组，与Object.keys相反
 
 Object.assign()
 用于将所有可枚举属性的值从一个或多个源对象复制到目标对象。后面会把前面覆盖。它将返回目标对象。

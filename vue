@@ -1425,3 +1425,22 @@ vuex-router-sync作用
 store.state.route.path   // current path (string)
 store.state.route.params // current params (object)
 store.state.route.query  // current query (object)
+
+vue项目结构整理
+frames放页面结构
+modules放页面
+components放页面需要的组件：
+base基础组件，分portal面板组件，packs复杂且复用高的业务组件
+
+大的页面放modules一级。结构复用的页面建空的template，在template里放frames结构组件，结构组件中放router-view路由口，暴露给frames框架组件中的slot插槽。
+在frames结构组件中用el-Layout:container,el-aside,el-header,el-main,el-footer中引入面板portals组件布好局，在页面变换处main处设置slot插槽，以接收主页面传来的路由页面。
+在modules页面引入packs业务组件和base基础组件，数据交互在页面中进行，把数据通过props传入组件，组件通过组件的按钮等，触发$emit把处理后的数据返回出来
+
+slot用法
+比如我要设置一个base组件，组件中要根据情况生产很多不同的html标签的、甚至可以在slot中放入别的base组件，可以用几个slot标签具名留好位置，然后在modules页面中引入base组件中写几个div有slot属性，分别放入该组件中。这样生成html标签方便。/貌似这几个modules页面上的slot标签里的html，因为属于modules组件，所以直接用modules组件的数据渲染就行了，渲染好了再放入base组件中。
+如果base组件中要生产的html结构差异不大，只是数据差异大，那完全可以把base组件封装性好点，props传入变量、数据即可。
+
+父子通讯用props和$emit
+跨组件通讯方便的用vuex
+跨组件通讯不方便的用空Vue事件总线，this.prototype.$emit,this.prototype.$on
+
