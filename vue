@@ -1444,3 +1444,17 @@ slot用法
 跨组件通讯方便的用vuex
 跨组件通讯不方便的用空Vue事件总线，this.prototype.$emit,this.prototype.$on
 
+computed计算属性不能传参
+filters过滤器可以接受过滤的值和传参，且不影响原数据
+
+数组索引更新
+this.$set(this.Arr, indexOfArr, newValue)
+改变数组长度
+vm.items.splice(newLength)
+添加一个对象属性
+vm.$set(vm.userProfile, 'age', 27)
+添加多个对象属性
+vm.userProfile = Object.assign({}, vm.userProfile, {
+  age: 27,
+  favoriteColor: 'Vue Green'
+})

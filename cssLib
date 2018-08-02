@@ -119,7 +119,7 @@ CSS后处理器框架：
 
 给定位的元素水平垂直居中
 一、margin:auto配合absolute四方位0撑开
-二、利用transform相对于自身变形，left,top:50%,transform: translate(-50%,-50%);即可
+二、利用transform相对于自身变形，left,top:50%,transform: translate(-50%,-50%);position即可
 
 position:fixed弹窗，页面很矮时，弹窗可滚动
 外层fixed层：
@@ -129,8 +129,11 @@ position:fixed弹窗，页面很矮时，弹窗可滚动
     1.垂直线不能margin:auto,top:0.bottom:0，也不能top:50%,transform: translateY(-50%,-50%)方法垂直居中，这样会强制显示在页面中间，失去自身高度
     2.得top: 15%;margin-bottom: 50px;来设置上下留白，不能居中。
     
-
-
+伪类添加边框
+li{position:relative;}
+li:after{content:'';height:2rpx;width:100rpx;background: #e6ecf0;position: absolute;bottom:0;right:0;}
+最后一行伪类处理，去边框
+li:last-child:after{height:0;}
 
 
 
