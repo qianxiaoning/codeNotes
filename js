@@ -340,16 +340,21 @@ Number.isInteger()
 Number.isInteger(25.0) // true
 
 ea6的export,export default,import
-export可以导多个对象 export default只能导一个匿名对象
+export可以暴露多个对象 export default只能暴露一个匿名对象
 引用方法：
-a文件export {a,b,c};
-b文件import {a,b} from './a.js'
+export:
+    a文件export {a,b,c};    
+    b文件import {a,b} from './a.js'
+    使用 a();
 
-a文件export default{...}或export default[]等等;
-b文件import xname from './a.js'
+    导入所有
+    b文件import * as xname from "./a.js";
+    使用 xname.a();
 
-导出所有
-import * as xname from "module-name";
+export default:
+    a文件export default{}或export default[]等等;
+    b文件import xname from './a.js'
+    使用 xname.a();或xname[0];
 
 Object.defineProperties()
 在一个对象上定义新的属性或修改现有属性，并返回该对象

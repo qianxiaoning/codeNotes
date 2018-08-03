@@ -1458,3 +1458,11 @@ vm.userProfile = Object.assign({}, vm.userProfile, {
   age: 27,
   favoriteColor: 'Vue Green'
 })
+
+两层以上嵌套组件信息传递
+简单的项目 用事件总线new Vue,$emit,$on自传自收
+
+复杂的项目 用vuex，子胥说为了管理请求。我觉得是留下记录方便调试维护，有迹可循，比如用vuetools
+用vuex改的话，开启了命名空间，得在孙组件调爷组件的命名mutation或者action才能触发修改爷组件的state
+
+我的思路，数据请求和vuex通讯管理分开写，不想和子胥一样写在一起。
