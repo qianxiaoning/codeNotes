@@ -9,6 +9,15 @@ meta法 <meta http-equiv='refresh' content='20'>20秒自动刷新
 修改网页标题 document.title = '新的标题';
 top顶层窗口self当前窗口
 js跳转链接 self.location.href = newUrl;
+
+try...catch...
+try {
+    adddlert("欢迎光临！");//尝试执行的代码块
+}
+catch(err) {
+    console.log(err.message);//获取的错误信息
+}
+
 取得html头部dom
 var head = document.getElemenetsByTagName('head').item(0);//.item(0)等同于[0]
 创造原生节点 var newDom = document.createElement('div');
@@ -279,50 +288,203 @@ function myFunction() {
     xxx.innerHTML = ages.filter(checkAdult);
 }
 
-async await 返回的是一个promise 对象，如果要获取到promise 返回值，我们应该用then 方法
-async关键字放到函数前面，用于表示函数是一个异步函数
-async function timeout() {
-　　return 'hello world';
-}
-获取
-async function timeout() {
-    return 'hello world'
-}
-timeout().then(result => {
-    console.log(result);//结果
-})
-出错
-async function timeout(flag) {
-    if (flag) {
-        return 'hello world'
-    } else {
-        throw 'my god, failure'
+Promise异步链式机制
+比如微信小程序wx.request封装
+const request = function (url, method, data) {
+    return new Promise((resolve, reject) => {//返回一个Promise对象
+    wx.request({
+        url: url,
+        method: method,
+        data: data,
+        success(res) {
+        if(res.data.code==200){
+            resolve(res);//此处调成功的resolve函数
+        }                                
+        },
+        complete(){
+
+        },
+        fail(err) {
+            reject(err);//此处调失败的reject函数
+        }
+    });
+    });
+};
+调用：
+request(
+    this.$url.login,
+    'POST',
+    this.form
+).then(
+    (res) => {
+    console.log(res)
     }
-}
-console.log(timeout(true))  // 调用Promise.resolve() 返回promise 对象。
-console.log(timeout(false)); // 调用Promise.reject() 返回promise 对象。
+).catch(
+    (err) => {
+    console.log(data)
+    }
+);
+链式调用：
+request(
+    this.$url.login,
+    'POST',
+    this.form
+).then(
+    (res) => {
+    console.log(res);
+    return request(
+        this.$url.login1,
+        'POST',
+        this.form
+    )
+    }
+).then(
+    (res1)=>{
+        console.log(res1);
+    }
+).catch(
+    (err) => {
+    console.log(err)
+    }
+);
 
-await 等后面的promise对象执行完毕，再向下执行
-function doubleAfter2seconds(num) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve(2 * num)
-        }, 2000);
-    } )
-}
-async function testResult() {
-    let result = await doubleAfter2seconds(30);
-    console.log(result);
-}
-调用
-testResult();
+async await
+如果在函数中 return 一个直接量，async 会把这个直接量通过 Promise.resolve()封装成 Promise 对象
+如果 async 函数没有返回值，它会返回 Promise.resolve(undefined);
+await只能获取到resolve值，得用其他方法（后文有）获取reject值
 
-计算3个数
-async function testResult() {
-    let first = await doubleAfter2seconds(30);
-    let second = await doubleAfter2seconds(50);
-    let third = await doubleAfter2seconds(30);
-    console.log(first + second + third);
+const loginRequest=(url,data)=>{
+    return new Promise((resolve,reject)=>{
+        success(res){
+            resolve(res);
+        },fail(err){
+            reject(err);
+        }
+    })
+}
+async function login(){
+    let res=await loginRequest('',{});
+    //得到login接口的返回值，把异步变成同步的书写方式
+}
+
+async await处理then链
+//obj1到obj4顺序执行
+const httpFun1=(obj)=>{
+    return xxx.then(
+        (res)=>{
+            return res
+        }
+    )
+}
+const httpFun2=(obj)=>{
+    return xxx.then(
+        (res)=>{
+            return res
+        }
+    )
+}
+const httpFun3=(obj)=>{
+    return xxx.then(
+        (res)=>{
+            return res
+        }
+    )
+}
+//把异步完全变成同步写
+async function callChaining1(){    
+    let obj1=await httpFun1({});
+    let obj2=await httpFun1({});
+    let obj3=await httpFun1({});
+    //得到我要的obj4
+    console.log(obj4)
+}
+//下面是Promise法
+    const obj1 = {};
+    step1(obj1)
+        .then(obj2 => step2(obj2))//前面值不用注入后面，不用return
+        .then(obj3 => step3(obj3))
+        .then(obj4 => {
+            console.log(obj4);//得到obj4           
+        });
+
+//obj1到obj4，后一步需要前一步结果
+const httpFun1=(obj1)=>{
+    return xxx.then(
+        (res)=>{
+            return res
+        }
+    )
+}
+const httpFun2=(obj1,obj2)=>{
+    return xxx.then(
+        (res)=>{
+            return res
+        }
+    )
+}
+const httpFun3=(obj1,obj2,obj3)=>{
+    return xxx.then(
+        (res)=>{
+            return res
+        }
+    )
+}
+async/await：
+async function callChaining2(){
+    const time1 = 300;
+    const time2 = await step1(time1);
+    const time3 = await step2(time1, time2);
+    const result = await step3(time1, time2, time3);
+}
+Promise://？对写法有疑问
+const time1 = 300;
+    step1(time1)
+        .then(time2 => {
+            return step2(time1, time2)
+                .then(time3 => [time1, time2, time3]);//?
+        })
+        .then(times => {
+            const [time1, time2, time3] = times;
+            return step3(time1, time2, time3);
+        })
+        .then(result => {
+            console.log(`result is ${result}`);
+            console.timeEnd("doIt");
+        });
+
+async/await的reject结果
+async function myFunction() {
+  try {
+    await somethingThatReturnsAPromise();
+  } catch (err) {
+    console.log(err);
+  }
+}
+// 另一种写法
+async function myFunction() {
+  await somethingThatReturnsAPromise().catch(function (err){
+    console.log(err);
+  });
+}
+
+确实希望多个请求并发执行，可以使用 Promise.all 方法
+async function dbFuc(db) {
+  let docs = [{}, {}, {}];
+  let promises = docs.map((doc) => db.post(doc));
+
+  let results = await Promise.all(promises);
+  console.log(results);
+}
+// 或者使用下面的写法
+async function dbFuc(db) {
+  let docs = [{}, {}, {}];
+  let promises = docs.map((doc) => db.post(doc));
+
+  let results = [];
+  for (let promise of promises) {
+    results.push(await promise);
+  }
+  console.log(results);
 }
 
 in运算符
@@ -880,7 +1042,7 @@ window.location.hash修改hash，路径后面的#，不刷新页面
 --------------------------------------------------------------------
 es6 数据交互
 fetch
-let fetchUrl = 'http://192.168.0.100:81/api/Pay/EBJPayQuery';
+let fetchUrl = 'http://192.168.0.100:81/api/Pay/payQuery';
 let fetchInit = {
     method: 'post',
     //请求头
@@ -889,7 +1051,9 @@ let fetchInit = {
         'Content-Type': 'application/json; charset=utf-8'
     },
     //传后台的参数 obj转string
-    body: JSON.stringify({merchantOutOrderNo:merchantOutOrderNo,payType:localStorage.getItem('payType')}),
+    body: JSON.stringify(
+        {merchantOutOrderNo:merchantOutOrderNo,payType:localStorage.getItem('payType')}
+    ),
 };
 //两个参数 url和init 
 fetch(fetchUrl,fetchInit)
@@ -1389,7 +1553,17 @@ data[0].cellList[i].commandNum=="01"?equip.eq(i).addClass("sel"):equip.eq(i).rem
 或：
 '<i class="iconfont icon-hekricon01 equip'+(cell.commandNum=="01"?" sel":"")+'"></i>'
 -------------------------------------------------------------------- 
+ng1使用双向绑定
+vue是单向绑定，就是js能影响html，html不能影响js，除v-model是双向
+vue在不同组件间强制使用单向数据流，单向传递，props或emit
 
-
-
+js查看代码执行时间
+一、console.time(label) 和 console.timeEnd(label)
+二、console.profile(label) 和 console.profileEnd(label) 是 time 的升级版
+不但测速，直接测性能了，需要到 profile 面板里面才能看到结果
+三、performance.now()
+performance.now()更加专业，专门测试执行时间，直接
+let t0 = performance.now();
+//执行代码
+console.log(performance.now()- t0);
 

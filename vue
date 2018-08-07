@@ -1466,3 +1466,20 @@ vm.userProfile = Object.assign({}, vm.userProfile, {
 用vuex改的话，开启了命名空间，得在孙组件调爷组件的命名mutation或者action才能触发修改爷组件的state
 
 我的思路，数据请求和vuex通讯管理分开写，不想和子胥一样写在一起。
+
+组件中的watch会随着组件销毁而销毁
+如果全局的watch，不用了要手动销毁
+$watch方法返回的就是一个自身销毁函数
+如：
+侦听时：const unwatch = app.$watch('aa',(newV,oldV)=>{})
+取消：unwatch();
+
+计算属性computed中如果有多个vm.xxx值，只要有一个vm.xxx值变化，computed就会执行函数体一遍
+
+大多数情况computed都比watch节约性能
+只能用watch实现的需求：
+在数据变化时执行异步 或开销较大的操作时
+执行异步操作 (访问一个 API)，限制我们执行该操作的频率，并在我们得到最终结果前，设置中间状态。这些都是计算属性无法做到的 
+
+但是感觉有些场合用computed容易互相影响，因为其中一个data值变了就会执行，等于一下子侦听了多个值的变化。
+而watch只侦听一个值的，不会互相影响。
