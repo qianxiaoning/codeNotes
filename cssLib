@@ -35,6 +35,12 @@ flex布局
 /*item属性*/
 /*项目宽高分配比例*/
 .fg-1{flex-grow: 1;} 
+
+flex上下固高，中间自适应高度，纵向布局
+wrap层 flex fd-c height:100%
+.up{} 固高
+.mid{} fg-1 overflow:auto;height:0
+.down{} 固高
 --------------------------------------------------------------------
 子元素设height:100%是获取不到靠兄弟元素撑开的，未设具体高度的父级的高度的。
 普通布局
@@ -135,6 +141,12 @@ li:after{content:'';height:2rpx;width:100rpx;background: #e6ecf0;position: absol
 最后一行伪类处理，去边框
 li:last-child:after{height:0;}
 
+文字两端对齐
+pc:
+    p{text-align: justify;text-align-last: justify;}
+手机端:
+    p{text-align: justify;}
+    p:after{content: " ";display: inline-block;width: 100%;}
 
 
 
