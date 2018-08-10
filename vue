@@ -1467,6 +1467,16 @@ vm.userProfile = Object.assign({}, vm.userProfile, {
 
 我的思路，数据请求和vuex通讯管理分开写，不想和子胥一样写在一起。
 
+watch侦听数据的简写方式
+watch:{
+    a(v,ov){//监听a属性
+
+    },
+    'b.c'(v,ov){//监听b.c属性
+
+    }
+}
+
 组件中的watch会随着组件销毁而销毁
 如果全局的watch，不用了要手动销毁
 $watch方法返回的就是一个自身销毁函数
@@ -1476,10 +1486,66 @@ $watch方法返回的就是一个自身销毁函数
 
 计算属性computed中如果有多个vm.xxx值，只要有一个vm.xxx值变化，computed就会执行函数体一遍
 
-大多数情况computed都比watch节约性能
-只能用watch实现的需求：
-在数据变化时执行异步 或开销较大的操作时
+能用computed就用computed,节约性能
+不能用computed,只能用watch的情况
+一、数据侦听用watch
+虽然computed也能侦听数据变化,但是得在模板调用后才能生效,类似于函数
+而watch不需要另外调用,直接生效
+二、在数据变化时执行异步 或开销较大的操作时
 执行异步操作 (访问一个 API)，限制我们执行该操作的频率，并在我们得到最终结果前，设置中间状态。这些都是计算属性无法做到的 
 
-但是感觉有些场合用computed容易互相影响，因为其中一个data值变了就会执行，等于一下子侦听了多个值的变化。
+computed会侦听函数里所有数据的变化
+其中一个data值变了就会执行，等于一下子侦听了多个值的变化。
 而watch只侦听一个值的，不会互相影响。
+
+父组件向子组件通过props特性传值流程
+自上而下顺序
+父data:{a:1}
+父created(){this.a=2}
+父beforeMount(){this.a=3}
+//子组件渲染完成后
+//向子组件props传第一次值
+子created=>beforeMount=>mounted(){this.a==3}
+
+父mounted(){this.a=4}
+//子组件渲染完成后,父组件props数据变化,传第二次值
+子beforeUpdate=>updated(){this.a==4}
+
+父接口异步给props赋值
+父created=>beforeMount=>mounted(){(res)=>{this.a=res}}
+//父组件props数据变化,传第三次值
+子beforeUpdate=>updated(){this.a==res}
+
+父组件向props传异步值方法:
+一、在父组件的子组件标签上加v-if='',数据变化再次渲染子组件,使子组件获取异步新props数据
+二、在子组件watch里侦听获取异步新props数据,用methods来代替created
+三、在子组件beforeUpdate,updated里获取异步新props数据(可能由任何数据更新触发,不推荐)
+
+将一个对象的所有属性都作为 prop 传入
+<blog-post v-bind="post"></blog-post>
+等价于：
+<blog-post
+  v-bind:id="post.id"
+  v-bind:title="post.title"
+></blog-post>
+
+子值改变动态传父
+子:this.$emit('update:title', newTitle)
+父:<text-document
+  :title="doc.title"
+  @update:title="doc.title = $event"//监听title触发update函数
+></text-document>
+父简写:<text-document :title.sync="doc.title"></text-document>
+
+vue生命周期
+每次进入组件
+beforeCreate,created,beforeMount,mounted都会依次触发
+
+mpvue生命周期
+会把所有组件的beforeCreate,created先执行一遍
+
+进入新page组件时依次触发onLoad,onShow,onReady,beforeMount,mounted
+第一次进入新子组件时依次触发onLoad,onReady,beforeMount,mounted
+第二次进入新子组件时依次触发onLoad,onShow,onReady,beforeMount,mounted
+
+再次进入 未被销毁的组件时只触发onShow
