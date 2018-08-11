@@ -148,7 +148,8 @@ pc:
     p{text-align: justify;}
     p:after{content: " ";display: inline-block;width: 100%;}
 
-
+单边的边框出现与否是由：border-style决定的
+如：border-bottom-style:solid 只要下边框
 
 
 

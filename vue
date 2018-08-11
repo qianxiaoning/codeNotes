@@ -635,18 +635,25 @@ xxx.vue中template下面都有export default{}
                     props:['option-array']//对象的话可以规定类型如：props:{'option-array':[Number,String]}，不符合类型会报错
                     methods:{
                         emitMyEvent(){
-                            //实例方法 向上触发my-event自定义事件 还可以传递一个参数
-                            this.$emit('my-event','aaa')
+                            //实例方法 向上触发indexPass自定义事件 还可以传递一个参数
+                            this.$emit('indexPass',1)
                         }
                     }
             父组件
-                <select-com :option-array=[...] @my-event='a'></select-com>
+                触发方法a
+                <select-com :option-array=[...] @indexPass='a'></select-com>
                 js:
+                    data index:0
                    methods:{
                        a(params){
                         //参数
+                        this.index=params
                        }
                    }
+                简写 子组件事件中的$event就是$emit出去的参数
+                可以直接对声明过的参数 赋值
+                <select-com :option-array=[...] @indexPass='index=$event'></select-com>
+
 slot插槽功能，也是父组件向子组件以模板形式，传递信息的一个方式
     当组件中某一项需要单独定义，那么就应该使用solt。                                           
     应用场景，model弹出框。可以用slot插槽向弹出框中插入不同的标题、内容。                                           
@@ -1538,14 +1545,21 @@ computed会侦听函数里所有数据的变化
 父简写:<text-document :title.sync="doc.title"></text-document>
 
 vue生命周期
-每次进入组件
-beforeCreate,created,beforeMount,mounted都会依次触发
+每次进入page
+会把page组件 和 page组件中的子组件依次触发
+beforeCreate,created,beforeMount,mounted
 
 mpvue生命周期
-会把所有组件的beforeCreate,created先执行一遍
+开始会把所有组件的beforeCreate,created先执行一遍
 
-进入新page组件时依次触发onLoad,onShow,onReady,beforeMount,mounted
-第一次进入新子组件时依次触发onLoad,onReady,beforeMount,mounted
-第二次进入新子组件时依次触发onLoad,onShow,onReady,beforeMount,mounted
+进入已销毁的page组件时，该page组件 依次触发onLoad,onShow,onReady,beforeMount,mounted
+第一次进入已销毁的page组件，该page组件中的子组件 依次触发onLoad,onReady,beforeMount,mounted
+第二次进入已销毁的page组件，该page组件中的子组件 依次触发onLoad,onShow,onReady
 
-再次进入 未被销毁的组件时只触发onShow
+再次进入 未被销毁的page组件，该page组件 和 该page组件中的子组件时只触发onShow
+
+<div @click='tabC(ind,$event)'></div>
+$event传入事件对象
+
+子组件props值设置对象属性默认值办法
+在子组件computed中设置一个值，在里面把const默认值和props值return Object.assign合并再出去，子组件模板里用computed设置的值。这样也是响应式的，方便
