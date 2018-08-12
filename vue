@@ -1572,8 +1572,12 @@ mpvue生命周期
 <div @click='tabC(ind,$event)'></div>
 $event传入事件对象
 
-子组件props值设置对象属性默认值办法
-在子组件computed中设置一个值，在里面把const默认值和props值return Object.assign合并再出去，子组件模板里用computed设置的值。这样也是响应式的，方便
+父子组件通讯
+父传子，直接通过props就行。props变，子模板自动会变
+子传父，得子$emit到父，父event接收$event值
+
+设置props对象默认值办法
+在子computed中const设置props对象的默认值，并Object.assign合并默认值和props值，返回默认值，子组件模板中用computed就行了
 
 mpvue一套代码多端使用
 对于onShow等生命周期，可以判断环境在created再加一遍
