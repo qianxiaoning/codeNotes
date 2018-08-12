@@ -650,9 +650,20 @@ xxx.vue中template下面都有export default{}
                         this.index=params
                        }
                    }
+
+                .sync修饰符
                 简写 子组件事件中的$event就是$emit出去的参数
                 可以直接对声明过的参数 赋值
                 <select-com :option-array=[...] @indexPass='index=$event'></select-com>
+
+                但父子组件存在双向通讯，即需要双向绑定时，
+                貌似可以用.sync修饰符简写
+                如：
+                <tab-head :inde='tabIndex' @switch='tabIndex=$event'></tab-head>
+                父传tabIndex给子
+                子emit tabIndex给父
+                可以写成 ？
+                <tab-head :inde.sync='tabIndex'></tab-head>
 
 slot插槽功能，也是父组件向子组件以模板形式，传递信息的一个方式
     当组件中某一项需要单独定义，那么就应该使用solt。                                           
@@ -1563,3 +1574,8 @@ $event传入事件对象
 
 子组件props值设置对象属性默认值办法
 在子组件computed中设置一个值，在里面把const默认值和props值return Object.assign合并再出去，子组件模板里用computed设置的值。这样也是响应式的，方便
+
+mpvue一套代码多端使用
+对于onShow等生命周期，可以判断环境在created再加一遍
+对于微信api问题，可以用wx.xxx再写一遍覆盖
+对于微信小程序组件问题，貌似只能用vue组件自己写一套代替
