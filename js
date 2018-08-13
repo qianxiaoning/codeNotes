@@ -200,6 +200,10 @@ function add(...x){
 console.log(add(1,2,3));//输出：6
 …x代表了所有传入add函数的参数
 
+...赋值
+let [a,b,...c] = [1,2,3,4,5]
+//c为[3,4,5]
+
 Object.keys 只对最外层
 返回一个所有元素为字符串的数组，其元素来自于从给定的object上面可直接枚举的属性。这些属性的顺序与手动遍历该对象属性时的一致
 // simple array
@@ -496,6 +500,11 @@ forEach
 用于调用数组的每个元素，并将元素传递给回调函数
 array.forEach(function(currentValue, index, arr), thisValue)
 [4, 9, 16, 25].forEach(function(item, index){demoP.innerHTML += index + item + "<br>";})
+
+arr1.forEach((v,i)=>{        
+    if(v=='完成'){arr1[i]='f'}
+    else if(v=='重置'){arr1[i]='r'}
+});
 
 Number.isInteger()
 判断一个值是否为整数，返回布尔值
@@ -1566,4 +1575,12 @@ performance.now()更加专业，专门测试执行时间，直接
 let t0 = performance.now();
 //执行代码
 console.log(performance.now()- t0);
+
+some() //返回布尔
+循环检测数组中的元素是否 有 满足指定条件（函数提供）
+[...].some((item)=>{return xxx});
+
+every() //返回布尔
+循环检测数组中的元素是否 都 满足指定条件（函数提供）
+[...].every((item)=>{return xxx});
 
