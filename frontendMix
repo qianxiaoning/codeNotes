@@ -37,3 +37,5 @@ h5 ajax以文件流的方式传输form信息 formData
 前端拿着唯一的token去找后台，后台才知道我什么身份，而且不易被冒充身份，安全，不容易被攻击
 一般方式有前端在header加入token，或后台set入cookie两种
 后台set入cookie两种在多域名接口不适用，因为不同域cookie不共用（但是可通过nginx实现跨域）。header加入token可不存在这个问题
+
+屏幕取色工具colorpix

@@ -33,8 +33,10 @@ flex布局
 .ac-sa{align-content: space-around;}
 .ac-s{align-content: stretch;} 
 /*item属性*/
-/*项目宽高分配比例*/
-.fg-1{flex-grow: 1;} 
+/*项目自动缩放*/
+.f-a{flex: auto;}  
+/*项目不缩放*/
+.f-n{flex: none;}
 
 flex上下固高，中间自适应高度，纵向布局
 wrap层 flex fd-c height:100%
@@ -150,6 +152,7 @@ pc:
 
 单边的边框出现与否是由：border-style决定的
 如：border-bottom-style:solid 只要下边框
+
 
 
 

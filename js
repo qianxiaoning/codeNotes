@@ -223,6 +223,8 @@ Object.assign()
 js map()
 map() 方法返回一个新数组，数组中的元素为原始数组元素调用函数处理后的值。
 array.map(function(currentValue,index,arr), thisValue)
+var numbers = [4, 9, 16, 25];
+numbers.map(Math.sqrt);//[2,3,4,5]
 
 普通函数：this 永远指向调用它的对象，new的时候，指向new出来的对象
 箭头函数：this 
@@ -1584,3 +1586,6 @@ every() //返回布尔
 循环检测数组中的元素是否 都 满足指定条件（函数提供）
 [...].every((item)=>{return xxx});
 
+js对象键值不能有-号
+a.b-c//错
+a['b-c']//对
