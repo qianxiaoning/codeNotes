@@ -41,7 +41,7 @@ flex布局
 flex上下固高，中间自适应高度，纵向布局
 wrap层 flex fd-c height:100%
 .up{} 固高
-.mid{} fg-1 overflow:auto;height:0
+.mid{} f-a overflow:auto;height:0
 .down{} 固高
 --------------------------------------------------------------------
 子元素设height:100%是获取不到靠兄弟元素撑开的，未设具体高度的父级的高度的。
@@ -152,6 +152,13 @@ pc:
 
 单边的边框出现与否是由：border-style决定的
 如：border-bottom-style:solid 只要下边框
+
+//div内上下等距做法
+<div>//div{padding-bottom:20rpx;}
+    <p></p>//p{margin-top:20rpx;}
+    <p></p>
+    <p></p>
+</div>
 
 
 

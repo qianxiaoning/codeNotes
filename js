@@ -1589,3 +1589,24 @@ every() //返回布尔
 js对象键值不能有-号
 a.b-c//错
 a['b-c']//对
+
+用&&判断是否都满足条件
+从左往右执行
+都为true，返回最右侧值
+1&&2&&3 //3
+执行中如有一项为false，中断执行，返回那一项值
+1&&0&&'' //0
+1&&''&&0 //''
+
+读取对象内部的某个属性 如message.body.user.firstName
+安全写法
+const firstName = (message
+  && message.body
+  && message.body.user
+  && message.body.user.firstName) || 'default';
+
+新的提案 ?.
+链判断运算符
+简化写法
+const firstName = message?.body?.user?.firstName || 'default';
+

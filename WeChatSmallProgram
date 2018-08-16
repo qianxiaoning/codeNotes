@@ -178,7 +178,7 @@ requirePlugin 方法
 微信背景图片不能用本地资源，img可以
 
 swiper+scroll-view 滑动结构
-<swiper :current='tabIndex' @change='c' class='sw'>//tabIndex:0 .sw{height:100%;}
+<swiper :current='tabIndex' @change='c' class='sw'>//.sw{height:100%;}
   <!-- xxx -->
   <swiper-item>
     <scroll-view class='sV' scroll-y='true' @scrolltolower='load'>.sV{height:100%;}
@@ -189,6 +189,11 @@ swiper+scroll-view 滑动结构
   </swiper-item>
 </swiper>
 
+data(){
+  return{
+    tabIndex:0 
+  }
+},
 methods:{
   c(e){
     this.tabIndex = e.target.current;      
