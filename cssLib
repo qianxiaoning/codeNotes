@@ -160,8 +160,10 @@ pc:
     <p></p>
 </div>
 
-
-
+css2.1盒模型中规定
+嵌套盒元素（同级或者嵌套），没有非空内容、Padding或Border分隔时，margin共享
+所以子元素的margin-top会作用于父元素上
+解决办法父元素overflow:auto;//不为visiable即可
 
 
 
