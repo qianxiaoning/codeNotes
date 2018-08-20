@@ -190,6 +190,7 @@ js分原始类型和引用类型
 es6 解构
 ...对象展开运算符
 ...[1,2,3] 可以将数组转化为参数。代替了es5的f.apply(null,[1,2,3])
+可以 array1.push(...array2);
 解构赋值
 let [name,,age]=['wayou','male','secrect'];
 
@@ -1619,3 +1620,10 @@ const firstName = (message
 简化写法
 const firstName = message?.body?.user?.firstName || 'default';
 
+func.apply(obj,argv)
+a.push.apply(a,[4,5,6]);
+等同于：
+a.push(4,5,6);
+
+c.push.apply(a,[4,5,6]);也是一样
+a调[c.push]这个方法，传入参数[4,5,6]
