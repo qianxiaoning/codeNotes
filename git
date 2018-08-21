@@ -581,3 +581,33 @@ $ git config user.email "email@example.com"
 $ git config --global alias.a add
 $ git config --global alias.c commit
 git a .&&c -m's'
+
+git license 开源许可证
+没有任何下游许可条件，您可以使用您想要的任何许可证。常见许可证包括MIT，Apache 2.0，ISC和BSD
+
+强版copyleft（也提供公共相同的权限，但条件是下游使用相同的许可证），
+那么您的项目将必须使用相同的许可证。常见的强大的Copyleft许可证包括GPLv2，GPLv3和AGPLv3
+MIT是npm库最受欢迎的许可证
+MIT 许可证 -- 只要用户在项目副本中包含了版权声明和许可声明，他们就可以拿你的代码做任何想做的事情，你也无需承担任何责任。
+
+Apache 许可证 -- 类似 MIT 许可证，但它同时还包含了贡献者向用户提供专利授权相关的条款。
+
+GPL 许可证 -- 这是一种copyleft许可证，要求修改项目代码的用户再次分发源码或二进制代码时，必须公布他的相关修改。
+V3版本与V2类似，但其进一步约束了在某些限制软件更改的硬件上的使用范围。
+
+从松到严，MIT --> Apache --> GPL，而且貌似有过统计，MIT协议用的最多。
+
+各种不同许可证区别，详见img/github_licenses图
+
+
+
+
+
+
+
+
+
+
+
+
+
