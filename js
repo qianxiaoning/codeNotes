@@ -187,23 +187,36 @@ js分原始类型和引用类型
         lodash:_.merge()
         jq的$.extend
 
-es6 解构
+es6 ...
 ...对象展开运算符
+可以将数组和对象转为参数列
+可以将一个数组展开为另一个数组，或将一个对象展开为另一个对象
+
 ...[1,2,3] 可以将数组转化为参数。代替了es5的f.apply(null,[1,2,3])
 可以 array1.push(...array2);
+let first = [1, 2];
+let second = [3, 4];
+let bothPlus = [0, ...first, ...second, 5];
+
+let defaults = { food: "spicy", price: "$$", ambiance: "noisy" };
+let search = { ...defaults, food: "rich" };
+
 解构赋值
-let [name,,age]=['wayou','male','secrect'];
-
-function add(...x){
-	return x.reduce((m,n)=>m+n);
-}
-//传递任意个数的参数
-console.log(add(1,2,3));//输出：6
-…x代表了所有传入add函数的参数
-
 ...赋值
+数组：
 let [a,b,...c] = [1,2,3,4,5]
 //c为[3,4,5]
+let [name,,age]=['wayou','male','secrect'];
+
+对象：
+let o = {
+    a: "foo",
+    b: 12,
+    c: "bar"
+};
+let { a, b } = o;
+let { a, ...b1 } = o; 
+b1//为{b: 12, c: "bar"}
 
 Object.keys 只对最外层
 返回一个所有元素为字符串的数组，其元素来自于从给定的object上面可直接枚举的属性。这些属性的顺序与手动遍历该对象属性时的一致
@@ -1627,3 +1640,5 @@ a.push(4,5,6);
 
 c.push.apply(a,[4,5,6]);也是一样
 a调[c.push]这个方法，传入参数[4,5,6]
+
+请求语义化 POST新增 GET查询 PUT更新 DELETE删除

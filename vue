@@ -660,6 +660,8 @@ xxx.vue中template下面都有export default{}
                 貌似可以用.sync修饰符简写
                 如：
                 <tab-head :inde='tabIndex' @switch='tabIndex=$event'></tab-head>
+                或者在方法里直接第一个参数获取
+                
                 父传tabIndex给子
                 子emit tabIndex给父
                 可以写成 ？
@@ -1619,3 +1621,55 @@ const loading={
     }
 }
 export default loading;
+
+vue是单页面，一个page对象。而mpvue是小程序，实际是多页面，多个page对象
+引入vuex和router的流程
+编译后：
+先走store/index.js
+import Vue from 'vue'
+import Vuex from 'vuex'
+Vue.use(Vuex)//在Vue实例中注入Vuex，其实类似绑定在原型中
+const store = new Vuex.Store({//在Vuex中注入配置，得到生成好的store vuex实例
+    modules: {
+        ...modules
+    }
+})
+export default store//暴露生成好的store vuex实例
+再走main.js:
+import store from './store'; //得到生成好的store vuex实例
+import router from './router';
+const app = new Vue({
+  router,
+  store, //生成好的store vuex实例挂载到页面上
+  render: h => h(App),
+})
+
+mpvue中改为：
+Vue.prototype.$store = store; //生成好的store vuex实例挂载到Vue原型上
+
+vuex中
+组件通过dispatch触发actions里的方法
+通过...mapActions直接触发actions里的方法，不用写dispatch了
+
+actions里通过commit触发mutations里的方法
+
+actions得通过mutations改变state的数据，不能直接改state
+
+computed计算属性里的值，在另一个computed中可以直接改
+computed计算属性里的值，在methods和生命周期中不能直接修改
+得加set方法来修改
+computed: {
+  fullName: {
+    // getter
+    get() {
+      return this.firstName + ' ' + this.lastName
+    },
+    // setter
+    set(newValue) {
+      var names = newValue.split(' ')
+      this.firstName = names[0]
+      this.lastName = names[names.length - 1]
+    }
+  }
+}
+现在再运行 vm.fullName = 'John Doe' 时，setter 会被调用，vm.firstName 和 vm.lastName 也会相应地被更新
