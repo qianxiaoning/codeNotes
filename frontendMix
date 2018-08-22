@@ -39,3 +39,5 @@ h5 ajax以文件流的方式传输form信息 formData
 后台set入cookie两种在多域名接口不适用，因为不同域cookie不共用（但是可通过nginx实现跨域）。header加入token可不存在这个问题
 
 屏幕取色工具colorpix
+
+windows上常用的量尺寸软件 pxcook

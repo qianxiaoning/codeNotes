@@ -1642,3 +1642,15 @@ c.push.apply(a,[4,5,6]);也是一样
 a调[c.push]这个方法，传入参数[4,5,6]
 
 请求语义化 POST新增 GET查询 PUT更新 DELETE删除
+
+new Array(3);生产一个空的三位数组
+
+fill()
+array.fill(value, start, end)
+从开始到结束位置填充固定值
+var fruits = ["Banana", "Orange", "Apple", "Mango"];
+fruits.fill("Runoob", 2, 4);
+//Banana,Orange,Runoob,Runoob
+
+这招根据数组长度，自动生成对应长度空数组
+this.idx_list = new Array(formList.length).fill(0);

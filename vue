@@ -1482,8 +1482,12 @@ vm.userProfile = Object.assign({}, vm.userProfile, {
 两层以上嵌套组件信息传递
 简单的项目 用事件总线new Vue,$emit,$on自传自收
 
+vuex方便管理大块数据，如列表加载，存储整块数据。
+封装方法方便，如滚动加载。
+
+eventbus是单点数据触发
+
 复杂的项目 用vuex，子胥说为了管理请求。我觉得是留下记录方便调试维护，有迹可循，比如用vuetools
-用vuex改的话，开启了命名空间，得在孙组件调爷组件的命名mutation或者action才能触发修改爷组件的state
 
 我的思路，数据请求和vuex通讯管理分开写，不想和子胥一样写在一起。
 
@@ -1673,3 +1677,25 @@ computed: {
   }
 }
 现在再运行 vm.fullName = 'John Doe' 时，setter 会被调用，vm.firstName 和 vm.lastName 也会相应地被更新
+
+动态组件 component标签
+<!-- 组件会在 `currentTabComponent` 改变时改变 -->
+<component v-bind:is="currentTabComponent"></component>
+
+ref属性：（非响应式，不能用做数据绑定）
+普通节点上，获取dom
+子组件上，获取子组件实例
+用处：
+父调子组件方法。比如父完成按钮，触发子组件校验函数
+this.$refs.f.form_validate((res,msg)=>{//传入一个闭包需要res和msg
+    console.log(res)
+    console.log(msg)
+})
+子组件：
+form_validate: function(cb) {//传入闭包
+    let msg;
+    let result = true;
+    let formList = this.formList;
+    ... //处理
+    cb(result, msg);//向闭包传入result和msg
+}
