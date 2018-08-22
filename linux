@@ -16,3 +16,5 @@ linux指令
 echo "xxx" >> xxx.filetype
 
 cd切运行路径时，按tab键自动补全，匹配文件名
+
+
