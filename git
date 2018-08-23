@@ -599,9 +599,15 @@ V3版本与V2类似，但其进一步约束了在某些限制软件更改的硬�
 
 各种不同许可证区别，详见img/github_licenses图
 
+推分支到不同远端的不同分支上
 推本地dev分支到remoteA远端上的master分支
-git push remoteA dev:master
+先git remote add remoteA到remote
+再git push remoteA dev:master
 
+拉取
+git pull remoteA dev:master
+同名的话
+git pull remoteA dev
 
 
 

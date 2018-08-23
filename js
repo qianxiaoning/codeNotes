@@ -1654,3 +1654,14 @@ fruits.fill("Runoob", 2, 4);
 
 这招根据数组长度，自动生成对应长度空数组
 this.idx_list = new Array(formList.length).fill(0);
+
+匿名函数async使用方法 //这样写即可
+this.$refs.f.form_validate(async(res,msg)=>{
+    await this.$http(this.$url.task_re,'PUT',forms); 
+})
+
+await是可以用在this前面的
+async search(v){        
+    this.name=v;    
+    await this.getList({}});    
+}

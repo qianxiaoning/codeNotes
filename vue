@@ -1699,3 +1699,6 @@ form_validate: function(cb) {//传入闭包
     ... //处理
     cb(result, msg);//向闭包传入result和msg
 }
+
+vuex中
+...mapGetters等等辅助函数中路径 不能使用变量，得写死
