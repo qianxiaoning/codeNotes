@@ -1562,7 +1562,7 @@ computed会侦听函数里所有数据的变化
 父简写:<text-document :title.sync="doc.title"></text-document>
 
 vue生命周期
-每次进入page
+只要url变化，每次进入page
 会把page组件 和 page组件中的子组件依次触发
 beforeCreate,created,beforeMount,mounted
 

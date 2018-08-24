@@ -61,8 +61,7 @@ $ git config --global user.email "email@example.com"
    （如是远端新增的分支则$ git fetch刷新一下，才能看到远端新增的分支）
    从远端拉dev到本地
    $ git checkout -b dev origin/dev
-   建立本地dev和远程dev的关联，方便以后pull
-   $ git branch --set-upstream dev origin/dev(--set-upstream被废弃)
+   建立本地dev和远程dev的关联，方便以后pull   
    新语法：
    git branch --track dev origin/dev
    git branch --set-upstream-to=origin/dev dev
@@ -200,8 +199,8 @@ $ git config --global user.email "email@example.com"
  拉取
   $ git pull
   $ git pull origin <name>
- pull之前建立本地分支和远程分支的关联
-  $ git branch --set-upstream dev origin/dev
+ pull之前建立本地分支和远程分支的关联  
+  git branch --set-upstream-to=origin/dev dev
   $ git branch --track dev origin/dev
  创建并切换分支
   创建$ git branch dev
@@ -609,6 +608,8 @@ git pull remoteA dev:master
 同名的话
 git pull remoteA dev
 
+git pull之前建立关联
+git branch --set-upstream-to=origin/dev dev
 
 
 

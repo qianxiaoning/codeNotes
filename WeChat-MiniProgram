@@ -199,3 +199,8 @@ methods:{
     this.tabIndex = e.target.current;      
   }
 }
+
+wx.login()
+小程序的wx.login()是建立微信号用户相关程序，获得用户唯一标识openid 和 会话密钥session_key。是一个手机一个微信号为一个账户
+
+而公司内部系统是根据固定角色账户分配的，和哪个微信号登录无关，只要有角色账户密码就能登，所以不需调wx.login()接口

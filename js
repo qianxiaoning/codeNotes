@@ -218,7 +218,14 @@ let { a, b } = o;
 let { a, ...b1 } = o; 
 b1//为{b: 12, c: "bar"}
 
-Object.keys 只对最外层
+Obejct.keys 只对最外层
+一、Obejct.keys把对象转为key值数组，让对象可以和数组一样用forEach循环。
+Obejct.keys(Obj).forEach(key=>{
+    console.log(key+' '+obj[key]);
+})
+二、拥有数组特性，比如数组的length长度。
+判断时，Obejct.keys(Obj).length!=0;//判断对象为不为空
+
 返回一个所有元素为字符串的数组，其元素来自于从给定的object上面可直接枚举的属性。这些属性的顺序与手动遍历该对象属性时的一致
 // simple array
 var arr = ['a', 'b', 'c'];
