@@ -212,3 +212,6 @@ wx.login()
 不能用在scroll-view、swiper中，会无法滚动
 得放在没有overflow属性的view里
 原生组件只能在page标签当中滚动，其他标签都不动
+
+cover-view可覆盖在原生组件上，（需要嵌套在原生组件中使用才生效？）可在cover-view中使用button
+cover-image嵌套在cover-view里

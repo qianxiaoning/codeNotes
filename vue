@@ -1585,6 +1585,8 @@ $event传入事件对象
 设置props对象默认值办法
 在子computed中const设置props对象的默认值，并Object.assign合并默认值和props值，返回默认值，子组件模板中用computed就行了
 
+mpvue别在created和beforeCreate中写逻辑，会出错
+
 mpvue一套代码多端使用
 对于onShow等生命周期，可以判断环境在created再加一遍
 对于微信api问题，可以用wx.xxx再写一遍覆盖
@@ -1702,3 +1704,17 @@ form_validate: function(cb) {//传入闭包
 
 vuex中
 ...mapGetters等等辅助函数中路径 不能使用变量，得写死
+
+当值传入子组件时
+mounted只走一遍，不能对后期真实数据进行处理
+watch虽然可以监听更新的数据，但是像这种：
+watch:{
+    percent(v){
+        this.percent = v*100;//监测自己改变自己，会造成死循环，导致失败
+    }
+}
+所以正确的办法是用computed
+computed:{
+    percentNew = this.percent = v*100;
+}
+然后在模板中用percentNew，解决问题

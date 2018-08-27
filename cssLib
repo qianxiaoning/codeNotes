@@ -169,16 +169,78 @@ css2.1盒模型中规定
 所以子元素的margin-top会作用于父元素上
 解决办法父元素overflow:auto;//不为visiable即可
 
+裁剪
+clip:rect(0rpx 150rpx 150rpx 75rpx)
+四个数字是距离上右下左的距离
 
+360度 任意扇形
+<div class='wrap'>        
+    <div class="leftCir over">
+        <div class="leftCirInner"></div>
+    </div>
+    <div class="rightCir over">
+        <div class="rightCirInner"></div>
+    </div>        
+</div>
 
+.wrap{width:160rpx;height:160rpx;margin: 10rpx;position: relative;}
+.over{position: absolute;width:50%;height:100%;overflow: hidden;top:0;}
+.leftCir{left:0;}
+.rightCir{right:0;}
+.leftCirInner,.rightCirInner{width:160rpx;height: 100%;position: absolute;top:0;border-radius:50%;background: red;}
 
+0~180度：
+.leftCirInner{left: 0;clip:rect(0 160rpx 160rpx 80rpx);transform: rotate(0deg);}
+.rightCirInner{right: 0;clip:rect(0 80rpx 160rpx 0);transform: rotate(30deg);}
+180~360度：
+.leftCirInner{left: 0;clip:rect(0 160rpx 160rpx 80rpx);transform: rotate(30deg);}
+.rightCirInner{right: 0;clip:rect(0 80rpx 160rpx 0);transform: rotate(180deg);}
 
+360度 任意圆环
+<div class='wrap'>        
+    <div class="leftCir over">
+        <div class="leftCirInner"></div>
+    </div>
+    <div class="rightCir over">
+        <div class="rightCirInner"></div>
+    </div>        
+</div>
 
+.wrap{width:160rpx;height:160rpx;margin: 10rpx;position: relative;}
+.over{position: absolute;width:50%;height:100%;overflow: hidden;top:0;}
+.leftCir{left:0;}
+.rightCir{right:0;}
+.leftCirInner,.rightCirInner{width:160rpx;height:100%;position: absolute;top:0;border-radius:50%;border:20rpx solid transparent;transform: rotate(-135deg);}
 
+0~180度：（为了兼容iphone的双倍屏，rotate为奇数的情况，把0改为2rpx）
+.leftCirInner{left: 2rpx;border-bottom:20rpx solid red;border-left:20rpx solid red;}
+.rightCirInner{right: 2rpx;border-top:20rpx solid red;border-right:20rpx solid red;transform: rotate(-105deg);}
+180度：
+.leftCirInner{left: 2rpx;border-bottom:20rpx solid red;border-left:20rpx solid red;}
+.rightCirInner{right: 2rpx;border-top:20rpx solid red;border-right:20rpx solid red;transform: rotate(45deg);}
+180~360度：
+.leftCirInner{left: 2rpx;border-bottom:20rpx solid red;border-left:20rpx solid red;transform: rotate(-105deg);}
+.rightCirInner{right: 2rpx;border-top:20rpx solid red;border-right:20rpx solid red;transform: rotate(45deg);}
+360度：
+.leftCirInner{left: 2rpx;border-bottom:20rpx solid red;border-left:20rpx solid red;transform: rotate(45deg);}
+.rightCirInner{right: 2rpx;border-top:20rpx solid red;border-right:20rpx solid red;transform: rotate(45deg);}
 
-
-
-
-
-
-
+圆环显示进度效果
+<div class='wrap'>        
+    <div class="leftCir over">
+        <div class="leftCirInner"></div>
+    </div>
+    <div class="rightCir over">
+        <div class="rightCirInner"></div>
+    </div>     
+    <!--底层  -->
+    <div class='floor'>12%</div>
+</div>
+.wrap{width:160rpx;height:160rpx;margin: 10rpx;position: relative;}
+.over{position: absolute;z-index: 20;;width:50%;height:100%;overflow: hidden;top:0;}
+.leftCir{left:0;}
+.rightCir{right:0;}
+.leftCirInner,.rightCirInner{width:160rpx;height:100%;position: absolute;top:0;border-radius:50%;border:20rpx solid transparent;transform: rotate(-135deg);}
+.leftCirInner{left: 2rpx;border-bottom:20rpx solid #F56C6C;border-left:20rpx solid #F56C6C;}
+.rightCirInner{right: 2rpx;border-top:20rpx solid #F56C6C;border-right:20rpx solid #F56C6C;transform: rotate(-105deg);}
+.floor{position: absolute;width:100%;height:100%;z-index: 10;border-radius: 50%;border:20rpx solid #e0e0e0;text-align: center;line-height: 120rpx;}
