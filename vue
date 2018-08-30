@@ -1715,6 +1715,43 @@ watch:{
 }
 所以正确的办法是用computed
 computed:{
-    percentNew = this.percent = v*100;
+    percentNew(){
+        this.percent = v*100;
+        return this.percent
+    }
 }
 然后在模板中用percentNew，解决问题
+其实用watch也行，但是得声明一个新的data属性
+data(){
+    return{
+        percent:0,
+        percentNew:0
+    }
+}
+watch:{
+    percent(v){
+        this.percentNew = v*100;//然后用percentNew
+    }
+}
+
+computed中不能执行异步，虽然computed也能获得异步的返回值，但是结束后不会在模板中同步数据
+
+this.$data是data中的所有数据
+
+this.$options返回实例的所有初始化选项export default中所有对象的初始值，
+返回初始data，
+貌似除了事件？
+在选项中包含自定义属性时会有用处
+new Vue({
+  customOption: 'foo',
+  created: function () {
+    console.log(this.$options.customOption) // => 'foo'
+  }
+})
+
+mpvue 在必要的需要数据重置的page调用
+（因为mpvue不做数据重置工作）
+onUnload() {  
+    Object.assign(this.$data, this.$options.data());
+    //离开page时，把data的初始值覆盖data对象，达到数据重置效果    
+}
