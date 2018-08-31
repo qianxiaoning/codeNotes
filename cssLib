@@ -247,5 +247,9 @@ clip:rect(0rpx 150rpx 150rpx 75rpx)
 
 当有全屏遮罩时，虽然某z-index层级比遮罩高，但是没背景颜色也会显示遮罩，至少要加个背景为白色
 
+nth-child和nth-of-type
+nth-child(1)是从父级选第一个子节点，看匹配否
+nth-of-type(1)是从父级选第一个特定子节点
+
 每4个，给特定样式
 p:nth-child(4n){...}
