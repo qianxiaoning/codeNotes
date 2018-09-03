@@ -1681,3 +1681,8 @@ async search(v){
 
 get和delete 参数传递方式相同
 post和put 参数传递方式相同
+
+后端只能接收string，所以http请求可以传数组，对象，数字，字符串都行，但是都要JSON.stringify。一些库帮你做过处理了，内部已经JSON.stringify了
+
+数字1 JSON.stringify是 "1"
+字符串1 JSON.stringify是 ""1"" 不一样
