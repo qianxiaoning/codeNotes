@@ -221,3 +221,5 @@ wx.request请求失败
 
 cover-view可覆盖在原生组件上，（需要嵌套在原生组件中使用才生效？）可在cover-view中使用button
 cover-image嵌套在cover-view里
+
+获取表单值时，e.target.value返回的是字符串，不是数字

@@ -376,6 +376,8 @@ request(
 );
 
 async await
+异步操作用了await，其父元素必需用async，否则会报错
+
 如果在函数中 return 一个直接量，async 会把这个直接量通过 Promise.resolve()封装成 Promise 对象
 如果 async 函数没有返回值，它会返回 Promise.resolve(undefined);
 await只能获取到resolve值，得用其他方法（后文有）获取reject值
@@ -1686,3 +1688,18 @@ post和put 参数传递方式相同
 
 数字1 JSON.stringify是 "1"
 字符串1 JSON.stringify是 ""1"" 不一样
+
+es6 for of循环
+for of可以循环数组，貌似不能循环对象
+for of比forEach优势：可以使用break,continue,return
+for of只能获取item，不能获取index
+for of可以获取map类型的index
+for(let i of check){
+    if(this[i.v]==''||this[i.v]==0){
+        n=i.name;
+        console.log(n);
+        break;
+    };          
+}
+
+用for of循环代替forEach循环数组，比较好
