@@ -23,3 +23,5 @@
   justify-content: center;
   
 iphone是双倍屏，所以单位用奇数的时候可能会有问题，比如多出1px。用偶数即可解决
+
+iphone7？input width height 100%，无法获取

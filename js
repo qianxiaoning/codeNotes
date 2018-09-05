@@ -381,6 +381,13 @@ async await
 如果在函数中 return 一个直接量，async 会把这个直接量通过 Promise.resolve()封装成 Promise 对象
 如果 async 函数没有返回值，它会返回 Promise.resolve(undefined);
 await只能获取到resolve值，得用其他方法（后文有）获取reject值
+取await后面的值，let res = (await this.$http(...)).data; 加括号即可
+
+用了async,await后 如果await没有成功返回，后面的代码都会被阻塞
+比如：
+let res =await this.$http(this.$url.trace_record,'POST',this.formData);
+console.log(1);
+//如果上面await没有正常通过resolve(res.data)，得到res.data值，后面的代码不会执行，比如日志的1
 
 const loginRequest=(url,data)=>{
     return new Promise((resolve,reject)=>{
