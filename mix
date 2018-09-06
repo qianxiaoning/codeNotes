@@ -1,3 +1,7 @@
 Free Download Manager 多路下载，加速神器
 
 postman请求软件
+
+mysql没有嵌套关系，性能好，某些特定查询比mongodb快1~2秒，不能传有嵌套关系的对象和数组，能传字符串、数字、日期等。比如传[]会无法识别，变为null
+
+mongodb有嵌套关系
