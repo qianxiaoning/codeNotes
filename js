@@ -305,7 +305,7 @@ var arr = [1, 9 , 2, 4, 3, 8].sort((a, b) => {
 })
 arr // [1, 2, 3, 4, 8, 9]
 
-Array filter() 方法
+Array filter(i,ind,arr) 方法
 lter() 方法返回一个新的数组，新数组中的元素是通过检查指定数组中符合条件的所有元素。
 var ages = [32, 33, 16, 40];
 function checkAdult(age) {
@@ -537,6 +537,7 @@ arr1.forEach((v,i)=>{
     if(v=='完成'){arr1[i]='f'}
     else if(v=='重置'){arr1[i]='r'}
 });
+forEach第三个参数是自身数组，可以即时操作改变自身
 
 Number.isInteger()
 判断一个值是否为整数，返回布尔值
@@ -1702,11 +1703,11 @@ for of比forEach优势：可以使用break,continue,return
 for of只能获取item，不能获取index
 for of可以获取map类型的index
 for(let i of check){
-    if(this[i.v]==''||this[i.v]==0){
-        n=i.name;
-        console.log(n);
-        break;
-    };          
+  if(this[i.v]==''||this[i.v]==0){
+    n=i.name;
+    console.log(n);
+    break;
+  };          
 }
 
 用for of循环代替forEach循环数组，比较好
