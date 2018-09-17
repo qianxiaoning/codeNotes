@@ -23,3 +23,29 @@ output.filename:webpack bundle 的名称
 output.path:bundle 生成(emit)到哪里
 
 path模块 是一个 Node.js 核心模块，用于操作文件路径
+
+package.json文件里：
+"scripts"编写指令的地方
+"dev": "webpack-dev-server --open"//启用 open 后，dev server 会打开浏览器
+如果没有提供浏览器（如上所示），则将使用您的默认浏览器。要指定不同的浏览器，只需传递其名称
+webpack-dev-server --open 'Google Chrome'
+
+webpack - 建设发展
+webpack -p - 建筑用于生产（缩小）
+webpack --watch - 用于持续增量建筑
+webpack -d - 包括源地图
+webpack --colors - 使建筑产量漂亮
+
+webpack.config.js webpack配置文件
+
+entry入口
+output输出口
+
+多个入口
+entry:{
+    bundle1:'./main1.js',
+    bundle2:'./main2.js'
+},
+output:{
+    filename:'[name].js'//bundle1.js bundle2.js
+}

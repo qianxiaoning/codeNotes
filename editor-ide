@@ -4,3 +4,5 @@ vs code
 在行末写debugger，然后打开浏览器，按f5调试
 
 ctrl+` 打开vscode 终端控制台
+
+ctrl k + s全部保存
