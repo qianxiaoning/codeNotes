@@ -47,5 +47,25 @@ entry:{
     bundle2:'./main2.js'
 },
 output:{
-    filename:'[name].js'//bundle1.js bundle2.js
+    filename:'[name].js'//bundle1.js bundle2.js 也会生成两个
 }
+
+引入模块
+module:{
+    relues:[//数组
+        test://匹配规则 会匹配 resource,Rule.resource的缩写,
+        exclude://排除项
+        use:{
+            loader:''//指定loader
+            options:{
+                presents:['es2015','react']//预设插件来转换es6和react
+            }
+        }
+    ]
+}
+
+CSS-loader
+允许将CSS包含在JS文件中，然后使用CSS-loader预处理CSS文件
+
+url-loader
+可以在JS文件中包含图像

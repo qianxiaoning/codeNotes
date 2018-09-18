@@ -10,3 +10,11 @@ markdown
 ```html
 中间是代码块
 ```
+
+jenkins 用java写的代码发布工具，获取gitlab上的代码，再配置文件，项目中编写start-app.json来发布项目
+
+pm2后台项目用的，前端项目直接在jenkins上Build with Parameters，服务器上配个nginx，就可以访问测试域名了
+
+vue
+vue ui框架 element,iview,vant-ui(有赞)
+mpvue
