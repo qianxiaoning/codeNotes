@@ -69,3 +69,15 @@ CSS-loader
 
 url-loader
 可以在JS文件中包含图像
+
+在js中引入css文件 配webpack
+import './subAccountManage.css';//直接用样式
+或
+import a from './subAccountManage.css';//html中用a.b
+
+在style中引入css文件
+@import './subAccountManage.css';//在前面加@
+
+加了scoped的样式，只对当前页面生效。自己不会影响别人，但是别人写了全局能影响我们
+
+写在外部css文件的再import引入的，会变成全局样式

@@ -1711,3 +1711,4 @@ for(let i of check){
 }
 
 用for of循环代替forEach循环数组，比较好
+
