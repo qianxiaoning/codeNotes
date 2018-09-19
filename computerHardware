@@ -171,3 +171,5 @@ Windows Loader windows激活工具
 missing operating system错误，插着u盘的原因
 
 貌似电脑不需要像手机一样备份。只要重装c盘就行了，其它盘不动。如果需要备份的话就用子羽说的一键ghost工具，或者windows自带的备份工具，或者还原精灵，或pe自带备份工具？
+
+不兼容的内存条插了会蓝屏，比如我core i3 m380的cpu不支持8g，最大支持4g
