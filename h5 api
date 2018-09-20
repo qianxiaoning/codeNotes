@@ -3,6 +3,12 @@ window.localStorage.setItem('a',[1,2,3]);
  window.localStorage存取对象
  window.localStorage.setItem('a',JSON.stringify({a:1}));
 JSON.parse(window.localStorage.getItem('a'));
+清除某项Storage
+localStorage.removeItem(`myCat`);
+清楚所有Storage
+localStorage.clear();
+
+localStorage可以直接点出来？localStorage.xxx来存取
 --------------------------------------------------------------------------------------------------
 不同浏览器的localstorage和cookie都是不同的，独立的。 
 不同域名的localstorage和cookie也是不共通的。

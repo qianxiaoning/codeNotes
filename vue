@@ -1755,3 +1755,6 @@ onUnload() {
     Object.assign(this.$data, this.$options.data());
     //离开page时，把data的初始值覆盖data对象，达到数据重置效果    
 }
+
+ui框架 use全局引用后，
+js调用方法就加this.$，如：this.$toast()
