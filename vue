@@ -1471,6 +1471,7 @@ filters过滤器可以接受过滤的值和传参，且不影响原数据
 this.$set(this.Arr, indexOfArr, newValue)
 改变数组长度
 vm.items.splice(newLength)
+
 添加一个对象属性
 vm.$set(vm.userProfile, 'age', 27)
 添加多个对象属性
@@ -1758,3 +1759,25 @@ onUnload() {
 
 ui框架 use全局引用后，
 js调用方法就加this.$，如：this.$toast()
+
+实战中$nextTick也不能保证所有内部组件都渲染完成再触发？？
+vue中调this.$refs.xxx时
+解决办法setTimeout()
+或者庚哥黑科技
+try(){
+    ...//在这里写也行，不报错
+}catch(e){}
+
+vue-router
+/user/123 这是一个命名路由
+// 命名的路由
+this.$router.push({ name: 'user', params: { userId: 123 }})
+
+路由传参
+// 带查询参数，变成 /register?plan=private
+this.$router.push({ path: 'register', query: { plan: 'private' }})
+
+this.$route.query获取参数
+
+//路由回退
+this.$router.go(-1)

@@ -81,3 +81,5 @@ import a from './subAccountManage.css';//html中用a.b
 加了scoped的样式，只对当前页面生效。自己不会影响别人，但是别人写了全局能影响我们
 
 写在外部css文件的再import引入的，会变成全局样式
+
+在vue.config.js配devServer.proxy可实现跨域调接口
