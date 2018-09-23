@@ -1758,7 +1758,13 @@ onUnload() {
 }
 
 ui框架 use全局引用后，
-js调用方法就加this.$，如：this.$toast()
+有组件调用 和 函数调用
+组件调用 import引入
+import { Toast } from 'vant';
+Toast();
+
+函数调用
+加this.$ 如：this.$toast()
 
 实战中$nextTick也不能保证所有内部组件都渲染完成再触发？？
 vue中调this.$refs.xxx时
@@ -1781,3 +1787,14 @@ this.$route.query获取参数
 
 //路由回退
 this.$router.go(-1)
+
+vue中路由切换前的定时器是不会被销毁的，到了下个页面，定时器仍能正常进行
+
+路由刷新则之前的定时器不能正常进行
+
+页面回退如何传递值：
+1.写在一个页面中，用弹窗或大弹框做内页的展示
+2.存storage并设标志。写两个页面，内页存storage并设标志为true，内页只能返回外页，不能去其他页面。外页判断为true时读storage，并设标志为false。
+3.存storage并结合路由守卫
+4.vue中的全局事件emit加setTimeout延迟发出，因为vue路由切换不销毁其他进程。
+

@@ -4,7 +4,7 @@ window.localStorage.setItem('a',[1,2,3]);
  window.localStorage.setItem('a',JSON.stringify({a:1}));
 JSON.parse(window.localStorage.getItem('a'));
 清除某项Storage
-localStorage.removeItem(`myCat`);
+localStorage.removeItem('myCat');
 清楚所有Storage
 localStorage.clear();
 
@@ -33,3 +33,12 @@ h5 datalist标签
 	<option value="Volvo">
 </datalist>
 datalist标签不仅可以供用户选择，用户还可以自己输入，而且datalist还可以达到模糊匹配的效果，使用很方便。
+
+历史栈
+push加入一个记录
+replace也是加入一个记录，但是会删除当前记录
+history.back()返回页面，会读取之前的缓存，变量值都在，生命周期也都执行
+
+vue中router.go(-1)返回页面，没有缓存，生命周期执行
+
+页面回退是不能传回任何参数的
