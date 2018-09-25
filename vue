@@ -1798,3 +1798,9 @@ vue中路由切换前的定时器是不会被销毁的，到了下个页面，�
 3.存storage并结合路由守卫
 4.vue中的全局事件emit加setTimeout延迟发出，因为vue路由切换不销毁其他进程。
 
+vue对seo不友好，只能看见div id='app'
+可以用服务端渲染
+规模化-服务端渲染
+引入prerender-spa-plugin模块，再改webpack配置
+或者直接用
+Nuxt.js
