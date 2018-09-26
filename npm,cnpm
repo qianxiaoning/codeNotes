@@ -18,3 +18,13 @@ package.json npm的配置文件
 package-lock.json作用
 锁定安装时的包的版本号，并且需要上传到git，以保证其他人在npm install时大家的依赖能保证一致
 package-lock.json 是在 `npm install`时候生成一份文件，用以记录当前状态下实际安装的各个npm package的具体来源和版本号。
+
+想要看一个组件支不支持npm包引入，可以点入它的github官网，看readme里有没有npm引入
+
+貌似npm包引入名，和安装名相同
+如：
+npm i install -S 'animate.css'
+import 'animate.css'
+
+npm i install -S 'axios'
+import axios from 'axios'即可

@@ -1804,3 +1804,7 @@ vue对seo不友好，只能看见div id='app'
 引入prerender-spa-plugin模块，再改webpack配置
 或者直接用
 Nuxt.js
+
+vue中不涉及需要数据同步，或者提交的地方。不一定要data数据层和视图层同步的，觉得直接粗暴的用原生js写就行了
+
+nuxt的入口文件可以看作layouts里的视图模板文件
