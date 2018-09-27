@@ -267,3 +267,101 @@ bg-color bg-img bg-repeat bg-position/bg-size
 transform: translate(-50%, -50%)出现的模糊与抖动问题
 办法transform: translate3d(-50%, -50%, 0) 解决抖动
 最外层高度为偶数 解决模糊
+
+animate.css 常用的css库
+class='animated xxx'
+如要循环执行，加上'infinite'
+
+1.  bounce             弹跳
+2.  flash              闪烁
+3.  pulse              放大，缩小
+4.  rubberBand         放大，缩小，弹簧
+5.  shake              左右晃动
+6.  headShake          左右小幅晃动
+7.  swing              左右扇形摇摆
+8.  tada               放大，左右上下晃动，缩小
+9.  wobble             左右小幅(圆点较远)扇形摇摆
+10. jello              左右左右上下晃动
+
+11. bounceIn           重复放大缩小
+12. bounceInDown       从上到下出现，弹簧
+13. bounceInLeft       从左到右出现，弹簧
+14. bounceInRight      从右到左出现，弹簧
+15. bounceInUp         从下到上出现，弹簧
+16. bounceOut          从常规到小消失，弹簧
+17. bounceOutDown      从常规到小，从下方消失，弹簧
+18. bounceOutLeft      从常规到小，从左方消失，弹簧
+19. bounceOutRight     从常规到小，从右方消失，弹簧
+20. bounceOutUp        从常规到小，从上方消失，弹簧
+
+21. fadeIn             渐现
+22. fadeInDown         渐现，从上到下
+23. fadeInDownBig      渐现，从上到下，滑动距离较长
+24. fadeInLeft         渐现，从左到右
+25. fadeInLeftBig      渐现，从左到右，滑动距离较长
+26. fadeInRight        渐现，从右到左
+27. fadeInRightBig     渐现，从右到左，滑动距离较长
+28. fadeInUp           渐现，从下到上
+29. fadeInUpBig        渐现，从下到上，滑动距离较长
+30. fadeOut            渐隐
+31. fadeOutDown        渐隐，从上到下
+32. fadeOutDownBig     渐隐，从上到下，滑动距离较长
+33. fadeOutLeft        渐隐，从左到右
+34. fadeOutLeftBig     渐隐，从左到右，滑动距离较长
+35. fadeOutRight       渐隐，从右到左
+36. fadeOutRightBig    渐隐，从右到左，滑动距离较长
+37. fadeOutUp          渐隐，从下到上
+38. fadeOutUpBig       渐隐，从下到上，滑动距离较长
+
+39. flip               中心Y轴旋转，放大，缩小
+40. flipInX            元素中心X轴旋转
+41. flipInY            元素中心Y轴旋转
+42. flipOutX           中心X轴旋转，消失
+43. flipOutY           中心Y轴旋转，消失
+
+44. lightSpeedIn       从右到左，平行四边形，左上角突出进入
+45. lightSpeedOut      从左到右，平行四边形，左上角突出进入
+
+46. rotateIn           元素中心顺时针旋转进入
+47. rotateInDownLeft   元素左外长半径顺时针旋转进入
+48. rotateInDownRight  元素右外长半径逆时针旋转进入
+49. rotateInUpLeft     元素左外长半径逆时针旋转进入     
+50. rotateInUpRight    元素右外长半径顺时针旋转进入
+51. rotateOut          元素中心顺时针旋转消失
+52. rotateOutDownLeft  元素左外长半径顺时针旋转消失
+53. rotateOutDownRight 元素右外长半径逆时针旋转消失
+54. rotateOutUpLeft    元素左外长半径逆时针旋转消失
+55. rotateOutUpRight   元素右外长半径顺时针旋转消失
+
+56. hinge              从右上到坐下，顺时针旋转，从上到下消失
+
+57. rollIn             元素左外长半径顺时针旋转，平滑进入
+58. rollOut            元素右外长半径顺时针旋转，平滑进入
+
+59. zoomIn             元素由小变大进入
+60. zoomInDown         元素由小变大，从上方进入
+61. zoomInLeft         元素由小变大，从左方进入
+62. zoomInRight        元素由小变大，从右方进入
+63. zoomInUp           元素由小变大，从下方进入
+64. zoomOut            元素由大变小，消失
+65. zoomOutDown        元素由大变小，从下方消失
+66. zoomOutLeft        元素由大变小，从左方消失
+67. zoomOutRight       元素由大变小，从右方消失
+68. zoomOutUp          元素由大变小，从上方消失
+
+69. slideInDown        元素从上到下，平滑进入
+70. slideInLeft        元素从左到右，平滑进入
+71. slideInRight       元素从右到左，平滑进入
+72. slideInUp          元素从下到上，平滑进入
+73. slideOutDown       元素从上到下，平滑消失
+74. slideOutLeft       元素从右到左，平滑消失
+75. slideOutRight      元素从左到右，平滑消失
+76. slideOutUp         元素从下到上，平滑消失
+
+转自：https://www.jianshu.com/p/75db347da9ba
+
+如果要设置先后执行，在dom上设置
+style="animation-delay:.5s;"
+style="animation-delay:1s;"
+
+做滚动到固定位置出现效果，只需隐藏大块，然后滚动到特定位置让大块出现即可，里面所有的animate.css的效果都会加载

@@ -36,6 +36,8 @@ document.onreadystatechange = function(){
 清除缓存 链接后加时间戳 href += '&time='+ new Data().getTime();
 
 dom属性
+窗口可视高度 (document.documentElement||document.body).clientHeight
+
 div.clientWidth/div.clientHeight 可见区域宽高（不含border）
 div.offsetWidth/div.offsetHeight可见区域宽高（含border）
 div.scrollWidth/div.scrollHeight全宽高（不含border含scroll隐藏部分）
@@ -1017,7 +1019,8 @@ window.top.document.compatMode 可显示浏览器的渲染模式
 --------------------------------------------------------------------
 标准和ie的兼容写法
 var e = e || window.event
-document.documentElement || document.body
+获取scrollTop或offsetTop值时
+document.documentElement||document.body
 window.getComputedStyle(xxx, null) || xxx.currentStyle
 var target = e.target || e.srcElement
 event.stopPropagation(); || event.cancelBubble = true
@@ -1712,3 +1715,26 @@ for(let i of check){
 
 用for of循环代替forEach循环数组，比较好
 
+document.querySelectorAll("");
+和jq的$('')效果一样
+document.querySelectorAll("#demo");
+
+js添加class属性
+dom.className += 'aaa';
+dom.classList.add("aaa");
+
+window事件貌似不能用箭头函数
+因为箭头函数不指向window
+
+操作改变数组
+forEach
+Array.forEach((value,index)=>{
+    value=value+'aaa'
+});
+map 需要return 返回值
+newArray = oldArray.map((value,index)=>{
+    return value+'aaa'
+});
+
+计算机语言中判断时不能连续判断
+如if(1<a<5)是不行的，得分开if(1<a&&a<5)
