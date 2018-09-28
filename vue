@@ -1808,3 +1808,28 @@ Nuxt.js
 vue中不涉及需要数据同步，或者提交的地方。不一定要data数据层和视图层同步的，觉得直接粗暴的用原生js写就行了
 
 nuxt的入口文件可以看作layouts里的视图模板文件
+
+vant-ui里的list组件坑点
+1.van-list组件外层必须高度占满100%。但是van-list组件高度不能100%，必须为真实高度。
+
+如果van-list组件高度没有达到外层包裹层的高度，也就是没有滚动条，它会一直发起请求，直到van-list组件高度大于包裹层的高度加上offset的值。
+
+2.要修改:offset的值，默认的300太大了，设成10触发
+
+3.van-list组件由于是<van-list @load='onLoad'>组件默认页面初始化就会执行位置检查加载。如果不想页面初始化就加载，而是要通过另外的事件触发，就把 :immediate-check='false'值设为false，finished初始值设为true，然后在要执行的事件里把finished改为false。然后调用list实例的check方法主动检查滚动位置，但是要设延迟，因为可能list组件传值有时间间隔
+如：
+setTimeout(()=>{
+    this.$refs.vanList.check();                             
+},10)
+
+在onLoad函数里
+要结束加载的话，设置loading:false;finished:true。
+加载就await ...里面写index++;this.count = res.data.count;this.loading=false;
+if(listArray.length==this.count){
+    this.finished = true
+}
+即可，同官网
+
+sap单页文件
+ssr服务端渲染
+
