@@ -1833,3 +1833,20 @@ if(listArray.length==this.count){
 sap单页文件
 ssr服务端渲染
 
+vue里设置定时器
+在data里设个timer:null
+mounted里
+设个定时器函数
+xxxSetInter(){
+    this.timer = setInterval(()=>{
+        if(...){
+            clearInterval(this.timer);
+            ...
+        }
+    });
+}
+其他调用的函数里
+aaa(){
+    clearInterval(this.timer);
+    this.xxxSetInter();
+}
