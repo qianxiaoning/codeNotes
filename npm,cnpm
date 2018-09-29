@@ -28,3 +28,13 @@ import 'animate.css'
 
 npm i install -S 'axios'
 import axios from 'axios'即可
+
+npm i -S 即 npm i -save     写入dependencies    生产环境
+npm i -D 即 npm i -save-dev 写入devDependencies 开发环境
+
+npm i 会下载两个环境的依赖
+npm install --production 只安装生产环境依赖，不需要调试开发的话
+
+webpack npm run build时打包项目里引用的部分
+
+axios返回的数据在res.data里 套了一层
