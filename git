@@ -611,7 +611,11 @@ git pull remoteA dev
 git pull之前建立关联
 git branch --set-upstream-to=origin/dev dev
 
-
+如果在github上新建仓库先建了文件（如.gitignore）等
+在本地推仓库时会报fatal: refusing to merge unrelated histories
+因为两个仓库有不同的开始点
+用--allow-unrelated-histories 告诉git自己确定远端就是我们设的origin
+git pull --allow-unrelated-histories
 
 
 
