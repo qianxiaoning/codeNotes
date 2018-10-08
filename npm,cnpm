@@ -19,7 +19,9 @@ package-lock.json作用
 锁定安装时的包的版本号，并且需要上传到git，以保证其他人在npm install时大家的依赖能保证一致
 package-lock.json 是在 `npm install`时候生成一份文件，用以记录当前状态下实际安装的各个npm package的具体来源和版本号。
 
-想要看一个组件支不支持npm包引入，可以点入它的github官网，看readme里有没有npm引入
+想要看一个组件支不支持npm包引入，可以点入右侧homepage和repository栏，看它的github官网，看readme里有没有npm引入
+
+通过npm点入右侧homepage和repository栏，看它的官网和主页
 
 貌似npm包引入名，和安装名相同
 如：
@@ -42,3 +44,36 @@ axios返回的数据在res.data里 套了一层
 npm i后面加@，安装指定版本
 如：
 npm install less@2.7.1 -g
+
+npx临时安装包，不污染全局
+
+npm i -D webpack
+npx webpack -v
+npx 会自动查找当前依赖包中的可执行文件，如果找不到，就会去 PATH 里找。如果依然找不到，就会帮你安装
+
+npx http-server 可以一句话帮你开启一个静态服务器
+npx http-server
+
+postcss-px2rem或postcss-pxtorem把px转为rem
+下面一堆代码动态改变根节点字体大小
+// 根节点动态字体大小
+! function (e, t) {
+  function n() {
+    t.body ? t.body.style.fontSize = 12 * o + "px" : t.addEventListener("DOMContentLoaded", n)
+  }
+
+  function d() {
+    var e = i.clientWidth / 10;
+    i.style.fontSize = e + "px"
+  }
+  var i = t.documentElement,
+    o = e.devicePixelRatio || 1;
+  if (n(), d(), e.addEventListener("resize", d), e.addEventListener("pageshow", function (e) {
+      e.persisted && d()
+    }), o >= 2) {
+    var a = t.createElement("body"),
+      s = t.createElement("div");
+    s.style.border = ".5px solid transparent", a.appendChild(s), i.appendChild(a), 1 === s.offsetHeight && i.classList
+      .add("hairlines"), i.removeChild(a)
+  }
+}(window, document);
