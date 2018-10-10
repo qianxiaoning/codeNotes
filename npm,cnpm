@@ -77,3 +77,14 @@ postcss-px2rem或postcss-pxtorem把px转为rem
       .add("hairlines"), i.removeChild(a)
   }
 }(window, document);
+
+npm升级
+npm install npm -g
+
+安装n模块
+npm install -g n --force
+
+升级node.js到最新稳定版本
+打开cmd查看你之前node版本安装的路径，where node
+直接去官网下载与你电脑系统（32位还是64位）对应的最新的mis版本,安装在上述路径中覆盖即可。
+node -v,发现更新到最新版本了。
