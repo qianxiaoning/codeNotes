@@ -8,3 +8,5 @@ ctrl+` 打开vscode 终端控制台
 ctrl k + s全部保存
 
 ctrl+p 搜文件名
+
+文件-首选项-设置-Editor: Word Wrap（控制折行的方式），off改为on即可。

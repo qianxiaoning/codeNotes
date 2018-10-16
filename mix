@@ -19,7 +19,7 @@ jira qa上看测试提的bug
 
 vue
 vue ui框架 
-pc端：element,iview,
+pc端：element
 移动端：vant-ui(有赞)
 服务端框架：nuxt
 

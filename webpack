@@ -83,3 +83,5 @@ import a from './subAccountManage.css';//html中用a.b
 写在外部css文件的再import引入的，会变成全局样式
 
 在vue.config.js配devServer.proxy可实现跨域调接口
+
+webpack编译报错时，会调用缓存版本
