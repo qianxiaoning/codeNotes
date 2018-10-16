@@ -1850,3 +1850,5 @@ aaa(){
     clearInterval(this.timer);
     this.xxxSetInter();
 }
+
+vuex-router-sync一个固定的路由vuex包
