@@ -88,3 +88,14 @@ npm install -g n --force
 打开cmd查看你之前node版本安装的路径，where node
 直接去官网下载与你电脑系统（32位还是64位）对应的最新的mis版本,安装在上述路径中覆盖即可。
 node -v,发现更新到最新版本了。
+
+npm config set loglevel=http
+会看到所有的http请求
+
+发生问题
+npm WARN checkPermissions Missing write access to 
+丢失写入权限，把原有node_modules删掉，重装就行。
+或者用cmd
+
+查看已安装全局模块
+npm ls -g --depth 0

@@ -144,8 +144,18 @@ http状态码
 通过nginx实现所有域请求的跨域，但是不能加token，会导致token验证然后失败
 或者通过服务，配置Access-Control-Allow-Origin: *，对所有域开放
 
+搬瓦工购买(参考flyzy2005)
+xshell连接主机、端口，密码
+在服务器上配置ss
+yum -y install git && git clone https://github.com/Flyzy2005/ss-fly
+	
+ss-fly/ss-fly.sh -i you_password 1024
+成功-服务器ss启动完毕
 
-
+github上安装shadowsock windows版本，设置地址、端口、密码
+开启开机启动、启动系统代理
+一键开启bbr加速
+ss-fly/ss-fly.sh -bbr
 
 
 

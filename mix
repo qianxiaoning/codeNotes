@@ -72,3 +72,5 @@ powerShell可以上下选择
 
 nginx本地代理
 一个系统得配一个nginx，再配一个host文件
+
+appH5混合开发，app中三个不同入口嵌入的h5页面，要分成三个项目给到，不能通过url的改变定位

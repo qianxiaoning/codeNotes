@@ -1852,3 +1852,5 @@ aaa(){
 }
 
 vuex-router-sync一个固定的路由vuex包
+
+vue国际化，$t()，切换语言的
