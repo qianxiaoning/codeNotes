@@ -1,0 +1,3 @@
+process 进程 对象是一个 global （全局变量）
+提供当前 Node.js 进程的有关信息，以及控制当前 Node.js 进程
+所以process.env，可以直接挂载和取值
