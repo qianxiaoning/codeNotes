@@ -1857,3 +1857,9 @@ vue国际化，$t()，切换语言的
 
 axios.defaults.baseURL
 baseURL请求头
+
+[...args]参数格式，扩展参数
+比如$emit(eventName,[…args]))
+{string} eventName
+[...args] //意为可以传,xxx,xxx,xxx 扩展下去
+this.$emit('aa','a1','a2','a3')
