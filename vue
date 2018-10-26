@@ -1863,3 +1863,12 @@ baseURL请求头
 {string} eventName
 [...args] //意为可以传,xxx,xxx,xxx 扩展下去
 this.$emit('aa','a1','a2','a3')
+
+element ui框架中的el-upload
+是不倡导方法公用的，因为el-upload已经是独立封装好的了，
+本身就是一个标签一个组件对应一个方法，方法分开写
+
+对于循环的el-upload，方法中套on-success获取外层方法的index就行
+
+实在不行，似乎el-upload中也是能获取原生事件的，
+直接在on-success方法中取event，能取到

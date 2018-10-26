@@ -157,6 +157,9 @@ github上安装shadowsock windows版本，设置地址、端口、密码
 一键开启bbr加速
 ss-fly/ss-fly.sh -bbr
 
+http请求中token放入中文,就会报请求头内容错误
+
+
 
 
 
