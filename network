@@ -152,7 +152,7 @@ yum -y install git && git clone https://github.com/Flyzy2005/ss-fly
 ss-fly/ss-fly.sh -i you_password 1024
 成功-服务器ss启动完毕
 
-github上安装shadowsock windows版本，设置地址、端口、密码
+github上安装shadowsock windows版本，设置地址、端口1024、密码
 开启开机启动、启动系统代理
 一键开启bbr加速
 ss-fly/ss-fly.sh -bbr
