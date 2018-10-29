@@ -99,3 +99,5 @@ npm WARN checkPermissions Missing write access to
 
 查看已安装全局模块
 npm ls -g --depth 0
+
+npm报错，似乎是从Error:开始看

@@ -1,0 +1,8 @@
+先注册service调接口
+注入进directives组件中
+组件中调注入的service方法
+赋值在scope上，模板中可以直接调用
+
+
+{{xxx}}
+

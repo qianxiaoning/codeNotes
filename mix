@@ -76,3 +76,5 @@ nginx本地代理
 appH5混合开发，app中三个不同入口嵌入的h5页面，要分成三个项目给到，不能通过url的改变定位
 
 chrome的Allow-Control-Allow-Origin.crx插件得关闭重新打开，才能重新生效
+
+powershell中连续命令执行符号|代替&&
