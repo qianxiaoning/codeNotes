@@ -159,3 +159,17 @@ ss-fly/ss-fly.sh -bbr
 
 http请求中token放入中文,就会报请求头内容错误
 
+cors跨域，前端发起request headers。如果浏览器检测到跨域，会自动在请求头中加入一个额外的origin字段，告诉服务器。
+服务器响应response headers，服务器在响应头中加入Access-Control-Allow-Origin:*，即可允许跨域请求。
+前端也可以自己写一个中间件，往response headers中写入允许跨域的域名。
+
+跨域一般是不允许带上cookie的，如果要cors允许带上cookie，得
+在客户端和服务端同时设置相应字段
+客户端：
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+服务端：
+res.setHeader('Access-Control-Allow-Credentials', true);
+表明服务器接受带凭据的请求
+
+repper说配置代理，是把客户端的地址模拟成服务的地址，这样就不存在跨域了。

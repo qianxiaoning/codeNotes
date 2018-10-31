@@ -1872,3 +1872,6 @@ element ui框架中的el-upload
 
 实在不行，似乎el-upload中也是能获取原生事件的，
 直接在on-success方法中取event，能取到
+
+element ui的el-form-item的select组件的校验，
+事件trigger:'change'，是change，而且当提交时才会校验为空

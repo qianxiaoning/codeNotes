@@ -3,6 +3,86 @@
 组件中调注入的service方法
 赋值在scope上，模板中可以直接调用
 
+directives模板里的逻辑直接写在directives里
+ng路由中-html中的逻辑写在对应的controller中
 
 {{xxx}}
 
+$scope.optionlist = [
+                {
+                    title: "",
+                    type: "S",
+                    sort: 0,
+                    picture: "images/camcel.png",
+                    qnrSurveySubjectOptions: [
+                        {
+                            desc: "",
+                            section: "A",
+                            picture: "images/camcel.png",
+                        }
+                    ]
+                }
+            ];
+
+showDetail(id){
+                api.getVoteDetail(id).then((res)=>{
+                             
+                //参数组装
+$scope.getParameters = function () {
+
+directives 433    
+
+showDetail(id){
+                api.getVoteDetail(id).then((res)=>{
+                        if(res.ok){
+                            this.$refs.createVote.resetForm();
+                            this.$refs.createVote.form.title=res.objValue.title;
+                            this.$refs.createVote.form.titleImageUrl=res.objValue.picture;
+                            this.$refs.createVote.form.id=res.objValue.id;
+                            this.$refs.createVote.form.desc=res.objValue.briefDesc;
+
+                            for(let i=0;i<res.objValue.userIds.length;i++){
+                                var obj={};
+                                obj.value=res.objValue.userIds[i];
+                                console.log(res.objValue);
+                                console.log(res.objValue.namesArr);
+                                obj.label=res.objValue.namesArr.split(",")[i];
+                                obj.key=res.objValue.userIds[i];
+                                this.$refs.createVote.form.people.push(res.objValue.userIds[i]);
+                                this.$refs.createVote.options.push(obj);
+                            }
+                            this.$refs.createVote.form.date=new Date(res.objValue.cutTime);
+                            this.$refs.createVote.form.sjts=res.objValue.randomUserCount==0 ? false : true;
+                            this.$refs.createVote.form.sjts_dec=res.objValue.randomUserCount;
+                            this.$refs.createVote.form.optionData=[];
+                            for(let j=0;j<res.objValue.qnrSurveySubject.length;j++){
+                                let obj_ticket={};
+                                obj_ticket.title=res.objValue.qnrSurveySubject[j].title;
+                                obj_ticket.type=res.objValue.qnrSurveySubject[j].type;
+                                obj_ticket.picture=res.objValue.qnrSurveySubject[j].picture;
+                                obj_ticket.qnrSurveySubjectOptions=[];
+                                for(let k=0;k<res.objValue.qnrSurveySubject[j].qnrSurveySubjectOptions.length;k++){
+                                    let obj_option={};
+                                    obj_option.section=res.objValue.qnrSurveySubject[j].qnrSurveySubjectOptions[k].section;
+                                    obj_option.desc=res.objValue.qnrSurveySubject[j].qnrSurveySubjectOptions[k].desc;
+                                    obj_option.picture=res.objValue.qnrSurveySubject[j].qnrSurveySubjectOptions[k].picture;
+                                    obj_ticket.qnrSurveySubjectOptions.push(obj_option);
+                                }
+                                this.$refs.createVote.form.optionData.push(obj_ticket);
+                            }
+                        }
+                })
+                this.dialogVisible=true;
+            },
+
+historyVoteQueryList
+
+historyVoteQueryDetail
+
+questionVoteQueryList
+
+questionVoteQueryDetail
+
+showDetail(id)
+
+baseRefId id
