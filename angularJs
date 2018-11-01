@@ -86,3 +86,9 @@ questionVoteQueryDetail
 showDetail(id)
 
 baseRefId id
+
+草稿2的 userIds为null
+
+http://app-uat.gtcloud.cn/eoop-api/r/activity/main/retrive
+
+activityId

@@ -1738,3 +1738,6 @@ newArray = oldArray.map((value,index)=>{
 
 计算机语言中判断时不能连续判断
 如if(1<a<5)是不行的，得分开if(1<a&&a<5)
+
+js删除对象中某个属性
+delete object.xxx;

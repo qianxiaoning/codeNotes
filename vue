@@ -1770,7 +1770,7 @@ Toast();
 vue中调this.$refs.xxx时
 解决办法setTimeout()
 或者庚哥黑科技
-try(){
+try{
     ...//在这里写也行，不报错
 }catch(e){}
 
@@ -1875,3 +1875,7 @@ element ui框架中的el-upload
 
 element ui的el-form-item的select组件的校验，
 事件trigger:'change'，是change，而且当提交时才会校验为空
+
+element ui el-select中v-model='form.xxx'时，
+如果form.xxx初始值是undefind，后面再次赋值了等于新加属性，
+视图层不更新。
