@@ -43,3 +43,77 @@ h5 ajax以文件流的方式传输form信息 formData
 windows上常用的量尺寸软件 pxcook
 
 animate.css 常用的css库
+
+chrome解决浏览器跨域问题
+老方法：
+1.加 --args --disable-web-security
+关闭chrome，在快捷方式里属性里加 --args --disable-web-security
+48版本后失效
+新方法：
+2.装Allow-Control-Allow-Origin.crx插件
+打开即可跨域
+
+解决后台接口限制跨域访问问题
+配中间层
+
+配nginx反向代理
+http{
+    server{
+        listen  80;#本地域名端口
+        server_name  localhost;#本地域名
+
+        location / {
+            proxy_pass http://localhost:8080; #前端页面地址
+            proxy_redirect default;
+        }
+
+        location /apis { #添加访问目录为/apis的代理配置
+			rewrite  ^/apis/(.*)$ /$1 break;# 监听所有/apis前缀，实则转发后台api接口地址
+			proxy_pass   http://a.cloud.cn/api/; #后台接口地址
+        }        
+    }
+}
+解释：
+location 为本地域名如：localhost:8080
+location /apis就重写为localhost:8080/apis/xxx 实则转发http://a.cloud.cn/api/xxx的接口地址
+
+vue-cli 自带的node中间层转发 实际似乎也是http-proxy-middleware这个包
+config/index.js里
+module.exports = {
+    dev:{
+        proxyTable: {
+            '/api': {                            
+                target: 'http://a.cloud.cn',//接口地址                
+                changeOrigin: true,
+                secure: false,
+                pathRewrite: {
+                    '^/api': ''//将接口地址重写为api
+                }
+            }
+        },
+    }
+}
+axios.defaults.baseURL = '/api';
+//axios.defaults.baseURL = process.env.API_ROOT+'';
+
+webpack自己起 装http-proxy-middleware这个包
+import proxy from 'http-proxy-middleware';
+module.exports = {
+    devServer: {
+		contentBase: path.resolve(__dirname, "dist"),
+		host: "localhost",  // win8 下自启浏览器可能是因为没设置为localhost
+		port: "8091",
+		open: true, // 开启浏览器
+		hot: true,  // 开启热更新
+        disableHostCheck: true,
+        proxy: {
+            '/apis': {
+                target: 'http://a.cloud.cn/api/',//接口地址    
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/apis': ''//将接口地址重写为api
+                }
+            }
+        }
+	}
+}

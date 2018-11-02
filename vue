@@ -214,7 +214,7 @@ export default new Router({
 两种都为不刷新跳转
 官网参考 https://router.vuejs.org/zh-cn/essentials/history-mode.html
 -------------------------------------------------------------------------------------------
-vue中可以通过给标签加ref属性，就可以在js中利用ref去引用它，从而操作该dom元素 （待测）
+vue中可以通过给标签加ref属性，就可以在js中利用ref去引用它，从而操作该dom元素
 <div id="box" ref="mybox">demo</div>
 js中   
 let that = this;  
@@ -1879,3 +1879,17 @@ element ui的el-form-item的select组件的校验，
 element ui el-select中v-model='form.xxx'时，
 如果form.xxx初始值是undefind，后面再次赋值了等于新加属性，
 视图层不更新。
+
+this.$refs和props传值 分析
+1.this.$refs
+获取数据时：
+this.$refs.subComponent.xxx也能取到子组件数据，取值赋值
+this.$refs中子组件传的数据貌似也不是响应式的，只是渲染完毕时的，官方说只是一个应急方案
+且访问了dom，加大了损耗，单纯数据操作不应该访问dom
+获取dom时：
+获取子组件的dom，this.$refs获取的也是父组件中子组件渲染完毕时的那个子组件dom。不是响应式的，不能获取到后面子组件dom的动态生成
+
+总之：
+this.$refs用在dom操作上
+props用在数据传递上
+

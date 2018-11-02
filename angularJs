@@ -89,6 +89,36 @@ baseRefId id
 
 草稿2的 userIds为null
 
-http://app-uat.gtcloud.cn/eoop-api/r/activity/main/retrive
+http://app-uat.gtcloud.cn/eoop-api/r/activity/main/retrive?activityId=
 
-activityId
+http://app-uat.gtcloud.cn/eoop-api/r/survey/main/retriveSurvey?surveyId=a9ddd8cbed884c4e9b1f3424bc233627&userId=9999
+
+http://app-uat.gtcloud.cn/eoop-api/r/survey/main/listUserVoteSurvey?searchKey=&type=create&userId=9999
+
+http://app-uat.gtcloud.cn/eoop-api/r/survey/main/retriveSurvey?surveyId=a9ddd8cbed884c4e9b1f3424bc233627&userId=9999
+
+
+http://app-uat.gtcloud.cn/eoop-api/activity/main/retrive
+
+controler 671
+
+$scope.addItmes = function ($event) {
+                // console.log(4);
+                const item={
+                    title: "",
+                    type: "S",
+                    sort: 0,
+                    picture: "images/camcel.png",
+                    qnrSurveySubjectOptions: [
+                        {
+                            desc: "",
+                            section: "A",
+                            picture: "images/camcel.png",
+                        }
+                    ]
+                };
+                console.log($scope.optionlist);                
+                $scope.optionlist.push(item);
+                console.log($scope.optionlist);
+
+scope.$parent.optionlist[index] = data.objValue;
