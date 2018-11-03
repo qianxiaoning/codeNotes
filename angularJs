@@ -122,3 +122,54 @@ $scope.addItmes = function ($event) {
                 console.log($scope.optionlist);
 
 scope.$parent.optionlist[index] = data.objValue;
+
+getActivityListByType
+
+resetForm() {
+                this.$refs['voteForm'].resetFields();
+                this.options=[];
+                this.activityForm={
+                    title: '',
+                    picture: '',
+                    addressDesc:'',
+                    addressDetail:'',
+                    positionX:'',
+                    positionY:'',
+                    activeDateStart:'',
+                    activeDateEnd:'',
+                    registerCutDate:'',
+                    maxUserCount:'',
+                    userIds:'',
+                    signInType:'',
+                    content:''
+                };
+                this.participants='';
+                this.form={
+                        title: '',
+                        titleImageUrl: '',
+                        id: '',
+                        desc: '',
+                        people: [],
+                        date: '',
+                        sjts: false,
+                        sjts_dec: 0,
+                        optionData: [
+                        {
+                            title: '',
+                            type: 'S',
+                            picture: '',
+                            qnrSurveySubjectOptions: [
+                                {
+                                    section: 'A',
+                                    desc: '',
+                                    picture: '',
+                                },
+                            ]
+                        },
+                    ]
+                };
+            },
+
+            createActivity
+
+            getActivityDetail

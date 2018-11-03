@@ -33,3 +33,11 @@ github似乎屏蔽百度蜘蛛，所以较难收录github page
 参考知乎：https://www.zhihu.com/question/30898326
 网上有：使用Nginx反向代理百度爬虫，对user agent进行伪造 参考https://3gods.com/webmaster/Github-Pages-Baidu-Index-Nginx.html
 通过SAE的免费主机加智能DNS解决的 参考https://blog.csdn.net/xiaoyufu007/article/details/50732955
+
+一个页面一个h1标签 用在网页的标题
+
+h2 段落标题
+
+h3 段落小节标题 和 strong标签差不多
+
+一般小标题用h3就行了，h4~h6反而是告诉搜素引擎这是很不重要的内容，一般不需要用。
