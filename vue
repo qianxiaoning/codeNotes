@@ -1893,3 +1893,13 @@ this.$refs中子组件传的数据貌似也不是响应式的，只是渲染完�
 this.$refs用在dom操作上
 props用在数据传递上
 
+vue-router中定义路由时
+第一级路由前面都要加/
+第二级开始，children里根目录一个重定向redirect:'./level1/level1-1',，后面都不加/，嵌套亦是如此，具体看我github template-elementUi-sass-vue2项目中的路由
+
+但是
+router-link和函数式this.$router.push中的path都必须写全路径'/a/b/c'，不然会跳错。
+或者定义路由时给name值，根据name值跳，:to="{name: 'Trace'}"，就不必写一大堆前缀了。
+
+路由中带:id，就是为了网页刷新，可以id扔可从url上取得，不掉信息
+path : "detail/:id",

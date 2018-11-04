@@ -101,3 +101,6 @@ npm WARN checkPermissions Missing write access to
 npm ls -g --depth 0
 
 npm报错，似乎是从Error:开始看
+
+貌似在u盘上没法npm install，
+电脑上硬盘格式是NTFS的，u盘是FAT32的
