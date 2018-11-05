@@ -182,3 +182,83 @@ vue2-elementui-sass
 template-elementUi-sass-vue2
 
 
+"scripts": {
+    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "start": "npm run dev",
+    "build": "node build/build.js"
+  },
+
+
+
+methods:{
+        async login(){            
+            const timestamp = Date.now();
+            const md5_sign = jsmd5(`loginName=${this.loginName}&timestamp=${timestamp}&secret=Qazwsx1234`);
+
+            let loginUrl = `${this.$urls.login}?loginName=${this.loginName}&timestamp=${timestamp}&sign=${md5_sign}`;
+            // console.log(loginUrl)
+            
+            const res = await this.$http.post(loginUrl);
+            console.log(res);
+            this.$router.push({
+                path: '/main'
+            });
+        }
+    }  
+
+
+
+
+const host_dev = '/eoop-api';//开发以'/'本地localhost发起
+const host_prod = 'http://app-uat.gtcloud.cn/eoop-api';
+// 根据 process.env.NODE_ENV 判断 开发或生产接口地址
+const host = process.env.NODE_ENV == 'development' ? host_dev : host_prod; 
+
+// 后台各个服务地址头
+// const hostV1 = host + '/v1';
+// const hostV2 = host + '/v2';
+// const hostV3 = host + '/v3';
+// const hostV4 = host + '/v4';  
+
+const urls = {
+    login:host+'/r/sys/rest/login4OtherSystem',
+}
+
+export default urls;
+
+
+
+<template>
+    <div class='login_wrap'>
+        login
+        <button @click='login'>登录</button>
+    </div>
+</template>
+<script>
+import jsmd5 from 'js-md5'
+export default {
+    data(){
+        return{
+            loginName:'test01'
+        }
+    },
+    methods:{
+        async login(){            
+            const timestamp = Date.now();
+            const md5_sign = jsmd5(`loginName=${this.loginName}&timestamp=${timestamp}&secret=Qazwsx1234`);
+
+            let loginUrl = `${this.$urls.login}?loginName=${this.loginName}&timestamp=${timestamp}&sign=${md5_sign}`;
+            // console.log(loginUrl)
+            
+            const res = await this.$http.post(loginUrl);
+            console.log(res);
+            this.$router.push({
+                path: '/main'
+            });
+        }
+    }
+}
+</script>
+<style lang="scss" scoped>
+
+</style>
