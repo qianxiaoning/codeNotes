@@ -1906,3 +1906,40 @@ path : "detail/:id",
 
 filters过滤器 第一个参数是message，arg1为第二个参数
 {{ message | filterA('arg1', arg2) }}
+
+slot具名插槽
+父组件div slot='xxx'向子组件slot name='xxx'插入dom
+
+slot-scope作用域插槽
+父组件div slot='xxx' slot-scope="user" 下面可以用user.data可以取到子组件传过来的['a','b','c']
+子组件slot name='xxx' :data="['a','b','c']"
+总结：
+意思是slot-scope可以使父组件拿到其中一个子组件的dom数据
+
+不用slot-scope，渲染出来的dom都是一样的。取到父组件再渲染，可以在父组件定义不同的样式
+
+官方文档是父组件todos传入，子组件再todo对象传回父组件，父组件通过 slot-scope="slotProps"，传回的todo会自动绑定到slotProps对象中
+<template slot-scope="slotProps">
+    <!-- 为待办项自定义一个模板，-->
+    <!-- 通过 `slotProps` 定制每个待办项。-->
+    <span v-if="slotProps.todo.isComplete">✓</span>
+    {{ slotProps.todo.text }}
+  </template>
+
+或者用es6解构写法取 slot-scope  下面的属性
+如：
+<template slot-scope="{ todo }">//直接取到slot-scope下面的todo属性
+    <span v-if="todo.isComplete">✓</span>
+    {{ todo.text }}
+  </template>
+
+总结slot-scope，可以使父组件中 子组件的插槽中返回子组件的数据
+
+关于vue slot 的多级传递使用 参考
+https://blog.csdn.net/xuxu_qkz/article/details/81115022
+
+在vue子组件上绑定原生事件.native 如@click.native
+
+router-view组件也可以接收自定义方法
+如：
+<router-view @a='a'/>
