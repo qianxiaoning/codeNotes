@@ -1943,3 +1943,16 @@ https://blog.csdn.net/xuxu_qkz/article/details/81115022
 router-view组件也可以接收自定义方法
 如：
 <router-view @a='a'/>
+
+Vue.mixin()全局混用 使用出现问题？，有路由嵌套的组件，我怀疑会递归循环很多次，导致全局混入的内容被调很多遍？
+每次切换路由，都会执行很多遍
+
+暂时只想到一个个引入，不知道全局混入如何使用不会重复调很多次？
+
+在mixin.js中比如写了async mounted调用异步，组件里mounted没写async，是能正常合并的，不会报错。
+
+
+
+
+
+

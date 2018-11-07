@@ -6,259 +6,526 @@
 directives模板里的逻辑直接写在directives里
 ng路由中-html中的逻辑写在对应的controller中
 
-{{xxx}}
-
-$scope.optionlist = [
-                {
-                    title: "",
-                    type: "S",
-                    sort: 0,
-                    picture: "images/camcel.png",
-                    qnrSurveySubjectOptions: [
-                        {
-                            desc: "",
-                            section: "A",
-                            picture: "images/camcel.png",
-                        }
-                    ]
-                }
-            ];
-
-showDetail(id){
-                api.getVoteDetail(id).then((res)=>{
-                             
-                //参数组装
-$scope.getParameters = function () {
-
-directives 433    
-
-showDetail(id){
-                api.getVoteDetail(id).then((res)=>{
-                        if(res.ok){
-                            this.$refs.createVote.resetForm();
-                            this.$refs.createVote.form.title=res.objValue.title;
-                            this.$refs.createVote.form.titleImageUrl=res.objValue.picture;
-                            this.$refs.createVote.form.id=res.objValue.id;
-                            this.$refs.createVote.form.desc=res.objValue.briefDesc;
-
-                            for(let i=0;i<res.objValue.userIds.length;i++){
-                                var obj={};
-                                obj.value=res.objValue.userIds[i];
-                                console.log(res.objValue);
-                                console.log(res.objValue.namesArr);
-                                obj.label=res.objValue.namesArr.split(",")[i];
-                                obj.key=res.objValue.userIds[i];
-                                this.$refs.createVote.form.people.push(res.objValue.userIds[i]);
-                                this.$refs.createVote.options.push(obj);
-                            }
-                            this.$refs.createVote.form.date=new Date(res.objValue.cutTime);
-                            this.$refs.createVote.form.sjts=res.objValue.randomUserCount==0 ? false : true;
-                            this.$refs.createVote.form.sjts_dec=res.objValue.randomUserCount;
-                            this.$refs.createVote.form.optionData=[];
-                            for(let j=0;j<res.objValue.qnrSurveySubject.length;j++){
-                                let obj_ticket={};
-                                obj_ticket.title=res.objValue.qnrSurveySubject[j].title;
-                                obj_ticket.type=res.objValue.qnrSurveySubject[j].type;
-                                obj_ticket.picture=res.objValue.qnrSurveySubject[j].picture;
-                                obj_ticket.qnrSurveySubjectOptions=[];
-                                for(let k=0;k<res.objValue.qnrSurveySubject[j].qnrSurveySubjectOptions.length;k++){
-                                    let obj_option={};
-                                    obj_option.section=res.objValue.qnrSurveySubject[j].qnrSurveySubjectOptions[k].section;
-                                    obj_option.desc=res.objValue.qnrSurveySubject[j].qnrSurveySubjectOptions[k].desc;
-                                    obj_option.picture=res.objValue.qnrSurveySubject[j].qnrSurveySubjectOptions[k].picture;
-                                    obj_ticket.qnrSurveySubjectOptions.push(obj_option);
-                                }
-                                this.$refs.createVote.form.optionData.push(obj_ticket);
-                            }
-                        }
-                })
-                this.dialogVisible=true;
-            },
-
-historyVoteQueryList
-
-historyVoteQueryDetail
-
-questionVoteQueryList
-
-questionVoteQueryDetail
-
-showDetail(id)
-
-baseRefId id
-
-草稿2的 userIds为null
-
-http://app-uat.gtcloud.cn/eoop-api/r/activity/main/retrive?activityId=
-
-http://app-uat.gtcloud.cn/eoop-api/r/survey/main/retriveSurvey?surveyId=a9ddd8cbed884c4e9b1f3424bc233627&userId=9999
-
-http://app-uat.gtcloud.cn/eoop-api/r/survey/main/listUserVoteSurvey?searchKey=&type=create&userId=9999
-
-http://app-uat.gtcloud.cn/eoop-api/r/survey/main/retriveSurvey?surveyId=a9ddd8cbed884c4e9b1f3424bc233627&userId=9999
-
-
-http://app-uat.gtcloud.cn/eoop-api/activity/main/retrive
-
-controler 671
-
-$scope.addItmes = function ($event) {
-                // console.log(4);
-                const item={
-                    title: "",
-                    type: "S",
-                    sort: 0,
-                    picture: "images/camcel.png",
-                    qnrSurveySubjectOptions: [
-                        {
-                            desc: "",
-                            section: "A",
-                            picture: "images/camcel.png",
-                        }
-                    ]
-                };
-                console.log($scope.optionlist);                
-                $scope.optionlist.push(item);
-                console.log($scope.optionlist);
-
-scope.$parent.optionlist[index] = data.objValue;
-
-getActivityListByType
-
-resetForm() {
-                this.$refs['voteForm'].resetFields();
-                this.options=[];
-                this.activityForm={
-                    title: '',
-                    picture: '',
-                    addressDesc:'',
-                    addressDetail:'',
-                    positionX:'',
-                    positionY:'',
-                    activeDateStart:'',
-                    activeDateEnd:'',
-                    registerCutDate:'',
-                    maxUserCount:'',
-                    userIds:'',
-                    signInType:'',
-                    content:''
-                };
-                this.participants='';
-                this.form={
-                        title: '',
-                        titleImageUrl: '',
-                        id: '',
-                        desc: '',
-                        people: [],
-                        date: '',
-                        sjts: false,
-                        sjts_dec: 0,
-                        optionData: [
-                        {
-                            title: '',
-                            type: 'S',
-                            picture: '',
-                            qnrSurveySubjectOptions: [
-                                {
-                                    section: 'A',
-                                    desc: '',
-                                    picture: '',
-                                },
-                            ]
-                        },
-                    ]
-                };
-            },
-
-            createActivity
-
-            getActivityDetail
-
-vue2-elementui-sass
-
-
-
-
-template-elementUi-sass-vue2
-
-
-"scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "start": "npm run dev",
-    "build": "node build/build.js"
-  },
-
-
-
-methods:{
-        async login(){            
-            const timestamp = Date.now();
-            const md5_sign = jsmd5(`loginName=${this.loginName}&timestamp=${timestamp}&secret=Qazwsx1234`);
-
-            let loginUrl = `${this.$urls.login}?loginName=${this.loginName}&timestamp=${timestamp}&sign=${md5_sign}`;
-            // console.log(loginUrl)
-            
-            const res = await this.$http.post(loginUrl);
-            console.log(res);
-            this.$router.push({
-                path: '/main'
-            });
+============IT事项接口============
+获取事项分类
+GET
+/r/it/report/getCategory
+返回：
+{
+  "value": null,
+  "objValue": [
+    {
+      "id": "e81c23845531400083374603b58125e8",
+      "name": "系统问题",
+      "secondCategoryList": [
+        {
+          "id": "f6c53a04409f45b89f6593c813813fcb",
+          "name": "上海"
+        },
+        {
+          "id": "b87a542c253a401b962d91f61d4a1e5a",
+          "name": "杭州"
+        },
+        {
+          "id": "18eba2a40b65450f8bdd4b45df52f49a",
+          "name": "武汉"
         }
-    }  
-
-
-
-
-const host_dev = '/eoop-api';//开发以'/'本地localhost发起
-const host_prod = 'http://app-uat.gtcloud.cn/eoop-api';
-// 根据 process.env.NODE_ENV 判断 开发或生产接口地址
-const host = process.env.NODE_ENV == 'development' ? host_dev : host_prod; 
-
-// 后台各个服务地址头
-// const hostV1 = host + '/v1';
-// const hostV2 = host + '/v2';
-// const hostV3 = host + '/v3';
-// const hostV4 = host + '/v4';  
-
-const urls = {
-    login:host+'/r/sys/rest/login4OtherSystem',
-}
-
-export default urls;
-
-
-
-<template>
-    <div class='login_wrap'>
-        login
-        <button @click='login'>登录</button>
-    </div>
-</template>
-<script>
-import jsmd5 from 'js-md5'
-export default {
-    data(){
-        return{
-            loginName:'test01'
-        }
+      ]
     },
-    methods:{
-        async login(){            
-            const timestamp = Date.now();
-            const md5_sign = jsmd5(`loginName=${this.loginName}&timestamp=${timestamp}&secret=Qazwsx1234`);
-
-            let loginUrl = `${this.$urls.login}?loginName=${this.loginName}&timestamp=${timestamp}&sign=${md5_sign}`;
-            // console.log(loginUrl)
-            
-            const res = await this.$http.post(loginUrl);
-            console.log(res);
-            this.$router.push({
-                path: '/main'
-            });
+    {
+      "id": "436d08c881444e529a2562cc379293a6",
+      "name": "硬件报修",
+      "secondCategoryList": [
+        {
+          "id": "66b80173545842aca4eff9bc9f25d3bf",
+          "name": "上海"
         }
+      ]
     }
+  ],
+  "ok": true
 }
-</script>
-<style lang="scss" scoped>
 
-</style>
+获取事项分类
+GET
+/r/it/report/getStatus
+返回：
+{
+  "value": null,
+  "objValue": [
+    {
+      "id": "n_new",
+      "name": "待处理"
+    },
+    {
+      "id": "y_solved",
+      "name": "已处理"
+    },
+    {
+      "id": "n_unsolved",
+      "name": "未解决"
+    },
+    {
+      "id": "y_close",
+      "name": "已办结"
+    }
+  ],
+  "ok": true
+}
+
+获取我的事项列表（门户）
+/r/it/report/getMyReportPage
+GET
+参数:
+pageNo
+pageSize
+secondCategoryId
+title
+status
+返回：
+{
+  "value": null,
+  "objValue": {
+    "pageNo": 1,
+    "pageSize": 30,
+    "count": 4,
+    "list": [
+      {
+        "id": "e87072e690ea486e8e573545a61bf740",
+        "categoryId": "e81c23845531400083374603b58125e8",
+        "secondCategoryId": "f6c53a04409f45b89f6593c813813fcb",
+        "title": "电脑黑屏2",
+        "description": "电脑黑屏2",
+        "status": "n_new",
+        "responseDate": null,
+        "updateDate": "2018-10-22 17:28:12",
+        "attachmentList": null,
+        "handleProcessList": null
+      },
+      {
+        "id": "f9c91c11ba2a48feb1280c520532bcfa",
+        "categoryId": "e81c23845531400083374603b58125e8",
+        "secondCategoryId": "f6c53a04409f45b89f6593c813813fcb",
+        "title": "电脑黑屏1",
+        "description": "电脑黑屏1",
+        "status": "n_new",
+        "responseDate": null,
+        "updateDate": "2018-10-22 17:27:47",
+        "attachmentList": null,
+        "handleProcessList": null
+      },
+      {
+        "id": "dcb7b1f4cf35428bae7844f99e26d51e",
+        "categoryId": "e81c23845531400083374603b58125e8",
+        "secondCategoryId": "f6c53a04409f45b89f6593c813813fcb",
+        "title": "电脑黑屏",
+        "description": "电脑黑屏",
+        "status": "n_unsolved",
+        "responseDate": "2018-10-22 15:49:15",
+        "updateDate": "2018-10-22 15:54:55",
+        "attachmentList": null,
+        "handleProcessList": null
+      },
+      {
+        "id": "c5f0c97d50ec4da399621153bf42ecb3",
+        "categoryId": "e81c23845531400083374603b58125e8",
+        "secondCategoryId": "f6c53a04409f45b89f6593c813813fcb",
+        "title": "电脑炸了",
+        "description": "电脑炸了",
+        "status": "y_close",
+        "responseDate": null,
+        "updateDate": "2018-10-22 11:26:40",
+        "attachmentList": null,
+        "handleProcessList": null
+      }
+    ],
+    "totalPageNum": 1
+  },
+  "ok": true
+}
+
+获取我的事项列表（APP）
+/r/it/report/getMyReportList
+GET
+参数:
+pageSize
+title
+status
+updateDate（最后一条记录的修改时间）
+返回：
+{
+  "value": null,
+  "objValue": [
+    {
+      "id": "e87072e690ea486e8e573545a61bf740",
+      "categoryId": "e81c23845531400083374603b58125e8",
+      "secondCategoryId": "f6c53a04409f45b89f6593c813813fcb",
+      "title": "电脑黑屏2",
+      "description": "电脑黑屏2",
+      "status": "n_new",
+      "responseDate": null,
+      "updateDate": "2018-10-22 17:28:12",
+      "attachmentList": null,
+      "handleProcessList": null
+    },
+    {
+      "id": "f9c91c11ba2a48feb1280c520532bcfa",
+      "categoryId": "e81c23845531400083374603b58125e8",
+      "secondCategoryId": "f6c53a04409f45b89f6593c813813fcb",
+      "title": "电脑黑屏1",
+      "description": "电脑黑屏1",
+      "status": "n_new",
+      "responseDate": null,
+      "updateDate": "2018-10-22 17:27:47",
+      "attachmentList": null,
+      "handleProcessList": null
+    },
+    {
+      "id": "dcb7b1f4cf35428bae7844f99e26d51e",
+      "categoryId": "e81c23845531400083374603b58125e8",
+      "secondCategoryId": "f6c53a04409f45b89f6593c813813fcb",
+      "title": "电脑黑屏",
+      "description": "电脑黑屏",
+      "status": "n_unsolved",
+      "responseDate": "2018-10-22 15:49:15",
+      "updateDate": "2018-10-22 15:54:55",
+      "attachmentList": null,
+      "handleProcessList": null
+    },
+    {
+      "id": "c5f0c97d50ec4da399621153bf42ecb3",
+      "categoryId": "e81c23845531400083374603b58125e8",
+      "secondCategoryId": "f6c53a04409f45b89f6593c813813fcb",
+      "title": "电脑炸了",
+      "description": "电脑炸了",
+      "status": "y_close",
+      "responseDate": null,
+      "updateDate": "2018-10-22 11:26:40",
+      "attachmentList": null,
+      "handleProcessList": null
+    }
+  ],
+  "ok": true
+}
+
+获取事项
+/r/it/report/getReport?id=c5f0c97d50ec4da399621153bf42ecb3
+GET
+参数:
+id
+返回：
+{
+  "value": null,
+  "objValue": {
+    "id": "dcb7b1f4cf35428bae7844f99e26d51e",
+    "categoryId": "e81c23845531400083374603b58125e8",
+    "secondCategoryId": "f6c53a04409f45b89f6593c813813fcb",
+    "title": "电脑黑屏",
+    "description": "电脑黑屏",
+    "status": "n_unsolved",
+    "responseDate": "2018-10-22 15:49:15",
+    "updateDate": "2018-10-22 11:26:40",
+    "attachmentList": null,
+    "handleProcessList": [
+      {
+        "id": "f2ec7252e06c4065bbc8f45df2a9a490",
+        "userId": "9999",
+        "userName": "测试1",
+        "mobile": "13315258321",
+        "reportStatus": "n_unsolved",
+        "answer": "未解决",
+        "createDate": "2018-10-22 15:54:55",
+        "attachmentList": null
+      },
+      {
+        "id": "8e6221b7a9624b2ca54c526e9a81bcb8",
+        "userId": "11000843",
+        "userName": "章红星",
+        "mobile": "13616803686",
+        "reportStatus": "y_solved",
+        "answer": "换台电脑",
+        "createDate": "2018-10-22 15:49:15",
+        "attachmentList": [
+          {
+            "id": "551d2c103c864de396d3bc4b2f5f791a",
+            "name": "7c2cc857-a8f0-481e-9971-69aa063c1ebc.jpg",
+            "url": "http://app-uat.gtcloud.cn:80/cmsContent//26/306/0694c8da181c6083ee1c94a3bffd1848/0694c8da181c6083ee1c94a3bffd1848.jpg"
+          }
+        ]
+      }
+    ]
+  },
+  "ok": true
+}
+
+保存事项
+/r/it/report/saveReport
+POST
+参数；
+{
+    "categoryId":"e81c23845531400083374603b58125e8",
+    "secondCategoryId":"f6c53a04409f45b89f6593c813813fcb",
+    "title":"电脑炸了",
+    "description":"电脑炸了",
+	"attachmentIds":""
+}
+返回：
+{
+  "value": null,
+  "objValue": null,
+  "ok": true
+}
+
+获取待处理或已处理事项列表（门户）
+/r/it/report/getReportPageForHandler?title=电脑&status=n
+GET
+参数:
+pageNo
+pageSize
+title
+status
+返回：
+{
+  "value": null,
+  "objValue": {
+    "pageNo": 1,
+    "pageSize": 30,
+    "count": 1,
+    "list": [
+      {
+        "id": "f9c91c11ba2a48feb1280c520532bcfa",
+        "categoryId": "e81c23845531400083374603b58125e8",
+        "secondCategoryId": "f6c53a04409f45b89f6593c813813fcb",
+        "title": "电脑黑屏1",
+        "description": "电脑黑屏1",
+        "status": "n_new",
+        "responseDate": null,
+        "updateDate": "2018-10-22 11:26:40",
+        "attachmentList": null,
+        "handleProcessList": null
+      }
+    ],
+    "totalPageNum": 1
+  },
+  "ok": true
+}
+
+获取待处理或已处理事项列表（APP）
+/r/it/report/getReportListForHandler?title=电脑&status=n
+GET
+参数:
+pageSize
+title
+status
+updateDate（最后一条记录的修改时间）
+返回：
+{
+  "value": null,
+  "objValue": [
+    {
+      "id": "f9c91c11ba2a48feb1280c520532bcfa",
+      "categoryId": "e81c23845531400083374603b58125e8",
+      "secondCategoryId": "f6c53a04409f45b89f6593c813813fcb",
+      "title": "电脑黑屏1",
+      "description": "电脑黑屏1",
+      "status": "n_new",
+      "responseDate": null,
+      "updateDate": "2018-10-22 11:26:40",
+      "attachmentList": null,
+      "handleProcessList": null
+    }
+  ],
+  "ok": true
+}
+
+解决事项
+/r/it/report/solveReport
+POST
+参数；
+{
+    "reportId":"c5f0c97d50ec4da399621153bf42ecb3",
+    "answer":"换台电脑",
+	"attachmentIds":""
+}
+返回：
+{
+  "value": null,
+  "objValue": null,
+  "ok": true
+}
+
+获取其他事项处理人
+/r/it/report/getOtherReportHandler
+GET
+参数:
+reportId
+返回：
+{
+  "value": null,
+  "objValue": [
+    {
+      "id": "11000843",
+      "name": "章红星"
+    }
+  ],
+  "ok": true
+}
+
+转交事项
+/r/it/report/transferReport
+POST
+参数:
+reportId
+userId
+返回：
+{
+  "value": null,
+  "objValue": null,
+  "ok": true
+}
+
+标记事项未解决
+/r/it/report/setReportUnsolved
+POST
+参数:
+reportId
+返回：
+{
+  "value": null,
+  "objValue": null,
+  "ok": true
+}
+
+标记事项已办结
+/r/it/report/closeReport
+POST
+参数:
+reportId
+返回：
+{
+  "value": null,
+  "objValue": null,
+  "ok": true
+}
+
+上传附件
+/r/it/report/uploadFile
+返回：
+{
+  "value": null,
+  "objValue": [
+    {
+      "id": "1b2e123b9fde4116971e20c53562cbdf",
+      "name": "70bf3ecd-a725-4d8c-bf97-a56631c841d9.jpg",
+      "url": "http://app-uat.gtcloud.cn:80/cmsContent//608/851/982d4e993cbf52e43ba79f0b3052ac00/982d4e993cbf52e43ba79f0b3052ac00.jpg"
+    }
+  ],
+  "ok": true
+}
+
+
+获取常见问题列表（门户）
+/r/it/report/getReportFaqPage?keywords=电脑
+GET
+参数:
+pageNo
+pageSize
+categoryId
+keywords
+返回：
+{
+  "value": null,
+  "objValue": {
+    "pageNo": 1,
+    "pageSize": 30,
+    "count": 2,
+    "list": [
+      {
+        "id": "5bb85baac3194be89e3335279afd07d0",
+        "categoryId": "e81c23845531400083374603b58125e8",
+        "question": "电脑黑屏",
+        "answer": "重启",
+        "updateDate": "2018-10-25 09:32:35",
+        "hasAttachment": true,
+        "attachmentList": null
+      },
+      {
+        "id": "820b784efa8d4eef8b27f7fb2741289c",
+        "categoryId": "e81c23845531400083374603b58125e8",
+        "question": "电脑炸了",
+        "answer": "换个电脑",
+        "updateDate": "2018-10-24 17:32:11",
+        "hasAttachment": true,
+        "attachmentList": null
+      }
+    ],
+    "totalPageNum": 1
+  },
+  "ok": true
+}
+
+
+获取常见问题列表（APP）
+/r/it/report/getReportFaqList?keywords=电脑
+GET
+参数:
+pageSize
+categoryId
+keywords
+updateDate（最后一条记录的修改时间）
+返回：
+{
+  "value": null,
+  "objValue": [
+    {
+      "id": "5bb85baac3194be89e3335279afd07d0",
+      "categoryId": "e81c23845531400083374603b58125e8",
+      "question": "电脑黑屏",
+      "answer": "重启",
+      "updateDate": "2018-10-25 09:32:35",
+      "hasAttachment": true,
+      "attachmentList": null
+    },
+    {
+      "id": "820b784efa8d4eef8b27f7fb2741289c",
+      "categoryId": "e81c23845531400083374603b58125e8",
+      "question": "电脑炸了",
+      "answer": "换个电脑",
+      "updateDate": "2018-10-24 17:32:11",
+      "hasAttachment": true,
+      "attachmentList": null
+    }
+  ],
+  "ok": true
+}
+
+获取常见问题
+/r/it/report/getReportFaq?id=c5f0c97d50ec4da399621153bf42ecb3
+GET
+参数:
+id
+返回：
+{
+  "value": null,
+  "objValue": {
+    "id": "5bb85baac3194be89e3335279afd07d0",
+    "categoryId": "e81c23845531400083374603b58125e8",
+    "question": "电脑黑屏",
+    "answer": "重启",
+    "updateDate": "2018-10-25 09:32:35",
+    "hasAttachment": true,
+    "attachmentList": [
+      {
+        "id": "eefa41c4cb594dcb99bc37c2542e4f1d",
+        "name": "c793cb3d-3baa-4a3a-a743-f09080a94951.jpg",
+        "url": "http://app-uat.gtcloud.cn:80/cmsContent//764/159/bf127d2c2ce0e40c562eadd7194780e3/bf127d2c2ce0e40c562eadd7194780e3.jpg"
+      },
+      {
+        "id": "fb8959c70a624858be42fa7f0cb55cd0",
+        "name": "bbb.png",
+        "url": "http://app-uat.gtcloud.cn:80/cmsContent//908/953/e30ee74facc820f09f50b58cd0461d73/e30ee74facc820f09f50b58cd0461d73.jpg"
+      }
+    ]
+  },
+  "ok": true
+}

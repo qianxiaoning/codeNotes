@@ -222,9 +222,12 @@ b1//为{b: 12, c: "bar"}
 
 Obejct.keys 只对最外层
 一、Obejct.keys把对象转为key值数组，让对象可以和数组一样用forEach循环。
-Obejct.keys(Obj).forEach(key=>{
-    console.log(key+' '+obj[key]);
+let params={xxx};
+Object.keys(params).forEach((key,index)=>{
+    console.log(key+' '+index);//返回键和序号
 })
+不能用以两个不同属性的对象一对一赋值
+
 二、拥有数组特性，比如数组的length长度。
 判断时，Obejct.keys(Obj).length!=0;//判断对象为不为空
 
