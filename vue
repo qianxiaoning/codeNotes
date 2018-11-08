@@ -165,7 +165,8 @@ this.$store.commit('newAuthor','xxx');
 嵌套路由https://router.vuejs.org/zh-cn/essentials/nested-routes.html
 路由带参就是传统的get路径带参
 this.$router.push(`/repayMethod?NowShouldRepaymentAmount=${this.NowShouldRepaymentAmount}`);
-添加动态参数 { path: '/home/:id', component: Home} 其中id是个变量
+添加动态参数 { path: '/home/:id', component: Home} 其中id是个变量 加?可不传
+this.$route.params获取
 -------------------------------------------------------------------------------------------
 //vue的ajax vue-resource和axios
 //不简写
@@ -851,9 +852,9 @@ vue-router
         路由中：                                           
             path:'/apple/:color/detail/:type'//带:的是参数，这种写法必须传参，否则会找不到这个路由页面。
             写法path:'/apple/red/detail/3'以完成参数传递，或
-            <router-link :to="{path:'apple',param:{color:'red'}}">xxx</router-link>以完成参数传递
+            <router-link :to="{path:'apple',params:{color:'red'}}">xxx</router-link>以完成参数传递
         组件中获取：
-            this.$router.params                                           
+            this.$route.params                                           
                                            
     路由嵌套
         routers:[
@@ -1951,8 +1952,13 @@ Vue.mixin()全局混用 使用出现问题？，有路由嵌套的组件，我�
 
 在mixin.js中比如写了async mounted调用异步，组件里mounted没写async，是能正常合并的，不会报错。
 
+从子路由回到父路由是不走created和mounted之流的
 
+vue-cli的npm run build默认执行在根目录
+在config-index.js中assetsPublicPath把/改成./即可，在当前目录执行
+但是初次运行时应该是/，初次运行assetsPublicPath:'./'会报错
 
+当几个详情页是一样时，把整个详情页作为一个组件，分别放在不同内页页面中，直接一个div包住整个详情页组件，这样可以使路由正常运行，详情页又可公用。
 
-
-
+定义路由时可以配置meta字段，
+需要遍历 $route.matched 来检查路由记录中的 meta 字段

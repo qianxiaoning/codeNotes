@@ -409,7 +409,7 @@ reportId
 }
 
 上传附件
-/r/it/report/uploadFile
+/r/it/report/upload
 返回：
 {
   "value": null,
