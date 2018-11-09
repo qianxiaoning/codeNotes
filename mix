@@ -104,3 +104,14 @@ v2ex
 csdn
 脚本之家
 慕课网手记
+
+web native混合开发（原理：native端可以监听我们的js响应，并调用我们挂载在window的方法）
+web和原生约定好，web调window.webView下面的方法（native写好的，比如打开摄像头）。native把获取的url或者base64传给我们时，再调我们挂载到window上的方法，把参数传给我们。
+我们可以在传给我们的方法里看日志，在native的方法里只能他们看日志。
+
+调试方法：
+在我们的方法里写好alert，装好apk，运行看alert信息。
+
+或者装抓包工具fiddle，手机在同一网络下，再设置代理。
+
+或者装winer类似软件，调试。
