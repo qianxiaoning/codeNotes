@@ -1962,3 +1962,41 @@ vue-cli的npm run build默认执行在根目录
 
 定义路由时可以配置meta字段，
 需要遍历 $route.matched 来检查路由记录中的 meta 字段
+
+vue路由守卫
+一、全局守卫 router对象中（前置router.beforeEach解析router.beforeResolve后置router.afterEach）
+router.beforeEach
+const router =  new Router({});
+router.beforeEach((to, from, next) => {});
+router.afterEach((to, from) => {});
+二、路由独享守卫（beforeEnter）
+{
+      path: '/foo',
+      component: Foo,
+      beforeEnter: (to, from, next) => {
+        // ...
+      }
+    }
+三、组件内守卫 在用了router-view的组件中（beforeRouteEnter，beforeRouteUpdate，beforeRouteLeave）
+在export default {}中直接暴露 生命周期钩子
+beforeRouteUpdate (to, from, next) {
+
+}
+beforeRouteEnter (to, from, next) {
+    
+}
+
+参数或查询的改变并不会触发进入/离开的导航守卫。
+1.你可以通过观察 $route 对象来应对这些变化，
+2.或使用 beforeRouteUpdate 的组件内守卫
+
+to/from的值：
+fullPath:"/a2"
+hash:""
+matched:(2) [{…}, {…}]
+meta:{aa: "bbbbb"}
+name:"a2"
+params:{}
+path:"/a2"
+query:{}
+

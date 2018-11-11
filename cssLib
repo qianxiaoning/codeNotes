@@ -372,3 +372,18 @@ calc()是css3的一个新增的功能，用来指定元素的长度，你可以�
 解决办法：
 父元素position:relative;
 子元素position:absolute;width:100%;height:100%;
+
+移动端ui的框架一般都是以375px为基准的，
+而设计图一般以750为基准，
+1.要求不高要么全用px进行开发，
+但是还是要按照设计稿/2的尺寸来写。
+
+2.移动端要适配两种方案：
+第一种，手淘的'lib-flexible'+'postcss-px2rem' 自动设置rem基准值+rem布局
+第二种，'postcss-px-to-viewport' vw布局
+问题：
+ui框架和设计稿的基准不同，开发起来还是得/(设计稿尺寸/375)，不管什么单位。
+一、所以在自己样式里 可以引入sass或less的函数
+帮我们进行单位转换，免去我们自己计算。
+二、vux框架可以在vux-loader里的'style-parser'插件里设置转换px前的数字
+vux-loader里的插件是处理用户代码的，不是处理框架自身代码的。
