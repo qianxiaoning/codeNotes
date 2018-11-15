@@ -122,7 +122,7 @@ function getSum(total, num) {
 document.getElementById("demo").innerHTML = numbers.reduce(getSum);
 
 Date.now()
-获取当前日期和时间
+获取1970至今的毫秒数
 
 js立即执行函数和var声明变量
 除了(function(){})()之外，+-*!function(){}()都能起到立即执行效果，但是这作用只是不污染全局变量
@@ -250,7 +250,7 @@ js map()
 map() 方法返回一个新数组，数组中的元素为原始数组元素调用函数处理后的值。
 array.map(function(currentValue,index,arr), thisValue)
 var numbers = [4, 9, 16, 25];
-numbers.map(Math.sqrt);//[2,3,4,5]
+numbers.map((item)=>{return item*item}));//[2,3,4,5]
 
 普通函数：this 永远指向调用它的对象，new的时候，指向new出来的对象
 箭头函数：this 
@@ -1744,3 +1744,6 @@ newArray = oldArray.map((value,index)=>{
 
 js删除对象中某个属性
 delete object.xxx;
+
+''==0 //为true
+''===0 //为false

@@ -105,4 +105,5 @@ npm报错，似乎是从Error:开始看
 貌似在u盘上没法npm install，
 电脑上硬盘格式是NTFS的，u盘是FAT32的
 
-Fastclick包移除移动端点击延迟
+Fastclick包移除移动端点击延迟。但是有bug，会导致input，textarea等无法获取光标
+

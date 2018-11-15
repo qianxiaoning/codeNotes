@@ -2000,3 +2000,30 @@ params:{}
 path:"/a2"
 query:{}
 
+vue根据状态显示不同class方法
+<span class='status' :status="xxx.status">{{xxx.string}}</span>
+css:
+.status[status='aaa']{
+    color: #000;background: #fff;
+}
+
+h5 native混合开发：
+h5调native，调methods里window下的方法
+native调h5，在mounted里监听定义在window下的方法
+
+避免重复绑定
+this.$event.$off('xxx').$on('xxx',res=>{})
+
+用vux的group组件，一定要设置label-width="4.5em" label-margin-right="2em" label-align="right" 这三个属性
+
+vue引用插件方法，
+import进包
+实例化对象，设置参数
+
+vux的selector是个坑，选项不固定会变。用picker或者原生select做
+相比较select插件还是picker好，兼容性问题小，select太难调了
+
+
+params.categoryId  mattersTypeValue
+
+params.secondCategoryId  mattersCategoryValue

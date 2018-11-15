@@ -121,3 +121,9 @@ module.exports = {
 I Doc View常见文件在线预览
 示例：
 http://api.idocv.com/view/url?url=http%3A%2F%2Fapi.idocv.com%2Fdata%2Fdoc%2Fmanual.docx 
+
+SweetAlert弹窗插件
+
+jq mobiscroll jq插件库
+
+store(key, data);是用来存字符串数据的

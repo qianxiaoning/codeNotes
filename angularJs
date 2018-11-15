@@ -529,3 +529,33 @@ id
   },
   "ok": true
 }
+
+--------------------------
+搜索其他处理人接口
+http://app-uat.gtcloud.cn/eoop-api/r/it/report/getOtherReportHandler?reportId=0ec83e375cfd4cd8b36cdd1bb7f2982b&searchKey=t
+
+
+
+保存事项
+http://app-uat.gtcloud.cn/eoop-api/r/it/report/saveReport
+{
+    "categoryId":"e81c23845531400083374603b58125e8",
+    "secondCategoryId":"f6c53a04409f45b89f6593c813813fcb",
+    "title":"电脑黑屏6",
+    "description":"电脑黑屏6",
+    "newAttachments":"a.jpg`/111/111/111.jpg,b.jpg`/222/222/222.png"
+}
+
+解决事项
+http://app-uat.gtcloud.cn/eoop-api/r/it/report/solveReport
+{
+    "reportId":"caa1d677061245519a67e9b171d8d1cf",
+    "answer":"换台电脑",
+  "newAttachments":"c.jpg`/333/333/333.jpg,d.jpg`/444/444/444.png"
+}
+
+搜索事项分页中添加了参数categoryId
+getMyReportPage
+
+
+
