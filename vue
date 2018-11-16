@@ -2020,10 +2020,15 @@ vue引用插件方法，
 import进包
 实例化对象，设置参数
 
-vux的selector是个坑，选项不固定会变。用picker或者原生select做
-相比较select插件还是picker好，兼容性问题小，select太难调了
-
+vux的selector是个坑，选项不固定会变。用picker插件或者select插件做
+相比较select插件还是picker插件好，调整小
+select插件难调，select插件在表单中对齐其他控件麻烦
 
 params.categoryId  mattersTypeValue
 
 params.secondCategoryId  mattersCategoryValue
+
+vue单页应用页面组件封装规则:
+外层结构相关组件-按照路由分内页-内页中再分别引入页面部分组件。
+而且vue的数据传输是单向的，同一页面部分，赋值功能和取值功能最好分开写。
+完全一样的部分封装成子组件重复引用，不一样的部分还是放在当前页面就行了，在当前页面做判断写不同，不要把判断写不同放到子组件里做，容易乱，减少嵌套关系。

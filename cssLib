@@ -392,3 +392,4 @@ vux-loader里的插件是处理用户代码的，不是处理框架自身代码�
 左：width: 207px;
 右：width: calc(100% - 207px);
 
+flexible不兼容ipad

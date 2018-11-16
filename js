@@ -1747,3 +1747,6 @@ delete object.xxx;
 
 ''==0 //为true
 ''===0 //为false
+
+if... else if...语法
+功能就是for...break...语法

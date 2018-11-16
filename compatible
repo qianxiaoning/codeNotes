@@ -31,3 +31,11 @@ ios系统（苹果手机和电脑）构建new Date对象时，得把-转为/
 得加 .replace(/\-/g, "/")
 
 但是ios识别国际标准时间，如2018-03-23T18:06:32+08:00，这里的-不用替换/，替换了反而报错
+
+select手机端兼容
+去除safari浏览器默认select样式，
+appearance: none;
+-webkit-appearance: none
+
+select原生标签在安卓是弹窗形式，在safari是下拉框形式，形式不一样
+所以select不用原生写，用picker插件或者select插件写
