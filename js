@@ -1750,3 +1750,9 @@ delete object.xxx;
 
 if... else if...语法
 功能就是for...break...语法
+
+better-scroll插件滚动要求
+div>ul>li
+ul高度为li的总和
+div高度小于ul，一般为可见区域撑满flex:auto;overflow:auto，ul是溢出可见屏，不做高度限制
+否则滑不动
