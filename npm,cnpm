@@ -107,3 +107,5 @@ npm报错，似乎是从Error:开始看
 
 Fastclick包移除移动端点击延迟。但是有bug，会导致input，textarea等无法获取光标
 
+anywhere -g
+anywhere 在当前目录生成一个静态文件服务器

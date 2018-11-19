@@ -2015,6 +2015,11 @@ native调h5，在mounted里监听定义在window下的方法
 this.$event.$off('xxx').$on('xxx',res=>{})
 
 用vux的group组件，一定要设置label-width="4.5em" label-margin-right="2em" label-align="right" 这三个属性
+但是尽管如此，还是觉得挺不灵活的
+样式不能方便设置，selector没有title插槽，不方便修改
+popup-picker引入报错
+x-input的restricted-label不生效
+总之很闹心，还是倾向于自己写样式
 
 vue引用插件方法，
 import进包
@@ -2032,3 +2037,4 @@ vue单页应用页面组件封装规则:
 外层结构相关组件-按照路由分内页-内页中再分别引入页面部分组件。
 而且vue的数据传输是单向的，同一页面部分，赋值功能和取值功能最好分开写。
 完全一样的部分封装成子组件重复引用，不一样的部分还是放在当前页面就行了，在当前页面做判断写不同，不要把判断写不同放到子组件里做，容易乱，减少嵌套关系。
+
