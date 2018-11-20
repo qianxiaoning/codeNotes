@@ -87,3 +87,142 @@ import a from './subAccountManage.css';//html中用a.b
 webpack编译报错时，会调用缓存版本
 
 webpack起不起来，更新webpack-cli2.x到3.1.0
+
+__dirname是node.js中的一个全局变量，它指向当前执行脚本所在的目录。
+
+1. 对于以/开始的路径片段，path.join只是简单的将该路径片段进行拼接，而path.resolve将以/开始的路径片段作为根目录，在此之前的路径将会被丢弃，就像是在terminal中使用cd命令一样。
+
+path.join('/a', '/b') // 'a/b'
+path.resolve('/a', '/b') // '/b'
+ 
+
+2. path.resolve总是返回一个以相对于当前的工作目录（working directory）的绝对路径。
+
+path.join('./a', './b') // 'a/b'
+path.resolve('./a', './b') // '/Users/username/Projects/webpack-demo/a/b'
+
+
+
+path-nodejs的模块 用于处理文件与目录的路径
+const path = require('path');
+path: path.resolve(__dirname, 'dist'), 将路径或路径片段的序列处理成绝对路径
+webpack文档
+概念：
+loader：
+test 属性，用于标识出应该被对应的 loader 进行转换的某个或某些文件
+use 属性，表示进行转换时，应该使用哪个 loader。
+
+在 webpack 配置中定义 loader 时，要定义在 module.rules 中
+
+plugins
+插件的范围包括：打包优化、资源管理和注入环境变量
+想要使用一个插件 需要 require() 它，然后把它添加到 plugins 数组中
+const HtmlWebpackPlugin = require('html-webpack-plugin'); // 通过 npm 安装
+plugins: [
+    new HtmlWebpackPlugin({template: './src/index.html'})
+  ]
+
+模式 mode
+module.exports = {
+  mode: 'production'
+};
+
+ polyfill为了兼容
+入口
+entry
+单个入口
+entry: string|Array<string>
+对象语法
+module.exports = {
+  entry: {
+    app: './src/app.js',
+    vendors: './src/vendors.js'
+  }
+};
+分离 应用程序(app) 和 第三方库(vendor) 入口
+webpack.config.js
+多页面应用程序
+module.exports = {
+  entry: {
+    pageOne: './src/pageOne/index.js',
+    pageTwo: './src/pageTwo/index.js',
+    pageThree: './src/pageThree/index.js'
+  }
+};
+输出output
+output: {
+    filename: 'bundle.js',//文件名
+    path: '/home/proj/public/assets'//path的绝对路径
+  }
+output: {
+    filename: '[name].js',//[name]占位符，确保命名唯一
+    path: __dirname + '/dist'
+  }
+mode模式
+只设置 NODE_ENV 时，不会自动设置 mode
+loader类似gulp中的task
+使用 loader
+配置（推荐）：在 webpack.config.js 文件中指定 loader。
+内联：在每个 import 语句中显式指定 loader。
+{
+        test: /\.css$/,
+        use: [
+          { loader: 'style-loader' },
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true
+            }
+          }
+        ]
+      }
+内联 使用 ! 将资源中的 loader 分开。分开的每个部分都相对于当前目录解析
+import Styles from 'style-loader!css-loader?modules!./styles.css';
+编写loader
+通过在 rule 对象设置 path.resolve 指向这个本地文件
+{
+        test: /\.js$/,
+        use: [
+          {
+            loader: path.resolve('path/to/loader.js'),
+            options: {/* ... */}
+          }
+        ]
+      }
+插件
+
+webpack --config XXX.js //使用另一份配置文件（比如webpack.config2.js）来打包
+
+webpack默认处理js，处理css，html...要loader
+
+webpack --devtool source-map
+在sources中生成webpack明细
+
+webpack-dev-server --inline --hot//hot热替换
+
+如果你使用 webpack 4+ 版本，你还需要安装 CLI。
+
+path.join和path.resolve是两个函数
+__dirname是当前执行目录，如：
+F:\Shon\pra\test\webpack-pra\demo3
+
+output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, './dist/a')
+}
+path.resolve(__dirname, './dist/a')
+'./dist/a'不能以/开头，会以/为根目录，丢失当前目录
+'./dist/a'或'dist/a'都行，意为在当前目录建dist文件夹，里面建a文件夹，里面生成bundle.js文件
+
+通过配置文件执行构建 可以使用 --config 选项执行任何名称的配置文件
+webpack --config webpack.config.js
+
+windows 中通过调用路径去调用 webpack 时，必须使用反斜线()。例如 node_modules\.bin\webpack --config webpack.config.js
+
+执行webpack 似乎默认执行webpack.config.js
+
+在webpack或npm run build中传参 --xxx --xxx
+
+如果你使用的是 npm 5，你可能还会在目录中看到一个 package-lock.json 文件
+
+[name]为entry键名，如：'index'

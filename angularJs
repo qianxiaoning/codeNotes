@@ -18,3 +18,11 @@ AngularJS 模块（Module） 定义了 AngularJS 应用。
 AngularJS 控制器（Controller） 用于控制 AngularJS 应用。
 
 ng-app指令指明了应用, ng-controller 指明了控制器。
+Module相当于一个容器
+directive与hhtml元素绑定
+
+service共有代码
+controller私有代码
+controller和view是mvvm，双向绑定$scope
+
+ngjs调试工具：batarang

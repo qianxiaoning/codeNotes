@@ -109,3 +109,12 @@ Fastclick包移除移动端点击延迟。但是有bug，会导致input，textar
 
 anywhere -g
 anywhere 在当前目录生成一个静态文件服务器
+
+npm init -y 初始化并直接yes
+
+mkdir xxx 生成文件夹
+
+在包的package.json中设置"private": true，则npm会拒绝发布它
+
+npx webpack --config webpack.config.js
+npx 会自动查找当前依赖包中的可执行文件，如果找不到，就会去 PATH 里找。如果依然找不到，就会帮你安装！
