@@ -226,3 +226,7 @@ windows 中通过调用路径去调用 webpack 时，必须使用反斜线()。�
 如果你使用的是 npm 5，你可能还会在目录中看到一个 package-lock.json 文件
 
 [name]为entry键名，如：'index'
+
+执行 npx webpack，会将我们的脚本作为入口起点，然后 输出 为 main.js。Node 8.2+ 版本提供的 npx 命令，可以运行在初始安装的 webpack 包(package)的 webpack 二进制文件
+
+运行webpack，如果没有webpack.config.js，会自动把代码src/index.js，作为入口文件。在index.html目录生成main.js作为出口文件。

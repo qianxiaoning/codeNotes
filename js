@@ -1756,3 +1756,12 @@ div>ul>li
 ul高度为li的总和
 div高度小于ul，一般为可见区域撑满flex:auto;overflow:auto，ul是溢出可见屏，不做高度限制
 否则滑不动
+
+var element = document.createElement('div');
+//js指定文本，添加class  
+element.innerHTML = _.join(['Hello', 'webpack'], ' ');
+element.classList.add('hello');
+
+js绑定事件
+dom.onclick=function(){};
+onclick，c小写

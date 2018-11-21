@@ -118,3 +118,7 @@ mkdir xxx 生成文件夹
 
 npx webpack --config webpack.config.js
 npx 会自动查找当前依赖包中的可执行文件，如果找不到，就会去 PATH 里找。如果依然找不到，就会帮你安装！
+
+storejs 存取对象
+storejs.set('userInfo',userInfo);
+storejs.get('userInfo');
