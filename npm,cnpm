@@ -122,3 +122,5 @@ npx 会自动查找当前依赖包中的可执行文件，如果找不到，就�
 storejs 存取对象
 storejs.set('userInfo',userInfo);
 storejs.get('userInfo');
+
+px2rem貌似不支持小数形式，如14.24px这种会转换错误

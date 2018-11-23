@@ -2017,7 +2017,8 @@ this.$event.$off('xxx').$on('xxx',res=>{})
 用vux的group组件，一定要设置label-width="4.5em" label-margin-right="2em" label-align="right" 这三个属性
 但是尽管如此，还是觉得挺不灵活的
 样式不能方便设置，selector没有title插槽，不方便修改
-popup-picker引入报错
+popup-picker引入报错，是因为vux-loader把<style lang="less">@import '../../styles/1px.less';</style>转为@import '../../styles/0.5px.less'了，导致找不到该文件
+设vux-loader时要排除1px.less，这个不转，否则引入用了该文件的组件都会报错
 x-input的restricted-label不生效
 总之很闹心，还是倾向于自己写样式
 
@@ -2038,3 +2039,4 @@ vue单页应用页面组件封装规则:
 而且vue的数据传输是单向的，同一页面部分，赋值功能和取值功能最好分开写。
 完全一样的部分封装成子组件重复引用，不一样的部分还是放在当前页面就行了，在当前页面做判断写不同，不要把判断写不同放到子组件里做，容易乱，减少嵌套关系。
 
+在<router-link>绑定点击事件，@click.native

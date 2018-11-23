@@ -405,3 +405,12 @@ pxtorem就是把px转为rem
 
 vux框架可以在vux-loader里的'style-parser'插件里设置转换px前的数字
 vux-loader里的插件是处理用户代码的，不处理ui框架代码。
+
+在外层高度一定，内层用margin:auto;也可以进行上下纵向的margin居中？
+
+弹出层插件里再套弹出层插件时，position:fixed套position:fixed或者relative还是absolute，容易出现问题。
+所以把弹出层放到popup等组件外面，避免弹出层嵌套。
+在ios中popup套popup非常容易出错
+
+解决ios点击元素后出现阴影或闪烁的问题
+-webkit-tap-highlight-color: transparent;
