@@ -1765,3 +1765,14 @@ element.classList.add('hello');
 js绑定事件
 dom.onclick=function(){};
 onclick，c小写
+
+事件句柄　(Event Handlers)
+HTML 4.0 的新特性之一是能够使 HTML 事件触发浏览器中的行为，比如当用户点击某个 HTML 元素时启动一段 JavaScript。
+
+事件句柄是指事件发生时要进行的操作，每一个事件均对应一个事件句柄，如onclick
+
+addeventlistener事件委托
+是通过事件冒泡原理监听target事件源和type触发的事件类型，来执行相应方法的机制
+
+js添加事件和html添加事件比较
+代码可读性、复用性、可维护性，js添加好
