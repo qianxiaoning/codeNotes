@@ -414,3 +414,5 @@ vux-loader里的插件是处理用户代码的，不处理ui框架代码。
 
 解决ios点击元素后出现阴影或闪烁的问题
 -webkit-tap-highlight-color: transparent;
+
+css内引css，@import方式
