@@ -2040,3 +2040,13 @@ vue单页应用页面组件封装规则:
 完全一样的部分封装成子组件重复引用，不一样的部分还是放在当前页面就行了，在当前页面做判断写不同，不要把判断写不同放到子组件里做，容易乱，减少嵌套关系。
 
 在<router-link>绑定点击事件，@click.native
+
+脚手架更新
+npm uninstall vue-cli -g
+
+cnpm install -g @vue/cli
+
+创建一个项目
+vue create hello-world
+
+在 Windows 上通过 minTTY 使用 Git Bash，交互提示符并不工作。通过 winpty vue.cmd create hello-world 可以上下选择

@@ -253,3 +253,35 @@ webpack.config.js中
 }
 babel-loader 是 webpack 的插件
 npm install babel-core babel-preset-env babel-loader -D
+
+webpack加载css背景图片、img元素src引用图片、使用es6的import引入的图片时
+需要使用url-loader或者file-loader。
+url-loader封装了file-loader。url-loader不依赖于file-loader
+减少http请求，提高页面性能
+url-loader可以将图片转为base64字符串，能更快的加载图片
+
+file-loader：
+Emits the file into the output folder and returns the (relative) URL
+
+貌似设了url-loader后设个limit就行了，会自动走url-loader和file-loader
+
+图片引用
+在img src和css背景中用的图片路径，貌似都是相对路径，
+绝对路径要比如f://xxx/xx/xx.png才行，貌似获取不到
+
+设置了resolve:alias @别名后，
+css背景中用的图片路径是不能用@的
+img src里暂时不知道
+
+url-loader不用打包到output了，直接使用
+走file-loader的，需要走到output引用
+import 引用时 待完善
+
+vue-cli中
+src/assets 会被webpack处理解析为模块依赖，只支持相对路径形式
+static 并不会被Webpack处理：它们会直接被复制到最终的打包目录（默认是dist/static）下，需要绝对路径引用
+
+推荐assets经过webpack处理的方式，压缩优化过
+
+js中引图片需
+import xxx from 'xxx'
