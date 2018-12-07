@@ -175,3 +175,6 @@ res.setHeader('Access-Control-Allow-Credentials', true);
 repper说配置代理，是把客户端的地址模拟成服务的地址，这样就不存在跨域了。
 
 如果暂时xshell连不上远端服务器了，登录搬瓦工官网-我的服务-打开kiwivm控制面板-reset就好了
+
+centerOs,ubuntu都是linux的操作系统
+Putty和xShell都是可以ssh连接服务器的客户端
