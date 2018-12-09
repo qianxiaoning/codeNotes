@@ -303,9 +303,10 @@ rules:{}
 另外指定publicPath: '../'
 
 url-loader中的file-loader中也能另外设置publicPath，
-但是貌似会把html和css中的publicPath都改变
+但是会把html和css中的publicPath都改变
 
 webpack3中ExtractTextPlugin.extract中可以另外设置publicPath，
-估计只改变css中的publicPath
+比如vue-cli中webpack3设置'../../'
+只改变css中的publicPath
 
 publicPath默认值貌似是 __webpack_public_path__
