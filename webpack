@@ -67,9 +67,6 @@ module:{
 CSS-loader
 允许将CSS包含在JS文件中，然后使用CSS-loader预处理CSS文件
 
-url-loader
-可以在JS文件中包含图像
-
 在js中引入css文件 配webpack
 import './subAccountManage.css';//直接用样式
 或
@@ -254,16 +251,15 @@ webpack.config.js中
 babel-loader 是 webpack 的插件
 npm install babel-core babel-preset-env babel-loader -D
 
-webpack加载css背景图片、img元素src引用图片、使用es6的import引入的图片时
-需要使用url-loader或者file-loader。
-url-loader封装了file-loader。url-loader不依赖于file-loader
-减少http请求，提高页面性能
-url-loader可以将图片转为base64字符串，能更快的加载图片
+在webpack中加载css背景图片、img元素src引用图片、使用es6的import引入的图片
+url-loader是file-loader的升级版
+fallback 
+Type: String Default: 'file-loader' 默认以file-loader处理
 
-file-loader：
-Emits the file into the output folder and returns the (relative) URL
+url-loader比file-loader多一个limit的功能，在limit一下的图片会被转为base64，减少http请求，更快的加载图片
+大于limit的会自动调用file-loader，只要配置url-loader就行了，不用再配置file-loader，装依赖的时候要装url-loader和file-loader
 
-貌似设了url-loader后设个limit就行了，会自动走url-loader和file-loader
+走file-loader的，会生成图片到output
 
 图片引用
 在img src和css背景中用的图片路径，貌似都是相对路径，
@@ -272,10 +268,6 @@ Emits the file into the output folder and returns the (relative) URL
 设置了resolve:alias @别名后，
 css背景中用的图片路径是不能用@的
 img src里暂时不知道
-
-url-loader不用打包到output了，直接使用
-走file-loader的，需要走到output引用
-import 引用时 待完善
 
 vue-cli中
 src/assets 会被webpack处理解析为模块依赖，只支持相对路径形式
@@ -288,3 +280,32 @@ import xxx from 'xxx'
 
 publicPath静态资源公共路径，会在所有静态资源前加，
 比如图片，在生成环境就需要变成'./'，不能是'/'，不能在服务器根路径。
+
+把css从js分出去
+可以让浏览器异步并行加载CSS
+不用等待整个JS包加载完毕再来加载样式
+ExtrackTextWebpackPlugin
+webpack4之后不应用ExtrackTextWebpackPlugin分割css
+用mini-css-extract-plugin替代，它本身去重
+
+optimize-css-assets-webpack-plugin在生产环境使css压缩，去重，另外需要安装UglifyJsPlugin
+
+生产环境js都要加上[hash去重]
+
+设定了url-loader，安装了file-loader后
+html中的图片必须要设定output.publicPath
+output:{
+  publicPath:devMode?'/':'./',
+}
+css中的图片必须要在
+rules:{}
+设定ExtrackTextWebpackPlugin.loader中
+另外指定publicPath: '../'
+
+url-loader中的file-loader中也能另外设置publicPath，
+但是貌似会把html和css中的publicPath都改变
+
+webpack3中ExtractTextPlugin.extract中可以另外设置publicPath，
+估计只改变css中的publicPath
+
+publicPath默认值貌似是 __webpack_public_path__
