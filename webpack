@@ -310,3 +310,11 @@ webpack3中ExtractTextPlugin.extract中可以另外设置publicPath，
 只改变css中的publicPath
 
 publicPath默认值貌似是 __webpack_public_path__
+
+老写法：
+data (){
+ return {
+  src: require('IMAGES/banner.jpg')
+ }
+}
+<img :src="src">

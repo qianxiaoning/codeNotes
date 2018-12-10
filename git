@@ -617,7 +617,10 @@ git branch --set-upstream-to=origin/dev dev
 用--allow-unrelated-histories 告诉git自己确定远端就是我们设的origin
 git pull --allow-unrelated-histories
 
+指定ssh文件生成目录 -f
+$ ssh-keygen -t rsa -C "https://git.xxx.com/" -b 4096 -f /C/Users/lenovo/.ssh_company_gitlab/id_rsa
 
+目前公司gitlab 只能用https拉推，不知道为什么不能用ssh
 
 
 
