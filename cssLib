@@ -414,3 +414,7 @@ vux-loader里的插件是处理用户代码的，不处理ui框架代码。
 
 解决ios点击元素后出现阴影或闪烁的问题
 -webkit-tap-highlight-color: transparent;
+
+页面设置了'lib-flexible'时，页面上不能设meta，lib-flexible会自动识别是否双倍屏，来改变viewport
+
+
