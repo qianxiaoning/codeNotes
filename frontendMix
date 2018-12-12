@@ -141,6 +141,19 @@ viewport的meta
 
 页面上的点击展开更多，按钮上一条线还带模糊效果，
 作用：为了使页面简短些，比如看评论区，相关链接方便，不用拖很久。不是为了减缓请求时间
+html结构:
+div.textBlock //position:relative
+    div.text.fold //.fold{height:11rem;overflow:hidden;}
+    div.dropDown //见下
+        i //下拉箭头icon
+
 csdn的写法是 纯css，主要通过
-background-image: linear-gradient(-180deg,rgba(255,255,255,0) 0%,#fff 70%);padding-top:160px;position: absolute;bottom: -1px;width: 100%;z-index: 9999;
+.dropDown{
+    background-image: linear-gradient(-180deg,rgba(255,255,255,0) 0%,#fff 70%);padding-top:160px;position: absolute;bottom: -1px;width: 100%;z-index: 20;text-align:center;
+}
 写的
+
+在pc chrome浏览器 ios模拟器时
+height设与没设 会影响font-size大小
+在安卓/ios真机均没问题，怀疑是pc chrome ios模拟器渲染模式问题
+
