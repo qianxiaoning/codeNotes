@@ -153,7 +153,11 @@ csdn的写法是 纯css，主要通过
 }
 写的
 
-在pc chrome浏览器 ios模拟器时
+在pc chrome浏览器 ios模拟器时 用了'lib-flexible'自动设的meta时
 height设与没设 会影响font-size大小
-在安卓/ios真机均没问题，怀疑是pc chrome ios模拟器渲染模式问题
+在安卓/ios真机均没问题，估计是pc chrome ios模拟器渲染模式问题
 
+详情页的文章，文字图片形式一般在后台以富文本形式输入，
+通过接口返回给前端，是带html标签的字符串，前端直接类似eval/Function渲染出来
+
+关于emoji表情，完全是前端的，后台只存对应的字符串
