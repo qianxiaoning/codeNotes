@@ -2050,3 +2050,7 @@ cnpm install -g @vue/cli
 vue create hello-world
 
 在 Windows 上通过 minTTY 使用 Git Bash，交互提示符并不工作。通过 winpty vue.cmd create hello-world 可以上下选择
+
+style绑定，对象语法，逗号分隔，样式值要用单引号 括起来 
+如：
+<ul :style="{transform:'translateY(-32px)',transition:'all 1s'}"></ul>

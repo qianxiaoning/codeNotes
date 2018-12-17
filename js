@@ -1776,3 +1776,33 @@ addeventlistener事件委托
 
 js添加事件和html添加事件比较
 代码可读性、复用性、可维护性，js添加好
+
+类型jq的once 只绑定一次事件
+addEventListener有个option once，bool值。如果为true表示事件执行之后自动解绑
+dom.addEventListener('transitionend',fun1,{once:true});
+
+removeEventListener只能解绑非匿名函数
+
+监听css动画效果结束
+animationend事件貌似是监听css的animation keyframes的动画效果
+transitionend事件是监听transition，在CSS 完成过渡后触发
+
+css translateY实现通告上下无缝循环播放
+const = [1,2,3,1];//for循环渲染dom
+let i = 1;//初始为0，所以2s后直接执行i=1动画
+setInterval(()=>{            
+    this.transitionTime = 1;
+    this.translateY = -(i*liHeight);
+    if(i==3){
+        //transitionend判断transition结束
+        noticeUl.addEventListener('transitionend',()=>{
+            //为了下一次起始做准备 i=1
+            i=1;    
+            this.transitionTime = 0;
+            this.translateY = 0;
+        },{once:true});//once:true 事件执行之后自动解绑
+    }
+    else{
+        i++;
+    }
+},2000);
