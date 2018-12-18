@@ -70,7 +70,7 @@ cursor光标
 /*缩小光标*/
 .reduce{cursor:zoom-out;}
 --------------------------------------------------------------------
-禁止被选中
+禁止被选中 手机端表现为：不能长按复制
 -webkit-user-select:none;
 -moz-user-select:none;
 -ms-user-select:none;

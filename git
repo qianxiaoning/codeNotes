@@ -617,10 +617,52 @@ git branch --set-upstream-to=origin/dev dev
 用--allow-unrelated-histories 告诉git自己确定远端就是我们设的origin
 git pull --allow-unrelated-histories
 
-指定ssh文件生成目录 -f
-$ ssh-keygen -t rsa -C "https://git.xxx.com/" -b 4096 -f /C/Users/lenovo/.ssh_company_gitlab/id_rsa
+指定ssh文件生成名称 -f
+$ ssh-keygen -t rsa -C "https://git.xxx.com/" -b 4096 -f /C/Users/lenovo/.ssh/id_rsa.company
 
-目前公司gitlab 只能用https拉推，不知道为什么不能用ssh
+配置多个ssh文件
+
+需要ssh连接时，需要rsa公钥，这个公钥是由注册的用户名，一般是个人邮箱或者公司邮箱（qianno.1@qq.com或Shon.Qian@myCompany.com）生成的
+
+ssh连接时，会比对本地电脑中的私钥和gitlab，github平台上的公钥，相同就建立连接
+
+需求：在不同账号（用户名下）调用不同的ssh私钥
+
+实现：
+在.ssh文件夹下新建config文件 系统默认在ssh文件夹下找私钥文件
+配置如下：
+Host hostName（git服务器域名）
+  IdentityFile #私钥位置
+  User #用户名（一般是注册时的个人或者公司的邮箱）
+
+git clone时，标准格式
+git clone git@hostName:qianxiaoning/a-demo.git
+
+ssh会去config文件里找到host名为hostName对应的私钥文件位置，与平台上的公钥进行加解密，校验是否合法
+
+#个人github
+Host github.com
+    IdentityFile ~/.ssh/id_rsa
+    User qianno.1@qq.com
+
+#个人gitlab
+Host gitlab.com
+    IdentityFile ~/.ssh/id_rsa
+    User qianno.1@qq.com
+
+#公司gitlab    
+Host git.a-company.com
+    IdentityFile ~/.ssh/id_rsa.company
+    User Shon.Qian@myCompany.com
+
+#客户公司的gitlab
+Host git.b-company.com
+    IdentityFile ~/.ssh/id_rsa.company
+    User Shon.Qian@myCompany.com
+
+有的公司gitlab服务器配置有问题，会导致ssh无法拉取，比如dns，ip问题。我以前公司就只能用https拉取，ssh拉取失败。
+
+
 
 
 
