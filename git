@@ -14,7 +14,7 @@ $ git config --global user.email "email@example.com"
    https每次都要输入账户、密码，不方便。
   二、ssh（对电脑）
    本地电脑运行
-   $ ssh-keygen -t rsa -C "email@example.com"
+   $ ssh-keygen -t rsa -C "qianxiaoning"
    C:\Users\Administrator\.ssh上会生成id_rsa私钥和id_rsa.pub公钥文件
    把id_rsa.pub公钥复制入github-settings-ssh and gpg keys里
   三、gpg（对人的）
@@ -44,7 +44,7 @@ $ git config --global user.email "email@example.com"
     一、在公司服务器内网建立一个gitlab账号，帮组员注册账号、密码、邮箱随便写
     二、添加组员ssh公钥入公司gitlab账号，分配组员权限。
    组员：
-    一、获得gitlab账号，密码。$ ssh-keygen -t rsa -C "email@example.com"获得id_rsa.pub添加入gitlab组织ssh keys中
+    一、获得gitlab账号，密码。$ ssh-keygen -t rsa -C "qianxiaoning"获得id_rsa.pub添加入gitlab组织ssh keys中
     二、配置git工具的用户名和邮箱等配置文件？
     三、$ git clone git@gitlab.com:qianxiaoning/qxnTest.git
   ------------------------ 
@@ -270,7 +270,7 @@ $ man git-config（未成功）
 取得 Git 项目仓库
 一、第一种是在本地现有项目或目录下导入所有文件到 Git 并传入github远端仓库。
 先在git上建立远程仓库，注意不选Initialize this repository选项
-在本地计算机上运行$ ssh-keygen -t rsa -C "qianno.1@qq.com"
+在本地计算机上运行$ ssh-keygen -t rsa -C "qianxiaoning"
 在C:\Users\Administrator\.ssh上会生成id_rsa私钥和id_rsa.pub公钥文件
 把id_rsa.pub公钥文件放入github-settings-ssh and gpg keys-添加新的标题和key就行了。另（ssh是对电脑的，gpg是对人的。）
 在本地项目设置远端的仓库地址 $ git remote add origin git@github.com:qianxiaoning/test3.git
@@ -617,29 +617,46 @@ git branch --set-upstream-to=origin/dev dev
 用--allow-unrelated-histories 告诉git自己确定远端就是我们设的origin
 git pull --allow-unrelated-histories
 
-指定ssh文件生成名称 -f
-$ ssh-keygen -t rsa -C "https://git.xxx.com/" -b 4096 -f /C/Users/lenovo/.ssh/id_rsa.company
+ssh 安全外壳协议 公钥私钥 用的就是非对称加密算法
 
-配置多个ssh文件
+一台电脑对应一对公私钥，一台电脑只需生成一对公私钥完成本机和网络的ssh传输
 
-需要ssh连接时，需要rsa公钥，这个公钥是由注册的用户名，一般是个人邮箱或者公司邮箱（qianno.1@qq.com或Shon.Qian@myCompany.com）生成的
+生成ssh-key 参数
+$ ssh-keygen -t rsa -C "qianxiaoning" -b 4096 -f /C/Users/lenovo/.ssh/id_rsa.company
 
-ssh连接时，会比对本地电脑中的私钥和gitlab，github平台上的公钥，相同就建立连接
+-t 指定密钥类型，默认是 rsa
+-C 设置注释文字，比如我的名字
+-f 指定密钥文件存储路径
 
-需求：在不同账号（用户名下）调用不同的ssh私钥
+公私钥默认文件名id_rsa，如要改名生成时使用-f
 
-实现：
-在.ssh文件夹下新建config文件 系统默认在ssh文件夹下找私钥文件
-配置如下：
+指定ssh文件存储路径 -f
+$ ssh-keygen -t rsa -C "qianxiaoning" -b 4096 -f /C/Users/lenovo/.ssh/id_rsa.company
+
+直接输入id_rsa.company，则在当前路径生成rsa文件
+
+ssh会默认在.ssh文件夹下读取文件名为id_rsa的文件为私钥文件
+
+如果私钥未放在.ssh文件夹下，或者私钥文件不叫id_rsa，则无法读取到，需要在.ssh文件夹下配置config文件，根据git clone的服务器域名，匹配对应的私钥地址
+
+一般一台电脑只需要一对公私钥，我的格式为
+$ ssh-keygen -C "qianxiaoning"
+注释为'qianxiaoning'生成公私钥
+在平台上（如github,gitlab）传上我的公钥，取名xxxPc（意为代表某一台电脑）
+
+-c注释统一为我的名字qianxiaoning即可，不然不同注释（比如不同邮箱）会使得生成的公私钥文件不同，使得ssh连接时校验失败，使得需要配置多个ssh-key使操作变的复杂。
+
+如果特殊需要，需要多对公私钥的，需要配置.ssh的config文件
+
+格式：
 Host hostName（git服务器域名）
   IdentityFile #私钥位置
-  User #用户名（一般是注册时的个人或者公司的邮箱）
+  User #用户名（注册平台时的个人或者公司的邮箱）
 
 git clone时，标准格式
-git clone git@hostName:qianxiaoning/a-demo.git
+git clone git@hostName:xxx/a-demo.git
 
-ssh会去config文件里找到host名为hostName对应的私钥文件位置，与平台上的公钥进行加解密，校验是否合法
-
+例子：
 #个人github
 Host github.com
     IdentityFile ~/.ssh/id_rsa
@@ -659,6 +676,8 @@ Host git.a-company.com
 Host git.b-company.com
     IdentityFile ~/.ssh/id_rsa.company
     User Shon.Qian@myCompany.com
+
+ssh会去config文件里找到Host名为hostName对应的本地的私钥文件位置，与gitlab，github平台上的公钥进行加解密，校验是否合法，从而建立连接
 
 有的公司gitlab服务器配置有问题，会导致ssh无法拉取，比如dns，ip问题。我以前公司就只能用https拉取，ssh拉取失败。
 
