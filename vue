@@ -2054,3 +2054,7 @@ vue create hello-world
 style绑定，对象语法，逗号分隔，样式值要用单引号 括起来 
 如：
 <ul :style="{transform:'translateY(-32px)',transition:'all 1s'}"></ul>
+
+感觉vue项目要做seo，
+只有通过nuxt等服务端渲染？
+webpack配置多页面，右击查看代码，还是只有一个div id='app'，对seo没用

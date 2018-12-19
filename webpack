@@ -318,3 +318,11 @@ data (){
  }
 }
 <img :src="src">
+
+webpack多页面
+在entry里配置多个入口文件，彼此独立
+这样在output也会生成多个js
+页面似乎是对html-webpack-plugin循环输出多个new HtmlWebpackPlugin({xx:xxx})
+
+vendor模块是指node_modules中的功用模块
+manifest是指针对vendor模块所做的缓存
