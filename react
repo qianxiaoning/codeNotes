@@ -1,3 +1,4 @@
+--------------------------------------------
 es6的class类
 
 function Point(x, y) {
@@ -34,4 +35,644 @@ Object.assign(Point.prototype, {
   toValue(){}
 });
 
-看到 取值函数（getter）和存值函数（setter）
+在“类”的内部可以使用get和set关键字，对某个属性设置存值函数和取值函数，拦截该属性的存取行为
+
+class MyClass {
+  constructor() {
+    // ...
+  }
+  get prop() {
+    return 'getter';
+  }
+  set prop(value) {
+    console.log('setter: '+value);
+  }
+}
+
+let inst = new MyClass();
+
+inst.prop = 123;
+// setter: 123
+
+inst.prop
+// 'getter'
+
+类的属性名，可以采用表达式。
+let methodName = 'getArea';
+
+class Square {
+  constructor(length) {
+    // ...
+  }
+
+  [methodName]() {
+    // ...
+  }
+}
+
+类也可以使用表达式的形式定义
+const MyClass = class Me {
+  getClassName() {
+    return Me.name;
+  }
+};
+
+类的名字是MyClass
+Me只在 Class 的内部代码可用，指代当前类
+
+内部没用到的话，可以省略Me
+const MyClass = class { /* ... */ };
+
+采用 Class 表达式，可以写出立即执行的 Class
+let person = new class {
+  constructor(name) {
+    this.name = name;
+  }
+
+  sayName() {
+    console.log(this.name);
+  }
+}('张三');
+
+person.sayName(); // "张三"
+上面代码中，person是一个立即执行的类的实例。
+
+不存在提升
+定义在前，使用在后
+
+子类在父类之后定义
+{
+  let Foo = class {};
+  class Bar extends Foo {
+  }
+}
+
+类的方法内部如果含有this，它默认指向类的实例
+
+类的静态方法，该方法不会被实例继承，而是直接通过类来调用
+加上static关键字
+class Foo {
+  static classMethod() {
+    return 'hello';
+  }
+}
+
+Foo.classMethod() // 'hello'
+
+静态方法中的this，指向类
+
+静态方法可以与非静态方法重名
+
+父类的静态方法，可以被子类继承
+
+class Foo {
+  static classMethod() {
+    return 'hello';
+  }
+}
+
+class Bar extends Foo {
+}
+
+Bar.classMethod() // 'hello'
+
+静态方法也可以从super对象上调用
+class Foo {
+  static classMethod() {
+    return 'hello';
+  }
+}
+
+class Bar extends Foo {
+  static classMethod() {
+    return super.classMethod() + ', too';//super对象指父类
+  }
+}
+
+Bar.classMethod() // "hello, too"
+
+类内属性
+除了在constructor()方法里面定义，也可以直接写在类的最顶层
+class IncreasingCounter {
+  constructor() {
+    this._count = 0;
+  }
+}
+写在顶层
+class IncreasingCounter {
+  _count = 0;//效果一样
+}
+
+私有方法和私有属性
+内部调用了bar.call(this, baz)。这使得bar实际上成为了当前模块的私有方法
+class Widget {
+  foo (baz) {
+    bar.call(this, baz);
+  }
+
+  // ...
+}
+
+function bar(baz) {
+  return this.snaf = baz;
+}
+
+利用Symbol值的唯一性，将私有方法的名字命名为一个Symbol值
+const bar = Symbol('bar');
+const snaf = Symbol('snaf');
+
+export default class myClass{
+
+  // 公有方法
+  foo(baz) {
+    this[bar](baz);
+  }
+
+  // 私有方法
+  [bar](baz) {
+    return this[snaf] = baz;
+  }
+
+  // ...
+};
+上面代码中，bar和snaf都是Symbol值，导致第三方无法获取到它们，因此达到了私有方法和私有属性的效果
+
+class的继承 extends
+
+class Point {
+}
+
+class ColorPoint extends Point {
+}
+
+class ColorPoint extends Point {
+  constructor(x, y, color) {
+    super(x, y); // 调用父类的constructor(x, y)，super()指父类的constructor()
+    this.color = color;
+  }
+
+  toString() {
+    return this.color + ' ' + super.toString(); // 调用父类的toString()，super.xxx指父类的原型方法
+  }
+}
+
+子类必须在constructor方法中调用super方法
+
+子类的构造函数中，只有调用super之后，才可以使用this关键字，否则会报错
+class Point {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
+class ColorPoint extends Point {
+  constructor(x, y, color) {
+    this.color = color; // ReferenceError
+    super(x, y);
+    this.color = color; // 正确
+  }
+}
+
+let cp = new ColorPoint(25, 8, 'green');
+
+cp instanceof ColorPoint // true
+cp instanceof Point // true
+上面代码中，实例对象cp同时是ColorPoint和Point两个类的实例，这与 ES5 的行为完全一致
+
+父类的静态方法，也会被子类继承
+class A {
+  static hello() {
+    console.log('hello world');
+  }
+}
+
+class B extends A {
+}
+
+B.hello()  // hello world
+
+Object.getPrototypeOf方法可以用来从子类上获取父类
+Object.getPrototypeOf(ColorPoint) === Point
+//因此，可以使用这个方法判断，一个类是否继承了另一个类
+
+super 关键字
+super作为函数调用时，代表父类的构造函数
+super内部的this指的是子类B
+因此super()在这里相当于A.prototype.constructor.call(this)
+
+class A {
+  constructor() {
+    console.log(new.target.name);
+  }
+}
+class B extends A {
+  constructor() {
+    super();
+  }
+}
+new A() // A
+new B() // B
+
+super()只能用在子类的构造函数之中，不能用在子类的原型方法中
+
+super.x只能取到定义在父类原型对象上的，取不到父类函数内属性
+
+原生构造函数
+Boolean()
+Number()
+String()
+Array()
+Date()
+Function()
+RegExp()
+Error()
+Object()
+这些原生构造函数是无法继承的，比如，不能自己定义一个Array的子类
+--------------------------------------------
+react 官网
+
+A Simple Component
+//定义组件
+class HelloMessage extends React.Component {//定义组件，在React.Component父类上扩展子类HelloMessage，子类通过this.props.xxx获取 父传子的数据
+  render() {
+    return (
+      <div>
+        Hello {this.props.name}
+      </div>
+    );
+  }
+}
+
+//ReactDOM.render 调用渲染
+ReactDOM.render(//调用组件，父组件直接通过属性传值给子组件
+  <HelloMessage name="Taylor" />,
+  mountNode
+);
+//输出Hello Taylor
+
+A Stateful Component
+
+class Timer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { seconds: 0 };//this.state 定义内部数据
+  }
+
+  tick() {
+    this.setState(state => ({//相当于小程序的setData视图层同步
+      seconds: state.seconds + 1
+    }));
+  }
+
+  componentDidMount() {
+    this.interval = setInterval(() => this.tick(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  render() {//render方法是写dom结构的地方
+    return (
+      <div>
+        Seconds: {this.state.seconds}
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<Timer />, mountNode);
+
+An Application
+
+class TodoApp extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { items: [], text: '' };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  render() {
+    return (
+      <div>
+        <h3>TODO</h3>
+        <TodoList items={this.state.items} />
+        <form onSubmit={this.handleSubmit}>
+          <label htmlFor="new-todo">
+            What needs to be done?
+          </label>
+          <input
+            id="new-todo"
+            onChange={this.handleChange}
+            value={this.state.text}
+          />
+          <button>
+            Add #{this.state.items.length + 1}
+          </button>
+        </form>
+      </div>
+    );
+  }
+
+  handleChange(e) {
+    this.setState({ text: e.target.value });
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    if (!this.state.text.length) {
+      return;
+    }
+    const newItem = {
+      text: this.state.text,
+      id: Date.now()
+    };
+    this.setState(state => ({
+      items: state.items.concat(newItem),
+      text: ''
+    }));
+  }
+}
+
+class TodoList extends React.Component {
+  render() {
+    return (
+      <ul>
+        {this.props.items.map(item => (
+          <li key={item.id}>{item.text}</li>
+        ))}
+      </ul>
+    );
+  }
+}
+
+ReactDOM.render(<TodoApp />, mountNode);
+
+A Component Using External Plugins
+
+class MarkdownEditor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.state = { value: 'Hello, **world**!' };
+  }
+
+  handleChange(e) {
+    this.setState({ value: e.target.value });
+  }
+
+  getRawMarkup() {
+    const md = new Remarkable();
+    return { __html: md.render(this.state.value) };
+  }
+
+  render() {
+    return (
+      <div className="MarkdownEditor">
+        <h3>Input</h3>
+        <label htmlFor="markdown-content">
+          Enter some markdown
+        </label>
+        <textarea
+          id="markdown-content"
+          onChange={this.handleChange}
+          defaultValue={this.state.value}
+        />
+        <h3>Output</h3>
+        <div
+          className="content"
+          dangerouslySetInnerHTML={this.getRawMarkup()}
+        />
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<MarkdownEditor />, mountNode);
+------------------------------------------------
+https://reactjs.org/docs/hello-world.html
+
+Hello World
+
+ReactDOM.render(
+  <h1>Hello, world!</h1>,
+  document.getElementById('root')
+);
+
+jsx
+const element = <h1>Hello, world!</h1>;
+
+const name = 'Josh Perez';
+const element = <h1>Hello, {name}</h1>;//单大括号{}代表变量
+
+ReactDOM.render(
+  element,
+  document.getElementById('root')
+);
+
+function formatName(user) {
+  return user.firstName + ' ' + user.lastName;
+}
+
+const user = {
+  firstName: 'Harper',
+  lastName: 'Perez'
+};
+
+const element = (
+  <h1>
+    Hello, {formatName(user)}!
+  </h1>
+);
+
+ReactDOM.render(
+  element,
+  document.getElementById('root')
+);
+
+//这两个例子是相同的
+const element = (
+  <h1 className="greeting">
+    Hello, world!
+  </h1>
+);
+
+const element = React.createElement(
+  'h1',//标签名
+  {className: 'greeting'},//属性对象
+  'Hello, world!'//文本
+);
+//转为
+const element = {
+  type: 'h1',
+  props: {
+    className: 'greeting',
+    children: 'Hello, world!'
+  }
+};
+
+组件
+function Welcome(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+此函数是一个有效的React组件，因为它接受单个“props”（代表属性）对象参数与​​数据并返回一个React元素。我们将这些组件称为“功能组件”，因为它们实际上是JavaScript函数
+
+您还可以使用ES6类来定义组件：
+
+class Welcome extends React.Component {
+  render() {
+    return <h1>Hello, {this.props.name}</h1>;
+  }
+}
+
+组件名大写字母开头
+
+组件里组件名为className
+
+State类似于props，但它是私有的并且完全由组件控制
+
+本地状态state
+构造函数=>es6类 props要写成this.props
+
+将本地状态添加到类
+class Clock extends React.Component {
+  //固有格式
+  constructor(props) {
+    super(props);
+    this.state = {date: new Date()};//添加一个分配初始化的类构造函数this.state
+  }
+
+  componentDidMount() {//组件被挂载时调用//生命周期方法
+    this.timerID = setInterval(
+      () => this.tick(),
+      1000
+    );
+  }
+
+  componentWillUnmount() {//组件从dom中删除时调用//生命周期方法
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    this.setState({//this.setState()用于安排视图层数据更新，局部更新
+      date: new Date()
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {this.state.date.toLocaleTimeString()}.</h2>//用this.state.date更换this.props.date
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Clock />,
+  document.getElementById('root')
+);
+
+//将生命周期方法添加到类中
+
+this.state.comment = 'Hello';//不渲染视图层
+
+//setState方法渲染视图层，和小程序渲染方法很像
+this.setState({comment: 'Hello'});
+
+在setState中使用state和props的值时，用匿名函数的回调
+// Wrong
+this.setState({
+  counter: this.state.counter + this.props.increment,
+});
+// Correct
+this.setState((state, props) => ({
+  counter: state.counter + props.increment
+}));
+
+组件可以选择将其状态作为props传递给其子组件
+
+单向数据流
+
+处理事件
+jsx中事件调用用驼峰命名
+事件调用和vue一样不用()也行
+<button onClick={activateLasers}>
+  Activate Lasers
+</button>
+
+阻止默认事件
+function ActionLink() {
+  function handleClick(e) {
+    e.preventDefault();
+    console.log('The link was clicked.');
+  }
+
+  return (
+    <a href="#" onClick={handleClick}>
+      Click me
+    </a>
+  );
+}
+
+事件的创建
+在es6类中定义类的方法
+如：
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {isToggleOn: true};
+
+    // This binding is necessary to make `this` work in the callback
+    this.handleClick = this.handleClick.bind(this);//这边把类(this)传入handleClick中，使handleClick中可以使用this，否则this是undefined
+  }
+
+  handleClick() {
+    this.setState(state => ({
+      isToggleOn: !state.isToggleOn
+    }));
+  }
+
+  //类字段语法
+  handleClick = () => {//用es6箭头函数可以不用绑定this
+    console.log('this is:', this);
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        {this.state.isToggleOn ? 'ON' : 'OFF'}
+      </button>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Toggle />,
+  document.getElementById('root')
+);
+
+将参数传递给事件处理程序
+<button onClick={(e) => this.deleteRow(id, e)}>Delete Row</button>//箭头函数e必须显示传递
+<button onClick={this.deleteRow.bind(this, id)}>Delete Row</button>//默认e为id后的第二个参数
+
+有条件的渲染
+根据用户是否登录 区别显示
+function Greeting(props) {
+  const isLoggedIn = props.isLoggedIn;
+  if (isLoggedIn) {
+    return <UserGreeting />;
+  }
+  return <GuestGreeting />;
+}
+
+ReactDOM.render(
+  // Try changing to isLoggedIn={true}:
+  <Greeting isLoggedIn={false} />,//原理也是属性传值，在子组件里做判断
+  document.getElementById('root')
+);
+
+看到 https://reactjs.org/docs/conditional-rendering.html#element-variables
