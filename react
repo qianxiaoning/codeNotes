@@ -675,4 +675,215 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-看到 https://reactjs.org/docs/conditional-rendering.html#element-variables
+元素变量
+
+使用 && 符号
+function Mailbox(props) {
+  const unreadMessages = props.unreadMessages;
+  return (
+    <div>
+      <h1>Hello!</h1>
+      {unreadMessages.length > 0 && //
+        <h2>
+          You have {unreadMessages.length} unread messages.
+        </h2>
+      }
+    </div>
+  );
+}
+
+const messages = ['React', 'Re: React', 'Re:Re: React'];
+ReactDOM.render(
+  <Mailbox unreadMessages={messages} />,
+  document.getElementById('root')
+);
+
+三目写法
+render() {
+  const isLoggedIn = this.state.isLoggedIn;
+  return (
+    <div>
+      {isLoggedIn ? (
+        <LogoutButton onClick={this.handleLogoutClick} />
+      ) : (
+        <LoginButton onClick={this.handleLoginClick} />
+      )}
+    </div>
+  );
+}
+
+防止组件渲染
+让组件返回 null
+function WarningBanner(props) {
+  if (!props.warn) {
+    return null;
+  }
+
+  return (
+    <div className="warning">
+      Warning!
+    </div>
+  );
+}
+
+class Page extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {showWarning: true};
+    this.handleToggleClick = this.handleToggleClick.bind(this);
+  }
+
+  handleToggleClick() {
+    this.setState(state => ({
+      showWarning: !state.showWarning
+    }));
+  }
+
+  render() {
+    return (
+      <div>
+        <WarningBanner warn={this.state.showWarning} /> //
+        <button onClick={this.handleToggleClick}>
+          {this.state.showWarning ? 'Hide' : 'Show'}
+        </button>
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Page />,
+  document.getElementById('root')
+);
+
+null从组件的render方法返回不会影响组件生命周期方法的触发。例如componentDidUpdate仍然会被调用
+
+列表和键
+用map()函数
+并 将返回的新数组赋值给map()变量doubled
+
+渲染多个组件
+const numbers = [1, 2, 3, 4, 5];
+const listItems = numbers.map((number) =>
+  <li>{number}</li>
+);
+ReactDOM.render(
+  <ul>{listItems}</ul>,
+  document.getElementById('root')
+);
+
+键值
+const todoItems = todos.map((todo) =>
+  <li key={todo.id}>
+    {todo.text}
+  </li>
+);
+
+内联map()
+function NumberList(props) {
+  const numbers = props.numbers;
+  return (
+    <ul>
+      {numbers.map((number) =>
+        <ListItem key={number.toString()}
+                  value={number} />
+
+      )}
+    </ul>
+  );
+}
+
+表单
+双向 绑定
+class NameForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {value: ''};
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
+
+  handleSubmit(event) {
+    alert('A name was submitted: ' + this.state.value);
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Name:
+          <input type="text" value={this.state.value} onChange={this.handleChange} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    );
+  }
+}
+
+提升状态
+有几个组件需要反映相同的变化数据，建议将共享状态提升到最近的共同祖先
+
+如果其他组件也需要它，您可以将它提升到最近的共同祖先。您应该依赖自上而下的数据流，而不是尝试在不同组件之间同步状态
+
+构成与继承
+我们建议使用组合而不是继承来重用组件之间的代码
+这里的构成 类似 vue中的插槽
+
+由于jsx的功能，可以直接这么实现插槽
+function SplitPane(props) {
+  return (
+    <div className="SplitPane">
+      <div className="SplitPane-left">
+        {props.left}
+      </div>
+      <div className="SplitPane-right">
+        {props.right}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <SplitPane
+      left={
+        <Contacts />
+      }
+      right={
+        <Chat />
+      } />
+  );
+}
+
+props从父组件传来，state只在当前组件
+props只读，对于自身不变
+
+架构时，确定用props还是state，根据会不会变化
+
+组件生命周期
+1.在创建组件的实例并将其插入DOM时，将按以下顺序调用这些方法：
+constructor()
+static getDerivedStateFromProps()
+render()
+componentDidMount()
+2.道具或州的更改可能导致更新。重新渲染组件时，将按以下顺序调用这些方法：
+static getDerivedStateFromProps()
+shouldComponentUpdate()
+render()
+getSnapshotBeforeUpdate()
+componentDidUpdate()
+3.卸载
+从DOM中删除组件时调用此方法：
+componentWillUnmount()
+4.错误处理
+在渲染期间，生命周期方法或任何子组件的构造函数中发生错误时，将调用这些方法。
+static getDerivedStateFromError()
+componentDidCatch()
+
+看到 https://reactjs.org/docs/accessibility.html#why-accessibility
