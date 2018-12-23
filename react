@@ -886,4 +886,5 @@ componentWillUnmount()
 static getDerivedStateFromError()
 componentDidCatch()
 
-看到 https://reactjs.org/docs/accessibility.html#why-accessibility
+文档看完 开搞！
+边看项目边做需求，不懂就百度和问chris
