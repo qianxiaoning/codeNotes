@@ -13,3 +13,7 @@ ctrl+p 搜文件名
 文件-首选项-设置-Editor: Word Wrap（控制折行的方式），off改为on即可。
 
 ctrl+x 删除当前行
+
+shift+alt+f 格式化
+
+插件prettier使代码按照eslint规则格式化

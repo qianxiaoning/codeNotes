@@ -888,3 +888,32 @@ componentDidCatch()
 
 文档看完 开搞！
 边看项目边做需求，不懂就百度和问chris
+
+js和dom还是要分开写，
+比如循环中
+xxx.map((item)=>{
+  console.log(1);//此处是js
+});
+
+xxx.map((item)=>
+  <li>{item}</li>//此处是dom
+)
+
+<div className='capacity-value'>
+{
+    this.state.montArr.map((item, index) => {
+        if(!item.flag){
+            return <input ref={`inputRef${index}`} key={index} />;  
+        }else{
+            return <span key={index}>{item.value}</span>;
+        }
+    })
+}
+</div>
+
+montArr
+
+左箭头leftAct
+右箭头rightAct
+
+import {ALL_CN_MONTH, ALL_NUM_MONTH} from 'constants';
