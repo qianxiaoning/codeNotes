@@ -886,6 +886,11 @@ componentWillUnmount()
 static getDerivedStateFromError()
 componentDidCatch()
 
+脚手架 create-react-app
+create-react-app demo01
+cd demo01
+npm start
+
 文档看完 开搞！
 边看项目边做需求，不懂就百度和问chris
 
