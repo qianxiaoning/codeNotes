@@ -891,6 +891,192 @@ create-react-app demo01
 cd demo01
 npm start
 
+class ShoppingList extends React.Component {
+  render() {
+    return (
+      <div className="shopping-list">
+        <h1>Shopping List for {this.props.name}</h1>
+        <ul>
+          <li>Instagram</li>
+          <li>WhatsApp</li>
+          <li>Oculus</li>
+        </ul>
+      </div>
+    );
+  }
+}
+
+// Example usage: <ShoppingList name="Mark" />
+
+ShoppingList是一个React组件类，或React组件类型。组件接受称为props（“属性”的缩写）的参数
+
+JavaScript表达式放在JSX中的大括号内
+
+注释
+<div>{/* status */}</div>
+
+class xxx extends React.Component{}
+所有组件都是React.Component的子类
+
+class Square
+class Board
+class Game
+
+Board给Square传值
+Board{
+  <Square value={1}/>;
+}
+Square{
+  <button className="square">{this.props.value}</button>
+}
+
+事件与class
+<button className="square" onClick={()=>{alert('click');}}></button>
+
+记住状态
+通过this.state在其构造函数中设置来具有状态
+this.state为组件私有
+
+定义子类构造函数时
+super(props);为固定格式
+
+constructor(props) {
+  super(props);
+  ...
+}
+
+放js
+return {...js}
+
+放dom
+return <li></li>
+或
+return (<li></li>)
+
+用state的值
+<div>{this.state.value}</div>
+
+开发者工具 React Devtools扩展程序
+可以检查 React组件树，React组件的props和state
+
+感觉react的错误提示比vue更友好
+
+提升状态
+将Square的状态存储在父Board组件中
+要从多个子级收集数据，或者让两个子组件相互通信，您需要在其父组件中声明共享状态
+
+现在需求从Square中修改Board的state的状态
+子传父方法，父在子组件上加上onClick事件，子组件可以通过this.props.onClick调用到子组件引用处的onClick方法
+eg:
+Board{
+  handleClick(){...}  //这种子调父上方法的方法名，一般为handle[Event]来命名
+  <Square onClick={()=>{this.handleClick(i)}}/>;
+}
+Square{
+  <button onClick={()=>{this.props.onClick()}}></button>
+}
+
+此时square是controlled components组件，board完全控制他们
+
+不改变原数据的好处：
+1.便于实现 撤消和重做 操作，保留历史的先前版本，并在以后重复使用
+2.检测变化 可将现在与其自身的先前副本进行比较。
+3.确定何时在React中重新渲染，可以帮助您在React中构建纯组件
+
+用函数代替类
+class Square extends React.Component {    
+  render() {
+    return (
+        <button className="square" onClick={()=>{this.props.onClick()}}>
+            {this.props.value}
+        </button>
+    )
+  }
+}
+改为
+function Square(props) {
+  return (
+    <button className="square" onClick={props.onClick}>
+      {props.value}
+    </button>
+  );
+}
+
+时间旅行
+现在需要右侧游戏板记录过去移动的列表,所以history要放在game组件中,提升state
+
+多层组件传递
+game{
+  <board onClick={()=>{this.handleClick(i)}}/>;
+}
+board{
+  <Square onClick={()=>{this.props.onClick(i)}}/>;
+}
+square{
+  <button onClick={()=>{this.props.onClick()}}></button>
+}
+从爷爷组件到孙子组件一层层传下去
+
+在react中,可以把dom存在变量中,如:
+const moves = (
+  <li>
+    <button>xxx</button>
+  </li>
+);
+或:
+const moves = ()=>{
+  return (
+    <li>
+      <button>xxx</button>
+    </li>
+  )
+}
+
+循环中的key
+xxx.map((item,index)=>{
+  return (
+    <li key={item.id}>{item.value}</li>
+  )
+})
+
+react-portal 数据请求流程
+//dom事件执行
+dom.onClick=()=>{
+  //调dao里的数据请求方法
+  this._dao.queryMainInfo(param1,param2);
+}
+
+dao.js
+//请求数据
+queryMainInfo(param1,param2){
+  ajax(xhr){
+    //以queryEnterpriseList键名发送对象{}
+    this.dispatchEvent('queryEnterpriseList', {
+        'getEnterpriseList': data
+    })
+  }
+}
+
+//初始化监听
+index.js
+//监听queryEnterpriseList键名,监听到就执行getEnterpriseList方法
+this._dao.subEvent('queryEnterpriseList', this, 'getEnterpriseList');
+
+//getEnterpriseList方法this.setState同步视图层数据
+//方法里data参数为dispatchEvent发送的{'getEnterpriseList': data}对象
+getEnterpriseList(data){
+    if(data.getEnterpriseList.code === 0){
+        const enterpriseList = data.getEnterpriseList.data;
+        this.setState({
+            'enterpriseList': enterpriseList,
+            'hasEnter': true
+        });
+    }   
+}
+
+
+现在 GET /budget/{version}/queryMainInfo
+
 文档看完 开搞！
 边看项目边做需求，不懂就百度和问chris
 

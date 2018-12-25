@@ -1806,3 +1806,14 @@ setInterval(()=>{
         i++;
     }
 },2000);
+
+//返回一个新数组
+[...].slice();
+
+浅合并一个对象
+var player = {score: 1, name: 'Jeff'};
+
+1.Object.assign()
+var newPlayer = Object.assign({}, player, {score: 2});
+2.扩展符...
+var newPlayer = {...player, score: 2};
