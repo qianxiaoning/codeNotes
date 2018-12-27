@@ -1074,12 +1074,6 @@ getEnterpriseList(data){
     }   
 }
 
-
-现在 GET /budget/{version}/queryMainInfo
-
-文档看完 开搞！
-边看项目边做需求，不懂就百度和问chris
-
 js和dom还是要分开写，
 比如循环中
 xxx.map((item)=>{
@@ -1089,6 +1083,71 @@ xxx.map((item)=>{
 xxx.map((item)=>
   <li>{item}</li>//此处是dom
 )
+-----------------------------------------
+视频教程
+create-react-app demo
+cd demo
+npm start
+
+public/ 静态资源目录
+
+PWA全称Progressive Web App，即渐进式WEB应用
+
+一个 PWA 应用首先是一个网页, 可以通过 Web 技术编写出一个网页应用. 随后添加上 App Manifest 和 Service Worker 来实现 PWA 的安装和离线等功能
+
+Manifest实现添加至主屏幕
+
+render <div></div> //单行
+render ( //加()，多行
+  <div> //同vue模板一样，有且只有一个根节点
+    ...
+  </div>
+)
+
+render里就是dom层，不能写与dom渲染无关的js表达式，得写在constructor或者render外面
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+文档看完 开搞！
+边看项目边做需求，不懂就百度和问chris
+
+现在 GET /budget/{version}/queryMainInfo
 
 <div className='capacity-value'>
 {
