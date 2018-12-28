@@ -1106,7 +1106,9 @@ render ( //加()，多行
 
 render里就是dom层，不能写与dom渲染无关的js表达式，得写在constructor或者render外面
 
-
+在react中视图和数据不默认绑定，
+每次改变数据（如数组，对象）都要调用this.setState()同步视图，
+所以不需要vue中的this.$set()方法
 
 
 
