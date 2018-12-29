@@ -41,6 +41,18 @@ webpack npm run build时打包项目里引用的部分
 
 axios返回的数据在res.data里 套了一层
 
+axios不支持jsonp
+
+fetch-jsonp //会自动在api后加上callback参数
+fetchJsonp('...').then((response)=>{
+  // 处理数据
+  return response.json()
+}).then((json)=>{
+  console.log('parsed json',response);
+}).catch((ex)=>{
+  console.log('parsing failed',ex);
+})
+
 npm i后面加@，安装指定版本
 如：
 npm install less@2.7.1 -g
