@@ -145,3 +145,8 @@ postcss-pxtorem
   //minPixelValue避免转化1px  或者写成1PX,1Px也能避免转化
   "minPixelValue": 2
 }
+
+url 模块
+获取url上的传统传参
+url.parse('?id=1',true);
+response.query=>{id:1}
