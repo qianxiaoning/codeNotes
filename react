@@ -1134,12 +1134,26 @@ componentDidUpdate 组件更新完成
 3、组件销毁时
 componentWillUnmount
 
+解析带html标签的字符串 dangerouslySetInnerHTML
+<div dangerouslySetInnerHTML={{__html:this.state.list.content}}></div>
 
+html中数据存在再执行
+{this.state.list.imgUrl?<img src={this.state.list.imgUrl}/>:''}
+或者
+{this.state.list.imgUrl&&<img src={this.state.list.imgUrl}/>}
 
-
-
-
-
+重定向
+import {Redirect} from 'react-router-dom'
+render(){
+  if(this.state.flag){
+    return <Redirect to='/' />
+    或
+    return <Redirect to={{pathname:'/'}} />
+  }
+  return (
+    ...
+  )
+}
 
 
 
