@@ -17,3 +17,6 @@ ctrl+x 删除当前行
 shift+alt+f 格式化
 
 插件prettier使代码按照eslint规则格式化
+
+html文件，右击预览
+安装 view-in-browser插件

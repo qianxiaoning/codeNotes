@@ -217,6 +217,7 @@ let o = {
     c: "bar"
 };
 let { a, b } = o;
+a为"foo" b为12
 let { a, ...b1 } = o; 
 b1//为{b: 12, c: "bar"}
 
@@ -1817,3 +1818,4 @@ var player = {score: 1, name: 'Jeff'};
 var newPlayer = Object.assign({}, player, {score: 2});
 2.扩展符...
 var newPlayer = {...player, score: 2};
+

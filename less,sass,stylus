@@ -16,3 +16,5 @@ unit转为rem单位
 
 在sass,less文件里
 @import 'xxx'其它less文件
+
+sass常用的是scss文件
