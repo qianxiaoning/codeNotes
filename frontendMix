@@ -166,3 +166,15 @@ height设与没设 会影响font-size大小
 1.get url传值
 2.localstorage
 3.动态路由，在路由守卫上传值
+
+在数据驱动的框架里，如'vue, react'
+一般在dom渲染前进行数据请求，防止重复渲染
+vue中:
+在creacted中请求数据
+需要操作dom的，才放到mounted
+
+react中：
+在constructor中请求数据初始化
+需要操作dom的，才放到componentDidMount
+另外eslint规则中：
+似乎还要给初始化请求具名函数，方便不需要组件时取消该请求函数

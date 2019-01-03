@@ -1044,41 +1044,6 @@ xxx.map((item,index)=>{
   )
 })
 
-react-portal 数据请求流程
-//dom事件执行
-dom.onClick=()=>{
-  //调dao里的数据请求方法
-  this._dao.queryMainInfo(param1,param2);
-}
-
-dao.js
-//请求数据
-queryMainInfo(param1,param2){
-  ajax(xhr){
-    //以queryEnterpriseList键名发送对象{}
-    this.dispatchEvent('queryEnterpriseList', {
-        'getEnterpriseList': data
-    })
-  }
-}
-
-//初始化监听
-index.js
-//监听queryEnterpriseList键名,监听到就执行getEnterpriseList方法
-this._dao.subEvent('queryEnterpriseList', this, 'getEnterpriseList');
-
-//getEnterpriseList方法this.setState同步视图层数据
-//方法里data参数为dispatchEvent发送的{'getEnterpriseList': data}对象
-getEnterpriseList(data){
-    if(data.getEnterpriseList.code === 0){
-        const enterpriseList = data.getEnterpriseList.data;
-        this.setState({
-            'enterpriseList': enterpriseList,
-            'hasEnter': true
-        });
-    }   
-}
-
 js和dom还是要分开写，
 比如循环中
 xxx.map((item)=>{
@@ -1220,7 +1185,10 @@ Context 设计目的是为共享那些被认为对于一个组件树而言是“
 
 Portals 提供了一种很好的将子节点渲染到父组件以外的 DOM 节点的方式
 
-
+this.setState的回调
+this.setState({},()=>{
+  
+})
 
 
 
@@ -1228,8 +1196,7 @@ Portals 提供了一种很好的将子节点渲染到父组件以外的 DOM 节�
 
 
 -----------------------------------------------
-文档看完 开搞！
-边看项目边做需求，不懂就百度和问chris
+项目：
 
 现在 GET /budget/{version}/queryMainInfo
 
@@ -1251,3 +1218,64 @@ montArr
 右箭头rightAct
 
 import {ALL_CN_MONTH, ALL_NUM_MONTH} from 'constants';
+
+react-portal 数据请求流程
+//dom事件执行
+dom.onClick=()=>{
+  //调dao里的数据请求方法
+  this._dao.queryMainInfo(param1,param2);
+}
+
+dao.js
+//请求数据
+queryMainInfo(param1,param2){
+  ajax(xhr){
+    //以queryEnterpriseList键名发送对象{}
+    this.dispatchEvent('queryEnterpriseList', {
+        'getEnterpriseList': data
+    })
+  }
+}
+
+//初始化监听
+index.js
+//监听queryEnterpriseList键名,监听到就执行getEnterpriseList方法
+this._dao.subEvent('queryEnterpriseList', this, 'getEnterpriseList');
+
+//getEnterpriseList方法this.setState同步视图层数据
+//方法里data参数为dispatchEvent发送的{'getEnterpriseList': data}对象
+getEnterpriseList(data){
+    if(data.getEnterpriseList.code === 0){
+        const enterpriseList = data.getEnterpriseList.data;
+        this.setState({
+            'enterpriseList': enterpriseList,
+            'hasEnter': true
+        });
+    }   
+}
+
+yuce页面
+初始化
+
+dom结构
+yuce-wrapper
+
+  panel-left 左边信息 <BasicInfo mainInfo={this.state.mainInfo} />
+    basic-info 基本信息
+    peidian-info 配电信息
+  panel-right 右边图表
+    bar-wrapper echart包裹
+      arrow-btn arrow-left 左按钮 this.curSteps
+      div echart图表:
+      <BarChart 
+          curIndex={this.state.index} 
+          curMonth={this.state.curMonth}
+          showDataElectri={this.state.showDataElectri}
+          showDataCapacity={this.state.showDataCapacity}
+          curYearAndMonth={this.state.curYearAndMonth}
+      />
+      arrow-btn arrow-right 右按钮
+    capacity 产量产能表 this.state.montArr.map((item, index)中的item.value
+    predicate-act 按钮
+      begin-act 开始预测
+      export-act 预测结果导出

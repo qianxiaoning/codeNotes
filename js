@@ -221,6 +221,37 @@ a为"foo" b为12
 let { a, ...b1 } = o; 
 b1//为{b: 12, c: "bar"}
 
+实际场景使用
+//初始化渲染
+async dataInit=()=>{
+    //获取数据
+    const data = await this.$http('...');
+    //this.handleData(data) 处理数据
+    //handleData得到数组返回值，直接定义一个数组 解构赋值，变量会自动对应
+    const [pageCount, list, pageTipsShow] = this.handleData(data);
+    //同步视图（如react）
+    this.setData({
+        pageCount:pageCount,
+        list:list,
+        pageTipsShow:pageTipsShow
+    })
+}
+//数据处理函数
+handleData=(data)=>{
+    let pageCount, list, pageTipsShow;
+    if(){
+        ...
+        //经过大量逻辑和计算
+        pageCount = ...;
+        //经过大量逻辑和计算
+        list = ...;
+        //经过大量逻辑和计算
+        pageTipsShow = ...;
+    }
+    //分别处理后，放在一个数组返回
+    return [pageCount, list, pageTipsShow]
+}
+
 Obejct.keys 只对最外层
 一、Obejct.keys把对象转为key值数组，让对象可以和数组一样用forEach循环。
 let params={xxx};
@@ -313,13 +344,8 @@ arr // [1, 2, 3, 4, 8, 9]
 
 Array filter(i,ind,arr) 方法
 lter() 方法返回一个新的数组，新数组中的元素是通过检查指定数组中符合条件的所有元素。
-var ages = [32, 33, 16, 40];
-function checkAdult(age) {
-    return age >= 18;
-}
-function myFunction() {
-    xxx.innerHTML = ages.filter(checkAdult);
-}
+const result = [32, 33, 16, 40].filter((item) => {return item >= 18;});
+// 得到[32, 33, 40]
 
 Promise异步链式机制
 比如微信小程序wx.request封装
@@ -1675,9 +1701,10 @@ array.fill(value, start, end)
 var fruits = ["Banana", "Orange", "Apple", "Mango"];
 fruits.fill("Runoob", 2, 4);
 //Banana,Orange,Runoob,Runoob
-
-这招根据数组长度，自动生成对应长度空数组
+具体场景：
+1.这招根据数组长度，自动生成对应长度空数组
 this.idx_list = new Array(formList.length).fill(0);
+2.var arr = Array(3).fill({}) // [{}, {}, {}];
 
 匿名函数async使用方法 //这样写即可
 this.$refs.f.form_validate(async(res,msg)=>{
@@ -1742,6 +1769,8 @@ newArray = oldArray.map((value,index)=>{
 
 计算机语言中判断时不能连续判断
 如if(1<a<5)是不行的，得分开if(1<a&&a<5)
+
+小于等于<=是可以的
 
 js删除对象中某个属性
 delete object.xxx;
@@ -1819,3 +1848,11 @@ var newPlayer = Object.assign({}, player, {score: 2});
 2.扩展符...
 var newPlayer = {...player, score: 2};
 
+if(){
+
+}else{
+
+} // 此处不应该加';'分号
+
+es6 const
+不能被再次赋值，但是作为数组 能push，作为对象能改变其中属性
