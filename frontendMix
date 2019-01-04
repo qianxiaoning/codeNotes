@@ -178,3 +178,10 @@ react中：
 需要操作dom的，才放到componentDidMount
 另外eslint规则中：
 似乎还要给初始化请求具名函数，方便不需要组件时取消该请求函数
+
+echarts 数据空值
+当某数据不存在时（ps：不是0），可以用 '-' 或者 null 或者 undefined 或者 NaN 表示
+无数据在折线图中可表现为该点是断开的，在其它图中可表示为图形不存在。
+
+input readOnly 也能进行focus和blur事件
+disabled的不行

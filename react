@@ -1190,11 +1190,26 @@ this.setState({},()=>{
   
 })
 
+react中setState会触发整个state对象的更新，
+所以说，就算只更新了state对象的一个属性，也会使整个state对象更新，造成有几次setState就会渲染几次的情况
 
+所以在react中，只应在最终完成时做一次setState，不要把多个属性分别setState，把要改变的一次setState完
 
+react的组件就是一个类，
+类方法能获取到constructor函数中挂载到this的属性
+所以全局变量放在constructor中的this即可，
+千万不要把渲染无关的全局变量放在this.state中
 
+在map循环中ref指向input时，
+得到的是最后一个input
 
+es7 bind语法 ::？
+<button onClick={this.handleClick.bind(this)}></button>
+等于
+<button onClick={::this.handleClick}></button>
 
+react中事件 在dom中写了()，似乎初始化的时候并不会执行
+<div onClick={() => this.aaa()}></div>
 -----------------------------------------------
 项目：
 

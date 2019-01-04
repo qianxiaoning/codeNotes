@@ -278,11 +278,17 @@ Object.assign()
 用于将所有可枚举属性的值从一个或多个源对象复制到目标对象。后面会把前面覆盖。它将返回目标对象。
 相当于把有值的对象传给没值的对象，避免直接赋值产生的地址指向相同影响
 
-js map()
-map() 方法返回一个新数组，数组中的元素为原始数组元素调用函数处理后的值。
+js map() 返回一个新数组 需要一个return值
+map() 数组中的元素为原始数组元素调用函数处理后的值。
 array.map(function(currentValue,index,arr), thisValue)
-var numbers = [4, 9, 16, 25];
-numbers.map((item)=>{return item*item}));//[2,3,4,5]
+实际场景：
+const oldArray = [4, 9, 16, 25];
+const newArray = oldArray.map((item) => {
+    const obj = {};
+    obj.xxx = item + 1;
+    return obj;
+});
+oldArray //[{xxx:5},{xxx:10},{xxx:17},{xxx:26}]
 
 普通函数：this 永远指向调用它的对象，new的时候，指向new出来的对象
 箭头函数：this 
@@ -1761,10 +1767,6 @@ window事件貌似不能用箭头函数
 forEach
 Array.forEach((value,index)=>{
     value=value+'aaa'
-});
-map 需要return 返回值
-newArray = oldArray.map((value,index)=>{
-    return value+'aaa'
 });
 
 计算机语言中判断时不能连续判断
