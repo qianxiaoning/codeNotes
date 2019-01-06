@@ -1123,35 +1123,22 @@ window.location.hash修改hash，路径后面的#，不刷新页面
 --------------------------------------------------------------------
 es6 数据交互
 fetch
-let fetchUrl = 'http://192.168.0.100:81/api/Pay/payQuery';
-let fetchInit = {
-    method: 'post',
-    //请求头
-    headers: {
-        'Authorization': `BasicAuth ${JSON.parse(localStorage.getItem('UserInfo')).openid}&${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json; charset=utf-8'
-    },
-    //传后台的参数 obj转string
-    body: JSON.stringify(
-        {merchantOutOrderNo:merchantOutOrderNo,payType:localStorage.getItem('payType')}
-    ),
+fetchA(obj){
+    fetch('api', {
+        'method': 'get/post',
+        'headers': {
+            'content-type': 'application/json;charset=UTF-8',
+            'Authorization' token
+        },
+        'body': JSON.stringify(obj)
+    }).then(res => res.json()).then(res => { // 接受时
+        console.log(res);
+    }, res => { // 拒绝时
+        console.log(res.desc);
+    }).catch(err => {
+        console.log(err);
+    });
 };
-//两个参数 url和init 
-fetch(fetchUrl,fetchInit)
-//string转obj
-.then(res=>res.json())
-.then(
-//成功时
-res=>{
-    console.log(res);
-},
-//拒绝时
-res=>{
-    console.log(res.desc);
-})
-.catch(err =>{
-    console.error(err);
-});
 fetch的两个参数 https://developer.mozilla.org/zh-CN/docs/Web/API/WindowOrWorkerGlobalScope/fetch 
 fetch的使用方法实例 https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API/Using_Fetch 
 https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch 

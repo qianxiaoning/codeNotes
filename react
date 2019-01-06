@@ -1210,87 +1210,56 @@ es7 bind语法 ::？
 
 react中事件 在dom中写了()，似乎初始化的时候并不会执行
 <div onClick={() => this.aaa()}></div>
+
+react事件中传入的第一个参数就是event对象
+
+react中的事件是合成事件
+在异步中出于性能，无法访问event对象的具体属性
+能通过在回调中加入：
+//保留原生事件
+event.persist();
+删除合成事件，保留对原生事件的引用
+
+似乎在js中this.xxx = xxx;逻辑层已经改变了
+this.setState只是触发render渲染页面
+所以有些js判断变量，不需要渲染的，不必调用this.setState
+
+需要页面渲染展示出来的数据，才需要放到this.state.xxx中
+
+react dom箭头函数调用事件必须加()?，不然不调用
+<button onClick={() => this.aaa()}></button>
 -----------------------------------------------
 项目：
-
-现在 GET /budget/{version}/queryMainInfo
-
-<div className='capacity-value'>
-{
-    this.state.montArr.map((item, index) => {
-        if(!item.flag){
-            return <input ref={`inputRef${index}`} key={index} />;  
-        }else{
-            return <span key={index}>{item.value}</span>;
-        }
-    })
-}
-</div>
-
-montArr
-
-左箭头leftAct
-右箭头rightAct
-
-import {ALL_CN_MONTH, ALL_NUM_MONTH} from 'constants';
-
 react-portal 数据请求流程
 //dom事件执行
 dom.onClick=()=>{
   //调dao里的数据请求方法
-  this._dao.queryMainInfo(param1,param2);
+  this._dao.daoA(param1,param2);
 }
 
 dao.js
 //请求数据
-queryMainInfo(param1,param2){
+daoA(param1,param2){
   ajax(xhr){
     //以queryEnterpriseList键名发送对象{}
-    this.dispatchEvent('queryEnterpriseList', {
-        'getEnterpriseList': data
+    this.dispatchEvent('eventA', {
+        'eventA': data
     })
   }
 }
 
 //初始化监听
 index.js
-//监听queryEnterpriseList键名,监听到就执行getEnterpriseList方法
-this._dao.subEvent('queryEnterpriseList', this, 'getEnterpriseList');
+//监听eventA键名,监听到就执行funA方法
+this._dao.subEvent('eventA', this, 'funA');
 
-//getEnterpriseList方法this.setState同步视图层数据
-//方法里data参数为dispatchEvent发送的{'getEnterpriseList': data}对象
-getEnterpriseList(data){
-    if(data.getEnterpriseList.code === 0){
-        const enterpriseList = data.getEnterpriseList.data;
+//funA方法this.setState同步视图层数据
+//方法里data参数为dispatchEvent发送的{'eventA': data}对象
+funA(data){
+    if(data.eventA.code === 0){
+        const list = data.eventA.data;
         this.setState({
-            'enterpriseList': enterpriseList,
-            'hasEnter': true
+            'list': list
         });
     }   
 }
-
-yuce页面
-初始化
-
-dom结构
-yuce-wrapper
-
-  panel-left 左边信息 <BasicInfo mainInfo={this.state.mainInfo} />
-    basic-info 基本信息
-    peidian-info 配电信息
-  panel-right 右边图表
-    bar-wrapper echart包裹
-      arrow-btn arrow-left 左按钮 this.curSteps
-      div echart图表:
-      <BarChart 
-          curIndex={this.state.index} 
-          curMonth={this.state.curMonth}
-          showDataElectri={this.state.showDataElectri}
-          showDataCapacity={this.state.showDataCapacity}
-          curYearAndMonth={this.state.curYearAndMonth}
-      />
-      arrow-btn arrow-right 右按钮
-    capacity 产量产能表 this.state.montArr.map((item, index)中的item.value
-    predicate-act 按钮
-      begin-act 开始预测
-      export-act 预测结果导出
