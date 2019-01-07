@@ -1845,3 +1845,16 @@ if(){
 
 es6 const
 不能被再次赋值，但是作为数组 能push，作为对象能改变其中属性
+
+向后端http请求中
+报错：SyntaxError: Unexpected token P in JSON at position 0
+意思是json解析异常，可能返回内容不是json格式的，这时候不能以json格式去解析它
+
+二进制href blob格式
+const url = window.URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+
+window.open(url);有时会被浏览器禁止弹出窗口
+
+可以window.location.href = url;// 让后台调起下载api，在当前跳转即可
