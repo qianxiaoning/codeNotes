@@ -1858,3 +1858,9 @@ a.href = url;
 window.open(url);有时会被浏览器禁止弹出窗口
 
 可以window.location.href = url;// 让后台调起下载api，在当前跳转即可
+
+js find方法 返回数组通过函数判断的第一个值，如果没有符合条件的元素返回 undefined
+[3, 10, 18, 20].find((item, index, arr) => {
+    return item >= 18;
+});
+得到18
