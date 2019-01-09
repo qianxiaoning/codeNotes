@@ -263,7 +263,13 @@ Object.keys(params).forEach((key,index)=>{
 二、拥有数组特性，比如数组的length长度。
 判断时，Obejct.keys(Obj).length!=0;//判断对象为不为空
 
-返回一个所有元素为字符串的数组，其元素来自于从给定的object上面可直接枚举的属性。这些属性的顺序与手动遍历该对象属性时的一致
+返回一个所有元素为字符串的数组，其元素来自于从给定的object上面可直接枚举的属性。
+顺序：
+Number 按照大小
+String 按照属性被创建的时间升序排序
+Symbol 通String
+所以给字符串数组用Object.keys时，出来的数组是乱序的
+
 // simple array
 var arr = ['a', 'b', 'c'];
 console.log(Object.keys(arr)); // console: ['0', '1', '2']
@@ -338,7 +344,7 @@ document.addEventListener('click', ev => {
     console.log(ev)
 })　　
 
-7. 作为数组排序回调
+7. 作为数组排序回调 sort(sortby) sortby为比较函数有a,b两个参数，提供比较规则
 var arr = [1, 9 , 2, 4, 3, 8].sort((a, b) => {
     if (a - b > 0 ) {
         return 1
@@ -1864,3 +1870,19 @@ js find方法 返回数组通过函数判断的第一个值，如果没有符合
     return item >= 18;
 });
 得到18
+
+在字符串数组中排除某几项
+const array = ['1','2','3','4','5'];
+
+array.forEach((item) => {
+    if(['1', '2', '3'].indexOf(item) < 0){
+        console.log(item); //这样只会循环'4','5'
+    }
+});
+
+定义对象时
+const aKey = 'aKey';
+const obj = {
+    aKey
+};
+obj会解析为{aKey: aKey}
