@@ -1228,6 +1228,17 @@ this.setState只是触发render渲染页面
 
 react dom箭头函数调用事件必须加()?，不然不调用
 <button onClick={() => this.aaa()}></button>
+
+表单
+受控组件 如：
+<input value={inputValue} onChange={inputChange} />
+此input可以通过setState渲染，但是只能通过onChange事件调用setState => {inputValue： e.target.value}编辑
+
+非受控组件 如：
+<input defaultValue={defaultValue} />
+此input只能通过defaultValue渲染一次，可以直接编辑
+
+<input type="file">是非受控组件
 -----------------------------------------------
 项目：
 react-portal 数据请求流程
