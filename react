@@ -1238,7 +1238,7 @@ react dom箭头函数调用事件必须加()?，不然不调用
 <input defaultValue={defaultValue} />
 此input只能通过defaultValue渲染一次，可以直接编辑
 
-<input type="file">是非受控组件
+<input type="file" />是非受控组件
 -----------------------------------------------
 项目：
 react-portal 数据请求流程

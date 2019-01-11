@@ -190,9 +190,9 @@ js分原始类型和引用类型
         jq的$.extend
 
 es6 ...
-...对象展开运算符
+...展开运算符
 可以将数组和对象转为参数列
-可以将一个数组展开为另一个数组，或将一个对象展开为另一个对象
+可以将一个数组展开为数组列，或将一个对象展开为对象列
 
 ...[1,2,3] 可以将数组转化为参数。代替了es5的f.apply(null,[1,2,3])
 可以 array1.push(...array2);
@@ -220,6 +220,17 @@ let { a, b } = o;
 a为"foo" b为12
 let { a, ...b1 } = o; 
 b1//为{b: 12, c: "bar"}
+
+//返回一个新数组
+[...].slice();
+
+浅合并一个对象
+var player = {score: 1, name: 'Jeff'};
+
+1.Object.assign()
+var newPlayer = Object.assign({}, player, {score: 2});
+2.扩展符...
+var newPlayer = {...player, score: 2};
 
 实际场景使用
 //初始化渲染
@@ -1831,17 +1842,6 @@ setInterval(()=>{
         i++;
     }
 },2000);
-
-//返回一个新数组
-[...].slice();
-
-浅合并一个对象
-var player = {score: 1, name: 'Jeff'};
-
-1.Object.assign()
-var newPlayer = Object.assign({}, player, {score: 2});
-2.扩展符...
-var newPlayer = {...player, score: 2};
 
 if(){
 
