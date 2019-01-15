@@ -187,7 +187,7 @@ input readOnly 也能进行focus和blur事件
 disabled的不行
 
 微信公众号h5开发 web接口
-1.引入'weixin-js-sdk';
+1.引入'weixin-js-sdk';   //微信js工具包
 2.通过config接口注入权限验证配置
 所有需要使用JS-SDK的页面必须先注入配置信息
 
