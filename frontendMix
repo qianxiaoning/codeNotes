@@ -185,3 +185,23 @@ echarts 数据空值
 
 input readOnly 也能进行focus和blur事件
 disabled的不行
+
+微信公众号h5开发 web接口
+1.引入'weixin-js-sdk';
+2.通过config接口注入权限验证配置
+所有需要使用JS-SDK的页面必须先注入配置信息
+
+同一个url仅需调用一次，对于变化url的SPA的web app可在每次url变化时进行调用,目前Android微信客户端不支持pushState的H5新特性，所以使用pushState来实现web app的页面会导致签名失败，此问题会在Android6.2中修复
+
+3.通过ready接口处理成功验证
+4.调用方法
+
+在手机微信公众号中就能调用相关方法
+感觉类似混合开发，这是微信原生暴露给h5 js的方法
+
+现在新版分享接口似乎无效 updateAppMessageShareData 
+改用老的可以wx.onMenuShareAppMessage
+
+分享接口里面的link参数
+link: linkUrl, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+所以必须是完整路径，含有域名，且一致

@@ -266,12 +266,6 @@ v-else
 v-else-if
 <h1 v-if="ok">Yes</h1>
 <h1 v-else>No</h1>
-<template>是不可见的包裹元素，判断多个节点时
-<template v-if="ok">
-  <h1>Title</h1>
-  <p>Paragraph 1</p>
-  <p>Paragraph 2</p>
-</template>
 用key不复用
 <input placeholder="Enter your email address" key="email-input">
 v-show和v-if
@@ -681,7 +675,7 @@ slot插槽功能，也是父组件向子组件以模板形式，传递信息的�
     子组件                                           
         <template>
             <div>original</div>                                           
-            <slot>no content</slot> -> 插槽有内容时<p>123</p> / 插槽无内容时，会显现slot中的默认内容'no content'                                          
+            <slot>no content</slot> -> 插槽有内容时<p>123</p> / 插槽无内容时，会显现slot中的默认内容'no content'                                   
         </template> 
     向具名slot中插入信息：
         父组件：
@@ -1306,11 +1300,9 @@ vuex状态管理 state,getters,mutations,actions,modules
                 <div class='app-footer'>footer</div>
             </div>
         </template>
-    pages放页面，与components同级的建一个page文件夹放页面，page/index.vue            
-                                           
-    <template v-for='product in productList'></template>v-for循环包裹块
-    <li v-for='item in product.list'></li>                                           
-    <div v-for="(item,index) in xxxList"></div>                                      
+    pages放页面，与components同级的建一个page文件夹放页面，page/index.vue       
+     
+    <div v-for="(item,index) in xxxList"></div>   
                                            
 json-server前端模拟数据测试服务器npm包，利用proxy功能代理端口跨域。只能通过get请求数据？                                           
 express写路由做模拟数据测试服务器                                           
@@ -2058,3 +2050,33 @@ style绑定，对象语法，逗号分隔，样式值要用单引号 括起来
 感觉vue项目要做seo，
 只有通过nuxt等服务端渲染？
 webpack配置多页面，右击查看代码，还是只有一个div id='app'，对seo没用
+
+返回顶部
+data(){
+    return{
+        scrollTop: 0,
+        timer :null
+    }
+}
+methods:{
+    timeFun(fn,s=7){
+        this.timer = setInterval(fn,s);
+    },
+}
+backToTop(){
+    this.timeFun(() => {
+        if(this.scrollTop <= 0){
+            this.scrollTop = 0;
+            document.body.scrollTop = document.documentElement.scrollTop = this.scrollTop;
+            clearInterval(this.timer);
+        }else{
+            this.scrollTop -= 10;
+            document.body.scrollTop = document.documentElement.scrollTop = this.scrollTop;
+        }
+    });
+}
+
+v-for v-if可以用在<template></template>标签上，不占位，这时:key要写在子元素中
+v-show不行用在<template>上
+
+v-for v-if一起用时，v-for 具有比 v-if 更高的优先级，意味着 v-if 将分别重复运行于每个 v-for 循环中
