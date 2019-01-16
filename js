@@ -1886,3 +1886,24 @@ const obj = {
     aKey
 };
 obj会解析为{aKey: aKey}
+
+何时可以触发onscroll事件
+当dom元素overflow出现滚动条时，该dom元素能有onscroll事件，并有滚动条时它才有scrollTop，否则scrollTop为0
+dom {overflow:auto;}
+dom.addEventListener('scroll', () => {
+    console.log(dom.scrollTop);
+});
+
+监听onscroll 和 获取 scrollTop 机制
+监听html和body貌似浏览器不支持
+当html{height:100%;}、body{height:100%;overflow:auto;}时，body无效
+当html、body都{height:100%;overflow:auto;}时，html无效，body可以
+1.监听全文、窗口的滚动在window、document
+1.此时获取全文、窗口的scrollTop，用document.documentElement.scrollTop || document.body.scrollTop;获取。
+window.scrollTop和document.scrollTop是不存在的
+
+2.监听普通dom直接document.getElement...获取dom绑定
+2.此时获取普通dom的scrollTop，直接用document.getElement....scrollTop获取
+
+let a,b;
+a = b = 1; //此时赋值是从右往左进行的，类似是将a和b的指针都指向1
