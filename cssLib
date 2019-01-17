@@ -48,6 +48,15 @@ wrap层 flex fd-c height:100%
 .mid{} f-a overflow:auto;
 .down{} 固高
 --------------------------------------------------------------------
+/*专属重置样式*/
+body, ul, ol, dl, dd, h1, h2, h3, h4, h5, h6, p, form, fieldset, legend, input, textarea, select, button, th, td {
+  margin:0;
+  padding:0;  
+}
+div,ul,li,a,p,span,i,h1,h2,h3,header,section,footer,nav,aside,article{
+  box-sizing: border-box;
+}
+--------------------------------------------------------------------
 子元素设height:100%是获取不到靠兄弟元素撑开的，未设具体高度的父级的高度的。
 普通布局
 block属性的div设height:auto是div自身高度

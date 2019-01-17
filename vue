@@ -2080,3 +2080,9 @@ v-for v-if可以用在<template></template>标签上，不占位，这时:key要
 v-show不行用在<template>上
 
 v-for v-if一起用时，v-for 具有比 v-if 更高的优先级，意味着 v-if 将分别重复运行于每个 v-for 循环中
+
+vue中class与style样式绑定
+class:
+class 与 :class加三目即可
+style:
+:style="{样式直接写}"
