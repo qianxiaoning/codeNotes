@@ -47,6 +47,10 @@ wrap层 flex fd-c height:100%
 .up{} 固高
 .mid{} f-a overflow:auto;
 .down{} 固高
+
+浏览器中input标签有默认宽度 如169px
+在flex布局中，要先给input一个小宽度，如width:1px;就能正常使用flex布局了
+flex能把input拉宽，但是不能压缩
 --------------------------------------------------------------------
 /*专属重置样式*/
 body, ul, ol, dl, dd, h1, h2, h3, h4, h5, h6, p, form, fieldset, legend, input, textarea, select, button, th, td {
