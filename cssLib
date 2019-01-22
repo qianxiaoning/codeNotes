@@ -67,8 +67,11 @@ block属性的div设height:auto是div自身高度
 flex布局
 flex属性的div设height:auto可以自动获取未设具体高度的父级高度（被兄弟子元素撑开的父级）。
 --------------------------------------------------------------------
-边框内阴影 inset
-box-shadow: 0px 4px 14px #eaeaea inset;
+box-shadow 边框阴影
+box-shadow: x轴位置 y轴位置 阴影距离 阴影发散度 阴影颜色 inset内部阴影
+x轴位置，y轴位置可负，表示坐标的两端
+inset内阴影，x和y坐标需要正负变换
+10px 10px 5px 20px pink inset
 --------------------------------------------------------------------
 css权重
 类，属性选择器和伪类选择器 权重相同都是10
@@ -448,3 +451,6 @@ html {
     touch-action: manipulation;
 }
 可以解决移动端click 300ms延迟的问题
+
+transition过渡效果
+能在具值间过渡，无法在具值到'auto'间过渡

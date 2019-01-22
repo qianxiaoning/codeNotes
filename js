@@ -33,6 +33,9 @@ document.onreadystatechange = function(){
         console.log('文档加载完毕');
     }
 }
+
+js时间戳 new Date().getTime()
+
 清除缓存 链接后加时间戳 href += '&time='+ new Data().getTime();
 
 dom属性
@@ -1907,3 +1910,9 @@ window.scrollTop和document.scrollTop是不存在的
 
 let a,b;
 a = b = 1; //此时赋值是从右往左进行的，类似是将a和b的指针都指向1
+
+js splice
+splice添加数组是从index处左边添加的
+如：
+const a = [1,2,3];
+a.splice(1,0,1.2); //得到[1, 1.2, 2, 3]

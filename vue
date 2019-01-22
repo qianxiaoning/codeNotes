@@ -1462,7 +1462,7 @@ filters过滤器可以接受过滤的值和传参，且不影响原数据
 
 数组索引更新
 this.$set(this.Arr, indexOfArr, newValue)
-改变数组长度
+改变数组长度 //改变数组长度 不如直接重新赋值了？
 vm.items.splice(newLength)
 
 添加一个对象属性
