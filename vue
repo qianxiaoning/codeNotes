@@ -2086,3 +2086,23 @@ class:
 class 与 :class加三目即可
 style:
 :style="{样式直接写}"
+
+vue中自定义指令
+可以在以下几个钩子函数中使用
+bind：只调用一次，绑定时
+
+inserted：被绑定元素插入父节点时
+
+update：所在组件的 VNode 更新时
+
+componentUpdated：指令所在组件的 VNode 及其子 VNode 全部更新后调用。
+
+unbind：只调用一次，指令与元素解绑时调用。
+
+钩子函数参数：
+el 指令所绑定的元素，dom
+binding ...
+vnode Vue 编译生成的虚拟节点
+oldVnode 上一个虚拟节点，仅在 update 和 componentUpdated 钩子中可用
+
+除了 el 之外，其它参数都应该是只读的，切勿进行修改。如果需要在钩子之间共享数据，建议通过元素的 dataset 来进行。

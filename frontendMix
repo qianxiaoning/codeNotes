@@ -194,6 +194,9 @@ disabled的不行
 同一个url仅需调用一次，对于变化url的SPA的web app可在每次url变化时进行调用,目前Android微信客户端不支持pushState的H5新特性，所以使用pushState来实现web app的页面会导致签名失败，此问题会在Android6.2中修复
 
 3.通过ready接口处理成功验证
+对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
+比如：调用相机或者相册
+
 4.调用方法
 
 在手机微信公众号中就能调用相关方法

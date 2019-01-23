@@ -83,8 +83,13 @@ chrome的Allow-Control-Allow-Origin.crx插件得关闭重新打开，才能重�
 
 powershell中连续命令执行符号|代替&&，|前后不用空格
 
-本地hosts文件无法修改，把hosts文件复制到另一个地方，修改了再替换过去就行
+windows host文件位置：
+C:\WINDOWS\system32\drivers\etc\hosts
 
+本地hosts文件无法修改，把hosts文件复制到另一个地方，修改了再替换过去就行
+里面#号是注释
+
+127.0.0.1       localhost
 windows给每台电脑默认本地域名是127.0.0.1
 hosts文件就是修改dns渲染的，当访问localhost时实际就是访问的127.0.0.1
 
