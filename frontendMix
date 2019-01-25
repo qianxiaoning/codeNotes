@@ -211,3 +211,17 @@ link: linkUrl, // 分享链接，该链接域名或路径必须与当前页面�
 
 修改google浏览器颜色展示方式，rgba切十六进制
 点颜色块，上下切换
+
+前端-Request Headers-content-type
+前端http请求时，发送给后台的请求头Request Headers里的content-type是设定前端发送的数据格式，一般为json，如果是input type='file'，为文件流格式
+
+'application/json; charset=utf-8' json格式
+'text/plain; charset=utf-8' 纯文本
+'multipart/form-data' 上传文件
+
+get请求参跟在url后面，与Request Headers-content-type无关
+post请求要设定对应的content-type格式
+
+在ios上看alert出的obj对象
+当在ios上调试时，由于看不到console日志，alert看不到对象，
+解决办法alert(JSON.stringify(obj)); 对象转成字符串即可

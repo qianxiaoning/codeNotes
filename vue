@@ -2106,3 +2106,10 @@ vnode Vue 编译生成的虚拟节点
 oldVnode 上一个虚拟节点，仅在 update 和 componentUpdated 钩子中可用
 
 除了 el 之外，其它参数都应该是只读的，切勿进行修改。如果需要在钩子之间共享数据，建议通过元素的 dataset 来进行。
+
+filter过滤器使用场景
+仅在mustache 插值（{{}}）和 v-bind 表达式
+在 v-model 、v-on 、v-for 等指令时使用computed代替
+
+不能给input的v-model使用filter过滤器
+由于v-model双向绑定不能使用filter             
