@@ -1919,3 +1919,22 @@ a.splice(1,0,1.2); //得到[1, 1.2, 2, 3]
 
 Math.floor(1.9) 向下取整
 //得到1
+
+伪数组
+拥有一个 length 属性和若干索引属性的任意对象
+如：{0:'a',1:'b',length:2}
+伪数组（如NodeList对象）转数组，使用数组方法
+1.call方法
+const divs = document.querySelectorAll('div');
+// 如果 end 未被规定，那么 slice() 方法会选取从 start 到数组结尾的所有元素
+// 如果start也没有，会返回一个新的完整的数组
+// 用divs调slice方法，没有传参，返回新的完整的数组
+// 数组构造函数原型方法调用
+const divArray = Array.prototype.slice.call(divs);
+或 实例对象调用slice
+const divArray = [].slice.call(divs);
+2.es6 Array.form
+Array.from()方法从一个类似数组或可迭代对象中创建一个新的数组实例。
+const divArray = Array.from(divs);
+3....扩展运算符
+const divArray = [...divs];

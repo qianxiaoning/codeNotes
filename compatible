@@ -39,3 +39,40 @@ appearance: none;
 
 select原生标签在安卓是弹窗形式，在safari是下拉框形式，形式不一样
 所以select不用原生写，用picker插件或者select插件写
+
+ios在微信浏览器input触发的键盘框 消失后下方留白问题
+此为apple在ios上的bug
+屏幕一移动留白就会恢复
+解决办法：
+给所有的input绑定onBlur事件，触发
+// 滚动到顶部
+window.scrollTo(0, 0);
+// 滚动到底部
+window.scrollTo(0, document.documentElement.clientHeight);
+
+或使屏幕上移1px
+$("input,select").blur(function(){
+    setTimeout(() => {
+        const scrollHeight = document.documentElement.scrollTop || document.body.scrollTop || 0;
+        window.scrollTo(0, Math.max(scrollHeight - 1, 0));
+    }, 100);
+});
+
+ios在微信浏览器，overflow:auto;无法滑动
+解决办法：
+1.webkit样式开启原生滚动
+-webkit-overflow-scrolling: touch; //有回弹效果 
+-webkit-overflow-scrolling: auto; //滑到哪停到哪
+在overflow的父节点添加：-webkit-overflow-scrolling:touch
+
+2.继续优化
+在1的基础上，对overflow:auto的子节点上加：
+min-height: calc(100% + 1px); // 帮助safari建立原生ScrollView
+
+只安卓？在微信浏览器用上下flex高度充满布局似乎会有问题
+在键盘弹出后，上下移动，下面用flex压下去的会可以移动到上面去
+似乎比较适合用position:fixed把底部条固定在底部
+上面用css计算属性扩充，height:calc(100% - 0.8rem);
+
+微信浏览器position:fixed的注意点
+微信浏览器在overflow:auto;-webkit-overflow-scrolling:touch;中固定定位会失效，因为这在原生ScrollView中了，得把固定定位放在overflow:auto;-webkit-overflow-scrolling:touch;外
