@@ -44,6 +44,9 @@ ios在微信浏览器input触发的键盘框 消失后下方留白问题
 此为apple在ios上的bug
 屏幕一移动留白就会恢复
 解决办法：
+因为在移动端布局最外面肯定是高度百分百，所以window.scrollTo(0, 0);不用担心页面上移
+在有iframe的页面中iframe内滚动对外层此bug无效，必须对最外层window对象设置scrollTo(0, 0)，所以用window.top对象，始终获取顶级。
+
 给所有的input绑定onBlur事件，触发
 // 滚动到顶部
 window.scrollTo(0, 0);
@@ -76,3 +79,8 @@ min-height: calc(100% + 1px); // 帮助safari建立原生ScrollView
 
 微信浏览器position:fixed的注意点
 微信浏览器在overflow:auto;-webkit-overflow-scrolling:touch;中固定定位会失效，因为这在原生ScrollView中了，得把固定定位放在overflow:auto;-webkit-overflow-scrolling:touch;外
+
+普通手机浏览器键盘取消下方留白问题
+用fixed定位的时候？
+解决办法：
+document.body.scrollTop = document.body.scrollHeight;

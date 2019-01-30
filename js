@@ -1938,3 +1938,8 @@ Array.from()方法从一个类似数组或可迭代对象中创建一个新的�
 const divArray = Array.from(divs);
 3....扩展运算符
 const divArray = [...divs];
+
+scrollTo(x, y)是window的方法，只有window能用
+
+dom有onscroll事件
+dom.onscroll
