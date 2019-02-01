@@ -1943,3 +1943,14 @@ scrollTo(x, y)是window的方法，只有window能用
 
 dom有onscroll事件
 dom.onscroll
+
+split('')
+const s = 'aaaa';
+const a = s.split(''); // ['a','a','a','a']
+
+for循环进阶
+const a = [...];
+for(let i = a.length - 1; i >= 0; i--){
+
+}
+// 甚至可以在for里面改变a数组，比如每次加1，每次减1这样   
