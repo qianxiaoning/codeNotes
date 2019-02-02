@@ -1708,7 +1708,7 @@ a调[c.push]这个方法，传入参数[4,5,6]
 
 new Array(3);生产一个空的三位数组
 
-fill()
+fill() //IE 11 及更早版本不支持 fill() 方法
 array.fill(value, start, end)
 从开始到结束位置填充固定值
 var fruits = ["Banana", "Orange", "Apple", "Mango"];

@@ -872,7 +872,7 @@ constructor()
 static getDerivedStateFromProps()
 render()
 componentDidMount()
-2.道具或州的更改可能导致更新。重新渲染组件时，将按以下顺序调用这些方法：
+2.prop或state的更改可能导致更新。重新渲染组件时，将按以下顺序调用这些方法：
 static getDerivedStateFromProps()
 shouldComponentUpdate()
 render()
