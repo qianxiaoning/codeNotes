@@ -326,3 +326,14 @@ webpack多页面
 
 vendor模块是指node_modules中的功用模块
 manifest是指针对vendor模块所做的缓存
+
+webpack.DllPlugin插件
+一个 dll 包，就是一个很纯净的依赖库，它本身不能运行，是用来给你的 app 或者业务代码引用的。
+把打包过程分成两步：
+1.打包ddl包
+2.引用ddl包，打包业务代码
+动态链接库
+生成manifest.json文件，用于DllReferencePlugin映射依赖项
+
+happypack使webpack能多线程处理
+npm i -D happypack
