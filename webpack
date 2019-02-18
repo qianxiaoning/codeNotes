@@ -6,13 +6,6 @@ cnpm run build项目打包生成dist文件夹，其中有static文件夹和index
 需要在原项目的config配置文件夹的index.js设置build命令的assetsPublicPath资源公共路径属性，把'/'改成'./'。把服务器根路径改成当前文件同级路径。
 这样在服务器上就能正常运行dist文件夹里的index.html文件了 。
 ---------------------------------------------------------
-DllPlugin
-把不需要重复编译的第三方库等文件，仅开始时编译一次，后续编译只编译业务代码，大幅提高编译速度。
-
-.dll文件，动态链接库
-动态链接库包含的是，可以在其他模块中进行调用的函数和数据
-提供了将应用模块化的方式，应用的功能可以在此基础上更容易被复用。
-
 四个核心概念：
 入口(entry)
 输出(output)
@@ -322,10 +315,19 @@ data (){
 webpack多页面
 在entry里配置多个入口文件，彼此独立
 这样在output也会生成多个js
-页面似乎是对html-webpack-plugin循环输出多个new HtmlWebpackPlugin({xx:xxx})
+
+HtmlWebpackPlugin生成多html
+在plugins数组中调用多次new HtmlWebpackPlugin()即可
 
 vendor模块是指node_modules中的功用模块
 manifest是指针对vendor模块所做的缓存
+
+DllPlugin
+把不需要重复编译的第三方库等文件，仅开始时编译一次，后续编译只编译业务代码，大幅提高编译速度。
+
+.dll文件，动态链接库
+动态链接库包含的是，可以在其他模块中进行调用的函数和数据
+提供了将应用模块化的方式，应用的功能可以在此基础上更容易被复用。
 
 webpack.DllPlugin插件
 一个 dll 包，就是一个很纯净的依赖库，它本身不能运行，是用来给你的 app 或者业务代码引用的。
@@ -337,3 +339,7 @@ webpack.DllPlugin插件
 
 happypack使webpack能多线程处理
 npm i -D happypack
+
+webpack配置路径
+api: xxx //api中的路径是webpack默认上下文，也就是项目根目录
+path.resolve(__dirname,"./xxx") //ath.resolve(__dirname)，指向的是当前文件目录
