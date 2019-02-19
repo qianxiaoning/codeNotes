@@ -1084,8 +1084,37 @@ window.getComputedStyle(xxx, null) || xxx.currentStyle
 var target = e.target || e.srcElement
 event.stopPropagation(); || event.cancelBubble = true
 --------------------------------------------------------------------
+innerHTML, innerText, outerHTML, outerText
+dom:
+<div class='div'>
+    000
+    <p>111</p>
+    <p>222</p>
+</div>
+const div = document.querySelector('.div');
+div.innerHTML //'000
+                <p>111</p>
+                <p>222</p>'
+div.innerText //'000
+                111
+                222'
+div.outerHTML //'<div class='div'>
+                    000
+                    <p>111</p>
+                    <p>222</p>
+                </div>'
+div.outerText //'000
+                111
+                222'
+
 前端开发的优化问题
 用innerHTML代替DOM操作，减少DOM操作次数，优化javascript性能
+
+dom和dom字符串的互相转化
+dom -> dom字符串 :
+document.querySelector('xxx').outerHTML;
+dom字符串 -> dom :
+document.querySelector('xxx').innerHTML = domString;
 --------------------------------------------------------------------
 callee代表函数本身的引用 js中函数自身的递归使用
 (function(num){
