@@ -599,7 +599,7 @@ this.setState((state, props) => ({
 
 处理事件
 jsx中事件调用用驼峰命名
-事件调用和vue一样不用()也行
+事件调用和vue一样不用()也行？
 <button onClick={activateLasers}>
   Activate Lasers
 </button>
@@ -1287,3 +1287,16 @@ funA(data){
 绑定包含input的状态值经验：
 以后绑定包含input的状态值，一定不能直接绑定-存在this实例中需要传递的变量
 绑定this.xxx的副本，都一直绑定副本，让this.xxx变量修改无压力
+
+react事件绑定方法 三种
+1.
+dom: this.xxx.bind(this);
+function: xxx(){...}
+
+2.
+dom: () => this.xxx();
+function: xxx(){...}
+
+3.
+dom: this.xxx;
+function: xxx = () => {...}
