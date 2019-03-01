@@ -1300,3 +1300,12 @@ function: xxx(){...}
 3.
 dom: this.xxx;
 function: xxx = () => {...}
+
+写style时：
+this.state.divStyle={
+  width:'10px',
+  height:'10px'
+}
+<div style={this.state.divStyle}></div>
+或者：
+<div style={{width:'10px',height:'10px'}}></div>
