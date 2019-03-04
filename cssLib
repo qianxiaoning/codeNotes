@@ -395,7 +395,7 @@ calc()是css3的一个新增的功能，用来指定元素的长度，你可以�
 
 左右布局，宽度计算
 左：width: 207px;
-右：width: calc(100% - 207px);
+右：width: calc(100% - 207px); //'-'前后要有空格
 
 flexible不兼容ipad
 
