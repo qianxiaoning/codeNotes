@@ -2003,3 +2003,6 @@ for (var i=0,len=cars.length; i<len; i++){
 }
 
 另外，语句1，2，3都是可以省略的
+
+echarts的chart.setOption(option, notMerge, lazyUpdate);
+notMerge默认为false，也就是默认option是合并的
