@@ -2006,3 +2006,6 @@ for (var i=0,len=cars.length; i<len; i++){
 
 echarts的chart.setOption(option, notMerge, lazyUpdate);
 notMerge默认为false，也就是默认option是合并的
+
+echarts里不光itemStyle, lineStyle下需要加normal
+有时候label下也需要加normal
