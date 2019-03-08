@@ -162,7 +162,7 @@ $ git config --global user.email "email@example.com"
  版本回退
   恢复
    $ git reset --hard 3628164,$ git reset --hard [commit id]
-   $ git reflog查看命令历史获取commit-id,想恢复到新版本$ git reset --hard 3628164
+   $ git reflog查看命令历史获取commit-id，找到后按q推出，恢复到旧版本$ git reset --hard 3628164。如果返回不明确失败就去官网找到对应码全称
   add前
    git checkout -- readme.txt可以丢弃工作区的修改
   add后，又改动

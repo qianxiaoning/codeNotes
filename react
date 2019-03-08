@@ -1309,3 +1309,12 @@ this.state.divStyle={
 <div style={this.state.divStyle}></div>
 或者：
 <div style={{width:'10px',height:'10px'}}></div>
+
+react中实现v-if
+{this.state.xxx === 'xxx' && (
+  <div></div>
+)}
+或者三目
+{this.state.xxx === 'xxx' ? (
+  <div></div>
+) : null}
