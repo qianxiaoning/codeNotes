@@ -2009,3 +2009,7 @@ notMerge默认为false，也就是默认option是合并的
 
 echarts里不光itemStyle, lineStyle下需要加normal
 有时候label下也需要加normal
+
+返回某一月的天数 // 如2019.2
+// 当new Date()第3个参数默认为1。设为0时，默认返回上月的前一天，也就是2.28
+new Date(2019, 2, 0).getDate(); //28
