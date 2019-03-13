@@ -1949,6 +1949,8 @@ splice添加数组是从index处左边添加的
 const a = [1,2,3];
 a.splice(1,0,1.2); //得到[1, 1.2, 2, 3]
 
+Math.ceil(1.001) 向上取整
+//得到2
 Math.floor(1.9) 向下取整
 //得到1
 
@@ -2013,3 +2015,10 @@ echarts里不光itemStyle, lineStyle下需要加normal
 返回某一月的天数 // 如2019.2
 // 当new Date()第3个参数默认为1。设为0时，默认返回上月的前一天，也就是2.28
 new Date(2019, 2, 0).getDate(); //28
+
+js中可以给函数中的参数再次赋值
+function a(a){
+    a = 3;
+    console.log(a);
+}
+a(2); // 返回3
