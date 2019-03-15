@@ -2,3 +2,37 @@
 /* eslint-disable */
     代码块
 /* eslint-enable */
+
+eslint 三大通用规则 airbnb(流行) google standard(自配置)
+
+对于react的jsx格式，需要eslint-plugin-react
+
+rules规则
+"off" 或 0 - 关闭规则
+"warn" 或 1 - 开启规则，使用警告级别的错误：warn (程序不会退出)
+"error" 或 2 - 开启规则，使用错误级别的错误：error (程序会退出)
+
+在webpack中使用eslint
+1.npm i eslint-loader eslint -D
+2.在webpack.config.js中添加eslint-loader
+module: {
+    rules: [
+        {
+            enforce: 'pre',
+            test: /\.js$/,
+            exclude: /node_modules/,
+            loader: 'eslint-loader'
+        }
+    ]
+}
+3.eslint配置文件
+  1.在根目录新建.eslintrc.js eslint配置文件
+  2.直接在package.json中添加  
+  {
+      "eslintConfig": {
+        "env": {
+            "browser": true,
+            "node": true
+        }
+      }
+  }
