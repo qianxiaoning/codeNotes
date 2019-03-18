@@ -12,6 +12,15 @@ rules规则
 "warn" 或 1 - 开启规则，使用警告级别的错误：warn (程序不会退出)
 "error" 或 2 - 开启规则，使用错误级别的错误：error (程序会退出)
 
+新建一个配置文件：
+eslint --init
+
+使用 ESLint 检测任何 JavaScript 文件：
+eslint test.js test2.js
+
+ESLint 中一些规则运行命令它可以帮你自动修复
+eslint test.js --fix
+
 在webpack中使用eslint
 1.npm i eslint-loader eslint -D
 2.在webpack.config.js中添加eslint-loader
@@ -36,3 +45,6 @@ module: {
         }
       }
   }
+4.运行./node_modules/.bin/eslint --init
+查看所需依赖，记下手动安装，ctrl+c退出
+5.在.eslintrc.js文件 引入规则 "extends": "airbnb-base"
