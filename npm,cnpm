@@ -150,3 +150,18 @@ url 模块
 获取url上的传统传参
 url.parse('?id=1',true);
 response.query=>{id:1}
+
+browserslist
+只要在package.json里加上browserslist
+{// package.json
+  "browserslist": [ // 注意：是一个数组对象
+    "> 1%",
+    "last 2 versions"
+  ] 
+}
+用于在不同前端工具之间共享目标浏览器和Node.js版本的配置
+
+polyfill 垫片，抚平不同浏览器之间对js实现的差异
+shim做垫片的一种方式：仅靠旧环境中已有的手段实现新的API
+如promise-polyfill，轻量promise垫片
+@babel/polyfill包含所有js新语法的垫片
