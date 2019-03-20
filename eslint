@@ -3,6 +3,9 @@
     代码块
 /* eslint-enable */
 
+调试前关闭eslint最方便方法
+在页头加/* eslint-disable */ 不用加结束语句
+
 eslint 三大通用规则 airbnb(流行) google standard(自配置)
 
 对于react的jsx格式，需要eslint-plugin-react
