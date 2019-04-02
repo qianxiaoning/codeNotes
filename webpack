@@ -343,3 +343,7 @@ npm i -D happypack
 webpack配置路径
 api: xxx //api中的路径是webpack默认上下文，也就是项目根目录
 path.resolve(__dirname,"./xxx") //ath.resolve(__dirname)，指向的是当前文件目录
+
+遇到的问题：
+使用DllPlugin预打包，运行的时候总是提示[name]VarName_[hash] is not defined找不到
+测试下来是DllPlugin的context和DllReferencePlugin的context两者上下文的问题
