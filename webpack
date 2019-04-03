@@ -347,3 +347,19 @@ path.resolve(__dirname,"./xxx") //ath.resolve(__dirname)，指向的是当前文
 遇到的问题：
 使用DllPlugin预打包，运行的时候总是提示[name]VarName_[hash] is not defined找不到
 测试下来是DllPlugin的context和DllReferencePlugin的context两者上下文的问题
+
+web模块化编程（import/require/@import/url(...)/<img src=...>）
+
+webpack hmr 模块热替换hot module replacement
+即在应用程序运行过程中替换、添加或删除模块，而无需重新加载整个页面，一般在开发中使用
+原理：
+出处：https://juejin.im/post/5c3ca02ce51d45451850250a
+1.webpack构建的项目，分为server端和client端(也就是浏览器)，项目启动时，双方会保持一个socket连接，用来通话
+
+2.当webpack监听到文件改动，server向client发送一个hash值，client保存下来，然后server再发送一个ok消息。client接收到表示知道可以加载更新了，于是调用reloadApp方法。
+
+3.reloadApp 会调用 check方法，然后check调用hotDownloadManifest方法，这时候会下载我们提到过的json文件。
+
+4.hotEnsureUpdateChunk完成后调用hotDownloadManifest方法，这个方法会通过jsonp的格式加载新的代码。
+
+5.加载完成之后，会有其他的方法对其对比分析，用目前最快的方法去更新文件。
