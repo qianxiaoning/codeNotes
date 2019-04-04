@@ -227,6 +227,8 @@ b1//为{b: 12, c: "bar"}
 //返回一个新数组
 [...].slice();
 
+slice可以截取字符串也可以截取数组
+
 浅合并一个对象
 var player = {score: 1, name: 'Jeff'};
 

@@ -363,3 +363,7 @@ webpack hmr 模块热替换hot module replacement
 4.hotEnsureUpdateChunk完成后调用hotDownloadManifest方法，这个方法会通过jsonp的格式加载新的代码。
 
 5.加载完成之后，会有其他的方法对其对比分析，用目前最快的方法去更新文件。
+
+webpack4 设置mode以后
+在页面js中能通过console.log(process.env.NODE_ENV);获取环境值
+但是在node运行环境，如webpack.config.js中，获取不到console.log(process.env.NODE_ENV);值
