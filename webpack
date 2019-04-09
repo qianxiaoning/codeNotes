@@ -367,3 +367,6 @@ webpack hmr 模块热替换hot module replacement
 webpack4 设置mode以后
 在页面js中能通过console.log(process.env.NODE_ENV);获取环境值
 但是在node运行环境，如webpack.config.js中，获取不到console.log(process.env.NODE_ENV);值
+
+webpack mode: production时，import './xxx.css'时，或import xxx from './xxx'而下文未引用时，打包时是不会打包进去的。
+需要打包'./xxx.css'，需要用CommonJs方法，require('./xxx.css');来引入
