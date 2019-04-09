@@ -679,9 +679,9 @@ Point.prototype.toString1 = function () {
 };
 var p = new Point(1, 2);
 6：
-//定义类
+// 定义类
 class Point {
-  //构造函数部分  
+  // 构造函数部分  
   constructor(x, y) {
     this.x = x;
     this.y = y;
@@ -689,14 +689,16 @@ class Point {
 
     }    
   }
-  //静态方法//可以被子类继承
-  static classMethod() {//调用，Point.classMethod()
+  // 私有方法还在提案中
+  #privateMethod(){}
+  // 静态方法// 可以被子类继承
+  static classMethod() {// 调用，Point.classMethod()
     return 'hello';
   }
-  //原型方法
+  // 原型方法
   toString() {
     return '(' + this.x + ', ' + this.y + ')';
-  }
+  } 
   //原型方法间不加逗号
   toString1() {
     return '(' + this.x + ', ' + this.y + ')';
