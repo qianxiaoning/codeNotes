@@ -370,3 +370,5 @@ webpack4 设置mode以后
 
 webpack mode: production时，import './xxx.css'时，或import xxx from './xxx'而下文未引用时，打包时是不会打包进去的。
 需要打包'./xxx.css'，需要用CommonJs方法，require('./xxx.css');来引入
+
+到了webpack4，已经默认多进程打包了，不需要再用happypack了，性能更好。

@@ -1,6 +1,6 @@
 babel只是将一些es6，es7-8的语法转换成符合目标的js代码
 
-babel不转换新的API，比如Iterator、Generator、Set、Maps、Proxy、Reflect、Symbol、Promise等全局对象，以及一些定义在全局对象上的方法（比如Object.assign）都不会转码。这时就需要babel-polyfill // 会添加相应变量到全局，所以会污染全局变量
+babel不转换新的API，比如Iterator、Generator、Set、Maps、Proxy、Reflect、Symbol、Promise等全局对象，以及一些定义在全局对象上的方法（比如Object.assign）都不会转码。这时就需要babel-polyfill // 会添加相应变量到全局，会污染全局变量
 
 @babel/polyfill和transform-runtime
 
