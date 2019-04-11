@@ -320,11 +320,11 @@ oldArray //[{xxx:5},{xxx:10},{xxx:17},{xxx:26}]
 因为没有自己的this，无法用做构造函数,call,apply等动态上下文this的情况
 (定义对象方法、定义原型方法、定义构造函数、定义事件回调函数)
 
-es6 箭头函数 相当于匿名函数 默认有个返回值
+es6 箭头函数 相当于匿名函数 
 setInterval(()=>{
      console.log(this.fileList);
  }, 1000)
-1. 具有一个参数的简单函数
+1. 具有一个参数的简单函数 单个参数不需要括号 单行时默认有个返回值，不需要加return
 var single = a => a
 single('hello, world') // 'hello, world'
 　　
