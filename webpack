@@ -121,8 +121,8 @@ module.exports = {
 入口
 entry
 单个入口
-entry: string|Array<string>
-对象语法
+entry: string|Array<string> // array时会把数组中所有文件打包在一起
+对象语法 // 多个入口
 module.exports = {
   entry: {
     app: './src/app.js',
@@ -313,11 +313,18 @@ data (){
 <img :src="src">
 
 webpack多页面
-在entry里配置多个入口文件，彼此独立
-这样在output也会生成多个js
 
 HtmlWebpackPlugin生成多html
 在plugins数组中调用多次new HtmlWebpackPlugin()即可
+
+在entry里配置多个入口文件，彼此独立
+这样在output也会生成多个js
+
+当entry为多个，HtmlWebpackPlugin为单个时，所有入口文件会在同一个html中引入
+
+当entry为多个，HtmlWebpackPlugin为多个时，在HtmlWebpackPlugin中设置chunks: ['xxx']，手动指定该html引入的chunks
+
+HtmlWebpackPlugin.chunksSortMode: 允许chunks在添加到页面之前的排序方式，支持的值：'none' | 'auto' | 'dependency' |'manual' | {function} - default: 'auto'
 
 vendor模块是指node_modules中的功用模块
 manifest是指针对vendor模块所做的缓存

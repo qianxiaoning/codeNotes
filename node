@@ -2,8 +2,7 @@ process 进程 对象是一个 global （全局变量）
 提供当前 Node.js 进程的有关信息，以及控制当前 Node.js 进程
 所以process.env，可以直接挂载和取值
 
+在命令行用console.log()，对象和数组会展开显示
 
-
-v-model="votingSearch" 
-
-questionBankSearch
+fs文件系统。fs.readdirSync同步版的返回 指定目录下所有文件名称的数组对象
+const path = fs.readdirSync(MODULES_PATH);
