@@ -324,9 +324,15 @@ es6 箭头函数 相当于匿名函数
 setInterval(()=>{
      console.log(this.fileList);
  }, 1000)
-1. 具有一个参数的简单函数 单个参数不需要括号 单行时默认有个返回值，不需要加return
+1. 具有一个参数的简单函数 单个参数且单行时不需要括号 单行时默认有个返回值，不需要加return
 var single = a => a
 single('hello, world') // 'hello, world'
+
+// 多行时，单个参数也要加括号()
+const $t = (id) => {
+    const lang = localStorage.lang ? cn : en;
+    return lang[id];
+};
 　　
 2. 没有参数的需要用在箭头前加上小括号
 var log = () => {
