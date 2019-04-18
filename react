@@ -1088,7 +1088,7 @@ propTypes 规定父组件的传值类型
 constructor 构造函数
 componentWillMount 组件将要挂载
 render 数据渲染
-componentDidMount 组件挂载完成 //dom操作
+componentDidMount 组件挂载完成 // dom操作 // ajax操作
 
 2、组件数据更新时：
 componentWillReceiveProps 父组件改变了传来的props值
