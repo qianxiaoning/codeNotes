@@ -379,3 +379,36 @@ webpack mode: production时，import './xxx.css'时，或import xxx from './xxx'
 需要打包'./xxx.css'，需要用CommonJs方法，require('./xxx.css');来引入
 
 到了webpack4，已经默认多进程打包了，不需要再用happypack了，性能更好。
+
+optimization.splitChunks的cacheGroups是开启多组分割方法的
+如：
+optimization: {
+  splitChunks: {
+    cacheGroups: {
+      vue: {
+        test: /node_modules[\\/]vue/,
+        chunks: 'all',
+        priority: 10,
+        name: true
+      },
+      elementui: {
+        test: /node_modules[\\/]element-ui/,
+        chunks: 'all',
+        priority: 10,
+        name: true
+      }
+    }
+  }
+}
+会将vue和element-ui分别放入单独的chunk中
+
+tree shaking
+在package.json中添加sideEffects:false
+去除import { a } from 'xxx';中未用的如b,c方法
+
+提供数组排除过滤，如样式文件就必须过滤掉
+"sideEffects": ["*.css", "*.less", "*.scss"]
+
+code splitting
+1.optimization.splitChunks
+2.动态引入来懒加载？，using import() or require.ensure to lazy load
