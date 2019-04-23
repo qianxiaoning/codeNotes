@@ -413,5 +413,7 @@ code splitting
 1.optimization.splitChunks
 2.动态引入来懒加载？，using import() or require.ensure to lazy load
 
-output.filename似乎只能有三层路径
-可以通过定义entry实现超过三层？
+webpack-dev-server
+devServer.publicPath作用
+devServer.publicPath: /xxx/
+到时候所有资源就会起在/xxx/下
