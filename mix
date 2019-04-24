@@ -160,3 +160,6 @@ sdk Software Development Kit 软件开发工具包
 由第三方服务商（如：微信）提供的实现软件产品功能的工具包。一般以集合kpi和文档、范例、工具的形式出现
 
 apk AndroidPackage 意为Android安装包(.apk)
+
+比ctrl+shift+delete清缓存更有用简单的方式
+打开浏览器f12，右键刷新，清空缓存硬性加载
