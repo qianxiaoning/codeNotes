@@ -245,7 +245,9 @@ babel-loader 是 webpack 的插件
 npm install babel-core babel-preset-env babel-loader -D
 
 在webpack中加载css背景图片、img元素src引用图片、使用es6的import引入的图片
-url-loader是file-loader的升级版
+图片处理
+小图片url-loader直接转base64，
+当图片过大时，url-loader会默认调用file-loader
 fallback 
 Type: String Default: 'file-loader' 默认以file-loader处理
 
@@ -284,16 +286,6 @@ webpack4之后不应用ExtrackTextWebpackPlugin分割css
 optimize-css-assets-webpack-plugin在生产环境使css压缩，去重，另外需要安装UglifyJsPlugin
 
 生产环境js都要加上[hash去重]
-
-设定了url-loader，安装了file-loader后
-html中的图片必须要设定output.publicPath
-output:{
-  publicPath:devMode?'/':'./',
-}
-css中的图片必须要在
-rules:{}
-设定ExtrackTextWebpackPlugin.loader中
-另外指定publicPath: '../'
 
 url-loader中的file-loader中也能另外设置publicPath，
 但是会把html和css中的publicPath都改变
@@ -417,3 +409,13 @@ webpack-dev-server
 devServer.publicPath作用
 devServer.publicPath: /xxx/
 到时候所有资源就会起在/xxx/下
+
+copyWebpackPlugin插件用法
+new copyWebpackPlugin([
+  {
+    from: path.resolve(__dirname,"../src/data"),
+    to: 'data',
+    ignore: ['.*']
+  },         
+])
+意为把src/data下的所有文件复制到服务下的data文件夹下

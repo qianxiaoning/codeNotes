@@ -26,3 +26,44 @@ controller私有代码
 controller和view是mvvm，双向绑定$scope
 
 ngjs调试工具：batarang
+
+main.html - main.controller
+main.html
+    head.html
+    body.html
+    foot.html
+main.controller中赋在$scope上的变量，main.html可用，里面的指令也可直接用
+如：main.controller中$scope.a=123，body.html中{{a}}也能使用。
+
+ng-class动态改变className
+
+ng-show,ng-hide
+ng-if
+
+directive
+    transclude: true //内嵌html
+    link: function(scope, element, attr){
+        // scope绑定作用域，element调用指令的元素，它的根元素上的所有属性集合
+        // 修改dom
+    }
+    scope: true(继承来隔离，scope变不影响$scope)|false(默认，使用的$scope)|{}
+
+
+对于scope: {}时
+scope: {
+    aa: '=',//传入变量
+    bb: '@',//传入字符串，指令中<span bb='xxx'></span>//传给bb字符串'xxx'
+    cc: '&'//传入回调函数，指令中<span ng-click='cc({id:1});'></span>
+}
+父页面：
+<div aa='AA' cc='click(id)'></div>//可以时指令调用父页面的函数
+
+上面3个都可以跟变量
+如：
+scope: {
+    aa: '=',
+    bb: '@xx',//把bb重命名为xx，在组件中就得这么用，<span xx='xxx'></span>
+    cc: '&'
+}
+
+<li ui-sref='main（路由id）'></li>路由跳转
