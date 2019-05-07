@@ -169,3 +169,6 @@ shim做垫片的一种方式：仅靠旧环境中已有的手段实现新的API
 
 -S === --save 放在生产环境dependencies
 -D === --save-dev 放在开发环境devDependencies
+
+npm命令
+npm root //查看当前项目依赖的安装路径
