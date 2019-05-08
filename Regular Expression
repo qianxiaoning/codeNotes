@@ -88,3 +88,6 @@ exp1(?!exp2) 查找后面不是exp2的exp1
 
 数字每三位加逗号
 (number).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+
+string.replace(//g,''); //全局替换
+string.replace(//i,''); //区分大小写
