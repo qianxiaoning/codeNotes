@@ -67,3 +67,43 @@ scope: {
 }
 
 <li ui-sref='main（路由id）'></li>路由跳转
+
+大概逻辑：
+一个项目多个html，
+一个html对应一个controller
+一个页面由多个组件html组成
+一个组件html对应一个directive
+
+一个controller中通过$q和$http请求在$scope上绑定页面变量A
+页面里的directive在scope中暴露接口a:'='
+在页面上的该组件调用处对A变量解耦<div app-directive a='A' is-show='isShow'></div>
+在组件html中即可使用解耦后的页面controller中的数据，如：
+<div>
+    <p ng-bind='a.name'></p>
+    <p ng-bind='a.description'></p>
+    <button ng-if='isShow'></button>
+</div>
+
+组件的事件绑定：
+组件html中绑定click事件
+<div>
+    <button ng-click='clickEvent(param)'></button>
+</div>
+组件directive中，事件触发的方法写在link下，改变scope上的变量：
+link:function(scope){
+    scope.clickEvent = function(param){
+        scope.xxx = xxx;
+    }
+}
+
+scope对象常用属性：
+scope.$id // scope对象唯一标识
+scope.$parent // scope对象副作用域，如组件scope的$parent就是页面的$scope
+scope.$root // 指向$root.scope，貌似是根scope？
+
+scope对象常用方法：
+scope.$watch() //监控scope某对象
+scope.$on() //接收自定义事件
+scope.$broadcast() //向下传自定义事件
+scope.$emit() //向上传自定义事件
+scope.$digest() //原生js方法操作dom时，双向绑定失效，手动同步视图时使用
