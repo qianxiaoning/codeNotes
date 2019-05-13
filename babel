@@ -88,3 +88,22 @@ npm install -S @babel/polyfill
     ]
   ]
 }
+
+babel的presets配置格式
+"presets": [
+  'babel/A',
+  'babel/B',
+  [
+    'babel/C',
+    {
+      optionA: 1,
+      optionA: 2
+    }
+  ]
+]
+
+babel的presets是指需要转化为es5的范围
+如：
+1.需要转化es6+就要加入"@babel/preset-env" // @babel/polyfill的useBuiltIns在此配置
+2.需要转化react就要加入"@babel/preset-react"
+3.需要转化typescript就要加入"@babel/plugin-transform-typescript"
