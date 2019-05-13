@@ -89,7 +89,7 @@ npm install -S @babel/polyfill
   ]
 }
 
-babel的presets配置格式
+babel的presets配置格式，plugins的配置格式同presets
 "presets": [
   'babel/A',
   'babel/B',
