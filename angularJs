@@ -107,3 +107,14 @@ scope.$on() //接收自定义事件
 scope.$broadcast() //向下传自定义事件
 scope.$emit() //向上传自定义事件
 scope.$digest() //原生js方法操作dom时，双向绑定失效，手动同步视图时使用
+
+服务service 和 服务工厂 factory
+懒加载，公用函数
+内置服务：
+    $http, $q(promise), $timeout, $interval, $rootScope(scope对象祖先)
+
+$rootScope用法：
+相当于定义在祖先上的属性，继承下去
+angular.module('app', ['ui.router', 'ngCookies', 'validation', 'ngAnimate']).run(['$rootScope', function($rootScope){
+    $rootScope.xxx = xxx;
+}]);    
