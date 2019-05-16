@@ -195,6 +195,7 @@ $ git config --global user.email "email@example.com"
   $ git push origin master
   $ git push origin <name>
  本地没有时，拉远程分支
+  $ git fetch
   $ git checkout -b dev origin/dev
  拉取
   $ git pull
@@ -239,6 +240,8 @@ $ git config --global user.email "email@example.com"
   $ git tag -a v0.1 -m "version 0.1 released" 3628164
  删除标签
   $ git tag -d v0.1
+ 删除远程分支
+  $ git push origin :hotfix
  删除远程标签
   $ git push origin :refs/tags/v0.9
  推送标签
@@ -691,9 +694,22 @@ and the repository exists.
 
 有的公司gitlab服务器配置有问题，会导致ssh无法拉取，比如dns，ip问题。我以前公司就只能用https拉取，ssh拉取失败。
 
+git tag v1.0 打标签
+tag标签是某一时间点上的版本，和分支无关，类似于"不可编辑的分支"
+把本地代码push以后，1.在本地打tag 2.再把tag push，此tag会为此时间点上的版本
 
+较具体的git分支管理（gitflow流程）：
+稳定分支：master
+开发分支：develop
+线上紧急bug，beta发：hotfix，生产环境发tagv1.11
+日常开发，beta发：release，生产环境发tagv1.2
+打tag：hotfix 或 release
 
+1.线上紧急bug（之前测完的项目又发现小bug）
+master => 新建hotfix，hotfix修改，修改完毕上测试，测完打tag小版本v1.11，把tag上传到远端。上传tagv1.11到测试再回测一遍？，测完tagv1.11上生产？，合并到master和develop，删除hotfix
 
+2.日常开发（时间较长久）
+develop => 新建feature1.2，开发完毕merge到develop，develop => 新建release，上测试环境，测试release，修改release，测完打tag大版本v1.2，把tag上传到远端。上传tagv1.2到测试再回测一遍？，测完tagv1.2上生产？，合并到develop和master，删除release和feature
 
-
-
+1.问一遍流程
+2.tag作用？发branch，又不发tag还用回测？
