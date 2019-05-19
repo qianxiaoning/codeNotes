@@ -21,6 +21,20 @@ abc$匹配字母 abc 并以 abc 结尾，$ 为匹配输入字符串的结束位�
 \t 一个制表符。等价于 \x09 和 \cI。
 \v 一个垂直制表符。等价于 \x0b 和 \cK
 
+\w 匹配字母或数字或下划线或汉字 等价于 '[^A-Za-z0-9_]'。
+
+\s 匹配任意的空白符
+
+\d 匹配数字
+
+\b 匹配单词的开始或结束
+
+^ 匹配字符串的开始
+
+$ 匹配字符串的结束
+
+\w能不能匹配汉字要视你的操作系统和你的应用环境而定
+
 特殊字符: 有特殊含义的字符
 $ 要匹配 $ 字符本身，请使用 \$。
 ( ) 标记一个子表达式的开始和结束位置。子表达式可以获取供以后使用
@@ -91,3 +105,14 @@ exp1(?!exp2) 查找后面不是exp2的exp1
 
 string.replace(//g,''); //全局替换
 string.replace(//i,''); //区分大小写
+
+input输入框去除
+value = value.toString();
+value = value.replace(/[^\-?\d.]/g, "");  //清除“数字”和“.”以外的字符
+value = value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
+value = value.replace(/\-{1,}/g, "-"); //只保留第一个- 清除多余的
+value = value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+value = value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数
+if (value.indexOf(".") < 0 && valid(value)) {//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+    value = parseFloat(value).toString();
+}

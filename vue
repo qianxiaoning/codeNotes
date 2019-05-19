@@ -1674,6 +1674,31 @@ computed: {
 }
 现在再运行 vm.fullName = 'John Doe' 时，setter 会被调用，vm.firstName 和 vm.lastName 也会相应地被更新
 
+computed的set属性（只是示例，并不恰当）
+data:{
+  return {
+    capacityInput: ''
+  }
+}
+<input type="number" v-model='capacityInputValue'>
+js:
+capacityInputValue: {
+    // getter，input从变量中读是get
+    get() {
+        // console.log(this.capacityInput);
+        return this.capacityInput;
+    },
+    // setter，input修改了，变量capacityInputValue改变了导致的动作是set
+    set(newValue) {
+        console.log(newValue);
+        let value = parseInt(newValue);                
+        value = isNaN(value) ? '' : value;
+        // value = value > 100 ? 100 : value;
+        value = value < 0 ? 0 : value;
+        this.capacityInput = value;
+    }
+}
+
 动态组件 component标签
 <!-- 组件会在 `currentTabComponent` 改变时改变 -->
 <component v-bind:is="currentTabComponent"></component>
@@ -2113,3 +2138,15 @@ filter过滤器使用场景
 
 不能给input的v-model使用filter过滤器
 由于v-model双向绑定不能使用filter             
+
+input限制输入正整数，类似要求实现方法
+input type='number' // 貌似有样式问题
+input type='text' @input = 'xxx'
+主要难度是实现input中对...的屏蔽
+方法：
+  let value = e.target.value;
+  value --;
+  this.inputValue = value;
+  value ++;
+  this.inputValue = value;
+进行一次加减，即可去掉input中小数点  
