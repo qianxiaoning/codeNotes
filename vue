@@ -2150,3 +2150,6 @@ input type='text' @input = 'xxx'
   value ++;
   this.inputValue = value;
 进行一次加减，即可去掉input中小数点  
+
+vue传常量布尔值也要加冒号
+<a-component :isShow='false'></a-component>

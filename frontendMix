@@ -225,3 +225,13 @@ post请求要设定对应的content-type格式
 在ios上看alert出的obj对象
 当在ios上调试时，由于看不到console日志，alert看不到对象，
 解决办法alert(JSON.stringify(obj)); 对象转成字符串即可
+
+echart移动端横屏展示
+方法：
+1.echarts坐标轴设置
+横屏正常显示。竖屏x轴位置顶部position:top,y轴反向显示inverse:true
+2.echarts放入iframe，再rotate旋转iframe
+
+触发方法：
+1.window.onresize触发比较屏幕宽高
+2.监听横竖屏事件
