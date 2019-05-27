@@ -458,3 +458,16 @@ html {
 
 transition过渡效果
 能在具值间过渡，无法在具值到'auto'间过渡
+
+css 判断横竖屏
+@media all and (orientation: landscape) {
+    .echartsPop {
+        background-color: lightblue !important;
+    } /*横屏时*/
+}
+
+@media all and (orientation: portrait) {
+    .echartsPop {
+        background-color: red !important;
+    } /*竖屏时*/
+}
