@@ -471,3 +471,39 @@ css 判断横竖屏
         background-color: red !important;
     } /*竖屏时*/
 }
+
+左侧竖条文字90度旋转布局
+左侧条，里面内建width:100vh的内div，内div顺时针按旋转点left top，旋转90度，使里面的文字成功旋转布局
+demo:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    *{margin: 0;padding: 0;}
+    html,body,.wrap{height: 100%;}
+    .wrap{display: flex;}
+    .wrap>div{height: 100%;}
+    .left{width: 50px;background: #c5aeae;}
+    .center{flex:auto;background: #73dacc;}
+    .right{flex:none;background: #4d6881;}
+    .warpper{width: 100vh;height: 50px;transform: rotate(90deg) translate(0,-100%);transform-origin:left top;display: flex;justify-content: center;align-items: center;}    
+    p{margin: 0 20px;}
+    </style>
+</head>
+<body>
+    <div class='wrap'>
+        <div class='left'>
+            <div class='warpper'>
+                <p>啊啊啊啊啊</p>            
+                <p>哦哦哦哦哦</p>
+            </div>
+        </div>
+        <div class='center'>2</div>
+        <div class='right'>3</div>
+    </div>
+</body>
+</html>
