@@ -65,7 +65,7 @@ ios在微信浏览器，overflow:auto;无法滑动
 解决办法：
 1.webkit样式开启原生滚动
 -webkit-overflow-scrolling: touch; //有回弹效果 
--webkit-overflow-scrolling: auto; //滑到哪停到哪
+-webkit-overflow-scrolling: auto; //滑到哪停到哪，（似乎没用）
 在overflow的同一级添加：-webkit-overflow-scrolling:touch
 
 2.继续优化
