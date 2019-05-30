@@ -490,7 +490,7 @@ demo:
     .left{width: 50px;background: #c5aeae;}
     .center{flex:auto;background: #73dacc;}
     .right{flex:none;background: #4d6881;}
-    .warpper{width: 100vh;height: 50px;transform: rotate(90deg) translate(0,-100%);transform-origin:left top;display: flex;justify-content: center;align-items: center;}    
+    .warpper{width: 100vh;height: 50px;transform: rotate(90deg) translateY(-100%);transform-origin:left top;display: flex;justify-content: center;align-items: center;}    
     p{margin: 0 20px;}
     </style>
 </head>
