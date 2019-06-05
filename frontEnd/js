@@ -609,6 +609,8 @@ Number.isInteger()
 判断一个值是否为整数，返回布尔值
 Number.isInteger(25.0) // true
 
+浏览器中不能直接使用require和import？貌似不行。得用webpack转
+
 ea6的export,export default,import
 export可以暴露多个对象 export default只能暴露一个匿名对象
 引用方法：
