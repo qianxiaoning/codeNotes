@@ -155,3 +155,7 @@ $scope.xxxClick = function(id,name){
 page => controller.data => list='data' => xxx => scope.fatherClick => ng-click='fatherClick(item)' => fatherClick='xxxClick(id,name)' => $scope.xxxClick => $scope.anotherName
 或：
 page => controller.data => list='data' => xxx => ng-click='myClick' => scope.myClick => scope.fatherClick => fatherClick='xxxClick' => $scope.xxxClick => $scope.anotherName
+ 
+angular filter
+filter函数里有两个参数list obj，分别为xxx和filterObj
+xxx|filterA:filterObj
