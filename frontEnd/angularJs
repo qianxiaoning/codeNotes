@@ -159,3 +159,22 @@ page => controller.data => list='data' => xxx => ng-click='myClick' => scope.myC
 angular filter
 filter函数里有两个参数list obj，分别为xxx和filterObj
 xxx|filterA:filterObj
+
+内置过滤器
+currency
+{{1.23 | currency:'$':1}} //$1.2
+number
+{{1.26 | number:1}} //1.3
+data
+{{时间戳 | data:'yyyy-MM-dd HH:mm:ss'}} //2019-01-01 22:22:11
+lowercase / uppercase
+{{'AAA' | lowercase}} //'aaa'
+{{'aaa' | uppercase}} //'AAA'
+limitTo
+{{[1,2,3,4] | limitTo:2}} //[1,2]
+{{'abcd' | limitTo:2}} //'ab'
+{{123 | limitTo:2}} //12
+orderBy
+{{friends | orderBy:'-age'}} // 按年龄降序排列
+
+在js中引用filter函数时，要在引用名后面加'Filter'
