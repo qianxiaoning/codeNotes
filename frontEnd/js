@@ -2041,3 +2041,18 @@ a(2); // 返回3
 1.数组.concat()方法
 const a = [1,2,3];
 const b = a.concat(); // b=>[1,2,3]
+
+前端模块化发展
+1.无模块化，闭包等js时代
+2.
+amd 推崇 依赖前置
+cmd 推崇 就近依赖
+requirejs是amd规范
+seajs是cmd规范
+3.webpack时代 nodejs npm管理
+import是es6的一个语法标准，如果要兼容浏览器的话必须转化成es5的语法
+
+nodejs自带require模块语法
+
+commonjs规范 浏览器端
+nodejs用commonjs规范

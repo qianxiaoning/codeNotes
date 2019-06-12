@@ -113,6 +113,10 @@ scope.$digest() //原生js方法操作dom时，双向绑定失效，手动同步
 内置服务：
     $http, $q(promise), $timeout, $interval, $rootScope(scope对象祖先)
 
+用自带的interval可能导致数据绑定失效
+
+$interval.cancel(); //取消定时器
+
 $rootScope用法：
 相当于定义在祖先上的属性，继承下去
 angular.module('app', ['ui.router', 'ngCookies', 'validation', 'ngAnimate']).run(['$rootScope', function($rootScope){
@@ -178,3 +182,5 @@ orderBy
 {{friends | orderBy:'-age'}} // 按年龄降序排列
 
 在js中引用filter函数时，要在引用名后面加'Filter'
+
+angular.config();貌似是引入angular插件的
