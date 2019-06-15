@@ -224,3 +224,7 @@ remove()
 阻止冒泡 $event.stopPropagation();
 $event 事件对象
 <i ng-click='$event.stopPropagation();select(item);'></i>
+
+和vue里一样，ngJs里也需要监听数据更新的方式
+ngJs: scope.$watch();
+vue: computed:{}
