@@ -184,3 +184,43 @@ orderBy
 在js中引用filter函数时，要在引用名后面加'Filter'
 
 angular.config();貌似是引入angular插件的
+
+decorator 修改angularJs里内置的服务，$xxx
+如：
+angular.module('app').config(['$provide', function ($provide) {
+    // decorator方法
+    $provide.decorator('$http', ['$delegate', '$q', function ($delegate, $q) {
+        // $delegate代表第一个参数$http
+        // 此处是把post方法改为get
+        $delegate.post = function (url, data, config) {
+            const def = $q.defer();
+            $delegate.get(url).success(function (resp) {
+                def.resolve(resp);
+            }).error(function (err) {
+                def.reject(err);
+            });
+            return {
+                success: function (cb) {
+                    def.promise.then(cb);
+                },
+                error: function (cb) {
+                    def.promise.then(null, cb);
+                }
+            }
+        };
+        return $delegate;
+    }]);
+}]);
+
+angular-cookies api
+$cookies.
+get()
+getObject()
+getAll()
+put()
+putObject()
+remove()
+
+阻止冒泡 $event.stopPropagation();
+$event 事件对象
+<i ng-click='$event.stopPropagation();select(item);'></i>
