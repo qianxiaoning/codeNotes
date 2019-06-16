@@ -145,7 +145,7 @@ link:function(scope){
     }
 }
 scope:{
-    tabClick:'&' // 定义父页面组件上的回调方法
+    fatherClick:'&' // 定义父页面组件上的回调方法
 }
 5.父页面组件上：
 <xxx list='data' father-click='xxxClick(id,name)'/> //通过组件的回调函数接口触发父页面$scope上的xxxClick方法，参数(id,name)为组件里传入的item上的属性
