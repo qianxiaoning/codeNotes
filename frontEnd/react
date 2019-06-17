@@ -1038,11 +1038,12 @@ const moves = ()=>{
 }
 
 循环中的key
-xxx.map((item,index)=>{
+<div>1</div>
+{xxx.map((item,index)=>{
   return (
     <li key={item.id}>{item.value}</li>
   )
-})
+})}
 
 js和dom还是要分开写，
 比如循环中
@@ -1079,9 +1080,6 @@ render里就是dom层，不能写与dom渲染无关的js表达式，得写在con
 在react中视图和数据不默认绑定，
 每次改变数据（如数组，对象）都要调用this.setState()同步视图，
 所以不需要vue中的this.$set()方法
-
-defaultProps 子组件props的默认值
-propTypes 规定父组件的传值类型
 
 生命周期
 1、组件初始化时：
@@ -1172,6 +1170,24 @@ function App2() {
 MyComponent组件的this.props.children就是标签中间的内容
 
 React.PropTypes 自 React v15.5 起已弃用。请使用 prop-types 库代替。
+defaultProps 子组件props的默认值
+propTypes 规定父组件的传值类型
+XXX.propTypes = {
+    listData: PropTypes.array,
+    parentFun: PropTypes.func
+};
+XXX.defaultProps = {
+    listData: [],
+    parentFun:function(){}
+};
+eg:
+optionalArray: PropTypes.array,
+optionalBool: PropTypes.bool,
+optionalFunc: PropTypes.func,
+optionalNumber: PropTypes.number,
+optionalObject: PropTypes.object,
+optionalString: PropTypes.string,
+optionalSymbol: PropTypes.symbol
 
 Context 通过组件树提供了一个传递数据的方法，从而避免了在每一个层级手动的传递 props 属性
 
@@ -1318,3 +1334,18 @@ react中实现v-if
 {this.state.xxx === 'xxx' ? (
   <div></div>
 ) : null}
+
+create-react-app官网 https://facebook.github.io/create-react-app/
+
+查看create-react-app的版本
+package.json中的"react-scripts": "3.0.1"
+即为create-react-app 3.0.1版本
+
+create-react-app引用绝对路径
+在根目录建jsconfig.json
+{
+    "compilerOptions": {
+        "baseUrl": "src"
+    },
+    "include": ["src"]
+}
