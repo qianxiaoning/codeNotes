@@ -224,6 +224,12 @@ a为"foo" b为12
 let { a, ...b1 } = o; 
 b1//为{b: 12, c: "bar"}
 
+使用 对象解构
+const { foo } = object;
+代替 const foo = object.foo;
+
+{ a: a } === { a }
+
 //返回一个新数组
 [...].slice();
 
@@ -2056,3 +2062,4 @@ nodejs自带require模块语法
 
 commonjs规范 浏览器端
 nodejs用commonjs规范
+
