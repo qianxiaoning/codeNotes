@@ -173,11 +173,118 @@ lib 第三方jar包
 
 jdk（开发工具包）> jre(运行类库)>jvm（java虚拟机）
 
+ctrl+f11 运行代码快捷键
 
+main alt+/ 快捷建main方法
 
+System.out.println(); 输出并换行
+System.out.print(); 输出不换行
 
+main方法只有args参数能变
 
+刷题：牛客网？
 
+java核心编程思想（白黄面）
+
+标识符：包名，类名，方法名
+关键字：53关键字，其中2个保留字：const,goto。不能用作标识符
+
+数据类型
+位Bit 字节byte 1Bit=8byte
+基本类型（8种）引用类型（很多）
+整数型：            字节空间                                         取值范围
+byte        1               -2^7 2^7-1
+short       2               -2^15 2^15-1
+int         4               -2^31 2^31-1
+long        8               -2^63 2^63-1
+
+浮点型：
+float       4               单精度，小数部分精度要求不高
+double      8               双精度，小数部分精度高并操作值大
+
+字符：
+char        2               0 65535
+
+布尔：
+boolean     1               true/false
+
+引用类似：
+类，接口，数组，...
+
+eclipse快捷键
+ctrl+d 删除整行
+
+基本类型的字面规律:
+1.整数（byte,short,int,long）字面值是int类型
+2.byte，short，char三种比int小的整数可以用范围内的值直接赋值
+3.浮点数（float,double）的字面值是double类型
+4.字面值后缀l f d
+如：
+long a = 9999999999l;
+float a1 = 3.14f;
+double a2 = 3d;
+5.进制前缀
+0b   -2进制
+0x   -16进制
+0    -8进制
+\u   -char类型，16进制
+
+隐式转换
+按字节 由小转大 直接转
+如：
+Byte a = 120;
+Int b = a; // 直接转
+long => float 特殊（由大转小）
+
+显示转换
+按字节 从大转小
+如：
+int b1 = 265;
+byte b2 = (byte)b1; // 强制转换
+int b3 = 456;
+byte b4 = (byte)(b1+b3);
+注意：小数转成整数，小数直接舍弃
+
+运算规则：
+1.计算结果的数据类型，与最大类型一致
+3/2 为1
+3d/2 声明浮点数
+2.整型字面义为int
+byte d1 = 3;
+byte d2 = 3;
+byte d3 = d1+d2; // 报错
+int d3 = d1+d2;
+3.整数运算溢出
+计算：光速运行一年的长度是多少米
+System.out.println(300000000*60*60*24*365); // 溢出转回到最小开始
+System.out.println(300000000l*60*60*24*365); // 正确
+4.浮点数运算不精确
+如：
+System.out.println(1-0.8);
+System.out.println(4.35*100);
+5.浮点数的特殊值
+System.out.println(3.14/0); // Infinity
+System.out.println(3.14/0.0); // Infinity
+System.out.println(3/0); // 报错
+System.out.println(0/0.0); // NaN
+
+运算符：
+1.算数运算符
++ - * / % ++ --
+2.比较运算符
+== !=
+3.逻辑运算符
+&&逻辑与+短路与（短路与：前为false，后不执行）
+&逻辑与 同true为true
+||逻辑或+短路或（短路或：前为true，后不执行）
+|逻辑或 一true为true
++ 字符串连接
+! 非
+4.三元运算符
+?:
+5.赋值运算符
+= 赋值运算
++= -= *= /= 复合的赋值运算 
 
 
 
