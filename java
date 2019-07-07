@@ -305,6 +305,7 @@ for(表达式1;表达式2;表达式3){
 int[] a = new int[4];
 2.静态
 int[] a = {1,2,3,4};
+此外int a[] 这样写也行
 二维数组：
 1.动态：
 int[][] a = new int[2][3];
@@ -375,3 +376,33 @@ oop面向对象编程
 匿名对象调用
 new Bird().fly(); // 直接调用
 
+main方法中的语句"System.out.println(s);"无法调用在main方法外声明的变量
+private 静态的可以？
+
+final
+1.修饰类
+次类不能被继承
+2.修饰方法
+该方法不能被重写
+3.修饰变量
+表示常量，只能被赋值一次，赋值后值不再改变。
+变量不会自动提升
+final byte a=1,b=2;
+byte c=a+b; // 正确
+
+隐式类型转换规则是：
+byte→short(char)→int→long→float→double
+
+定义变量类型的时候要特别注意，强转和隐转
+byte a=1,b=2; // 此句没错
+byte c=a+b; // 此句就不行，c=1+2;是强转了，
+得写成：
+byte c=(byte)(a+b);
+
+"=="两边的类型不匹配，无法比较
+String a="a";  
+int b=1;
+if(x==y)  { } // 错
+
+运算符
+^ 异或  
