@@ -42,3 +42,10 @@ history.back()返回页面，会读取之前的缓存，变量值都在，生命
 vue中router.go(-1)返回页面，没有缓存，生命周期执行
 
 页面回退是不能传回任何参数的
+
+h5经典结构：
+header
+nav
+article               aside
+	section
+fotter
