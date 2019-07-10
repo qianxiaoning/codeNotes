@@ -173,8 +173,6 @@ lib 第三方jar包
 
 jdk（开发工具包）> jre(运行类库)>jvm（java虚拟机）
 
-ctrl+f11 运行代码快捷键
-
 main alt+/ 快捷建main方法
 
 System.out.println(); 输出并换行
@@ -211,11 +209,20 @@ boolean     1               true/false
 引用类似：
 类，接口，数组，...
 
-eclipse快捷键
+基本类型存值，引用类型存地址值
+
+eclipse快捷键：
 ctrl+d 删除整行
 alt+上下 代码上下移
 ctrl+alt+上下 复制代码
 alt+shit+l，只写右侧，提取变量
+ctrl+f11 运行代码快捷键
+f11 debug运行
+alt+shift+r 改名
+shift按住，鼠标悬浮在方法名上 查看调用的方法
+ctrl+t 看继承结构
+ctrl+o 显示成员大纲
+双击大括号 复制方法内部所有代码
 
 设置代码模板  window->preferences->java->editor->template
 nextint
@@ -291,7 +298,10 @@ System.out.println(0/0.0); // NaN
 ?:
 5.赋值运算符
 = 赋值运算
-+= -= *= /= 复合的赋值运算 
++= -= *= /= 复合的赋值运算    自动转型，不能强转
+
+byte a=2;
+byte b+=2;
 
 a++和++a:
 int a = 2;   
@@ -467,3 +477,120 @@ c   ---------------断点
 
 this代表本类对象的引用
 super代表父类对象的引用
+
+switch中只能判断byte,short,char,int,没有long,enum枚举,string
+
+循环命名？
+break outer;
+
+//构造方法中调用另一个重载的构造方法
+// 必须是首行
+this(id,name,null);//没有传默认值
+this(id,name,gender,0);//没有传默认值
+
+java只能单继承，只能继承一个直接父类
+不继承：
+1.构造方法
+2.private 私有成员（隐藏的）
+
+extends继承
+public class Student extends Person{
+
+}
+创子类实例时，先创建父类实例，也先执行父类的构造函数，默认执行父类的无参构造，也可以手动调有参构造super(xx,xx,xx);
+找属性、方法时先找子类再找父类
+
+重写时：
+super.xxx()
+
+this();和super();必须是首行
+
+父类中方法只要发现不同就调方法？
+
+java和js不一样
+java中 类中是成员变量，方法中是局部变量，不同方法的局部变量互不影响
+类实例化后的成员变量各方法共享
+如：
+1.int a=1;
+method(a);
+syso(a);// 还是1
+
+private void method(int a){
+	a = 2;
+}
+2.但是同一方法中的子代码块可以影响父代码块
+
+String api
+equals 比较字符串内容
+charAt(i) 访问指定位置的字符
+length() 字符长度
+indexOf(子串) 查找子串起始位置的下标值，找不到返回-1
+indexOf(子串,start) 从指定位置向后找
+lastIndexOf 从后向前找
+trim() 去除两端的空白字符，新建一个
+substring(start)/substring(start,end) 截取子串
+
+StringBuilder(jdk1.5)
+和String区别：可变的字符序列，有对内部字符修改的方法
+常用于：代替字符串做高效的字符串连接运算
+内部数组默认初始容量16
+存满翻倍+2
+append() 在内部数组中追加新的字符
+例：
+StringBuilder sb = new StringBuilder();
+sb.append("xxxxx");
+
+StringBuffer
+旧版本的类，jdk1.0(1995年线程安全的java)
+
+Integer int整数的包装类
+把基本类型当做引用类型来使用
+new Integer(6); // 新建实例
+Integer.valueOf(6); // 直接访问6的缓存，超出范围就是新建
+在Integer类中，有256个缓存的Integer实例 -128~127
+
+Integer方法
+byteValue() 取值并转型
+shortValue() 取值并转型
+intValue() 取值并转型
+longValue() 取值并转型
+floatValue() 取值并转型
+doubleValue() 取值并转型
+
+Integer.parseInt("255") 字符串解析成int类型
+Integer.parseInt("11111",2) 字符串解析成int类型
+Integer.parseInt("ff",16) 字符串解析成int类型
+
+数字转 不同进制字符串
+Integer.toBinaryString(255) 转成2进制字符串 "11111111"
+Integer.toHexString(255) "ff"
+
+自动装箱和自动拆箱（编译器转）
+自动装箱
+Integer a = 6;
+自动拆箱 // 要当心null值，null.xxx空指针报错
+int b = a;
+
+八种基本类型对应的包装类
+Byte Short Integer Long
+Float Double 
+Character
+Bolean 
+
+正则表达式 regex
+matches(正则) 是否匹配
+split(正则) 用子串来拆分
+replaceAll(正则) 替换所有
+
+s.matches(regex)
+
+java转义为 \
+
+
+
+
+
+
+
+
+
