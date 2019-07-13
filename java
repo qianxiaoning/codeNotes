@@ -223,6 +223,8 @@ shift按住，鼠标悬浮在方法名上 查看调用的方法
 ctrl+t 看继承结构
 ctrl+o 显示成员大纲
 双击大括号 复制方法内部所有代码
+ctrl+n 新建文件
+alt+shift+s generate construct from filed 生成构造函数
 
 设置代码模板  window->preferences->java->editor->template
 nextint
@@ -529,6 +531,7 @@ indexOf(子串,start) 从指定位置向后找
 lastIndexOf 从后向前找
 trim() 去除两端的空白字符，新建一个
 substring(start)/substring(start,end) 截取子串
+String.valueOf() 转成字符串
 
 StringBuilder(jdk1.5)
 和String区别：可变的字符序列，有对内部字符修改的方法
@@ -537,8 +540,11 @@ StringBuilder(jdk1.5)
 存满翻倍+2
 append() 在内部数组中追加新的字符
 例：
-StringBuilder sb = new StringBuilder();
+StringBuilder sb = new StringBuilder("xxx");
 sb.append("xxxxx");
+setCharAt(2,xx) 设置下标位置的值
+delete(5,26) 删除下标区间
+toString() 转成String对象
 
 StringBuffer
 旧版本的类，jdk1.0(1995年线程安全的java)
@@ -586,6 +592,142 @@ s.matches(regex)
 
 java转义为 \
 
+多态的作用
+一致的类型
+所有子类型实例，都可以被当做一致的父类型来处理
+cat可以当做pet类型来处理
+
+1.向上转型
+void f(Pet pet) // cat, dog,...都能传入了
+
+Pet pet = null;
+pet = new Cat();
+
+判断运行期实例类型 instanceof 
+shape instanceof Line
+真实类型和父类型 得到true
+
+2.向下转型 必须强转
+Line l = (Line)shape;
+l.length();
+
+转的引用变量，内在实例不变
+
+类型转换
+1.向上转型
+子类实例可以转型成父类型
+
+2.向下转型
+转成父类型的子类实例，再转回成子类型
+
+java中，在同一个类里面，方法不能嵌套定义，但是可以相互调用
+
+抽象类
+半成品类，一个没有完成的类
+
+抽象方法
+只有方法的定义，没有方法代码块
+public abstract class A(){
+	public abstract String aaa();
+}
+
+abstract关键字
+
+在抽象类中才能定义抽象方法
+
+作用：
+1.简化代码，相比在父类中定义的通用方法
+2.要求子类必须实现该方法
+3.方便子类向上转型时可以调父类方法
+
+抽象类不能实例化，只能给子类来继承
+
+final
+1.常量 值锁定，不可变 
+final int a = 6;
+a = 7;// 错
+
+final Student s = new Student("张三");
+s.name = "李四";// 可变
+s本身不可变
+
+2.方法
+不能被子类重写
+
+3.类
+不能被继承
+如：System,String,Integer
+
+static 静态属于类，而不属于实例
+非静态属于实例，要用实例调用
+class Soldier{
+	int id;
+	int blood;
+	static int soldierCounts;// 记录生成了多少个士兵了，属于类本身
+}
+Soldier.soldierCounts // 这样来调用
+
+静态方法中不能直接调用非静态成员
+解决办法：
+1.都改成static
+2.A a = new A();// 用实例调用
+a.wayA();
+
+jvm java虚拟机
+1.方法区 保存加载的类（静态变量）
+2.栈 局部变量
+3.堆 创建的实例，包含实例的所有数据（成员变量）
+
+什么使用静态：
+使用原则：
+1.能不用就不用，是非面向对象的语法
+2.用在共享的数据上，如士兵的counts
+3.放工具方法，如：Math.sqrt
+
+静态初始化块
+class A(){
+	static{
+		// 类加载时，只执行一次
+	}
+}
+
+常量
+用static final两个关键字定义
+final int A = 6;
+static 内存中只有一份
+
+命名习惯，全大写，单词间下划线连接
+static final int MAX_VALUE = 100;
+
+Object 所有类的顶层父类
+Object的方法：
+1.toString() // 获得实例的字符串表示 "类型@地址"
+2.equals(Object obj) // 当前实例和参数实例obj比较内存地址是否相等
+
+Object中默认是比较内存地址
+this == obj
+
+相比数据可以重写
+
+BigDecimal 精确浮点数运算 不new
+IEEE-754规范
+BigDecimal a = BigDecimal.valueOf(6);
+BigDecimal b = BigDecimal.valueOf(6);
+方法：
+add(BigDecimal bd)
+subtract(BigDecimal bd) 减
+multiply(BigDecimal bd) 乘
+divide(BigDecimal bd) 除（不允许无理数）
+divide(BigDecimal bd,位数,舍入方式) 除（重载） BigDecimal.常量
+setScale(位数,舍入方式) 舍入运算
+
+double ds = s.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+
+BigDecimal c = a.subtract(b);
+c.doubleValue(); // 取值
+c.toString(); // 取值
+
+BigInteger 超大整数运算，超出long时
 
 
 
