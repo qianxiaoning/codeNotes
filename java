@@ -225,6 +225,8 @@ ctrl+o 显示成员大纲
 双击大括号 复制方法内部所有代码
 ctrl+n 新建文件
 alt+shift+s generate construct from filed 生成构造函数
+包名上按f2 改包名
+ctrl+shift+t 快速打开类
 
 设置代码模板  window->preferences->java->editor->template
 nextint
@@ -435,6 +437,7 @@ debug调试
 f5进入源码
 f6向下执行
 f7返回
+f8连续向下执行，直到断点
 
 构造方法 新建实例时，执行的一个特殊方法
 java的类中，必须有构造方法
@@ -729,6 +732,446 @@ c.doubleValue(); // 取值
 c.toString(); // 取值
 
 BigInteger 超大整数运算，超出long时
+
+访问控制符
+控制一个类，或类中的成员的访问范围
+				类		包		子类		任意	  
+public			1		1		1		1
+protected		1		1		1
+[default]		1		1
+private			1
+
+尽量使用小范围
+public是与其他开发人员公开的，要尽量保持稳定不变
+private更便于维护修改，不对其他代码造成影响
+
+类中 成员变量习惯定义成private
+
+对象创建过程：
+大体：
+1.静态分内存
+2.静态赋值和静态执行
+// 第二次开始只
+3.实例分内存
+4.实例赋值和实例构造执行
+
+详细：
+加载类：
+1.加载父类，为父类的静态变量分配内存
+2.加载子类，为子类的静态变量分配内存
+3.执行父类静态变量赋值，和静态代码块初始化（无先后顺序）
+4.执行子类静态变量赋值，和静态代码块初始化（无先后顺序）
+创建实例：
+5.创建父类实例，为父类的实例变量分配内存
+6.创建子类实例，为子类的实例变量分配内存
+7.执行父类的实例变量的赋值运算，和父类的构造方法
+8.执行子类的实例变量的赋值运算，和子类的构造方法
+
+Date封装一个毫秒值，表示一个精确的时间点
+getTime();
+setTime(long t);
+compareTo(Date d); // 当前实例和参数实例比较大小，大正小负同0
+
+SimpleDateFormat 日期格式工具，可以把Date实例，格式化成字符串
+也可以把字符串解析成Date实例
+
+new SimpleDateFormat(格式)
+格式：yyyy-MM-dd hh:mm:ss 12小时制
+格式：yyyy-MM-dd HH:mm:ss 24
+yy-M-d H:m
+M月d日
+
+方法：
+format(Date实例)  // 得到日期字符串
+parse(日期字符串)  // 得到Date实例
+
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+Date d = sdf.parse("1991-04-12");
+
+集合（重点）
+用来存储一组数据的数据结构
+数组缺点：
+1.长度不可变
+2.访问方式单一，只能用下标访问
+3.在前面增删数据，操作繁琐
+
+三个集合工具：
+LinkedList
+ArrayList
+HashMap
+
+LinkedList 双向链表
+两端效率高
+方法：
+add(数据)
+在尾部添加数据
+getFirst()
+get(i)
+访问指定位置的数据
+removeFirst()
+remove(i)
+删除指定位置的数据，返回被删除的数据
+remove(数据)
+找到第一个相等的数据删除，返回true找到并删除，返回false没有找到
+size()
+数据的数量
+
+iterator // 辅助创建迭代器实例的方法
+it = list.iterator()
+it.hasNext() // 还有没有下一项
+it.next() // 下一项
+remove()// 移出刚刚取出的数据，it.remove();
+
+ArrayList
+内部用数组存放数据，简化了数组的繁琐操作
+1.内部数组默认的初始容量 10
+2.放慢之后容量1.5倍增长
+
+效率表现：
+1.访问任意位置效率高
+2.增删数据效率可能降低
+
+创建实例：
+new ArrayList() // 默认容量10
+new ArrayList(1000) // 指定容量
+
+list.size() 为0，没添加的话
+
+方法：
+1.与LinkedList相同
+2.但没有两端操作数据的方法
+
+ArrayList LinkedList
+如果仅在两端操作数据，用LinkedList
+数据量小时（100以内），频繁的增删数据用LinkList
+
+ArrayList用途更广
+
+HashMap 哈希表，散列表（重点）
+存放键值对数据
+9527    唐伯虎
+9528    祝枝山
+
+哈希表作用：快速查找数据
+
+键：
+不重复，无序
+
+哈希运算过程（重点）
+1.使用Entry[]存放数据
+2.数组的默认初始容量是16
+3.容量是翻倍增长
+4.内部运算过程，由键来运算
+5.key.hashCode()获得键的哈希值
+6.用哈希值和数组长度来计算下标值i
+7.把键值对封装成Entry实例，放入i位置
+	空位置，直接放入
+	有数据，依次用equals比较是否相等
+		找到相等的，覆盖值
+		没有相等的，链表连接在一起
+	覆盖率，加载因子到0.75
+		新建翻倍容量的新数组
+		所有数据重新执行哈希运算，放入新数组
+	jdk1.8后
+		链表长度到8，转成一个红黑树结构
+		数据减少到6，转回成链表
+
+哈希运算过程（简约版）
+1.使用Entry数组（默认长度16，容量翻倍增长）存放
+2.key.hashCode取得键的哈希值和数组长度计算下标
+3.将键值对封装为Entry实例放入位置
+特性：
+1.空直接放入，有数据equals等覆盖，有数据equals不等链表。
+2.覆盖率到0.75，翻倍数组，重新哈希计算放入新数组
+3.jdk1.8后，链表长度>8转成红黑树，减少到<6，转回链表
+
+方法：
+put(key,value);// 放入键值对数据，重复的键覆盖旧值
+get(key);// 获取键对应的值，键不存在返回null值
+remove(key);// 删除键值对数据，返回被删除的值
+size();// 键值对的数量
+
+hashCode()方法
+object的方法，object中默认是用内存地址值作为哈希值
+例子：
+HashMap<Point, String> map = new HashMap<Point, String>();
+map.put(new Point(1, 3), "3.1亿");
+new Point(1, 3).hashCode()// 求hash值
+
+接口 特殊的类
+是一个结构设计工具，用来解耦合，隔离实现
+我的理解：
+	接口和普通父类相比，同样是提取公共的功能。
+	优化：
+		1.写法更简化
+		2.可以让子类多继承
+语法：
+1.interface代替class关键字
+2.implements代替extends关键字
+3.接口中只能定义：
+	公开的常量
+	公开的抽象方法
+	公开的内部类，内部接口
+4.接口没有构造方法
+5.类可以同时实现多个接口
+class A implements X,Y,Z{
+
+}
+class A extends B implements X,Y,Z{
+	
+}
+x,y,z=>B=>A 多个父类
+6.接口之间继承 用extends 因为都是接口没有实现，不用implements
+interface A extends X,Y,Z{
+
+}
+		
+例子：
+机器人有个武器接口，接口能接刀，剑，枪
+
+机器人类：
+	变量：武器类
+	方法：设置武器，进攻
+
+武器类（是个接口）：
+	常量：武器常量冷热核012
+	抽象方法：武器进攻，获取武器名字，获取武器类型
+
+AK47类（继承自武器类）：
+	方法（子类实现抽象）：武器进攻，获取武器名字，获取武器类型
+
+Sword类（继承自武器类）：
+	方法（子类实现抽象）：武器进攻，获取武器名字，获取武器类型
+
+Test1类：
+	1.实例化机器人类
+	2.实例设置武器类
+	3.实例进攻
+
+集合的继承结构
+Collection 接口
+	List 接口
+		ArrayList
+		LinkedList
+	Set接口
+		HashSet
+		TreeSet
+Map接口
+	HashMap
+	TreeMap
+iterator 接口
+Collections工具类
+
+Collections工具类：
+addAll(集合,值1,值2,值3,值4,...);// 一次添加多个数据
+sort(List); // 排序，基本类型快速，引用类型合并
+binarySearch(List,目标值);// 二分法查找。如果找不到返回-(插入点+1)。缺点：必须有序。返回下标值
+swap(List,i,j);// 交换位置
+shuffle(List);// 随机打乱
+
+Comparator比较器
+Comparator<String> comp = new Comparator<String>() {
+	/*
+		* 比较o1和o2大小
+		* o1大，返回正数
+		* o1小，返回负数
+		* 相同，返回0
+		* */
+	@Override
+	public int compare(String o1, String o2) {
+		int a = Integer.parseInt(o1);
+		int b = Integer.parseInt(o2);
+		return a-b;
+	}
+};
+// 按数字顺序排序                // Comparator比较器
+// 把比较器交给sort()方法使用，sort()方法内部会调用comp.compare()来比较数据大小
+Collections.sort(list,comp);// 排序
+
+new ArrayList().add()
+ArrayList<Integer> list = new ArrayList<Integer>();
+Collections.addAll(list, 5, 23, 76, 8, 4, 3, 43);
+list.add(i,8);// 在这个位置插入数字8
+
+for-each循环（获取不到下标）
+数组遍历和集合迭代遍历的语法简化
+1.数组：
+for(int i=0;i<a.length;i++){
+	String s = a[i];
+	// todo
+}
+简化为：
+for(String s:a){
+	// todo
+}
+
+集合 的迭代器遍历
+for(Iterator<String> it = list.iterator();it.hasNext();){
+	String s = it.next();
+	// tode
+}
+简化为：
+for(String s:list){
+	// tode
+}
+
+异常 封装错误信息的对象
+错误信息：
+1.类型 如NullPointerException
+2.消息
+3.行号
+例子：
+// 1.类型：java.lang.NumberFormatException
+// 2.消息：: For input string: "qwqw"
+// 3.行号：at day1403_异常.Test1.f(Test1.java:20)
+Exception in thread "main" java.lang.NumberFormatException: For input string: "qwqw"
+	at java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)
+	at java.lang.Integer.parseInt(Integer.java:580)
+	at java.lang.Integer.parseInt(Integer.java:615)
+	at day1403_异常.Test1.f(Test1.java:20)
+	at day1403_异常.Test1.main(Test1.java:7)
+
+异常的继承结构
+Throwable
+	Error 系统级错误，没法修复
+	Exception 可修复错误
+		RuntimeException
+			NullPointerException
+			ArrayIndexOutOfBoundException
+			ArithmeticException
+			NumberFormatException
+			ClassNotFoundException
+
+异常捕获 
+作用：
+1.资源清理
+
+try{
+	// 捕获A,B异常赋值到e
+	return;// finally也会执行
+}catch(AException e){
+
+}catch(BException e){
+
+}catch(父类型Exception e){
+
+}finally{
+	// 不管出不出错都执行
+}
+
+try{
+
+}finally{
+	// 资源清理
+}
+
+例子：
+while(true) {
+	try {
+		f();
+		break;
+	}catch (ArrayIndexOutOfBoundsException e) {// ArrayIndexOutOfBounds
+		System.out.println("输入两个，不是一个");
+	}catch (ArithmeticException e) {// Arithmetic
+		System.out.println("不能除0");
+	}catch (Exception e) {// 父异常
+		System.out.println("程序出错，请重新尝试");
+	}finally {
+		System.out.println("--------");
+	}
+}
+
+System.exit(0);// 关闭虚拟机
+
+字符串的+操作符
+a = "aaa";
+b = "bbb";
+s = a+b;// 创建了2个实例对象，s1 = new StringBuilder(s); s1.toString();
+
+s1 = "aaa"+"bbb"+"ccc";
+等同于
+s1 = "aaabbbccc";
+
+内部类：
+1.非静态内部类
+作用：
+辅助外部实例进行运算，来封装局部的数据，或局部的运算逻辑
+class A{
+	class Inner{// 不能独立创建内部类实例，依赖于外部实例存在，属于A实例
+
+	}
+}
+A a = new A();
+Inner i = a.new Inner();// 也要导包
+2.静态内部类
+作用：
+与普通类没有区别，嵌套定义，或者独立定义都可以，只是一个设计选项
+
+两个类如果关系紧密，可以选择嵌套定义
+例子：两个类Robot Arm
+class A{
+	static class Inner{
+
+	}
+}
+A.Inner i = new A.Inner();// 可以独立调用
+Inner i = new Inner();// 可以独立调用，导包写法
+3.局部内部类
+只能在局部使用，f()中用，可以把实例的内存地址return出去
+Inner类不能在外部用，在外只能转为父类型使用
+class A{
+	Object/Weapon f(){
+		class Inner implements Weapon{
+
+		}
+		Inner i = new Inner();
+		return i;
+	}
+}
+A a = new A();
+Weapon w = a.f();// 真实类型是子类实例
+4.匿名内部类（常用）
+class A{
+	void f(){
+		// 匿名内部类  是赋值所以要有;号
+		父类 xx = new 父类(){  // new 父类()=>super()执行object的构造
+
+		};
+	}
+}
+例子：
+class A implements Weapon{
+	public A(){
+		super();
+	}
+}
+实例化
+Weapon w = new Weapon();
+
+缩写成：
+Weapon w = new A(){
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
