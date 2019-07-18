@@ -395,9 +395,6 @@ oop面向对象编程
 匿名对象调用
 new Bird().fly(); // 直接调用
 
-main方法中的语句"System.out.println(s);"无法调用在main方法外声明的变量
-private 静态的可以？
-
 final
 1.修饰类
 次类不能被继承
@@ -523,7 +520,7 @@ syso(a);// 还是1
 private void method(int a){
 	a = 2;
 }
-2.但是同一方法中的子代码块可以影响父代码块
+2.但是同一方法中的子代码块不能影响父代码块
 
 String api
 equals 比较字符串内容
@@ -1041,6 +1038,7 @@ Throwable
 			ArithmeticException
 			NumberFormatException
 			ClassNotFoundException
+		其它Exception
 
 异常捕获 
 作用：
@@ -1080,6 +1078,65 @@ while(true) {
 		System.out.println("--------");
 	}
 }
+
+e.printStackTrace();// 错误打印
+
+异常处理方式：
+1.catch捕获异常
+2.throws添加管道 往前面方法继续抛出异常
+
+方法有默认异常管道，RuntimeException和它的子类型
+
+手动插管道
+throws 在方法上设置异常的抛出管道
+
+void f() throws AException,BException{
+
+}
+
+catch和throws
+java语法的设计者，强制开发人员事先考虑如何处理异常，必须二选一
+
+1.catch和throws首选throws
+2.底层异常向前抛给上层处理
+3.在调用路径中，可以选择一个合适的位置catch，修复异常
+4.经验不足的情况下，不知道应该在哪捕获，一路向前throws到最前面
+
+throw 手动抛出异常，执行异常的抛出动作
+如果不自动出错，通过判断检查到程序中的逻辑错误，可以手动创建异常实例，并抛出
+3.14/0 Infinity
+if(逻辑错误){
+	AException e = new AException("提示消息");
+	throw e;
+}
+
+异常包装
+捕获的异常实例，包装成另一种类型再抛出
+try{
+
+}catch(AException e){
+	BException x = new BException(e);
+	throw x;
+}
+使用场景：
+1.不能抛出的异常，包装成能抛出的类型再抛
+2.异常简化，多种异常类型，简化成一种类型
+
+自定义异常
+现有的异常类型，不能表示所有的业务中的错误情况，需要自定义新的异常类型来表示具体业务中的错误
+如：转账失败，用户名错误，密码错误
+
+步骤：
+1.起一个合适的类名
+2.选一个合适的父类
+3.添加合适的构造方法
+
+Exception 和 RuntimeException
+1.RuntimeException有默认的异常管道
+void f() throws RuntimeException{}
+RuntimeException 非检查异常，编译器不会检查这种异常是否添加了处理代码，不强制处理
+
+2.Exception 检查异常，必须编写处理代码throws或者catche，强制处理
 
 System.exit(0);// 关闭虚拟机
 
@@ -1153,9 +1210,100 @@ Weapon w = new A(){
 
 };
 
+方法重写
+1.子类重写父类方法 访问范围不能降低，能提高
+2.不能比父类抛更多异常
 
+接口方法默认范围
+public abstract
 
+io Input/Output 输入/输出
+相对于内存 到 磁盘文件
+把磁盘文件读入内存
 
+java.io包
+	File	
+	FileInputStream,FileOutputStream
+	ObjectInputStream,ObjectOutputStream
+	InputStreamReader,OutputStreamWriter
+
+1.File 两斜杠都支持 封装一个磁盘路径的字符串，提供了文件属性，文件的创建删除，目录列表等操作方法
+可以封装：
+	文件
+	文件夹
+	不存在的路径
+例子：
+"d:/abc"
+
+文件或文件夹属性：
+length() 文件的字节量 213123131 约等于213M，对文件夹无效
+isFile() 是否是文件
+isDirectory() 是否是文件夹
+exists() 封装的路径是否存在 false
+getName() 获得文件名 
+getParent() 获得父目录
+getAbsolutePath() 绝对路径
+创建/删除文件或文件件：
+createNewFile() 创建文件，已经存在不会新建，返回false。路径前面文件夹不存在
+mkdirs() 只建一层
+mkdirs() 新建多层目录，逐层创建 指定多层路径"d:/a/a/a/"
+delete() 删除文件，或空文件夹
+文件夹列表：
+list() 获得String[]数组，只包含文件或文件夹的名称字符串。例子：["aa","bb","c.png"]
+listFiles() 获得File[]数组，包含每个文件和文件夹的封装的File实例。[{...},{},{}]
+
+文件夹列表 可能得到null值
+1.对文件列表
+2.对不存在的路径
+3.无权进入的文件夹
+
+流 stream 把字节数据的读写，抽象成数据在管道中流动
+1.只能单向流动
+	输入流，只能读取数据
+	输出流，只能把内存数据向外输出
+2.只能从头到尾流动一次，不能反复流动
+
+FileInputStream,FileOutputStream 直接插在文件上，读写文件数据
+创建对象：
+new FileOutputStream(文件)
+不管文件是否存在，都会新建一个空文件，会删除旧文件。
+
+new FileInputStream(文件,true)
+如果文件已经存在，追加数据
+如果文件夹不存在，会出现异常
+
+方法：
+write(int b) 输出int 4个字节中末尾的一个字节值
+[1],[2],[3],[4]   ---->   [4]
+一般给255范围内，一个字节内
+
+write(byte[],start,length)
+例子：
+write(byte[],3,3);
+输出数组中，从start开始的length个字节值
+
+read()
+读取一个字节值，补三个0字节，转成int类型
+[4]  -->   [0][0][0][4]  第一位是0正数
+
+read(byte[] buff)
+按数组的长度，读取一批数据放入数组，并返回这一批的字节数量
+
+读取结束再读取，返回-1，表示结束
+例子：
+FileInputStream in = new FileInputStream(from);
+byte[] buff = new byte[8192];
+int n;// 存每一批的数量
+while ((n=in.read(buff))!=-1) {
+	// 最后一批没有8192个，而是只有n个
+	// 只能输出数组的前n个字节值
+	out.write(buff,0,n);
+}
+
+while嵌套写法：
+while ((b=in.read())!=-1) {
+	System.out.println(b);
+}
 
 
 
