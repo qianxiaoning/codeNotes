@@ -1540,6 +1540,21 @@ OutputStream out = s.getOutputStream();
 服务线程（总机）：main方法，启动ss服务，循环执行accept()，等待下一个客户端连接
 通信线程：不断和新接入的客户，建立新的通信线程
 
+服务端：
+1.主线程创建ServerSocket对象，循环等待接入并返回Socket对象，一个客户端成功发起一个Socket连接，此Socket对象就会被传入一个新建的通信线程。
+2.这个通信线程会取得此Socket对象的网络输入和输出流，加以处理转为接入和发送方法，赋值在此通信线程实例上，然后此通信线程实例就可给此Socket收发信息。所以要一个通信线程一对接入和发送方法。
+3.通信线程的群发方法，在外部类的成员变量中拿到所有通信线程实例的数组集合，循环执行每个通信线程实例的send方法，send方法会用每个实例自己的发送方法对象给自己的Socket对象发送消息。
+客户端：
+一个实例，包含一个接收线程，一个输入线程
+总的关系：
+服务器一个总线程下多个通信线程，每个通信线程和一个客户端的Socket实例对应。
+
+BufferedReader in;
+PrintWriter out;
+in.readLine();
+out.println();// 只有输出的时候需要刷缓存
+out.flush();
+
 反射 Reflect（透视）
 配置文件：里面都是字符串 new "字符串" 传统方式不行
 config.txt
@@ -1619,9 +1634,122 @@ Object r = t.invoke(实例,6,"abc");
 
 框架（ssm）底层就是用反射实现，根据配置来执行
 
-注解
+注解:
+为其它的开发工具和java程序提供代码的额外信息
+@Override 重写 // 提示编译器，让编译器检查重写的语法
 
-爬虫
+自定义一个注解
+自定义的注解，需要自己编写处理程序
+有@Test注释就运行
+
+注释文件Test:
+@Target(ElementType.METHOD)
+//@Target({ElementType.METHOD,ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Test {
+	// 如果不指定默认值，使用时必须赋值
+	int id() default 0;
+	String title() default "";
+	/*
+	 * 特殊的属性名value，这个属性名有特殊待遇
+	 * 在单独赋值时，可以省略属性名
+	 * @Test("测试1")
+	 * @Test(title="测试1")
+	 * */
+	// 把特殊属性名value当做是title的一个别名
+	String value() default "";
+}
+运行器文件Runner（反射的方式）:
+public class Runner {
+	public static void launch(Class<?> c) throws Exception {
+		// 新建实例
+		Object obj = c.newInstance();
+		// 获得所有的方法
+		Method[] a = c.getMethods();
+		for (Method t : a) {
+			//判断方法上是否有@Test注解存在
+	        if(t.isAnnotationPresent(Test.class)) {
+	           run(obj, t);//执行这个有@Test注解的方法
+	        }
+		}
+	}
+	private static void run(Object obj, Method t) throws Exception{
+		System.out.println("---------");
+		// 从方法获取注解实例
+		Test test = t.getAnnotation(Test.class);
+		System.out.println("id="+test.id());
+		String title = test.title();//取title
+		if(title.equals("")) {// 没有title
+			title = test.value();//那么把value当做title
+		}
+		System.out.println("title="+title);
+		t.invoke(obj);//发射操作执行该方法
+	}
+	public static void main(String[] args) throws Exception {
+		Runner.launch(Test1.class);// Test1的类对象，反射
+	}
+}
+日常代码文件Test1：
+public class Test1 {
+	@Test(id=3525,title="测试1")
+	public void a() {
+		System.out.println("Test1.a()");
+	}
+	@Test
+	public void b() {
+		System.out.println("Test1.b()");
+	}
+	public void c() {
+		System.out.println("Test1.c()");
+	}
+	@Test("测试3")
+	public void d() {
+		System.out.println("Test1.d()");
+	}
+}
+
+上层api，上层框架：
+一些底层基础api，使用繁琐，有更方便使用的上层api，封装了繁琐操作，使用上层api，只简单调用一个方法就行
+
+JUnit 测试框架 开源单元测试框架
+已经成为单元测试的事实标准
+eclipse集成了JUnit，直接支持JUnit框架
+引入JUnit开发包：
+右键点击项目--Build Path--Add library--JUnit--JUnit4
+右键点击项目--项目属性--左侧Build Path--标签libraries--add library
+
+引入JUnit，加了注释，ctrl+f11
+
+爬虫：
+从互联网页面上自动爬取数据
+1.和服务器建立Socket连接
+2.用流，向服务器发送http协议数据（请求信息）
+3.接收服务器返回的http协议数据（包含页面数据）
+4.解析页面数据，提取需要的内容
+
+Jsoup 开源的http请求的api，也可以方便的从页面代码从提取内容
+
+需要下载Jsoup的jar包，导入项目
+导入外部jar包，build path--add external archives--lib下所有jar包选中加入
+
+Jsoup:
+// 爬body全文
+@Test
+public void test2() throws Exception {
+	String s = Jsoup.connect("https://item.jd.com/100002795959.html")
+			.execute()
+			.body();
+	System.out.println(s);
+}
+// 爬对应class文本
+@Test
+public void test3() throws Exception {
+	String title = Jsoup.connect("https://item.jd.com/100002795959.html")
+			.get()
+			.select("div.sku-name")
+			.text();
+	System.out.println(title);
+}
 
 抽象子类 继承 接口 与方法实现
 public interface A {
