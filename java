@@ -375,7 +375,7 @@ int b = a+++9; b=a(a=a+1)+9;
 System.out.println(b); // 11
 
 java重载
-当参数顺序不一样，也是重载
+当参数顺序不一样，也是重载，返回值可以不同
 
 oop面向对象编程
 
@@ -482,8 +482,9 @@ super代表父类对象的引用
 
 switch中只能判断byte,short,char,int,没有long,enum枚举,string
 
-循环命名？
+循环命名，可以跳出两层
 break outer;
+continue outer;
 
 //构造方法中调用另一个重载的构造方法
 // 必须是首行
@@ -732,11 +733,14 @@ BigInteger 超大整数运算，超出long时
 
 访问控制符
 控制一个类，或类中的成员的访问范围
-				类		包		子类		任意	  
+				类		同包	子类	任意	  
 public			1		1		1		1
 protected		1		1		1
 [default]		1		1
 private			1
+
+protected 同包可见，包外有继承关系的子类可见
+default 同包可见
 
 尽量使用小范围
 public是与其他开发人员公开的，要尽量保持稳定不变
@@ -882,6 +886,11 @@ HashMap 哈希表，散列表（重点）
 2.覆盖率到0.75，翻倍数组，重新哈希计算放入新数组
 3.jdk1.8后，链表长度>8转成红黑树，减少到<6，转回链表
 
+HashMap放值时，会对键进行hashCode和equals的比较：
+1.HashMap调用put(key,value)方法放入键值对时，会调用当前key的hashCode和equals方法去比对，hashCode值决定位置，equals值决定覆盖与否。
+2.不同key类型，默认的hashCode和equals方法可能会不一样（有的比较内容，有的比较地址值）。
+3.当默认方法不满足需要时，需要改写hashCode和equals方法，使hashCode和equals方法比较键的内容而不是地址值，使得hashCode和equals都返回true，达到key内容相同即覆盖值的效果。
+
 方法：
 put(key,value);// 放入键值对数据，重复的键覆盖旧值
 get(key);// 获取键对应的值，键不存在返回null值
@@ -894,6 +903,8 @@ object的方法，object中默认是用内存地址值作为哈希值
 HashMap<Point, String> map = new HashMap<Point, String>();
 map.put(new Point(1, 3), "3.1亿");
 new Point(1, 3).hashCode()// 求hash值
+
+String的hashCode不是比地址值，是比里面的值
 
 接口 特殊的类
 是一个结构设计工具，用来解耦合，隔离实现
@@ -1305,11 +1316,352 @@ while ((b=in.read())!=-1) {
 	System.out.println(b);
 }
 
+ObjectInputStream,ObjectOutputStream
+对象的序列化和反序列化
+序列化：把一个实例的信息，按固定格式转成一串字节序列输出
+类名，变量，变量值
+作用：传java实例
+方法：
+writeObject(Object obj) 把对象转成一串字节值输出
+readObject 读取序列化数据，重新恢复对象
 
+被序列化的对象，必须实现Serializable接口
+Serializable接口是一个空接口，称为标识接口，用来标识一个类，允许被序列化
 
+序列化是序列化实例
 
+不序列化的成员：
+static 静态属于类，而不属于实例，不会随实例被序列化输出
+transient 临时，只在程序运行期间，在内存中存在，不会随实例序列化持久保存
 
+序列化版本id
+用来控制旧的数据，不允许恢复成新的版本的类型
+实例变成实例2了，序列化1就恢复不了了
+如果不定义，编译器会自动添加版本id，会根据类的定义信息来计算产生一个id值
+private static final long serialVersionUID = 1L;
 
+文件流按字节读
+
+InputStreamReader,OutputStreamWriter
+编码转换流（只能读取文本，按字符读）
+1.java的char类型使用Unicode码（双字节的）
+2.Unicode保存或传输，应该转换成其他编码
+3.转成utf-8
+	Unicode的传输格式，英文单字节，中文三字节，其他字符两字节或四字节
+4.转成GBK
+	国标码
+	英文单字节
+	中文双字节
+
+OutputStreamWriter
+	把Unicode转成其他编码输出
+InputStreamReader
+	读取其他编码的字符，转成Unicode
+
+线程（重点）
+进程：在操作系统里并行执行的任务
+cpu同一时间只能处理一项任务，时间被切分成小的时间片，所有任务在时间片上轮换执行
+
+线程：在进程内部并行执行的多项任务（也是时间片随机执行）
+
+包含关系：操作系统>进程>线程
+
+在jvm进程中创建线程
+创建线程（两种方式）：
+1.继承Thread
+继承Thread，写一个Thread子类，子类里重写run(){}
+调t1.start()启动线程后，会自动执行其中的run方法，不用t1.run()手动调，自动执行
+例子：
+static class T1 extends Thread{
+	public void run() {}
+}
+new T1().start();
+例子2（匿名内部类）：
+new Thread() {
+	public void run() {}
+}.start()
+
+jvm启动main线程，执行main方法，t1.start()启动新线程和main线程并行，等待争夺时间片。
+
+2.实现Runnable
+Runnable不是线程，是用来封装可以在线程中执行的代码
+写一个Runnable接口的子类，写run方法
+1.实现Runnable接口
+2.实现run()方法
+3.新建线程实例时，把Runnable对象放入线程
+4.线程启动后,执行Runnable对象的run()方法
+例子：
+static class R1 implements Runnable{
+	public void run(){}
+}
+Thread t1 = new Thread(new R1());
+t1.start();
+
+线程状态：
+新生    =>   start()  => 
+可执行
+执行   =>   run方法结束  /  暂停下来
+消亡 /  阻塞  =>  可执行状态
+除了新生和消亡都是活动线程
+消亡的线程不能重新启动，只能重新创建线程实例
+
+线程的方法：
+Thread.currentThread()// 静态，获得正在执行这行代码的当前线程实例
+Thread.sleep(毫秒值)// 阻塞暂停当前线程指定的毫秒时长
+getName(),setName()
+start()
+interrupt() 打断一个线程的暂停状态，把另一个线程敲醒
+由b执行a.interrupt()，被打断的线程a会出现InterruptedException异常
+setDaemon(true) 后台线程，守护线程，只能在启动之前设置
+jvm中多个线程，等所有前台线程结束，jvm会关闭
+jvm不会等后台线程死活
+例子：
+Thread t2 = new Thread() {
+	public void run() {}
+}
+t2.setDaemon(true);// 在start前设置为后台进程
+t2.start();
+setPriority() 线程优先级，1~10级，默认是5
+join() 当前线程暂停，等待被调用的线程结束
+a线程
+b线程 等待a的计算结果 再继续运行
+在b中执行a.join()
+
+多线程数据访问冲突（线程安全问题）
+多个线程共享数据，一个线程修改，一个线程同时访问，可能会访问到修改了一般的数据
+
+数据访问冲突
+线程同步 synchronized
+让多个线程步调一致的执行
+1.线程同步锁
+java中任何实例都有一个同步锁，如果一个线程抢到同步锁，其他线程等待，直到能抢到锁才能执行
+抢同一把锁，使步调一致，加两处synchronized
+synchronized(对象){// 抢指定对象的锁，锁定代码越少越好
+	数据修改或数据访问的代码
+}
+synchronized(this/A.class){}
+不同的写法：
+1.synchronized void f(){// 抢当前实例this的锁
+
+}
+a.f() // 同是a抢锁
+
+2.static synchronized void f(){// 抢类的锁
+
+}
+a.f()// 抢的是类的锁
+b.f()
+
+实例允许调用类的方法
+
+生产者，消费者
+线程间的通信模型
+中间放一个数据容器 来解耦
+1.生产者产生数据，存入一个数据容器
+2.消费者从数据容器获取数据进行处理
+3.生产者和消费者之间，用中间的容器解耦// 容器栈结构，后进先出，一个出口
+
+等待和通知
+Object的方法
+wait()
+notify() // 无法指定参数
+notifyAll()
+
+stack.wait() 停止synchronized，解锁
+stack.notifyAll() 在synchronized同步监视器中发出通知，唤醒wait实例
+1.只能在synchronized内调用
+2.等待和通知的对象必须是加锁的对象
+3.wait的外面总应该是一个循环条件判断，notify后，即从wait处醒来，往下执行
+
+先轮时间片再轮synchronized锁
+
+wait的对象等待stack.notifyAll通知，加入竞争队列
+
+同步监视器模型
+执行到synchronized，会在加锁的对象上，关联一个同步监视器
+入口区  同步区  等待区（wait后，等待notify）
+
+死锁：
+线1
+synchronized(a){
+	synchronized(b){
+
+	}
+}
+线2
+synchronized(b){
+	synchronized(a){
+
+	}
+}
+线1等b，线2等a，死锁
+同一顺序解决问题
+
+Socket网络通信（套接字）
+主机之间可以通过ip地址找到对方，两台主机各选择一个端口（0~65535？），各插一个插头
+
+关闭防火墙
+ping 192.168.14.xxx 对方关闭防火墙
+
+回环ip 127.0.0.1
+
+ServerSocket 在服务器端选择一个端口号，等待客户端发起连接
+端口号：
+http 80
+https 443?
+ftp 21
+0~1024 常见服务的默认端口
+50000~65535 系统保留端口
+ServerSocket ss = new ServerSocket(端口号);
+ss.accept();// 暂停，等客户端发起连接，并建立连接通道，返回服务器端的插头对象
+服务器端 socket实例有一个输入流一个输出流
+
+客户端
+客户端主动创建Socket插头对象，与指定服务器的ip地址和端口建立连接
+Socket s = new Socket(ip,port);
+网络输入输出流
+InputStream in = s.getInputStream();
+OutputStream out = s.getOutputStream();
+
+阻塞操作：
+1.ss.accept();// 暂停，等待客户端发起连接
+2.in.read();// 暂停，等待接收客户端的数据
+如果要同时执行这两个阻塞操作，要启动两个线程并行执行：
+1.同时等待客户端连接
+2.同时等待接收客户端数据
+
+服务器端线程模型：
+类型10086 accept等待客户
+多客户多客服
+1.总机等下一个客户
+2.和在线客户一起对话
+
+首先启动服务线程：
+服务线程（总机）：main方法，启动ss服务，循环执行accept()，等待下一个客户端连接
+通信线程：不断和新接入的客户，建立新的通信线程
+
+反射 Reflect（透视）
+配置文件：里面都是字符串 new "字符串" 传统方式不行
+config.txt
+------------------------
+day1901.A;a
+day1901.B;b
+day1901.C;c
+使用加载到虚拟机中的类对象的反射操作，可以新建实例，调用成员
+用反射操作可以：
+1.获取类的定义信息：
+
+获取类对象：（重点）   在方法区找到
+Class c = A.class 访问方法区的这个类 /Class<A> A类的类对象
+Class c = Class.forName("day1901.A")
+Class c = a1.getClass() 得到实例的类对象
+已加载直接访问，访问时没找到会先去加载
+
+获取包名类名：
+// 包名
+c.getPackage().getName()
+// 完整类名
+c.getName() 包名加类名
+// 简写类名（不含包名）
+c.getSimpleName()
+
+获取成员变量的定义信息:
+getFields() 获取所有可见的成员变量，包含继承的变量
+getDeclaredFields() 获得本类定义的成员变量，不包含继承的，包含私有变量
+getField(变量名) 获得指定的一个变量
+getDeclaredField(变量名)
+
+获取构造方法的定义信息:
+getConstructors() 获取所有可见的构造方法，不含父构造，构造是不继承的
+getDeclaredConstructors() 获取所有可见的构造方法，包含私有
+getConstructor(参数类型列表) 指定一个
+getDeclaredConstructor(int.class,String.class) 通过参数类型来区分
+类对象，int这个类的class？
+
+获取方法的定义信息:
+getMethods() 获得所有方法，包含继承
+getDeclaredMethods() 获得所有本类定义的方法，包含私有，不含继承
+getMethod(方法名，参数类型列表) 
+getDeclaredMethod(方法名，int.class,String.class)
+
+2.新建实例：
+1.执行无参构造 Object obj = c.newInstance();
+2.执行有参构造:
+// 获得构造方法
+Constructor t = c.getConstructor(int.class,String.class)
+// 新建实例并执行该方法
+Object obj = t.newInstance(6,"abc");
+
+3.调用成员变量，成员方法
+// 获取变量
+Field f = c.getDeclaredField(变量名);
+// 使私有变量允许被访问
+f.setAccessible(true);
+// 变量的反射操作，为指定实例的变量赋值
+// 如果是静态变量，第一个参数给null值
+f.set(实例,值);
+// 变量的反射操作，来访问指定实例变量的值
+// 如果是静态变量，参数给null值
+Object v = f.get(实例);
+
+调用成员方法:
+// 获取方法
+Method t = c.getDeclaredMethod(方法名，参数类型列表)
+// 使私有方法允许被调用
+t.setAccessible(true);
+// 方法的反射操作，并执行这个方法
+// 如果是静态方法，第一个参数给null
+// 如果方法是void，得到的返回结果也是null
+Object r = t.invoke(实例,6,"abc");
+
+反射的作用：
+动态编程，程序不是固化的静态代码，而是通过配置文件可以配置程序的执行流程
+
+框架（ssm）底层就是用反射实现，根据配置来执行
+
+注解
+
+爬虫
+
+抽象子类 继承 接口 与方法实现
+public interface A {
+	void a();
+	void b();
+	void c();
+}
+public abstract class B implements A{
+	@Override
+	public void a() {
+		// TODO Auto-generated method stub
+		System.out.println(11);
+	}
+	@Override
+	public void b() {
+		// TODO Auto-generated method stub
+		
+	}
+}
+public class C extends B{
+	@Override
+	public void c() {
+		// TODO Auto-generated method stub
+		System.out.println(222);
+	}
+}
+public class Test1 {
+	public static void main(String[] args) {
+		new C().a();// 11
+		new C().c();// 222
+	}	
+}
+A接口(a,b,c方法)=>B抽象类(a,b)=>C子类(c)=>new C().a();new C().c();没毛病
+抽象类B可以缺省需要实现的方法c，但是抽象类B不能被实例化，所以要直到非抽象类C实现完了还没实现的方法c，该非抽象类C才能被实例化
+
+int范围：正负21.47亿左右
+
+OutputStream out = s.getOutputStream();
+// getBytes()把字符转成字节值
+out.write("world".getBytes());
 
 
 
