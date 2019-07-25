@@ -52,7 +52,7 @@ show databases;
 drop database jt_yh;
 
 \c 退出当前操作
-
+1
 表操作：
 创建表tb_door，:
 选中数据库
