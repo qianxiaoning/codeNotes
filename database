@@ -1,0 +1,170 @@
+------------------
+Mysql
+数据库>数据表=>（表头：字段，表记录）
+
+数据库：
+sqlserver(基本淘汰，技术古老),
+oracle（收费，维护费）,
+mysql（免费，开源）,
+db2（主要于银行）,
+
+Nosql(非关系型数据库):
+redis（内存数据库）,
+mongodb（分布式文件数据库？）
+
+mysql:
+登录 mysql -uroot -p
+登录 mysql -uroot -p密码
+退出 exit,quit
+注释 #sfdfd
+注释 -- wwwewq
+注释 /*wewewee*/
+密码 root
+对库操作：
+创建jt_yh数据库：
+create database jt_yh;
+查看所有数据库：
+show databases;
+自带4个不能删，除test
+删除数据库：
+drop database jt_yh;
+
+\c 退出当前操作
+
+表操作：
+创建表tb_door，:
+选中数据库
+use jt_yh;
+建表：
+primary key // 主键
+auto_increment // 自增长
+create table tb_door(id int primary key auto_increment,door_name varchar(200),tel varchar(100));
+表中3个字段id,door_name,tel
+查看所有表：
+show tables;
+查看表结构：
+desc tb_door;
+删除表：
+drop table tb_door;
+表记录操作：
+向表中插入2条记录
+insert into tb_door value(null,'yhdw1','666');
+insert into tb_door value(null,'yhdw2','777');
+查看 tb_door表中所有的记录
+select * from tb_door; 
+修改表中id为3的记录
+update tb_door set tel='991' where id=3;
+按某个顺序排序 默认升序
+select * from tb_door order by tel;
+降序
+select * from tb_door order by tel desc;
+查看表中所有的数据总数
+select count(*) from tb_door;
+删除某条指定的记录
+delete from tb_door where id=3;
+
+用软件操作数据库：
+navicat for Mysql
+可视化数据库工具
+双击库
+右键新建数据库
+右键删除数据库
+选中库，新建表，主键按钮、自动递增勾选，向下箭头新增表记录，字符集utf8
+设计表：查看表结构
+右键删除记录
+验证sql对否：
+查询-新建查询select * from tb_door where id=2; 运行
+三个timestamp只能有一个根据当前时间戳更新
+timestamp, int, double默认值为null
+
+数据库mysql
+关系型数据库
+用于存储，管理数据的仓库
+
+数据库根据底层存储数据结构的不同可以分为很多种类：
+早期的层次式（淘汰），网络型，现在流行的关系型（大部分）、非关系型
+
+关系型数据库：
+底层以二维表的形式，保存数据的数据库
+eg：
+表头
+表记录
+表记录
+
+非关系型数据库：
+底层是key-value结构
+
+常见的关系型数据库：
+SQL Server（微软，收费，适用于中大型项目）,
+Oracle（甲骨文，占比50%，收费，大-超大型项目）,
+Mysql（瑞典MysqlAB公司，小-中型项目，集群也能支持大型项目，占比20%）,
+Mariadb（核心就是Mysql）
+DB2（IBM公司，收费，经常在银行金融使用）,
+Sqlite（迷你数据库，手机-移动设备-智能家居）
+
+数据库服务器：
+安装的数据库软件的服务器
+
+数据库：
+数据库服务器中有很多个数据库，一个网站所有数据会存放在一个数据库中
+
+表（数据表）：
+一个数据库中可以有多张表，一般情况下一类信息会存放在一张表中。比如用户相关的信息存在用户表中，商品信息在商品表。
+
+表记录：
+一张表中有多条表记录，一条表记录用以记录某一条具体的信息，对应java在的对象（实例）
+java中通过类保存一类信息，因此，java一个类对应一张表
+
+drop, delete, truncate区别
+drop删除库和表，不能删除表记录
+delete和truncate用于删除表记录，不能用于删除库和表本身
+delete用于删除表记录，可以删除表中的某一部分记录，也可以删除表中的所有记录，而且删除时，是一条一条删除。
+truncate也是用于删除表记录，只能删除所有记录，删除时不是一条一条删除，而且将整张表摧毁重建。
+
+mysql中常见的函数：
+ifnull(列名,值);// 对指定列的值判断是否为null，如果为null则用第二个参数对null值替换
+count(列|*);// 对指定列或所有列统计行数
+max(列名)/min(列名)
+sum(列名)// 合计
+avg(列名)// 平均
+curdata()/curtime()/sysdate()/now()// 时间
+
+两表建立关系
+在一个表中添加另一张表的主键
+
+设立外键
+告诉数据库两表的对应关系，数据库会帮我们维护。
+比如指定外键后，如果想删除一个部门，数据库会帮我们检查该部门下是否有员工，如果还有员工，数据库会阻止我们删除。
+eg:
+dept				emp
+部门表                员工表
+id					dept_id
+建表时：
+create table emp(
+	id int primary key auto_increment,	-- 员工编号
+	name varchar(20),					-- 员工姓名
+	dept_id int,						-- 部门编号
+	foreign key(dept_id) references dept(id) -- 指定外键
+);
+
+外键：
+通知数据库两表数据对应关系的一个列
+
+一对一
+在任意一张表添加主键
+
+一对多，多对一
+通常会在多的一方添加主键
+
+多对多
+再创建一张表，至少有两列
+eg:
+学生表，教师表
+stuid		teaid
+一号学生对应哪些老师
+一号老师对应哪些学生
+二号学生对应哪些老师
+二号老师对应哪些学生
+...
+
+------------------

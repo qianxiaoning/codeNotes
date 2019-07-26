@@ -20,89 +20,28 @@ public static void main(String[] args){
 d盘目录 "d:\\qr.png"
 CreateQR.create(width, height, content, path);
 
-int整型？
-String
-
 <link rel="stylesheet" href="order.css"/>
 
 /返回根目录
 
-数据库>数据表=>（表头：字段，表记录）
+字符和字节的关系：
+不同编码方式的字符的字节大小是不同的：
+ASCII和GBK：
+英文1字节
+汉字2字节
 
-数据库：
-sqlserver(基本淘汰，技术古老),
-oracle（收费，维护费）,
-mysql（免费，开源）,
-db2（主要于银行）,
+utf-8：
+英文1字节
+汉字3字节
 
-Nosql(非关系型数据库):
-redis（内存数据库）,
-mongodb（分布式文件数据库？）
-
-mysql:
-登录 mysql -uroot -p
-密码 root
-对库操作：
-创建jt_yh数据库：
-create database jt_yh;
-查看所有数据库：
-show databases;
-自带4个不能删，除test
-删除数据库：
-drop database jt_yh;
-
-\c 退出当前操作
-1
-表操作：
-创建表tb_door，:
-选中数据库
-use jt_yh;
-建表：
-primary key // 主键
-auto_increment // 自增长
-create table tb_door(id int primary key auto_increment,door_name varchar(200),tel varchar(100));
-表中3个字段id,door_name,tel
-查看所有表：
-show tables;
-查看表结构：
-desc tb_door;
-删除表：
-drop table tb_door;
-表记录操作：
-向表中插入2条记录
-insert into tb_door value(null,'yhdw1','666');
-insert into tb_door value(null,'yhdw2','777');
-查看 tb_door表中所有的记录
-select * from tb_door; 
-修改表中id为3的记录
-update tb_door set tel='991' where id=3;
-按某个顺序排序 默认升序
-select * from tb_door order by tel;
-降序
-select * from tb_door order by tel desc;
-查看表中所有的数据总数
-select count(*) from tb_door;
-删除某条指定的记录
-delete from tb_door where id=3;
+unicode：
+英文2字节
+汉字2字节
 
 servlet:
 1.接收请求，实现页面跳转
 2.准备数据
 jsp:
-
-用软件操作数据库：
-navicat for Mysql
-可视化数据库工具
-双击库
-右键新建数据库
-右键删除数据库
-选中库，新建表，主键按钮、自动递增勾选，向下箭头新增表记录，字符集utf8
-设计表：查看表结构
-右键删除记录
-验证sql对否：
-查询-新建查询select * from tb_door where id=2; 运行
-三个timestamp只能有一个根据当前时间戳更新
-timestamp, int, double默认值为null
 
 jdbc:
 用一段java代码操作数据库
@@ -115,11 +54,6 @@ jdbc:
 
 方法三要素：
 修饰符，返回值，参数
-
-alt+/ 自动补全
-
-eclip重置视图
-window-perspective-reset perspective
 
 定义变量：
 变量类型 变量名 = 变量的值;
@@ -135,14 +69,6 @@ pojo 实体类
 
 jsp变量
 ${xx.xxx}
-
-doc命令
-c: 快速进入c盘
-dir 输出目录
-mkdir xxx 创建文件夹
-rmdir xxx 删除文件夹
-cd / 到磁盘根目录
-cls 清屏
 
 java se标准版 普通桌面、商务应用
 java me小型版 移动，嵌入设备
@@ -173,8 +99,6 @@ lib 第三方jar包
 
 jdk（开发工具包）> jre(运行类库)>jvm（java虚拟机）
 
-main alt+/ 快捷建main方法
-
 System.out.println(); 输出并换行
 System.out.print(); 输出不换行
 
@@ -190,7 +114,7 @@ java核心编程思想（白黄面）
 数据类型
 位Bit 字节byte 1byte=8Bit
 基本类型 又叫原生类、内置类型（8种）引用类型（很多）
-整数型：            字节空间                                         取值范围
+整数型：	字节空间			取值范围
 byte        1               -2^7 2^7-1 = -128 127
 short       2               -2^15 2^15-1
 int         4               -2^31 2^31-1
@@ -210,27 +134,6 @@ boolean     1               true/false
 类，接口，数组，...
 
 基本类型存值，引用类型存地址值
-
-eclipse快捷键：
-ctrl+d 删除整行
-alt+上下 代码上下移
-ctrl+alt+上下 复制代码
-alt+shit+l，只写右侧，提取变量
-ctrl+f11 运行代码快捷键
-f11 debug运行
-alt+shift+r 改名
-shift按住，鼠标悬浮在方法名上 查看调用的方法
-ctrl+t 看继承结构
-ctrl+o 显示成员大纲
-双击大括号 复制方法内部所有代码
-ctrl+n 新建文件
-alt+shift+s generate construct from filed 生成构造函数
-包名上按f2 改包名
-ctrl+shift+t 快速打开类
-
-设置代码模板  window->preferences->java->editor->template
-nextint
-int ${cursor} = new Scanner(System.in).nextInt();${:import(java.util.Scanner)}
 
 基本类型的字面规律:
 1.整数（byte,short,int,long）字面值是int类型
@@ -1428,7 +1331,7 @@ b线程 等待a的计算结果 再继续运行
 在b中执行a.join()
 
 多线程数据访问冲突（线程安全问题）
-多个线程共享数据，一个线程修改，一个线程同时访问，可能会访问到修改了一般的数据
+多个线程共享数据，一个线程修改，一个线程同时访问，可能会访问到修改了一半的数据
 
 数据访问冲突
 线程同步 synchronized
@@ -1790,13 +1693,6 @@ int范围：正负21.47亿左右
 OutputStream out = s.getOutputStream();
 // getBytes()把字符转成字节值
 out.write("world".getBytes());
-
-
-
-
-
-
-
 
 
 

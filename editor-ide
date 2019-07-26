@@ -34,3 +34,28 @@ vscode 格式化缩进
 --------------------------
 UltraEdit
 ctrl+h    把字符转成字节（16进制）来看
+--------------------------
+Eclipse
+快捷键：
+alt+/ 自动补全
+window-perspective-reset perspective eclip重置视图
+ctrl+d 删除整行
+alt+上下 代码上下移
+ctrl+alt+上下 复制代码
+alt+shit+l，只写右侧，提取变量
+ctrl+f11 运行代码快捷键
+f11 debug运行
+alt+shift+r 改名
+shift按住，鼠标悬浮在方法名上 查看调用的方法
+ctrl+t 看继承结构
+ctrl+o 显示成员大纲
+双击大括号 复制方法内部所有代码
+ctrl+n 新建文件
+alt+shift+s generate construct from filed 生成构造函数
+包名上按f2 改包名
+ctrl+shift+t 快速打开类
+
+设置代码模板  window->preferences->java->editor->template
+nextint
+int ${cursor} = new Scanner(System.in).nextInt();${:import(java.util.Scanner)}
+--------------------------
