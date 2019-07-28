@@ -369,6 +369,8 @@ String a = new String(a);
 字符串常量池
 第一次使用一个字符串的字面值，在"字符串常量池"中新建实例
 
+String 为引用数据类型，引用类型数据成员的默认值为 null
+
 再次使用相同字面值时，直接访问常量池中存在的实例，而不会创建
 
 断点：
@@ -413,18 +415,25 @@ this();和super();必须是首行
 
 父类中方法只要发现不同就调方法？
 
-java和js不一样
-java中 类中是成员变量，方法中是局部变量，不同方法的局部变量互不影响
-类实例化后的成员变量各方法共享
-如：
-1.int a=1;
-method(a);
-syso(a);// 还是1
+js和java一样，是值传递，字面值和地址值
 
-private void method(int a){
-	a = 2;
-}
-2.但是同一方法中的子代码块不能影响父代码块
+java中 类中是成员变量，方法中是局部变量，区别：
+1.成员变量各方法内都能用
+2.局部变量只有本方法内能用
+
+java中的参数传递 与 基本类型和引用类型的赋值：
+1.参数传递可以看做实参对形参的赋值
+2.基本类型，字面值直接复制，形参变和实参无关
+3.引用类型，地址值传递，形参变，实参也变。除非形参指向了另一个地址值，那就和实参无关了。
+4.在java中String引用类型比较特殊，形参变，相当于指向了另一个地址值（新建了一个String），所以也影响不了实参。
+5.另外几种基本类型(boolean,byte→short(char)→int→long→float→double)的封装类，虽然是引用类型，但是估计内部创建的还是基本类型，字面值直接复制，形参变和实参无关
+
+String foo = "blue";
+String bar = foo; 
+foo = "green"; 
+System.out.println(bar);
+// 输出结果为"blue" 
+采用 String foo = "blue"定义方式定义的字符串放在字符串池中，通过 String bar = foo;他们指向了同一地址空间，就是同一个池子，当执行 foo = "green"; foo 指向新的地址空间，bar仍指向原来的地址空间"blue"
 
 String api
 equals 比较字符串内容
@@ -485,7 +494,7 @@ int b = a;
 Byte Short Integer Long
 Float Double 
 Character
-Bolean 
+Boolean 
 
 正则表达式 regex
 matches(正则) 是否匹配
@@ -815,7 +824,7 @@ String的hashCode不是比地址值，是比里面的值
 	接口和普通父类相比，同样是提取公共的功能。
 	优化：
 		1.写法更简化
-		2.可以让子类多继承
+		2.可以让子类多实现
 语法：
 1.interface代替class关键字
 2.implements代替extends关键字
@@ -1124,9 +1133,42 @@ Weapon w = new A(){
 
 };
 
-方法重写
+方法重写：
 1.子类重写父类方法 访问范围不能降低，能提高
 2.不能比父类抛更多异常
+3.返回值类型是基本类型的话，要求相同
+
+方法重载：
+1.访问范围可以降低，没要求
+2.方法名相同且参数列表不同，与返回值类型无关
+
+重写与重载之间的区别
+区别点：	重载方法：	重写方法：
+参数列表	必须修改	一定不能修改
+返回类型	可以修改	一定不能修改
+异常	可以修改	可以减少或删除，一定不能抛出新的或者更广的异常
+访问	可以修改	一定不能做更严格的限制（可以降低限制）
+
+重写要求高一点
+
+在类方法中绝对不能调用实例方法 ：错误
+在类方法中可以通过实例化对象调用实例方法。
+
+类中的普通属性是类的实例变量 ：正确
+
+方法中定义的是局部变量，不能用类成员变量修饰符 private
+
+接口中的属性都是常量，默认由public static final同时修饰，可以省略，abstract不能修饰变量，修饰类
+
+abstract可以修饰方法和类，不能修饰属性
+
+抽象方法可以在接口中和抽象类中定义
+
+接口是一种只含有抽象方法或常量的一种特殊的抽象类，因为接口不包括任何实现，所以与存储空间没有任何关系。
+
+java8以前，接口只能被类实现，类不能继承接口，遵循单继承多实现原则。java8以后，接口中可以包含静态方法和默认方法。
+
+修饰接口只能是public和默认
 
 接口方法默认范围
 public abstract
@@ -1693,6 +1735,89 @@ int范围：正负21.47亿左右
 OutputStream out = s.getOutputStream();
 // getBytes()把字符转成字节值
 out.write("world".getBytes());
+
+顶层类修饰符：
+对于顶层类(外部类)来说，只有两种修饰符：public和默认(default)。 因为外部类的上一单元是包，所以外部类只有两个作用域：同包，任何位置。 因此，只需要两种控制权限：包控制权限和公开访问权限，也就对应两种控制修饰符：public和默认(default)。 
+
+创建对象时：
+声明对象，为对象分配内存空间，对对象初始化，使用对象 
+
+String 类是 final 的，在 java 中 final 修饰类的不能被继承
+String对象在调用toUpperCase()和trim()方法时都会返回新的字符串对象，原对象不变
+
+Map与Collection是两个不同的接口，没有继承关系。
+
+LinkedHashSet 元素唯一，且按照存放顺序读取
+
+不是Collection接口所定义 compareTo
+
+Vector是线程安全的 
+
+ArrayList不是线程安全的
+
+java.util.Queue 是链式存储并快速顺序(不需要随机访问)访问的集合类型
+
+Map没有继承Collection接口
+
+java不支持goto语句。
+
+目录在Java中作为一种特殊文件，即文件名的列表
+
+Java中的RandomAccessFile类提供了随意访问文件的功能
+
+计算机中的流是 流动的数据缓冲区 
+
+FilterOutputStream构造函数的参数类型（ ）OutputStream 
+
+InputStreamReader  面向字符的输入流
+
+ByteArrayInputStream,FileInputStream,ObjectInputStream 是字节流
+
+FileNotFoundException  编写程序时申明异常
+
+ClassCastException 运行时异常
+
+Java异常的基类为java.lang.Throwable，java.lang.Error和java.lang.Exception继承 Throwable，RuntimeException和其它的Exception等继承Exception。
+
+finally是关键字不是方法
+
+finally在异常处理的时候使用，提供finally块来执行任何清除操作 ？
+
+sleep 是线程类（Thread）的方法，wait 是 Object 类的方法 
+
+wait 后进入等待此对象的等待锁定池，只有针对此对象发出 notify 方法（或 notifyAll）后本线程才进入对象锁定池准备获得对 象锁进入运行状态。
+
+Java 提供对多线程同步提供语言级的支持 
+
+线程生命周期：新建状态、可运行状态、运行状态、阻塞状态和终止状态
+
+当一个线程因为抢先机制而停止运行，只能在轮换队列中排队而不能排在前面。
+
+能让线程停止执行的有stop：这个方法将终止所有未结束的方法，包括 run 方法
+
+Schema与DTD的相同之处有 对XML文档结构进行验证
+
+java 解析 xml 文件四种方式：SAX、DOM、JDOM、DOM4J
+
+xml文档中实体符号是用&作为开头的
+
+前后问号 <?xml-stylesheet type="txt/css" href="abc.css"?> 
+
+预定义实体 < 和 >
+
+SAX解析文档需要按照顺序 DOM可以随意
+
+^属于二进制位运算符 代表异或的意思
+运算时两个二进制数对应位的数不同时结果为1  否则为0
+所以1100^1010的结果应该是0110
+
+~属于二进制位运算符 代表非的意思
+
+&运算的规则是数位都为1则是1，只要有一个数的当前数位是0则结果为0，所以 2&3 == 10 & 11 ，则对应的结果为10，转换成十进制就是数字2
+
+
+
+
 
 
 
