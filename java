@@ -1,4 +1,6 @@
 java -version
+-------------------------------
+热身：
 1.指定目录新建工程java project(day01)
 2.在工程/src目录下新建包java package(com.baidu.hello)公司域名倒写
 3.在包下新建类java class(HelloWorld)
@@ -110,8 +112,8 @@ java核心编程思想（白黄面）
 
 标识符：包名，类名，方法名
 关键字：53关键字，其中2个保留字：const,goto。不能用作标识符
-
-数据类型
+-------------------------------
+数据类型：
 位Bit 字节byte 1byte=8Bit
 基本类型 又叫原生类、内置类型（8种）引用类型（很多）
 整数型：	字节空间			取值范围
@@ -188,7 +190,7 @@ System.out.println(3.14/0); // Infinity
 System.out.println(3.14/0.0); // Infinity
 System.out.println(3/0); // 报错
 System.out.println(0/0.0); // NaN
-
+-------------------------------
 运算符：
 1.算数运算符
 + - * / % ++ --
@@ -215,13 +217,13 @@ int a = 2;
 int b = a++; // b=a;a+=1;
 int c = ++a; // a+=1;c=a;
 // syso a=>4,b=>2,c=>4
-
+-------------------------------
 for循环的执行顺序
 for(表达式1;表达式2;表达式3){
 	表达式4;
 }
 1=>2=>4=>3 =>2=>4=>3 =>2=>3
-
+-------------------------------
 定义数组
 1.动态：
 int[] a = new int[4];
@@ -245,7 +247,7 @@ s.length()
 a.length
 
 java数组必须存相同类型的数据
-
+-------------------------------
 一个java文件能有多个class类
 但是只有一个类能是public，且此class为文件同名
 
@@ -276,10 +278,10 @@ private关键字
 int a = 2;
 int b = a+++9; b=a(a=a+1)+9;
 System.out.println(b); // 11
-
+-------------------------------
 java重载
 当参数顺序不一样，也是重载，返回值可以不同
-
+-------------------------------
 oop面向对象编程
 
 面向过程：
@@ -434,7 +436,8 @@ foo = "green";
 System.out.println(bar);
 // 输出结果为"blue" 
 采用 String foo = "blue"定义方式定义的字符串放在字符串池中，通过 String bar = foo;他们指向了同一地址空间，就是同一个池子，当执行 foo = "green"; foo 指向新的地址空间，bar仍指向原来的地址空间"blue"
-
+-------------------------------
+api:
 String api
 equals 比较字符串内容
 charAt(i) 访问指定位置的字符
@@ -490,12 +493,6 @@ Integer a = 6;
 自动拆箱 // 要当心null值，null.xxx空指针报错
 int b = a;
 
-八种基本类型对应的包装类
-Byte Short Integer Long
-Float Double 
-Character
-Boolean 
-
 正则表达式 regex
 matches(正则) 是否匹配
 split(正则) 用子串来拆分
@@ -503,8 +500,56 @@ replaceAll(正则) 替换所有
 
 s.matches(regex)
 
-java转义为 \
+BigDecimal 精确浮点数运算 不new
+IEEE-754规范
+BigDecimal a = BigDecimal.valueOf(6);
+BigDecimal b = BigDecimal.valueOf(6);
+方法：
+add(BigDecimal bd)
+subtract(BigDecimal bd) 减
+multiply(BigDecimal bd) 乘
+divide(BigDecimal bd) 除（不允许无理数）
+divide(BigDecimal bd,位数,舍入方式) 除（重载） BigDecimal.常量
+setScale(位数,舍入方式) 舍入运算
 
+double ds = s.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+
+BigDecimal c = a.subtract(b);
+c.doubleValue(); // 取值
+c.toString(); // 取值
+
+BigInteger 超大整数运算，超出long时
+
+Date封装一个毫秒值，表示一个精确的时间点
+getTime();
+setTime(long t);
+compareTo(Date d); // 当前实例和参数实例比较大小，大正小负同0
+
+SimpleDateFormat 日期格式工具，可以把Date实例，格式化成字符串
+也可以把字符串解析成Date实例
+
+new SimpleDateFormat(格式)
+格式：yyyy-MM-dd hh:mm:ss 12小时制
+格式：yyyy-MM-dd HH:mm:ss 24
+yy-M-d H:m
+M月d日
+
+方法：
+format(Date实例)  // 得到日期字符串
+parse(日期字符串)  // 得到Date实例
+
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+Date d = sdf.parse("1991-04-12");
+-------------------------------
+八种基本类型对应的包装类
+Byte Short Integer Long
+Float Double 
+Character
+Boolean 
+-------------------------------
+java转义为 \
+-------------------------------
+多态：
 多态的作用
 一致的类型
 所有子类型实例，都可以被当做一致的父类型来处理
@@ -534,7 +579,7 @@ l.length();
 转成父类型的子类实例，再转回成子类型
 
 java中，在同一个类里面，方法不能嵌套定义，但是可以相互调用
-
+-------------------------------
 抽象类
 半成品类，一个没有完成的类
 
@@ -554,7 +599,7 @@ abstract关键字
 3.方便子类向上转型时可以调父类方法
 
 抽象类不能实例化，只能给子类来继承
-
+-------------------------------
 final
 1.常量 值锁定，不可变 
 final int a = 6;
@@ -570,7 +615,8 @@ s本身不可变
 3.类
 不能被继承
 如：System,String,Integer
-
+-------------------------------
+静态：
 static 静态属于类，而不属于实例
 非静态属于实例，要用实例调用
 class Soldier{
@@ -603,7 +649,7 @@ class A(){
 		// 类加载时，只执行一次
 	}
 }
-
+-------------------------------
 常量
 用static final两个关键字定义
 final int A = 6;
@@ -623,26 +669,6 @@ this == obj
 
 相比数据可以重写
 
-BigDecimal 精确浮点数运算 不new
-IEEE-754规范
-BigDecimal a = BigDecimal.valueOf(6);
-BigDecimal b = BigDecimal.valueOf(6);
-方法：
-add(BigDecimal bd)
-subtract(BigDecimal bd) 减
-multiply(BigDecimal bd) 乘
-divide(BigDecimal bd) 除（不允许无理数）
-divide(BigDecimal bd,位数,舍入方式) 除（重载） BigDecimal.常量
-setScale(位数,舍入方式) 舍入运算
-
-double ds = s.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
-
-BigDecimal c = a.subtract(b);
-c.doubleValue(); // 取值
-c.toString(); // 取值
-
-BigInteger 超大整数运算，超出long时
-
 访问控制符
 控制一个类，或类中的成员的访问范围
 				类		同包	子类	任意	  
@@ -657,7 +683,7 @@ default 同包可见
 尽量使用小范围
 public是与其他开发人员公开的，要尽量保持稳定不变
 private更便于维护修改，不对其他代码造成影响
-
+-------------------------------
 类中 成员变量习惯定义成private
 
 对象创建过程：
@@ -679,29 +705,8 @@ private更便于维护修改，不对其他代码造成影响
 6.创建子类实例，为子类的实例变量分配内存
 7.执行父类的实例变量的赋值运算，和父类的构造方法
 8.执行子类的实例变量的赋值运算，和子类的构造方法
-
-Date封装一个毫秒值，表示一个精确的时间点
-getTime();
-setTime(long t);
-compareTo(Date d); // 当前实例和参数实例比较大小，大正小负同0
-
-SimpleDateFormat 日期格式工具，可以把Date实例，格式化成字符串
-也可以把字符串解析成Date实例
-
-new SimpleDateFormat(格式)
-格式：yyyy-MM-dd hh:mm:ss 12小时制
-格式：yyyy-MM-dd HH:mm:ss 24
-yy-M-d H:m
-M月d日
-
-方法：
-format(Date实例)  // 得到日期字符串
-parse(日期字符串)  // 得到Date实例
-
-SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-Date d = sdf.parse("1991-04-12");
-
-集合（重点）
+-------------------------------
+集合（重点）:
 用来存储一组数据的数据结构
 数组缺点：
 1.长度不可变
@@ -818,7 +823,52 @@ new Point(1, 3).hashCode()// 求hash值
 
 String的hashCode不是比地址值，是比里面的值
 
-接口 特殊的类
+集合的继承结构
+Collection 接口
+	List 接口
+		ArrayList
+		LinkedList
+	Set接口
+		HashSet
+		TreeSet
+Map接口
+	HashMap
+	TreeMap
+iterator 接口
+Collections工具类
+
+Collections工具类：
+addAll(集合,值1,值2,值3,值4,...);// 一次添加多个数据
+sort(List); // 排序，基本类型快速，引用类型合并
+binarySearch(List,目标值);// 二分法查找。如果找不到返回-(插入点+1)。缺点：必须有序。返回下标值
+swap(List,i,j);// 交换位置
+shuffle(List);// 随机打乱
+
+Comparator比较器
+Comparator<String> comp = new Comparator<String>() {
+	/*
+		* 比较o1和o2大小
+		* o1大，返回正数
+		* o1小，返回负数
+		* 相同，返回0
+		* */
+	@Override
+	public int compare(String o1, String o2) {
+		int a = Integer.parseInt(o1);
+		int b = Integer.parseInt(o2);
+		return a-b;
+	}
+};
+// 按数字顺序排序                // Comparator比较器
+// 把比较器交给sort()方法使用，sort()方法内部会调用comp.compare()来比较数据大小
+Collections.sort(list,comp);// 排序
+
+new ArrayList().add()
+ArrayList<Integer> list = new ArrayList<Integer>();
+Collections.addAll(list, 5, 23, 76, 8, 4, 3, 43);
+list.add(i,8);// 在这个位置插入数字8
+-------------------------------
+接口 特殊的类:
 是一个结构设计工具，用来解耦合，隔离实现
 我的理解：
 	接口和普通父类相比，同样是提取公共的功能。
@@ -867,52 +917,7 @@ Test1类：
 	1.实例化机器人类
 	2.实例设置武器类
 	3.实例进攻
-
-集合的继承结构
-Collection 接口
-	List 接口
-		ArrayList
-		LinkedList
-	Set接口
-		HashSet
-		TreeSet
-Map接口
-	HashMap
-	TreeMap
-iterator 接口
-Collections工具类
-
-Collections工具类：
-addAll(集合,值1,值2,值3,值4,...);// 一次添加多个数据
-sort(List); // 排序，基本类型快速，引用类型合并
-binarySearch(List,目标值);// 二分法查找。如果找不到返回-(插入点+1)。缺点：必须有序。返回下标值
-swap(List,i,j);// 交换位置
-shuffle(List);// 随机打乱
-
-Comparator比较器
-Comparator<String> comp = new Comparator<String>() {
-	/*
-		* 比较o1和o2大小
-		* o1大，返回正数
-		* o1小，返回负数
-		* 相同，返回0
-		* */
-	@Override
-	public int compare(String o1, String o2) {
-		int a = Integer.parseInt(o1);
-		int b = Integer.parseInt(o2);
-		return a-b;
-	}
-};
-// 按数字顺序排序                // Comparator比较器
-// 把比较器交给sort()方法使用，sort()方法内部会调用comp.compare()来比较数据大小
-Collections.sort(list,comp);// 排序
-
-new ArrayList().add()
-ArrayList<Integer> list = new ArrayList<Integer>();
-Collections.addAll(list, 5, 23, 76, 8, 4, 3, 43);
-list.add(i,8);// 在这个位置插入数字8
-
+-------------------------------
 for-each循环（获取不到下标）
 数组遍历和集合迭代遍历的语法简化
 1.数组：
@@ -934,8 +939,8 @@ for(Iterator<String> it = list.iterator();it.hasNext();){
 for(String s:list){
 	// tode
 }
-
-异常 封装错误信息的对象
+-------------------------------
+异常 封装错误信息的对象：
 错误信息：
 1.类型 如NullPointerException
 2.消息
@@ -1060,7 +1065,7 @@ void f() throws RuntimeException{}
 RuntimeException 非检查异常，编译器不会检查这种异常是否添加了处理代码，不强制处理
 
 2.Exception 检查异常，必须编写处理代码throws或者catche，强制处理
-
+-------------------------------
 System.exit(0);// 关闭虚拟机
 
 字符串的+操作符
@@ -1071,7 +1076,7 @@ s = a+b;// 创建了2个实例对象，s1 = new StringBuilder(s); s1.toString();
 s1 = "aaa"+"bbb"+"ccc";
 等同于
 s1 = "aaabbbccc";
-
+-------------------------------
 内部类：
 1.非静态内部类
 作用：
@@ -1132,7 +1137,7 @@ Weapon w = new Weapon();
 Weapon w = new A(){
 
 };
-
+-------------------------------
 方法重写：
 1.子类重写父类方法 访问范围不能降低，能提高
 2.不能比父类抛更多异常
@@ -1150,7 +1155,8 @@ Weapon w = new A(){
 访问	可以修改	一定不能做更严格的限制（可以降低限制）
 
 重写要求高一点
-
+-------------------------------
+错题整理：
 在类方法中绝对不能调用实例方法 ：错误
 在类方法中可以通过实例化对象调用实例方法。
 
@@ -1173,6 +1179,86 @@ java8以前，接口只能被类实现，类不能继承接口，遵循单继承
 接口方法默认范围
 public abstract
 
+顶层类修饰符：
+对于顶层类(外部类)来说，只有两种修饰符：public和默认(default)。 因为外部类的上一单元是包，所以外部类只有两个作用域：同包，任何位置。 因此，只需要两种控制权限：包控制权限和公开访问权限，也就对应两种控制修饰符：public和默认(default)。 
+
+创建对象时：
+声明对象，为对象分配内存空间，对对象初始化，使用对象 
+
+String 类是 final 的，在 java 中 final 修饰类的不能被继承
+String对象在调用toUpperCase()和trim()方法时都会返回新的字符串对象，原对象不变
+
+Map与Collection是两个不同的接口，没有继承关系。
+
+LinkedHashSet 元素唯一，且按照存放顺序读取
+
+不是Collection接口所定义 compareTo
+
+Vector是线程安全的 
+
+ArrayList不是线程安全的
+
+java.util.Queue 是链式存储并快速顺序(不需要随机访问)访问的集合类型
+
+Map没有继承Collection接口
+
+java不支持goto语句。
+
+目录在Java中作为一种特殊文件，即文件名的列表
+
+Java中的RandomAccessFile类提供了随意访问文件的功能
+
+计算机中的流是 流动的数据缓冲区 
+
+FilterOutputStream构造函数的参数类型（ ）OutputStream 
+
+InputStreamReader  面向字符的输入流
+
+ByteArrayInputStream,FileInputStream,ObjectInputStream 是字节流
+
+FileNotFoundException  编写程序时申明异常
+
+ClassCastException 运行时异常
+
+Java异常的基类为java.lang.Throwable，java.lang.Error和java.lang.Exception继承 Throwable，RuntimeException和其它的Exception等继承Exception。
+
+finally是关键字不是方法
+
+finally在异常处理的时候使用，提供finally块来执行任何清除操作 ？
+
+sleep 是线程类（Thread）的方法，wait 是 Object 类的方法 
+
+wait 后进入等待此对象的等待锁定池，只有针对此对象发出 notify 方法（或 notifyAll）后本线程才进入对象锁定池准备获得对 象锁进入运行状态。
+
+Java 提供对多线程同步提供语言级的支持 
+
+线程生命周期：新建状态、可运行状态、运行状态、阻塞状态和终止状态
+
+当一个线程因为抢先机制而停止运行，只能在轮换队列中排队而不能排在前面。
+
+能让线程停止执行的有stop：这个方法将终止所有未结束的方法，包括 run 方法
+
+Schema与DTD的相同之处有 对XML文档结构进行验证
+
+java 解析 xml 文件四种方式：SAX、DOM、JDOM、DOM4J
+
+xml文档中实体符号是用&作为开头的
+
+前后问号 <?xml-stylesheet type="txt/css" href="abc.css"?> 
+
+预定义实体 < 和 >
+
+SAX解析文档需要按照顺序 DOM可以随意
+
+^属于二进制位运算符 代表异或的意思
+运算时两个二进制数对应位的数不同时结果为1  否则为0
+所以1100^1010的结果应该是0110
+
+~属于二进制位运算符 代表非的意思
+
+&运算的规则是数位都为1则是1，只要有一个数的当前数位是0则结果为0，所以 2&3 == 10 & 11 ，则对应的结果为10，转换成十进制就是数字2
+-------------------------------
+io:
 io Input/Output 输入/输出
 相对于内存 到 磁盘文件
 把磁盘文件读入内存
@@ -1302,8 +1388,8 @@ OutputStreamWriter
 	把Unicode转成其他编码输出
 InputStreamReader
 	读取其他编码的字符，转成Unicode
-
-线程（重点）
+-------------------------------
+线程（重点）:
 进程：在操作系统里并行执行的任务
 cpu同一时间只能处理一项任务，时间被切分成小的时间片，所有任务在时间片上轮换执行
 
@@ -1441,8 +1527,8 @@ synchronized(b){
 }
 线1等b，线2等a，死锁
 同一顺序解决问题
-
-Socket网络通信（套接字）
+-------------------------------
+Socket网络通信（套接字）:
 主机之间可以通过ip地址找到对方，两台主机各选择一个端口（0~65535？），各插一个插头
 
 关闭防火墙
@@ -1499,11 +1585,11 @@ PrintWriter out;
 in.readLine();
 out.println();// 只有输出的时候需要刷缓存
 out.flush();
-
-反射 Reflect（透视）
+-------------------------------
+反射 Reflect（透视）:
 配置文件：里面都是字符串 new "字符串" 传统方式不行
 config.txt
-------------------------
+
 day1901.A;a
 day1901.B;b
 day1901.C;c
@@ -1664,7 +1750,7 @@ eclipse集成了JUnit，直接支持JUnit框架
 右键点击项目--项目属性--左侧Build Path--标签libraries--add library
 
 引入JUnit，加了注释，ctrl+f11
-
+-------------------------------
 爬虫：
 从互联网页面上自动爬取数据
 1.和服务器建立Socket连接
@@ -1727,6 +1813,7 @@ public class Test1 {
 		new C().c();// 222
 	}	
 }
+-------------------------------
 A接口(a,b,c方法)=>B抽象类(a,b)=>C子类(c)=>new C().a();new C().c();没毛病
 抽象类B可以缺省需要实现的方法c，但是抽象类B不能被实例化，所以要直到非抽象类C实现完了还没实现的方法c，该非抽象类C才能被实例化
 
@@ -1735,85 +1822,15 @@ int范围：正负21.47亿左右
 OutputStream out = s.getOutputStream();
 // getBytes()把字符转成字节值
 out.write("world".getBytes());
+-------------------------------
+jdbc
+java database connectivity java数据库连接，用java语言连接并访问数据库的技术
+在企业开发中，通过程序连接并访问数据库。如果java程序访问数据库，就必须使用jdbc技术。
 
-顶层类修饰符：
-对于顶层类(外部类)来说，只有两种修饰符：public和默认(default)。 因为外部类的上一单元是包，所以外部类只有两个作用域：同包，任何位置。 因此，只需要两种控制权限：包控制权限和公开访问权限，也就对应两种控制修饰符：public和默认(default)。 
+Mybatis
+Hibernate两框架封装了jdbc
 
-创建对象时：
-声明对象，为对象分配内存空间，对对象初始化，使用对象 
-
-String 类是 final 的，在 java 中 final 修饰类的不能被继承
-String对象在调用toUpperCase()和trim()方法时都会返回新的字符串对象，原对象不变
-
-Map与Collection是两个不同的接口，没有继承关系。
-
-LinkedHashSet 元素唯一，且按照存放顺序读取
-
-不是Collection接口所定义 compareTo
-
-Vector是线程安全的 
-
-ArrayList不是线程安全的
-
-java.util.Queue 是链式存储并快速顺序(不需要随机访问)访问的集合类型
-
-Map没有继承Collection接口
-
-java不支持goto语句。
-
-目录在Java中作为一种特殊文件，即文件名的列表
-
-Java中的RandomAccessFile类提供了随意访问文件的功能
-
-计算机中的流是 流动的数据缓冲区 
-
-FilterOutputStream构造函数的参数类型（ ）OutputStream 
-
-InputStreamReader  面向字符的输入流
-
-ByteArrayInputStream,FileInputStream,ObjectInputStream 是字节流
-
-FileNotFoundException  编写程序时申明异常
-
-ClassCastException 运行时异常
-
-Java异常的基类为java.lang.Throwable，java.lang.Error和java.lang.Exception继承 Throwable，RuntimeException和其它的Exception等继承Exception。
-
-finally是关键字不是方法
-
-finally在异常处理的时候使用，提供finally块来执行任何清除操作 ？
-
-sleep 是线程类（Thread）的方法，wait 是 Object 类的方法 
-
-wait 后进入等待此对象的等待锁定池，只有针对此对象发出 notify 方法（或 notifyAll）后本线程才进入对象锁定池准备获得对 象锁进入运行状态。
-
-Java 提供对多线程同步提供语言级的支持 
-
-线程生命周期：新建状态、可运行状态、运行状态、阻塞状态和终止状态
-
-当一个线程因为抢先机制而停止运行，只能在轮换队列中排队而不能排在前面。
-
-能让线程停止执行的有stop：这个方法将终止所有未结束的方法，包括 run 方法
-
-Schema与DTD的相同之处有 对XML文档结构进行验证
-
-java 解析 xml 文件四种方式：SAX、DOM、JDOM、DOM4J
-
-xml文档中实体符号是用&作为开头的
-
-前后问号 <?xml-stylesheet type="txt/css" href="abc.css"?> 
-
-预定义实体 < 和 >
-
-SAX解析文档需要按照顺序 DOM可以随意
-
-^属于二进制位运算符 代表异或的意思
-运算时两个二进制数对应位的数不同时结果为1  否则为0
-所以1100^1010的结果应该是0110
-
-~属于二进制位运算符 代表非的意思
-
-&运算的规则是数位都为1则是1，只要有一个数的当前数位是0则结果为0，所以 2&3 == 10 & 11 ，则对应的结果为10，转换成十进制就是数字2
+导jar包，ctrl+c新建folder，选中ctrl+v，选中jer包右键，build path，add to...
 
 
 

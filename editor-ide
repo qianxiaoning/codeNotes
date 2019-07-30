@@ -54,8 +54,12 @@ ctrl+n 新建文件
 alt+shift+s generate construct from filed 生成构造函数
 包名上按f2 改包名
 ctrl+shift+t 快速打开类
+syst 打印类的main方法
 
 设置代码模板  window->preferences->java->editor->template
 nextint
 int ${cursor} = new Scanner(System.in).nextInt();${:import(java.util.Scanner)}
+
+设置字体大小
+preferences-colors and fonts-basic-Text font
 --------------------------
