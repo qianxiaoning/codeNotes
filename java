@@ -1164,9 +1164,9 @@ Weapon w = new A(){
 
 方法中定义的是局部变量，不能用类成员变量修饰符 private
 
-接口中的属性都是常量，默认由public static final同时修饰，可以省略，abstract不能修饰变量，修饰类
+接口中的属性都是常量，默认由public static final同时修饰，可以省略
 
-abstract可以修饰方法和类，不能修饰属性
+abstract可以修饰方法和类，不能修饰属性和变量
 
 抽象方法可以在接口中和抽象类中定义
 
@@ -1175,9 +1175,6 @@ abstract可以修饰方法和类，不能修饰属性
 java8以前，接口只能被类实现，类不能继承接口，遵循单继承多实现原则。java8以后，接口中可以包含静态方法和默认方法。
 
 修饰接口只能是public和默认
-
-接口方法默认范围
-public abstract
 
 顶层类修饰符：
 对于顶层类(外部类)来说，只有两种修饰符：public和默认(default)。 因为外部类的上一单元是包，所以外部类只有两个作用域：同包，任何位置。 因此，只需要两种控制权限：包控制权限和公开访问权限，也就对应两种控制修饰符：public和默认(default)。 
@@ -1220,11 +1217,11 @@ FileNotFoundException  编写程序时申明异常
 
 ClassCastException 运行时异常
 
-Java异常的基类为java.lang.Throwable，java.lang.Error和java.lang.Exception继承 Throwable，RuntimeException和其它的Exception等继承Exception。
+Java异常的基类为java.lang.Throwable。java.lang.Error和java.lang.Exception继承 Throwable，RuntimeException和其它的Exception等继承Exception。
 
 finally是关键字不是方法
 
-finally在异常处理的时候使用，提供finally块来执行任何清除操作 ？
+finally在异常处理的时候使用，提供finally块来执行任何清除操作 （指的是清楚内存吧）？
 
 sleep 是线程类（Thread）的方法，wait 是 Object 类的方法 
 
@@ -1250,13 +1247,17 @@ xml文档中实体符号是用&作为开头的
 
 SAX解析文档需要按照顺序 DOM可以随意
 
-^属于二进制位运算符 代表异或的意思
+^属于二进制位运算符 代表异或的意思（同0异1）
 运算时两个二进制数对应位的数不同时结果为1  否则为0
 所以1100^1010的结果应该是0110
 
-~属于二进制位运算符 代表非的意思
+按位与（&）、按位或（|）、按位异或（^）、按位取反（~）、按位左移（<<）、按位右移（>>）
+
+~属于二进制位运算符 代表非的意思？
 
 &运算的规则是数位都为1则是1，只要有一个数的当前数位是0则结果为0，所以 2&3 == 10 & 11 ，则对应的结果为10，转换成十进制就是数字2
+
+二进制取反~：取反加一
 -------------------------------
 io:
 io Input/Output 输入/输出
@@ -1749,6 +1750,12 @@ eclipse集成了JUnit，直接支持JUnit框架
 右键点击项目--Build Path--Add library--JUnit--JUnit4
 右键点击项目--项目属性--左侧Build Path--标签libraries--add library
 
+导jar包：
+1.jar包放入lib文件夹
+2.在jar包上右键点击--Build Path--Add to build path
+3.jar解压到Referenced Librarries中
+4.导jar包完成
+
 引入JUnit，加了注释，ctrl+f11
 -------------------------------
 爬虫：
@@ -1832,11 +1839,71 @@ Hibernate两框架封装了jdbc
 
 导jar包，ctrl+c新建folder，选中ctrl+v，选中jer包右键，build path，add to...
 
+例子：
+public class JdbcDemo1 {
+	public static void main(String[] args) throws Exception {
+		/*通过java程序查询jt_db.account表中的所有记录
+		 * 将查询到的结果输出到控制台上
+		 * */
+		/*
+		 * 1.注册数据库驱动
+		 * 2.获取数据库连接
+		 * 3.获取传输器
+		 * 4.发送sql到数据库执行，并返回执行结果
+		 * 5.处理结果
+		 * 6.释放资源
+		 * */
+		// 1.注册数据库驱动
+		//com.mysql.jdbc包路径，Driver类名
+		// 改成大的异常，后面不用再抛了
+		// 根据传入类的路径（包名+类名），加载一个类到内存中，在Driver类中的静态代码块包含注册驱动的代码
+		Class.forName("com.mysql.jdbc.Driver");
+		// 2.获取数据库连接
+		// 协议名+主机名+库名
+		// jdbc:mysql://localhost:3306/jt_db
+//		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jt_db", "root", "root");
+//		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jt_db", "root", "root");
+//		Connection conn = DriverManager.getConnection("jdbc:mysql:///jt_db", "root", "root");
+		// characterEncoding=utf-8避免get和set数据库乱码
+		Connection conn = DriverManager.getConnection("jdbc:mysql:///jt_db?characterEncoding=utf-8", "root", "root");
+		// 3.获取传输器 
+		Statement stat = conn.createStatement();
+		// 4.发送sql到数据库执行，并返回执行结果
+		String sql = "select * from account";
+		// executeUpdate增删改 
+		// executeQuery查询 查询结果是一个ResultSet对象
+		// 返回结果集
+		ResultSet rs = stat.executeQuery(sql);
+		// 5.处理结果 循环
+		// rs指向表头，rs.next()下移一行，指向第一行
+		// 不知道什么类型，rs.getObject()
+		while (rs.next()) {
+			int id = rs.getInt("id");
+			String name = rs.getString("name");
+			double money = rs.getDouble("money");
+			System.out.println(id+","+name+","+money);
+		}
+		// 6.释放资源
+		// 释放时，从后往前释放
+		rs.close();
+		stat.close();
+		conn.close();
+		System.out.println("JdbcDemo1.main()");
+	}	
+}
 
+连接池：
+dataSource，因此连接池也叫数据源，
+连接池，常量池，线程池，所谓池就是在内存中开辟的空间，是一个容器
+连接池就是将连接放在一个容器中，目的是为了减少连接的创建和关闭，实现连接的复用，从而提高程序执行的效率！
 
+为什么要使用数据库连接池
+1.在传统方式中不使用连接池：
+创建和关闭连接很耗时间、资源，因此这种方式效率不高
+2.使用连接池
+可以在程序一启动时，就初始化一批连接放在容器（池）中，供整个程序共享，不用再创建和关闭步骤，实现了连接的复用，提高效率。
 
-
-
+如何使用连接池：
 
 
 

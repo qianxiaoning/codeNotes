@@ -55,6 +55,7 @@ alt+shift+s generate construct from filed 生成构造函数
 包名上按f2 改包名
 ctrl+shift+t 快速打开类
 syst 打印类的main方法
+/**+回车 添加文档注释
 
 设置代码模板  window->preferences->java->editor->template
 nextint
