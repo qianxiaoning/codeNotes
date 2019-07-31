@@ -279,9 +279,6 @@ int a = 2;
 int b = a+++9; b=a(a=a+1)+9;
 System.out.println(b); // 11
 -------------------------------
-java重载
-当参数顺序不一样，也是重载，返回值可以不同
--------------------------------
 oop面向对象编程
 
 面向过程：
@@ -302,7 +299,7 @@ new Bird().fly(); // 直接调用
 
 final
 1.修饰类
-次类不能被继承
+子类不能被继承
 2.修饰方法
 该方法不能被重写
 3.修饰变量
@@ -325,21 +322,11 @@ String a="a";
 int b=1;
 if(x==y)  { } // 错
 
-运算符
-^ 异或  
-
 把类理解成模板或者图纸
 
 对象是从类创建的具体实例，占独立堆内存空间
 
 引用变量就像是实例对象的遥控器
-
-debug调试
-左侧双击加断点，f11debug执行
-f5进入源码
-f6向下执行
-f7返回
-f8连续向下执行，直到断点
 
 构造方法 新建实例时，执行的一个特殊方法
 java的类中，必须有构造方法
@@ -375,6 +362,15 @@ String 为引用数据类型，引用类型数据成员的默认值为 null
 
 再次使用相同字面值时，直接访问常量池中存在的实例，而不会创建
 
+String foo = "blue";
+String bar = foo; 
+foo = "green"; 
+System.out.println(bar);
+// 输出结果为"blue" 
+采用 String foo = "blue"定义方式定义的字符串放在字符串池中，通过 String bar = foo;他们指向了同一地址空间，就是同一个池子，当执行 foo = "green"; foo 指向新的地址空间，bar仍指向原来的地址空间"blue"
+
+字符串每次加号会创建新实例，所以长了会效率低
+
 断点：
 a
 b
@@ -382,14 +378,12 @@ c   ---------------断点
 
 当调试时，代码执行完b，到c前停止
 
-字符串每次加号会创建新实例，所以长了会效率低
-
 this代表本类对象的引用
 super代表父类对象的引用
 
-switch中只能判断byte,short,char,int,没有long,enum枚举,string
+Java SE 7之前，switch中的变量类型只能是byte,short,char,int,没有long,enum枚举,string
 
-循环命名，可以跳出两层
+给外层for循环命名，可以跳出外层循环
 break outer;
 continue outer;
 
@@ -415,7 +409,7 @@ super.xxx()
 
 this();和super();必须是首行
 
-父类中方法只要发现不同就调方法？
+父类中方法只要发现不同就建立方法？
 
 js和java一样，是值传递，字面值和地址值
 
@@ -429,13 +423,6 @@ java中的参数传递 与 基本类型和引用类型的赋值：
 3.引用类型，地址值传递，形参变，实参也变。除非形参指向了另一个地址值，那就和实参无关了。
 4.在java中String引用类型比较特殊，形参变，相当于指向了另一个地址值（新建了一个String），所以也影响不了实参。
 5.另外几种基本类型(boolean,byte→short(char)→int→long→float→double)的封装类，虽然是引用类型，但是估计内部创建的还是基本类型，字面值直接复制，形参变和实参无关
-
-String foo = "blue";
-String bar = foo; 
-foo = "green"; 
-System.out.println(bar);
-// 输出结果为"blue" 
-采用 String foo = "blue"定义方式定义的字符串放在字符串池中，通过 String bar = foo;他们指向了同一地址空间，就是同一个池子，当执行 foo = "green"; foo 指向新的地址空间，bar仍指向原来的地址空间"blue"
 -------------------------------
 api:
 String api
@@ -956,10 +943,10 @@ Exception in thread "main" java.lang.NumberFormatException: For input string: "q
 	at day1403_异常.Test1.f(Test1.java:20)
 	at day1403_异常.Test1.main(Test1.java:7)
 
-异常的继承结构
-Throwable
+Exception异常的继承结构
+Throwable（基类）
 	Error 系统级错误，没法修复
-	Exception 可修复错误
+	Exception（这是异常） 可修复错误
 		RuntimeException
 			NullPointerException
 			ArrayIndexOutOfBoundException
@@ -1147,6 +1134,9 @@ Weapon w = new A(){
 1.访问范围可以降低，没要求
 2.方法名相同且参数列表不同，与返回值类型无关
 
+java重载
+当参数顺序不一样，也是重载，返回值可以不同
+
 重写与重载之间的区别
 区别点：	重载方法：	重写方法：
 参数列表	必须修改	一定不能修改
@@ -1251,6 +1241,7 @@ SAX解析文档需要按照顺序 DOM可以随意
 运算时两个二进制数对应位的数不同时结果为1  否则为0
 所以1100^1010的结果应该是0110
 
+位运算符
 按位与（&）、按位或（|）、按位异或（^）、按位取反（~）、按位左移（<<）、按位右移（>>）
 
 ~属于二进制位运算符 代表非的意思？
@@ -1904,8 +1895,41 @@ dataSource，因此连接池也叫数据源，
 可以在程序一启动时，就初始化一批连接放在容器（池）中，供整个程序共享，不用再创建和关闭步骤，实现了连接的复用，提高效率。
 
 如何使用连接池：
+三种方式见项目
+properties
+xml
 
-
+c3p0连接池开发步骤：
+引入jar包
+public void findByName() {
+	Connection conn = null;
+	PreparedStatement ps = null;
+	ResultSet rs = null;
+	// 创建一个连接池对象ComboPooledDataSource
+	ComboPooledDataSource pool = new ComboPooledDataSource();
+	try {
+		// 从连接池中获取一个连接对象
+		// 借
+		conn = pool.getConnection();
+		// 获取传输器并执行sql语句
+		String sql = "select * from account where name like ?";
+		// prepareStatement子类传输器
+		ps = conn.prepareStatement(sql);
+		ps.setString(1, "%张%");
+		rs = ps.executeQuery();
+		while (rs.next()) {				
+			int id = rs.getInt("id");
+			String name = rs.getString("name");
+			double money = rs.getDouble("money");
+			System.out.println(id+","+name+","+money);
+		}
+	} catch (Exception e) {
+		e.printStackTrace();
+	}finally{
+		// 释放资源
+		xxx.close();
+	}
+}
 
 
 

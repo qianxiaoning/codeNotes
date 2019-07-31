@@ -30,3 +30,5 @@ input的pattern 属性
 input type=tel 也是唤起数字键盘
 
 <sup></sup>上标标签
+
+&emsp;中文字符等宽的空格

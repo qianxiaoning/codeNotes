@@ -2063,3 +2063,10 @@ nodejs自带require模块语法
 commonjs规范 浏览器端
 nodejs用commonjs规范
 
+进制转换
+1.把x进制的String转换为10进制
+parseInt('23',x);
+parseInt('23',10); // 返回23
+2.把10进制数转为x进制数
+(3).toString(x);
+(3).toString(2);// 返回"111"

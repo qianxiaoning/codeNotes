@@ -35,6 +35,9 @@ vscode 格式化缩进
 UltraEdit
 ctrl+h    把字符转成字节（16进制）来看
 --------------------------
+EverEdit
+ctrl+j 复制当前
+--------------------------
 Eclipse
 快捷键：
 alt+/ 自动补全
@@ -56,6 +59,13 @@ alt+shift+s generate construct from filed 生成构造函数
 ctrl+shift+t 快速打开类
 syst 打印类的main方法
 /**+回车 添加文档注释
+
+debug调试
+左侧双击加断点，f11debug执行
+f5进入源码
+f6向下执行
+f7返回
+f8连续向下执行，直到断点
 
 设置代码模板  window->preferences->java->editor->template
 nextint
