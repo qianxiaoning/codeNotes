@@ -944,9 +944,9 @@ Exception in thread "main" java.lang.NumberFormatException: For input string: "q
 	at day1403_异常.Test1.main(Test1.java:7)
 
 Exception异常的继承结构
-Throwable（基类）
+Throwable
 	Error 系统级错误，没法修复
-	Exception（这是异常） 可修复错误
+	Exception（异常） 可修复错误
 		RuntimeException
 			NullPointerException
 			ArrayIndexOutOfBoundException
@@ -1249,6 +1249,38 @@ SAX解析文档需要按照顺序 DOM可以随意
 &运算的规则是数位都为1则是1，只要有一个数的当前数位是0则结果为0，所以 2&3 == 10 & 11 ，则对应的结果为10，转换成十进制就是数字2
 
 二进制取反~：取反加一
+
+final关键字可以修饰：方法，常量，类  不能修饰变量
+
+反射机制的作用是 A,B,C,D
+A. A.在运行时判断任意一个对象所属的类。
+B. B.在运行时构造任意一个类的对象。
+C. C.在运行时判断任意一个类所具有的成员变量和方法。
+D. D.在运行时调用任意一个对象的方法
+
+运行一个Java程序，只需要JDK中的JRE
+
+JRE是Java Runtime Environment的缩写，顾名思义是java运行时环境，包含了java虚拟机，java基础类库。
+
+Jdk是Java Development Kit的缩写，顾名思义是java开发工具包，是程序员使用java语言编写java程序所需的开发工具包，是提供给程序员使用的。
+
+下列各项可以用作标识符的是？( ) A,B,C,D
+A. String  
+B. Int 
+C. finalize  
+D. $T$  
+
+抽象类可以有构造方法，接口没有构造方法
+一个类最多可以继承一个抽象类，但是可以实现多个接口
+抽象类可以有非抽象方法，接口中都是抽象方法
+抽象类和接口都不能创建对象
+
+二进制左移和右移
+y<<x	 乘以2的x次方
+y>>x	 除以2的x次方
+
+众多大小异常的基类为 Exception，所有异常都必须直接或者间接继承它 
+但是java.lang.Exception这个类的基类是Throwable
 -------------------------------
 io:
 io Input/Output 输入/输出
