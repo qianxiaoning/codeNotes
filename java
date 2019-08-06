@@ -1962,10 +1962,78 @@ public void findByName() {
 		xxx.close();
 	}
 }
+-------------------------------
+tomcat
+改服务器端口为80:
+/conf/server.xml - <Connector port="80" protocol="HTTP/1.1"
 
+/logs/ 错误日志
+异常会有缩进
 
+目录结构：
+/bin/ .bat windows批处理文件 .s# linux下的批处理文件 的存放目录
+/conf/ 配置文件的存放目录 server.xml是核心配置文件
+/logs/ 运行期间产生的日志文件存放目录
+/temp/ 临时文件存放位置
+/work/ 运行时工作文件的存放目录
+/webapps/ localhost虚拟主机默认管理目录，放在该目录下的web应用程序可以通过localhost主机进行访问
 
+虚拟主机：
+<Host name="localhost"  appBase="webapps"
+	unpackWARs="true" autoDeploy="true">
+</Host>
+在tomcat服务器中可以配置多个站点，每一个站点都是一台虚拟主机
 
+web应用：
+简单说，就是一个目录，该目录包含了很多web资源（html,css,js,img,jsp,servlet等），组织起来的一个web应用。
 
+虚拟主机包含web应用，web资源文件放在web应用中，不能直接在虚拟主机中放web资源文件
 
+web应用目录结构：
+web应用根目录/
+	WEB-INF目录（受保护的目录，在该目录下的资源文件，不能被浏览器直接访问）/
+		classes（存放java编译后的class文件）/
+		lib（存放当前应用所需要的jar包）/
+		web.xml（当前web应用的核心配置文件）
+	除WEB-INF以外的其它目录（可以被浏览器直接访问）/
 
+部署web应用到虚拟主机中：
+将web应用的目录放在webapps下即可
+
+未配置默认web应用之前：
+访问xxx应用下的xxx.html路径为localhost/xxx/xxx.html
+
+配置默认的web应用：
+将web应用的名字改为ROOT
+访问路径 localhost/xxx.html
+
+配置web应用的主页：
+没有配置主页前 访问路径 localhost/xxx.html
+配置主页：
+在web应用里/WEB-INF/web.xml文件中加上：
+<welcome-file-list>
+	<welcome-file>hello.html</welcome-file>// 会去根目录下找hello.html
+</welcome-file-list>
+可以设置多个备用主页
+
+打war包：
+-------------------------------
+int和Integer的区别：
+Integer提供方法实现类型间转化
+
+进程和线程：
+进程：
+计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。
+线程：
+是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务。
+
+同一进程中的多条线程将共享该进程中的全部系统资源，如虚拟地址空间，文件描述符和信号处理等等。但同一进程中的多个线程有各自的调用栈（call stack），自己的寄存器环境（register context），自己的线程本地存储（thread-local storage）。
+
+hashcode()和equals()的重要性：
+Java中HashMap使用hashcode()和equals()来确定键值对的索引，当根据键获取值的时候也会用到这两个方法。如果没有正确使用这两个方法，两个不同的键可能会有相同的hash值，因此，可能会被集合认定为是相等的。而且，这两个方法也会用来发现重复元素。所以，这两个的实现对HashMap的精确性和正确性是至关重要的。
+
+值传递和引用传递：
+值传递：
+做参数时会被复制，创建副本，函数中无法改变原始对象
+引用传递：
+做参数时不会被复制，不会创建副本，函数中可以改变原始对象

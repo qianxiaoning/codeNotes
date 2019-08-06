@@ -552,5 +552,65 @@ source F:/files/tedu/杂项/db40.sql;
 	group by... -- 根据指定的列进行分组
 	order by... -- 根据指定的列进行排序
 	...
+----------------------------
+在数据库中有两种基本的锁类型：排它锁（Exclusive Locks，即X锁）和共享锁（Share Locks，即S锁）。当数据对象被加上排它锁时，其他的事务不能对它读取和修改。加了共享锁的数据对象可以被其他事务读取，但不能修改。数据库利用这两种基本的锁类型来对数据库的事务进行并发控制。
+----------------------------
+题目：
+student_score:
 
-------------------
+id,
+user_code, 学号
+class_name, 学科
+score 分数
+
+1.1查学号和平均分，平均分>=60,学号，平均分，从大到小排序
+select user_code,avg(score) avg_score from student_score group by user_code
+having avg(score)>=60
+order by user_code desc;
+1.2从如上筛选出，每个课程分数都>=60的学号
+select user_code from student_score
+group by user_code having avg(score) >= 60
+and user_code not in(select user_code from student_score where score<60);
+1.3添加分页，只显示11~20条
+select user_code from student_score
+group by user_code having avg(score) >= 60
+and user_code not in(select user_code from student_score where score<60)
+limit 10,10;
+
+二、
+业务培训信息三表
+s(s#,sn,sd,sa) 学号，学员姓名，所属单位，学员年龄
+c(c#,cn) 课程编号，课程名称
+sc(s#,c#,g) 学号，所选的课程编号，学习成绩
+
+2.1查询选修课程名称为"java编程"的学员学号和姓名
+select s#,sn from s where s# in(
+	select s# from c,sc where c.c#=sc.c# and cn='java编程'
+);·
+
+2.2查询不选修课程编号为"cs"的学员姓名和所属单位
+select sn,sd from s where s# not in(
+	select s# from sc where c#='cs';
+);
+
+2.3查询选修了课程的学员人数
+select count(distinct s#) from sc;
+
+2.4查询选修课程超过5门的学员学号和所属单位
+select s#,sd from s where s# in(
+	select s# from sc group by s# having count(c#)>5;
+);
+
+2.5查询两门以上（含两门）不及格课程的学生姓名及其平均成绩
+select sn,avg(ifnull(g,0)) from s,sc where s.s#=sc.s# and s.s# in (
+	select s# from sc where g<60 group by s# having count(*)>=2
+) group by sn;
+
+2.6列出既学过"java编程"又学过"项目管理"课程的所有学生姓名
+select sn from s where s# in(
+	select s# from c,sc where c.c#=sc.c# and cn in ('java编程','项目管理') group by s#  
+	having count(sc.c#)=2
+);
+----------------------------
+格式：
+select xx from xx where xx group by xx having xx;
