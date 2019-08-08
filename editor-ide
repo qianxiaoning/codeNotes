@@ -57,6 +57,8 @@ ctrl+n 新建文件
 alt+shift+s generate construct from filed 生成构造函数
 包名上按f2 改包名
 ctrl+shift+t 快速打开类
+alt+shift+m 选中区域提取为方法
+ctrl+shift+o 导包
 syst 打印类的main方法
 /**+回车 添加文档注释
 

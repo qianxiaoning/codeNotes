@@ -1,4 +1,6 @@
 java -version
+javac Hello.java文件的文件名 将java 源文件编译为 class 字节码文件
+java Hello 文件中的类名
 -------------------------------
 热身：
 1.指定目录新建工程java project(day01)
@@ -1486,7 +1488,8 @@ b线程 等待a的计算结果 再继续运行
 多个线程共享数据，一个线程修改，一个线程同时访问，可能会访问到修改了一半的数据
 
 数据访问冲突
-线程同步 synchronized
+线程 同步机制 synchronized
+synchronized声明的方法同一时间只能被一个线程访问
 让多个线程步调一致的执行
 1.线程同步锁
 java中任何实例都有一个同步锁，如果一个线程抢到同步锁，其他线程等待，直到能抢到锁才能执行
@@ -1551,6 +1554,14 @@ synchronized(b){
 }
 线1等b，线2等a，死锁
 同一顺序解决问题
+
+transient 修饰符
+临时的，即不会随类一起序列化到本地，所以当还原后，这个关键字定义的变量也就不再存在。
+
+volatile 修饰符
+volatile 修饰的成员变量在每次被线程访问时，都强制从共享内存中重新读取该成员变量的值。
+而且，当成员变量发生变化时，会强制线程将变化值回写到共享内存。
+这样在任何时刻，两个不同的线程总是看到某个成员变量的同一个值。
 -------------------------------
 Socket网络通信（套接字）:
 主机之间可以通过ip地址找到对方，两台主机各选择一个端口（0~65535？），各插一个插头
@@ -2017,6 +2028,231 @@ web应用根目录/
 可以设置多个备用主页
 
 打war包：
+将一个web应用中所有资源打成war包的好处：
+1.便于传输，体积小
+2.将war包传输到远程服务器上，服务器能够识别war格式，会自动解压发布
+如何打war包：
+进入web应用的根目录，选中所有文件，将所有文件打成zip包，再将后缀名改成war即可
+-------------------------------
+http协议：
+规定浏览器和服务器通信的方式/规则
+主要规定两个内容：
+1.规定了浏览器如何给服务器发送请求信息（请求信息格式）
+2.服务器如何给浏览器发送响应信息（响应信息格式）
+
+遵循的基本原则：
+1.一次请求对应一次响应
+2.请求只能是浏览器发起，服务器只能等待请求做出回应
+
+http请求：
+1.请求行 GET /news/hello.html HTTP/1.1
+2.若干请求（报）头
+Host: localhost   -- 表示浏览器所请求的主机
+Accept-Language: zh-CN   -- 通知服务器浏览器能接收的语言环境
+3.请求实体内容
+如果请求方式是GET提交, 请求实体一定没有内容, 是空的
+如果请求方式是POST提交,并且请求中携带了数据给服务器, 请求实体才会有内容
+
+http响应：
+1.状态行 HTTP/1.1 200 OK
+HTTP/1.1 响应信息所遵循的协议和版本
+2.若干响应（报）头
+Content-Type:text/html
+Refresh:5;url=xxx/index.html 通知浏览器在多少秒之后跳转到指定的地址
+3.响应实体内容
+-------------------------------
+servlet
+sun公司提供的一门动态web资源开发技术
+本质上是一段java程序
+和普通的java程序不同的是：
+servlet不能独立运行，必须放在服务器中，由服务器调用才可以执行
+
+servlet作用：
+1.浏览器向服务器发送请求，服务器负责接收请求
+2.服务器将请求交给其中的某一个servlet，由servlet负责处理请求
+3.在处理请求的过程中，servlet也负责连接并访问数据，并实现数据增删改查等操作
+4.将请求处理的结果转发给jsp，由jsp负责展示给用户（响应给浏览器）
+
+开发servlet程序的步骤：
+1.写一个类，实现一个servlet接口（直接实现或间接实现）
+2.在web应用的web.xml文件中添加Servlet相关的配置信息，将web应用发布到服务器中运行
+
+运行Servlet程序、访问测试 一键访问
+在运行的Servlet上点击右键 ---> "Run As" ---> "1 Run on Server"
+
+通过Eclipse发布项目到tomcat，会把web项目发布到工作空间下\.metadata\...
+F:\study\teduStudy\workspace2_web\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\day09
+
+修改Eclipse默认发布项目位置，在tomcat服务器上双击，修改配置。修改前remove项目，clean服务器
+
+Servlet继承关系
+Servlet接口 Servlet接口定义了一个Servlet应该具备哪些功能
+	GenericServlet类 实现了Servlet接口，并实现了接口中大部分方法，但其中service方法没实现，这个方法由开发人员实现
+		HttpServlet抽象类（doGet和doPost不是抽象方法） 实现了service方法，在service中判断请求方式，如果是get则调doGet方法，如果是post请求则调doPost方法
+			HelloServlet类 重写了doGet和doPost方法，分别处理get和post请求
+
+以后只要继承HttpServlet类写servlet即可
+
+servlet调用过程：
+1.浏览器向服务器发送http请求
+2.服务器中：
+	根据请求中的Host头，获知浏览器访问的是哪一个虚拟主机
+	根据请求行中的资源路径获知浏览器访问的是哪一个web应用及下具体资源
+	根据获取到的资源路径到web.xml中匹配真实路径
+	创建代表请求的Request对象和代表响应的Response对象，传入Servlet实例
+3.服务器中的Servlet实例：
+	通过request对象获取请求相关的信息
+	Servlet实例通过请求的信息，经过处理按照http协议规定的方式组织成想要信息，再发送给浏览器
+
+request和response简介
+Request是表示Http请求信息的对象
+Response是表示Http响应信息的对象
+
+在服务器接收到浏览器的请求之后, 调用某一个Servlet的service方法之前, 服务器会创建代表请求的Request对象和代表响应的Response对象。将这两个对象传递给service方法，执行service来处理请求。
+
+通过request对象可以获取请求相关的信息
+通过response对象可以将响应数据发送给浏览器
+
+获取请求参数：
+浏览器向服务器发送的请求参数
+请求参数是key-value结构
+
+request提供的请求参数的方法：
+String = request.getParameter(String name);
+通过请求参数的名字，获取对应的参数值
+String[] = request.getParameterValues(String name);
+通过请求参数的名字，获取对应的所有参数值组成的数组
+
+代码示例：获取请求中的用户名和爱好对应的参数值
+
+请求参数乱码问题：
+1.如果当前是tomcat8.0及以后版本，get提交的中文参数是没有乱码问题的，底层已经做了处理。如果8.0之前的版本，get也有乱码问题
+解决办法：
+在tomcat服务器安装目录下/conf/server.xml，在修改端口的Connector上加属性URIEncoding="utf-8"
+2.post一直有乱码问题：
+request.setCharacterEncoding("utf-8");
+
+实现请求转发：
+请求转发就是服务器内部资源跳转的一种方式
+当浏览器发送请求访问服务器中的某一个资源A时，A没有对请求做出响应，而是将请求转交给了服务器内部的另一个资源B，由B对请求做出响应。
+从资源A将请求转交给资源B，由资源B来做响应的过程就叫做请求转发。
+实现请求转发：
+request.getRequestDispatcher("/资源路径.jsp").forward(request,res)
+
+请求转发特点：
+1.转发前后地址栏地址没有发生变化
+2.转发前后是一次请求，一次响应
+3.转发前后的request对象是同一个，因此转发前后可以通过request域对象带数据到目的地。
+4.转发前后的两个资源只能是同一个web应用中的资源，否则将无法实现跳转
+
+作为域对象使用：
+如果一个对象具有一个可以被访问的范围，利用该对象上提供的map集合，在这个范围内就可以实现资源的共享。
+Request提供了存取数据的方法：
+往request域中添加一个域属性
+request.setAttribute(String attrName,Object attrValue);
+通过属性名获取指定的属性值
+request.getAttribute(String attrName);
+
+request.getAttribute()获取的是一个Object，所以要向下强转
+
+Request具备的三大特征：
+1.生命周期：
+一次请求开始时服务器创建Request对象，一次请求结束时服务器销毁Request对象
+2.作用范围
+一次请求范围内
+3.主要功能
+一次请求范围内实现数据的共享（通过转发将数据带往目的地）
+
+1.通过jdbc查询数据库，返回数据
+2.把数据存入request对象的map中
+request.setAttribute("name",name);
+3.通过转发将request对象（及map）带到jsp进行显示
+request.getRequestDispatcher("/xx.jsp").forward(request,res)
+转发的同时会将Servlet中的request对象（域对象）传递给jsp
+4.jsp通过request.getAttribute("name")取数据
+
+response对象：
+1.向客户端发送数据
+PrintWriter out = response.getWriter();
+out.write("你好");
+2.实现重定向
+重定向和请求转发都可以实现资源的跳转
+只不过转发只能是服务器内部同一个web应用内的资源之间的的跳转
+而重定向没有该限制
+实现请求重定向：
+response.sendRedirect("资源的地址");
+重定向的特点：
+1.重定向前后两次请求，两次响应
+2.重定向前后地址栏会发生变化
+3.重定向前后的request对象不是同一个对象，因此就不能在重定向前后通过request域对象带数据到目的地
+4.重定向前后的两个资源可以不是同一个web应用内部的资源
+-------------------------------
+jsp
+jsp和servlet都是sun公司提供的动态web资源开发技术
+jsp本质上是一个servlet，jsp第一次被访问时，会被翻译为一个servlet程序
+为什么要有jsp：
+既解决了servlet不适合向外输出一个完整的html网页，也解决了html无法展示动态数据的问题。
+
+<% %> 语句
+<%= %> 变量，会输出
+
+html的执行过程：
+当浏览器的地址栏中输入：xxx.com时，服务器会根据请求的路径去到xxx项目中寻找index.html，找到后直接将index.html文件内容响应给浏览器，由浏览器去解析并显示
+html文件是不需要在服务器端执行
+在tomcat服务器中提供了一个默认的servlet，当浏览器向服务器请求一个静态资源文件时，就会由这个默认的servlet处理。
+
+jsp的执行过程：
+当浏览器请求服务器中的xxx.jsp时，服务器会根据请求的路径去寻找xxx.jsp文件，如果找到就将这个jsp翻译为一个servlet程序，servlet程序再执行，返回一个html网页
+访问JSP后看到的html网页，就是JSP翻译后的Servlet在向外输出
+
+jsp语法：
+模板元素：
+java元素
+
+jsp表达式：
+格式:
+<%= 表达式/变量/常量 %>
+
+jsp脚本片段：
+格式：
+<% String name = "张三"; %>
+<%= name %>
+<% 
+	for(int i=0;i<5;i++){
+		out.write(i+"<br/>");
+	}
+%>
+或：
+<% for(int i=0;i<5;i++){ %>
+		out.write("<br/>");
+<% } %>
+
+jsp注释：
+<%-- 注释 --%>
+
+jsp指令：
+作用：不产生输出，用于指挥jsp解析引擎，如何翻译一个jsp
+1.page指令
+<%@ page 若干属性...%>
+作用声明jsp页面的基本属性信息，比如jsp页面使用的编码，jsp页面使用的开发语言等
+
+2.taglib指令
+<%@ taglib 若干属性...%>
+作用引入jsp标签库，比如在使用jstl标签库之前，需要在jsp文件中通过taglib指令引入jstl标签库
+
+jsp的标签技术：
+用来代替java代码，方便维护
+el  ${}
+jstl  标签库
+
+el表达式
+格式：
+${常量，表达式，变量} 变量必须得事先存入域中
+作用：主要作用是从域中获取数据并输出
+1.用来获取常量，表达式，变量的值（变量必须先存入域中）
+2.获取域中的数组或集合中的数据
+3.获取域中的map集合中的数据
+4.获取域中的JavaBean/Pojo中的数据
 -------------------------------
 int和Integer的区别：
 Integer提供方法实现类型间转化
