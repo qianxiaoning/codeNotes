@@ -1244,7 +1244,7 @@ SAX解析文档需要按照顺序 DOM可以随意
 所以1100^1010的结果应该是0110
 
 位运算符
-按位与（&）、按位或（|）、按位异或（^）、按位取反（~）、按位左移（<<）、按位右移（>>）
+按位与（&）、按位或（|）、按位异或（^）、按位取反（~）、按位左移（<<）、按位右移（>>）、按位右移补零（>>>）
 
 ~属于二进制位运算符 代表非的意思？
 
@@ -1283,6 +1283,27 @@ y>>x	 除以2的x次方
 
 众多大小异常的基类为 Exception，所有异常都必须直接或者间接继承它 
 但是java.lang.Exception这个类的基类是Throwable
+
+web应用中的类，位于包中，那么这个类的.class文件的存放路径应该是什么？
+答：web应用名/WEB-INF/classes/包名/类名.class
+
+HttpServlet类中处理客户请求和响应时所使用的两个接口是：HttpServletRequest和HttpServletResponse
+
+在Servlet生命周期方法中，每当有请求访问Servlet时，web容器会调用（service）方法处理请求
+
+以下错误：
+Servlet的生命周期由Servlet实例控制  
+init()方法在创建完Servlet实例后, Servlet会调用该方法进行初始化。
+
+request域的生命周期为：在服务器针对一次请求创建出request对象后生命周期开始，在响应结束后request对象销毁，生命周期结束
+
+response.sendRedirect("xxx");重定向是无法传数据的
+
+post乱码解决办法：request.setCharcterEncoding("GBK");
+
+HTTP协议只规定了浏览器和服务器之间如何通信，而request和response对象是由javaee规范规定的、由javaweb容器负责创建的
+
+response对象不能作为域对象实现资源共享，request可以
 -------------------------------
 io:
 io Input/Output 输入/输出
@@ -1955,6 +1976,7 @@ public void findByName() {
 		// 借
 		conn = pool.getConnection();
 		// 获取传输器并执行sql语句
+		// ?占位符不能代替表名，列名
 		String sql = "select * from account where name like ?";
 		// prepareStatement子类传输器
 		ps = conn.prepareStatement(sql);
@@ -2137,7 +2159,7 @@ request.setCharacterEncoding("utf-8");
 当浏览器发送请求访问服务器中的某一个资源A时，A没有对请求做出响应，而是将请求转交给了服务器内部的另一个资源B，由B对请求做出响应。
 从资源A将请求转交给资源B，由资源B来做响应的过程就叫做请求转发。
 实现请求转发：
-request.getRequestDispatcher("/资源路径.jsp").forward(request,res)
+request.getRequestDispatcher("/资源路径.jsp").forward(request,response)
 
 请求转发特点：
 1.转发前后地址栏地址没有发生变化
@@ -2167,7 +2189,7 @@ Request具备的三大特征：
 2.把数据存入request对象的map中
 request.setAttribute("name",name);
 3.通过转发将request对象（及map）带到jsp进行显示
-request.getRequestDispatcher("/xx.jsp").forward(request,res)
+request.getRequestDispatcher("/xx.jsp").forward(request,response)
 转发的同时会将Servlet中的request对象（域对象）传递给jsp
 4.jsp通过request.getAttribute("name")取数据
 
@@ -2250,9 +2272,135 @@ el表达式
 ${常量，表达式，变量} 变量必须得事先存入域中
 作用：主要作用是从域中获取数据并输出
 1.用来获取常量，表达式，变量的值（变量必须先存入域中）
+在EL中书写变量，会通过变量名依次到四个域（从小到大：pageContext,request,session,application）中去寻找指定名称属性值
+${xxx} 代替 <%= request.getAttribute(xxx) %>
 2.获取域中的数组或集合中的数据
+String names[] = {"a","a","a"};
+request.setAttribute("names",names);
+${names}
 3.获取域中的map集合中的数据
+Map map = new HashMap();
+map.put("name","aaa");
+map.put("age",18);
+request.setAttribute("map",map);
+${map.name}
 4.获取域中的JavaBean/Pojo中的数据
+<%
+	// 创建一个Account对象，并存入域中
+	Account acc = new Account(1,"john",3000.0);
+	request.setAttribute("account", acc);		
+%>
+${account.name}调的是getName()方法，和name属性名无关
+${account.getName()}
+
+jstl标签库：
+在使用JSTL标签库前：
+1.在项目中导入jstl的jar包
+2.在使用jstl标签库的jsp中引入jstl标签库，通过taglib指令
+
+JSTL标签库是为JavaWeb开发人员提供的一套标准通用的标签库；
+JSTL标签库和EL配合使用取代JSP中大部分的Java代码；
+常用标签：
+1、<c:set></c:set> -- 往四大作用域中添加域属性，或者修改四大作用域中已有的属性
+<c:set var="name" value='张三' scope='request'/>
+${name}
+<c:set var="name" value='张三丰' scope='request'/>
+${name}
+2、<c:if></c:if> -- 构造if…else…语句
+<c:set var="score" value='79' scope='request'/>
+<c:if test="${score>=80}">
+	优秀
+</c:if>
+<c:if test="${score>=60 and score<80}">
+	中等
+</c:if>
+<c:if test="${score<60}">
+	不及格
+</c:if>
+3、<c:forEach></c:forEach> -- 对集合或数组等中元素进行循环遍历或者是执行指定次数的循环
+数组、集合:
+<%
+	String names[] = {"a","a","a"};
+	request.setAttribute("ns",names);
+%>
+<c:forEach items="${ns}" var='name'>
+	${name}<br/>
+</c:forEach>
+map集合（map是无序的）：
+<%
+	Map map = new HashMap();
+	map.put("name","aaa");
+	map.put("age",18);
+	map.put("addr","aaa");
+	request.setAttribute("map",map);
+%>
+<c:forEach items="${map}" var='entry'>
+	${entry}<br/>
+	${entry.getKey()}:${entry.getValue()}<br/>
+	${entry.key}:${entry.value}<br/>
+</c:forEach>
+遍历数值：
+<c:forEach begin="0" end="100"
+	var='i' step="1" varStatus='status'>
+	<c:if test="${i%7==0}">
+		${status.first?'':','}
+		${i}
+	</c:if>
+</c:forEach>
+-------------------------------
+Maven
+介绍
+公共包管理工具，类似npm install -g：
+一个项目管理工具，jar包管理，简化配置，统一项目结构
+
+下载maven
+配置maven
+maven\apache-maven-3.5.3\conf\settings.xml
+本地仓库位置：
+<localRepository>F:/software/maven/repository</localRepository>
+下载镜像服务器位置（阿里云不能使用手机热点）：
+<mirrors>
+	<mirror>
+		<id>aliyun</id>
+		<name>aliyun Maven</name>
+		<mirrorOf>*</mirrorOf>
+		<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+	</mirror>
+</mirrors>
+指定jdk版本：
+<profile>
+	<id>jdk-1.8</id>
+	<activation>
+	<activeByDefault>true</activeByDefault>
+	<jdk>1.8</jdk>
+	</activation>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+	</properties>
+</profile>
+
+Maven在Eclipse的配置：
+window右键--> Preferences->maven->勾选Download Artifact Sources下源码->
+installations=>add=>将自己安装的maven目录选中=>勾选上
+user settings=>全局设置和用户设置选maven中的settings.xml=>
+本地仓库位置选F:\software\maven\repository
+
+Maven项目构建：
+new Maven->Create a simple project->packaging:jar(java项目)/war(web项目)->
+group id组织名称（com.xxx）->Artifact id项目名称->补充web.xml文件
+
+导入已有maven项目：
+1.复制src文件夹覆盖
+2.在pom.xml文件中复制
+properties版本号
+dependencies依赖坐标
+保存自动下载，不行就项目右击Update Project
+
+在pom.xml中导入依赖：
+1.右键maven->add dependency->搜索已有依赖
+2.在http://mvnrepository.com 或者公司镜像仓库搜索依赖坐标
 -------------------------------
 int和Integer的区别：
 Integer提供方法实现类型间转化
@@ -2273,3 +2421,6 @@ Java中HashMap使用hashcode()和equals()来确定键值对的索引，当根据
 做参数时会被复制，创建副本，函数中无法改变原始对象
 引用传递：
 做参数时不会被复制，不会创建副本，函数中可以改变原始对象
+-------------------------------
+.bin.tar.gz linux版本
+.bin.zip windows版本
