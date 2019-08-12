@@ -1304,6 +1304,14 @@ post乱码解决办法：request.setCharcterEncoding("GBK");
 HTTP协议只规定了浏览器和服务器之间如何通信，而request和response对象是由javaee规范规定的、由javaweb容器负责创建的
 
 response对象不能作为域对象实现资源共享，request可以
+
+JSP只有在第一次被访问时(或者JSP被修改后)，才会被翻译为一个Servlet。
+
+<%-- 这是一个注释 --%> 没有参与JSP的翻译过程
+
+<!-- 这是一个注释 --> 参与了JSP的翻译过程
+
+以下哪些属于JSP的指令：page，taglib，include
 -------------------------------
 io:
 io Input/Output 输入/输出
@@ -2358,6 +2366,8 @@ Maven
 maven\apache-maven-3.5.3\conf\settings.xml
 本地仓库位置：
 <localRepository>F:/software/maven/repository</localRepository>
+nexus私服
+central中央服务器
 下载镜像服务器位置（阿里云不能使用手机热点）：
 <mirrors>
 	<mirror>
@@ -2400,7 +2410,94 @@ dependencies依赖坐标
 
 在pom.xml中导入依赖：
 1.右键maven->add dependency->搜索已有依赖
+如搜索不到，打开maven视图，右键local repository,rebuild index。索引会被重建
+
 2.在http://mvnrepository.com 或者公司镜像仓库搜索依赖坐标
+-------------------------------
+会话技术 客户端与服务端之间的交互，就是会话
+概念：
+浏览器和服务器之间产生的多次请求和响应，称为浏览器和服务器的会话。
+从浏览器访问服务器开始，一直到浏览器关闭，访问服务器结束为止，这期间多次请求和响应组合在一起就是一次会话。
+cookie，session本地存储
+
+Cookie
+1.在cookie中通过Set-Cookie响应头负责将数据从服务器发送给浏览器，让浏览器以cookie形式保存到内部
+2.在cookie中，通过cookie请求头负责将cookie信息从浏览器带回服务器，给服务器使用
+3.在cookie中是将会话产生的数据保存在客户端，是客户端技术
+
+cookie的api
+1.创建Cookie对象 指定cookie的名字和要保存的值
+Cookie cookie = new Cookie(String name,String value);
+2.将Cookie添加到response响应中
+发送给浏览器，让浏览器保存到内部，可以调用多次addCookie方法，可以将多个cookie发送给浏览器
+response.addCookie(Cookie cookie);
+3.获取请求中的所有cookie对象组成的数组
+如果请求中未携带cookie，返回null
+Cookie[] cs = request.getCookies();
+4.删除cookie
+cookie的api中没有直接删除方法
+创建一个同名cookie，并设置存活时间为0，发送cookie给浏览器
+5.cookie的常用方法
+cookie.getName() -- 获取cookie的名字
+cookie.getValue() -- 获取cookie的值
+cookie.setValue() -- 设置cookie的值
+没有cookie.setName()
+6.setMaxAge方法
+cookie.setMaxAge() -- 设置cookie最大生成年龄 默认cookie在一次会话结束后立即销毁
+cookie会以文件的形式保存在浏览器的临时文件夹中（硬盘上）
+
+tomcat8.5之前 cookie中保存中文问题
+在http协议中规定了，浏览器和服务器的交互数据，不能发送中文，要进行url编码
+
+session 是服务器端临时本地存储 技术，浏览器没有
+一次会话范围内，一个session对象  开关浏览器
+1.session是一个域对象，可以通过session.setAttribute方法往session域中添加一个域属性 session.setAttribute("prod","小米手机");
+2.String prod = (String)session.getAttribute("prod");
+3.session是服务器端的一个对象，session是将数据保存在服务器端中，是服务器端技术
+
+session是一个域对象
+session.setAttribute(String name,Object value);
+session.getAttribute(String name);
+
+session具备的三大特征
+1.生命周期：
+创建session：
+第一次调用request.getSession方法时
+request.getSession();同request.getSession(true);// 有则返回已有的，无则建
+request.getSession(false);// 有则返回已有的，无则返回null
+销毁session：
+a.超时销毁：30分钟未被访问销毁
+b.自杀：当调用session的invalidate时，会立即销毁session
+c.意外身亡：服务器非正常关闭，session销毁
+反之，服务器正常关闭，session不会销毁，session对象会以文件形式保存到硬盘上，服务器work目录下，这个过程叫做session的系列化（钝化），当服务器再次启动时，session对象会再次恢复到服务器中，叫做session的反序列化（活化）。
+2.作用范围：
+整个会话范围内
+3.主要功能：
+整个会话范围内，实现数据的共享
+
+总结：
+cookie和session区别：
+Cookie的特点：
+保存在客户端，客户端技术
+适合安全性要求不高, 但是需要长时间保存的数据。
+Session的特点：
+保存在服务器端，是服务器端技术
+安全，短期的保存
+
+java中添加cookie，
+Cookie cookie = new Cookie("prod",prod);
+一个cookie只能加入一个键值
+response.addCookie(cookie);
+依次添加入response中
+取出cookies数组
+Cookie[] cs = request.getCookies();遍历
+
+java中添加session，
+session域中添加属性
+session.setAttribute("prod", prod);
+放入session域中
+取出session，按key取值
+session.getAttribute("prod");
 -------------------------------
 int和Integer的区别：
 Integer提供方法实现类型间转化
@@ -2424,3 +2521,5 @@ Java中HashMap使用hashcode()和equals()来确定键值对的索引，当根据
 -------------------------------
 .bin.tar.gz linux版本
 .bin.zip windows版本
+
+这种由编译器特别支持的包装称为装箱，所以当内置数据类型被当作对象使用的时候，编译器会把内置类型装箱为包装类。相似的，编译器也可以把一个对象拆箱为内置类型。Number 类属于 java.lang 包

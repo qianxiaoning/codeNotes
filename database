@@ -56,7 +56,7 @@ insert into tb_door value(null,'yhdw2','777');
 查看 tb_door表中所有的记录
 select * from tb_door; 
 修改表中id为3的记录
-update tb_door set tel='991' where id=3;
+update tb_door set tel='991',name='xxx' where id=3;
 按某个顺序排序 默认升序
 select * from tb_door order by tel;
 降序
@@ -614,3 +614,52 @@ select sn from s where s# in(
 ----------------------------
 格式：
 select xx from xx where xx group by xx having xx;
+----------------------------
+事务
+数据库事务：将一堆sql语句绑定在一起执行，执行的结果是要么全执行成功，要么全部执行失败
+
+举例：
+银行转账，A,B各有1000元，A转账给B 100元
+
+开启事务
+update acc set money=money-100 where name='A';
+update acc set money=money+100 where name='B';
+结束事务：提交（全成功了）/回滚（任何一条没成功，回滚）
+
+事务的四大特征：
+1.原子性 事务中的所有sql语句是一个整体，不能再分割，要么全执行成功，要么全执行失败
+2.一致性 事务前后的业务数据之和是保持不变的。比如A,B各有1000元，A转账给B 100元，而转账操作在一个事务中，不管转账成功与否，A和B的总金额之和是保持不变的
+3.隔离性 在隔离级别足够高的情况下，事务和事务是完全隔离开来的，一个事务是看不到另一个事务正在进行中的操作。
+能看到的要么是一个事务开始之前的状态，要么看到事务结束之后的状态
+比如：
+事务1：正在查询A和B的账户金额总和
+第一次查询：A 1000,B 1000
+第二次查询：A 1000,B 1000
+事务2：正在进行转账操作
+A-100 900  B还没加上  事务1看不到
+4.持久性 
+在事务提交后，对数据的修改将会是永久的，数据的修改也会持久的保存到硬盘上
+比如：
+A-100 成功了  日志：记录A账户要减去100元
+b+100 失败了  日志：记录B账户要加上100元
+回滚相当于擦除日志
+提交事务，会按照日志进行操作
+
+mysql中的事务：
+在mysql中默认一条sql是一个事务
+mysql中：
+开启事务：start transaction;
+结束事务：commit(提交)/rollback(回滚);
+例子：
+A转账100元给B账户
+-- 开启事务
+start transaction;
+-- A账户减去100元
+update acc set money=money-100 where name='A';
+-- B账户加上100元
+update acc set money=money+100 where name='B';
+-- 结束事务
+rollback / commit;
+
+
+
