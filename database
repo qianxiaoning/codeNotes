@@ -673,5 +673,63 @@ A 给 B 转账100元
 B已经读到了B多了100
 事务一回滚了
 2.不可重复读
+在一个事务中，读取到了另外一个事务已提交的数据，导致前后两次的提交结果不一致
+在两次查询之间，有另外的事务对查询的记录进行了修改操作
+例子：
+查询
+事务一：修改，提交了
+查询
+两次查询结果不一致
 3.幻读
+在一个事务中，对同一张表的两次查询结果不一致，因为有别的事务对表进行了插入或者删除操作
+例子：
+查询id为3，未找到
+另外事务中：
+插入了id为3的数据，提交
+插入id为3，插入失败，显示已存在
 
+事务隔离级别 四个等级
+set tx_isolation='read-uncommitted';
+1、READ UNCOMMITTED（读未提交数据）
+安全级别最低, 可能出现任何事务并发问题(比如脏读、不可以重复读、幻读等)
+性能最好（不使用!!）
+2、READ COMMITTED（读已提交数据）（Oracle默认）
+防止脏读，没有处理不可重复读，也没有处理幻读；
+性能比REPEATABLE READ好
+3、REPEATABLE READ（可重复读）（MySQL默认）
+防止脏读和不可重复读，不能处理幻读问题；
+性能比SERIALIZABLE好
+4、SERIALIZABLE（串行化）
+不会出现任何并发问题，因为它是对同一数据的访问是串行的，非并发访问的；
+性能最差；
+
+MySQL的默认隔离级别为REPEATABLE READ，即可以防止脏读和不可重复读
+
+设置隔离级别:
+MySQL查询当前的事务隔离级别:
+select @@tx_isolation;
+
+JDBC设置事务隔离界别:
+JDBC中通过Connection提供的方法设置事务隔离级别：
+Connection. setTransactionIsolation(int level)
+参数可选值如下：
+Connection.TRANSACTION_READ_UNCOMMITTED       1（读未提交数据）
+Connection.TRANSACTION_READ_COMMITTED     2（读已提交数据）
+Connection.TRANSACTION_REPEATABLE_READ    4（可重复读）
+Connection.TRANSACTION_SERIALIZABLE           8（串行化）
+Connection.TRANSACTION_NONE               0（不使用事务）
+
+JDBC中默认是自动提交事务，conn.setAutoCommit(true); 
+所以需要关闭自动提交，改为手动提交事务
+conn.setAutoCommit(false); 
+try{
+	conn = JDBCUtil.getConn();
+	conn.setAutoCommit(false); 
+	...
+	conn.commit();// 提交
+}catch(Exception e){
+	conn.rollback();// 回滚
+}
+----------------------------
+sql中相等为一个=号
+where name='张三'
