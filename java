@@ -384,6 +384,17 @@ this代表本类对象的引用
 super代表父类对象的引用
 
 Java SE 7之前，switch中的变量类型只能是byte,short,char,int,没有long,enum枚举,string
+java12后
+switch简写 不用写break了，可以直接返回值
+switch(xx){
+	case x -> xx;
+	case x -> {
+
+	}
+	default -> {
+
+	}
+}
 
 给外层for循环命名，可以跳出外层循环
 break outer;
@@ -1240,14 +1251,14 @@ xml文档中实体符号是用&作为开头的
 
 SAX解析文档需要按照顺序 DOM可以随意
 
+位运算符
+按位与（&）、按位或（|）、按位异或（^）、按位取反（~）、按位左移（<<）、按位右移（>>）、按位右移补零（>>>）
+
 ^属于二进制位运算符 代表异或的意思（同0异1）
 运算时两个二进制数对应位的数不同时结果为1  否则为0
 所以1100^1010的结果应该是0110
 
-位运算符
-按位与（&）、按位或（|）、按位异或（^）、按位取反（~）、按位左移（<<）、按位右移（>>）、按位右移补零（>>>）
-
-~属于二进制位运算符 代表非的意思？
+~属于二进制位运算符 代表非的意思~0为1
 
 &运算的规则是数位都为1则是1，只要有一个数的当前数位是0则结果为0，所以 2&3 == 10 & 11 ，则对应的结果为10，转换成十进制就是数字2
 
@@ -1437,7 +1448,7 @@ InputStreamReader,OutputStreamWriter
 1.java的char类型使用Unicode码（双字节的）
 2.Unicode保存或传输，应该转换成其他编码
 3.转成utf-8
-	Unicode的传输格式，英文单字节，中文三字节，其他字符两字节或四字节
+	utf-8，英文单字节，中文三字节，其他字符两字节或四字节
 4.转成GBK
 	国标码
 	英文单字节
@@ -2525,12 +2536,8 @@ Java中HashMap使用hashcode()和equals()来确定键值对的索引，当根据
 .bin.zip windows版本
 
 这种由编译器特别支持的包装称为装箱，所以当内置数据类型被当作对象使用的时候，编译器会把内置类型装箱为包装类。相似的，编译器也可以把一个对象拆箱为内置类型。Number 类属于 java.lang 包
--------------------------------
-MyBatis框架
-本是apache的一个开源项目iBatis
-Mybatis对JDBC访问数据库的过程进行了封装，简化了JDBC代码，解决JDBC将结果集封装为Java对象的麻烦
-#{}占位符 代替带引号的字符串 类似?
-${}占位符 代替不带引号的字符串
+
+jvm报错看 Caused by: 这一行
 -------------------------------
 java方法的补充：
 方法的可变参数 必须是最后一个参数
@@ -2642,6 +2649,19 @@ Jsp（View）:负责响应结果
 
 ssh(Struts2有漏洞,Spring,Hibernate自动生成sql语句不够灵活)
 ssm(SpringMVC,Spring,MyBatis)
+
+Spring MVC设计模式
+对servlet进行了封装
+Springmvc是spring框架的一个模块
+spring和springmvc无需中间整合层整合
+-------------------------------
+mybatis框架
+本是apache的一个开源项目iBatis
+Mybatis对JDBC访问数据库的过程进行了封装，简化了JDBC代码，解决JDBC将结果集封装为Java对象的麻烦
+
+MyBatis是一个优秀的持久层框架，它对jdbc的操作数据库的过程进行封装，
+使开发者只需要关注 SQL 本身，
+而不需要花费精力去处理例如注册驱动、创建connection、创建statement、手动设置参数、结果集检索等jdbc繁杂的过程代码。
 -------------------------------
 Spring 框架
 1.方便解耦
@@ -2652,10 +2672,95 @@ Spring 框架
 Spring的本质是管理软件中的对象，即创建对象和维护对象之间的关系
 
 ioc 控制反转
+不用自己new对象，交给容器创建
 
 Spring DI依赖注入
+在创建对象的同时，给对象赋值
 
-Spring MVC设计模式
-对servlet进行了封装
-Springmvc是spring框架的一个模块
-spring和springmvc无需中间整合层整合
+Spring的本质是管理软件中的对象，即创建对象和维护对象之间的关系
+-------------------------------
+mybatis
+1.src/main/resources/mybatis-config.xml(mybatis配置文件，可引用jdbc.properties变量)
+<environments>配置开发环境，
+<transactionManager>配置事务管理方式，
+<dataSource>配置数据源
+<mappers>sql语句映射，指向XxxMapper.xml
+
+2.src/main/java/com.tedu.mybatis/MyBatis.java
+// 读取配置文件
+InputStream in = Resources.getResourceAsStream("mybatis-config.xml");
+// 通过配置信息获取SqlSessionFactory工厂对象
+SqlSessionFactory fac = new SqlSessionFactoryBuilder().build(in);
+// 通过工厂获取SqlSession对象
+session = fac.openSession();
+@Test
+public void testFindById() {
+	// SqlSession对象接收XxxMapper接口类，反射生成实例
+	EmpMapper mapper = session.getMapper(XxxMapper.class);	
+	// 调实例方法，到XxxMapper接口中添加一个对应的方法	
+	Emp emp = mapper.findById(4);
+	// 改的话session.commit();
+}
+
+3.src/main/java/com.tedu.dao/XxxMapper.java
+public interface XxxMapper {		
+	// findById方法，注意参数和返回值
+	public Emp findById(Integer id);
+}
+
+// 到XxxMapper.xml中添加一条sql语句
+// <select>或<update>
+<select resultType="com.tedu.pojo.Xxx" id="wayA">查询
+<update id="wayB">增删改
+4.src/main/resources/XxxMapper.xml
+占位符 #{}有引号变量类似? ${}无引号变量
+// id为接口方法名
+<select id="findById" resultType="com.tedu.pojo.Xxx">
+	select * from emp where id=#{id}
+</select>
+
+// pojo基本类
+5.src/main/java/com.tedu.pojo/Xxx.java
+
+6.加入log4j.properties日志框架
+mybatis日志输出工具
+配置好了，会自动加载使用
+-------------------------------
+spring
+// 创建实体类
+1.src/main/java/com.tedu.pojo/User.java
+src/main/java/com.tedu.pojo/UserInfo.java
+
+// spring配置文件
+2.src/main/resources/applicationContext.xml
+<beans>
+	// 此处为spring容器，由容器创建实例
+	// 默认单实例singleton，scope="prototype"多实例
+	// 当对象有会改变的状态时，使用多实例，否则单实例
+	// <bean id="User" class="com.tedu.pojo.User" scope="prototype">
+	<bean id="User" class="com.tedu.pojo.User">
+		<!-- 依赖注入2种方式 -->
+		<!-- set方法注入 -->
+		<property name="name" value="哈罗"></property>
+		<property name="info" ref="userInfo"></property>
+		<!-- 构造方法注入，spring大部分 -->
+		<constructor-arg name="name" value="马云"></constructor-arg>
+		<constructor-arg name="info" ref="userInfo"></constructor-arg>
+	</bean>
+	<bean id="userInfo" class="com.tedu.pojo.UserInfo"></bean>
+</beans>
+
+3.src/main/java/com.tedu.test/TestSpring.java
+@Test
+public void testIOC() {
+	// 1.读取Spring的核心配置文件
+	ClassPathXmlApplicationContext ac = 
+	new ClassPathXmlApplicationContext("applicationContext.xml");
+	// 2.通过Spring容器获取User类的实例
+	User u = (User)ac.getBean("user");
+	System.out.println(u);// 实例已有值
+}
+-------------------------------
+springmvc
+Springmvc是spring框架的一个模块，spring和springmvc无需中间整合层整合
+Springmvc是一个基于mvc的web框架
