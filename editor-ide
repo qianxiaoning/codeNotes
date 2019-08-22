@@ -62,6 +62,7 @@ ctrl+shift+o 导包
 syst 打印类的main方法
 /**+回车 添加文档注释
 ctrl+i 设置缩进
+ctrl+1 给出提示
 
 debug调试
 左侧双击加断点，f11debug执行

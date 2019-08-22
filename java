@@ -1676,7 +1676,7 @@ day1901.C;c
 
 获取类对象：（重点）   在方法区找到
 Class c = A.class 访问方法区的这个类 /Class<A> A类的类对象
-Class c = Class.forName("day1901.A")
+Class c = Class.forName("day1901.A")// 全类名
 Class c = a1.getClass() 得到实例的类对象
 已加载直接访问，访问时没找到会先去加载
 
@@ -2538,21 +2538,30 @@ Java中HashMap使用hashcode()和equals()来确定键值对的索引，当根据
 这种由编译器特别支持的包装称为装箱，所以当内置数据类型被当作对象使用的时候，编译器会把内置类型装箱为包装类。相似的，编译器也可以把一个对象拆箱为内置类型。Number 类属于 java.lang 包
 
 jvm报错看 Caused by: 这一行
+
+Class对象 为 字节码对象
 -------------------------------
 java方法的补充：
 方法的可变参数 必须是最后一个参数
 public class C {
-	public static void main(String[] args) {
-		q("aqwa","aegra","ayjja","cvaa");
-		q(new String[]{"scc","ayj","awd"});
-	}
 	// 参数类型... 参数名
-	private static void q(String... p) {
+	private static void q(String... p) {// 同String[] p = {};
 		// 传入的参数会组成一个数组p
 		System.out.println(p);
 		System.out.println(Arrays.toString(p));
 	}
+	public static void main(String[] args) {
+		q("aqwa","aegra","ayjja","cvaa");
+		q(new String[]{"scc","ayj","awd"});
+	}
 }
+-------------------------------
+垃圾回收机制：
+1.System.gc();
+2.jvm内存快不足时
+gc会扫描磁盘对不可达（不被指向时）对象一一标记后，一次性回收
+gc比较耗时，且会使系统中断？
+回收时触发finalize() 方法
 
 finalize() 方法 在实例对象被垃圾回收前调用，类似钩子
 public class E {
@@ -2560,7 +2569,7 @@ public class E {
 		Z z1 = new Z(1);
 		Z z2 = new Z(2);
 		z1=z2=null;
-		System.gc();// 垃圾回收
+		System.gc();// 建议垃圾回收
 	}
 }
 class Z{
@@ -2764,3 +2773,342 @@ public void testIOC() {
 springmvc
 Springmvc是spring框架的一个模块，spring和springmvc无需中间整合层整合
 Springmvc是一个基于mvc的web框架
+
+c控制器：接收请求，调用业务类，派发页面
+m模型：service，dao，pojo，返回处理结果
+v视图：视图渲染
+
+1.在web.xml中配置springmvc
+<!-- 配置springmvc前端控制器, 将所有请求交给springmvc来处理 -->
+<servlet>
+	<servlet-name>springmvc</servlet-name>
+	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>	
+	<!-- 配置springmvc核心配置文件的位置，默认Springmvc的配置文件是在WEB-INF目录下，默认的名字为springmvc-servlet.xml，如果要放在其他目录，则需要指定如下配置：
+	-->
+	<init-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:springmvc-config.xml</param-value>
+	</init-param>		
+</servlet>
+<!-- 其中的斜杠（/）表示拦截所有请求（除JSP以外）, 所有请求都要经过springmvc前端控制器 -->
+<servlet-mapping>
+	<servlet-name>springmvc</servlet-name>
+	<url-pattern>/</url-pattern>
+</servlet-mapping>
+<!-- 处理post提交的中文参数乱码问题 -->
+<filter>
+	<filter-name>encodingFilter</filter-name>
+	<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+	<init-param>
+		<param-name>encoding</param-name>
+		<param-value>UTF8</param-value>
+	</init-param>
+</filter>
+<filter-mapping>
+	<filter-name>encodingFilter</filter-name>
+	<url-pattern>/*</url-pattern>
+</filter-mapping>
+
+// springmvc 配置文件
+2.src/main/resources/springmvc-config.xml
+<beans>
+	<!-- 1.配置前端控制器放行静态资源(html/css/js等，否则静态资源将无法访问) -->
+	<mvc:default-servlet-handler />
+	<!-- 2.配置注解驱动，用于识别注解（比如@Controller） -->
+	<mvc:annotation-driven></mvc:annotation-driven>
+	<!-- 3.配置需要扫描的包：spring自动去扫描 base-package 下的类， 如果扫描到的类上有 @Controller、@Service、@Component等注解，将会自动将类注册为bean，
+	将对象的创建交给Spring容器 -->
+	<context:component-scan
+		base-package="com.tedu.controller">
+	</context:component-scan>
+	<!-- 4.配置内部资源视图解析器 prefix:配置路径前缀 suffix:配置文件后缀 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/pages/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+</beans>
+
+3.src/main/java/com.tedu.controller/HelloController.java
+/**
+ * @Controller的作用：表示当前类属于Controller层，Controller方法用于处理请求
+ */
+@Controller
+public class HelloController {
+	/*
+	 *@RequestMapping("/hello")作用：映射路径和当前方法的对应关系
+	 *访问 主机名/项目名/hello 时，执行该方法
+	 */
+	@RequestMapping("/hello")
+	public String testHello(User user,Model model) {// 自动获取请求参数
+		System.out.println(user);
+		model.addAttribute("user",user);// model，Controller层和jsp的共享域
+		return "home";// 访问home路径，如果匹配到方法执行，匹配到jsp跳转
+		return "forward:/hello";// 请求转发（一个来回）
+		return "redirect:/hello";// 重定向（两个来回）
+	}
+	/**
+	 * 向浏览器响应json数据
+	 * */
+	@RequestMapping("/testJson")
+	@ResponseBody
+	public List<User> testJson() {
+		List<User> list = new ArrayList();
+		User u1 = new User("张飞",20,"北京");
+		User u2 = new User("刘备",22,"河北");
+		list.add(u1);
+		list.add(u2);
+		// 将User对象的集合以json格式响应给浏览器
+		return list;
+	}
+	/* 自定义日期转换格式 */
+	@InitBinder // 用于指定自定义的日期转换格式
+	public void InitBinder(ServletRequestDataBinder binder) {
+		binder.registerCustomEditor(java.util.Date.class,
+				new CustomDateEditor(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"), true));
+	}
+}
+-------------------------------
+spring+mybatis+springmvc 框架整合 ssm
+
+spring
+// 创建实体类
+1.src/main/java/com.tedu.pojo/User.java
+src/main/java/com.tedu.pojo/UserInfo.java
+
+// spring配置文件
+2.src/main/resources/spring/applicationContext.xml
+// jdbc properties文件
+src/main/resources/jdbc.properties
+<!-- 1.加载jdbc.properties文件的位置 -->
+<context:property-placeholder location="classpath:jdbc.properties" />
+<!-- 2.配置druid连接池 ，id是固定值，class是druid连接池类的全路径 -->
+<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+	<!-- 配置连接数据库的基本信息 -->
+	<property name="driverClassName" value="${db.driverClassName}"></property>
+	<property name="url" value="${db.url}"></property>
+	<property name="username" value="${db.username}"></property>
+	<property name="password" value="${db.password}"></property>
+</bean>
+<!-- 3.整合spring和mybatis框架 将SqlSession等对象的创建交给Spring容器 id值(sqlSessionFactory)是固定值 -->
+<bean id="sqlSessionFactory"
+	class="org.mybatis.spring.SqlSessionFactoryBean">
+	<!-- 3.1.指定mybatis核心配置文件的位置 -->
+	<property name="configLocation" value="classpath:mybatis/mybatis-config.xml"></property>
+	<!-- 3.2.配置连接池(数据源) ref指向连接池bean对象的id值 -->
+	<property name="dataSource" ref="dataSource"></property>
+	<!-- 3.3、扫描所有的 XxxMapper.xml映射文件，读取其中配置的SQL语句 -->
+	<property name="mapperLocations" value="classpath:mybatis/mapper/*.xml" />
+</bean>
+<!-- 4、定义mapper接口扫描器
+	配置所有mapper接口所在的包路径，将来由spring+mybatis框架来为接口提供实现类，
+	以及实现类的实例也由spring框架来创建 -->
+<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	<!-- 扫描所有XxxMapper接口，将接口实例的创建交给spring容器 -->
+	<property name="basePackage" value="com.tedu.dao" />
+</bean>
+<!-- 5.配置需要扫描的包(service层)：spring自动去扫描 base-package下的类， 如果扫描到的类上有 @Controller、@Service、@Component等注解，将会自动将类注册为bean（即由spring创建实例） -->
+<context:component-scan base-package="com.tedu.service"></context:component-scan>
+
+// mybatis核心配置文件
+3.src/main/resources/mybatis/mybatis-config.xml
+<configuration>
+	<!-- 已在spring的配置文件中配置 -->
+</configuration>
+
+// 写mybatis的接口类
+4.src/main/java/com.tedu.dao/XxxMapper.java
+public interface XxxMapper {		
+	// findById方法，注意参数和返回值
+	public Emp findById(Integer id);
+}
+
+// 扫描mybatis的XxxMapper.xml映射文件，读取其中配置的SQL语句
+5.src/main/resources/mybatis/mapper/XxxMapper.xml
+// 到XxxMapper.xml中添加一条sql语句
+// <select>或<update>
+<select resultType="com.tedu.pojo.Xxx" id="wayA">查询
+<update id="wayB">增删改
+占位符 #{}有引号变量类似? ${}无引号变量
+// id为接口方法名
+<select id="findById" resultType="com.tedu.pojo.Xxx">
+	select * from emp where id=#{id}
+</select>
+
+// 加入log4j.properties日志框架
+7.src/main/resources/log4j.properties
+mybatis日志输出工具
+配置好了，会自动加载使用
+
+8.在WEB-INF/web.xml中配置springmvc
+<!-- 配置springmvc, 将所有请求交给springmvc来处理 -->
+<servlet>
+	<servlet-name>springmvc</servlet-name>
+	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	<!-- 配置springmvc核心配置文件的位置，默认Springmvc的配置文件是在WEB-INF目录下，默认的名字为springmvc-servlet.xml，如果要放在其他目录，则需要指定如下配置： -->
+	<init-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:springmvc-config.xml</param-value>
+	</init-param>
+</servlet>
+<!-- 其中的斜杠（/）表示拦截所有请求（除JSP以外）, 所有请求都要经过springmvc前端控制器 -->
+<servlet-mapping>
+	<servlet-name>springmvc</servlet-name>
+	<url-pattern>/</url-pattern>
+</servlet-mapping>
+<!-- 乱码处理过滤器，处理post提交的中文参数乱码问题 -->
+<filter>
+	<filter-name>encodingFilter</filter-name>
+	<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+	<!-- 指定编码集 -->
+	<init-param>
+		<param-name>encoding</param-name>
+		<param-value>utf-8</param-value>
+	</init-param>
+</filter>
+<filter-mapping>
+	<filter-name>encodingFilter</filter-name>
+	<!-- 指定拦截方式为拦截所有请求 -->
+	<url-pattern>/*</url-pattern>
+</filter-mapping>
+
+// springmvc 配置文件
+9.src/main/resources/spring/springmvc-config.xml
+<beans>
+	<!-- 1.配置前端控制器放行静态资源(html/css/js等，否则静态资源将无法访问) -->
+	<mvc:default-servlet-handler />
+	<!-- 2.配置注解驱动，用于识别注解（比如@Controller） -->
+	<mvc:annotation-driven></mvc:annotation-driven>
+	<!-- 3.配置需要扫描的包：spring自动去扫描 base-package 下的类， 如果扫描到的类上有 @Controller、@Service、@Component等注解，将会自动将类注册为bean，
+	将对象的创建交给Spring容器 -->
+	<context:component-scan
+		base-package="com.tedu.controller">
+	</context:component-scan>
+	<!-- 4.配置内部资源视图解析器 prefix:配置路径前缀 suffix:配置文件后缀 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/pages/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+</beans>
+
+// controller层文件
+10.src/main/java/com.tedu.controller/DoorController.java
+/**
+ * @Controller的作用：表示当前类属于Controller层，Controller方法用于处理请求
+ */
+@Controller
+public class DoorController {
+	/*
+	 * @Autowired（自动装配）将当前对象的创建交给spring容器，
+	 * 反射创建XxxMapper实例对象，赋给dao变量
+	 * */
+	@Autowired
+	private DoorMapper dao;
+	 /*
+	 *@RequestMapping("/doorInfo")作用：映射路径和当前方法的对应关系
+	 *访问 主机名/项目名/doorInfo 时，执行该方法
+	 */
+	@RequestMapping("/doorInfo")
+	public String doorInfo(Integer id,Model model) {// 自动获取请求参数
+		// 根据id查询门店信息
+		Door door = dao.findById(id);
+		// 将门店对象存入model中
+		model.addAttribute("door",door);// model，Controller层和jsp的共享域
+		// 转发到门店页面进行数据回显
+		return "door_update";
+		// "forward:/xxx";// 请求转发（一个来回）
+		// "redirect:/xxx";// 重定向（两个来回）
+	}
+	/**
+	 * 通用的页面跳转方法 优先级低
+	 * 通过变量接收浏览器发送的请求资源的名称
+	 * 在方法中return相同名称
+	 * */
+	// 作用：由于优先级低，/xxx会在Controller中没有同名方法时，自动跳转/xxx的jsp页面
+	@RequestMapping("/{pageName}")
+	public String page(@PathVariable String pageName) {
+		return pageName;
+	}
+}
+-------------------------------
+双亲委派机制
+先去最顶层看有没有此类，有就最顶层加载，没有往下，直到AppClassLoader自己加载
+
+AppClassLoader 和 ExtClassLoader extends ClassLoader(abstract)
+
+BootStrapClassLoader没继承ClassLoader，自己c++写的
+
+AppClassLoader.classLoader = ExtClassLoader;
+
+AppClassLoader 和 ExtClassLoader组合关系
+
+自定义加载器
+XxxClassLoader extends ClassLoader(abstract)
+
+作用：
+1.保证基类安全性，基类只由基类加载器加载
+2.不会重复加载
+
+缺点：
+1.效率影响
+
+打破双亲委派机制：
+重写loadClass方法
+
+打破双亲委派必要性：
+1.
+BootStrapClassLoader加载jdbc的Connection类
+Connection的实现类由AppClassLoader加载
+所以父类得委托子类加载
+
+2.
+加密
+
+3.
+热替换
+-------------------------------
+延迟加载，懒加载
+方法：
+1.通过内部类
+
+针对：
+大对象
+-------------------------------
+类加载：
+1.使用类加载器直接加载
+2.构建本类或这个类的子类对象时
+3.访问类中成员时(包含属性和方法)，但也有特殊情况，static final 修饰的（基本数据和String）成员变量
+
+静态代码块的执行：
+class ClassC{
+	static {
+		System.out.println("ClassC");
+	}
+}
+class ClassCC extends ClassC{
+	static {
+		System.out.println("ClassCC");
+	}
+}
+//-XX:+TraceClassLoading
+public class TestClassObject06 {
+    public static void main(String[] args) {
+		int a=ClassCC.c;
+	}
+}
+// 输入ClassC
+父类ClassC是主动执行，执行静态代码块
+子类ClassCC是被动执行，不执行静态代码块
+-------------------------------
+{} 实例代码块
+每次创建对象前会执行，在构造函数前
+-------------------------------
+jvm参数
+最大堆:-Xmx10m
+最小堆:-Xms10m 
+对象逃逸分析:-XX:+DoEscapeAnalysis 
+输出GC信息:-XX:+PrintGC
+-Xmx10m -Xms10m -XX:+DoEscapeAnalysis -XX:+PrintGC
+-------------------------------
+
