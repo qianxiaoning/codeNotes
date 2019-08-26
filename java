@@ -1324,6 +1324,50 @@ JSP只有在第一次被访问时(或者JSP被修改后)，才会被翻译为一
 <!-- 这是一个注释 --> 参与了JSP的翻译过程
 
 以下哪些属于JSP的指令：page，taglib，include
+
+oracle
+删除表 DELETE FROM Student 
+修改表结构 ALTER TABLE 
+truncate 在提交 commit 之前不可回滚
+truncate 不可删除表结构 
+
+DML：data manipulation language 数据操作语言：
+      insert、delete、update、merge
+DDL：data definition language 数据定义语言：
+      create、alter、drop、truncate
+DCL：data control	language 数据控制语言：
+      grant、revoke
+
+Oracle数据库连接URI正确格式：
+jdbc:oracle:thin:@hostname:1521:orcl 
+
+execute方法的返回的是bollean类型
+
+JDBC可以执行的语句：DDL DML DQL 
+
+连接池可以限制客户端的连接数量 
+连接池可以提高系统性能，于查询语句没有关系，不能提高查询语句的执行效率。
+
+查询海量数据的时，Oracle默认每次拿指定数量的结果，将指定数量的结果遍历完后，再拿下一个指定数量的结果
+
+Statement对象close后，由其创建的ResultSet对象将自动的close 
+
+getColumnCount() 返回此 ResultSet 对象中的列数
+
+PreparedStatement和Statement都可以进行批处理操作
+
+PreparedStatement可以存储预编译的Statement，从而提升执行效率 
+
+得到结果集中的第一列数据的代码：rs.getString(1); 
+
+java.sql.SQLException: No suitable driver（URL拼写错误） 
+
+oracle分页不用limit，通过rownum分页先在子查询中查询小于满足条件的最后一条数据的所有记录，当子查询结果集确定后，再过滤出大于满足条件的起始第一条数据的所有记录。
+
+事务四大特性：原子性、隔离性、一致性、持久性
+
+getGeneratedKeys()方法获取刚刚插入数据库的记录的自增主键值，
+返回的结果是ResultSet类型的结果集
 -------------------------------
 io:
 io Input/Output 输入/输出
@@ -1480,7 +1524,7 @@ new T1().start();
 例子2（匿名内部类）：
 new Thread() {
 	public void run() {}
-}.start()
+}.start();
 
 jvm启动main线程，执行main方法，t1.start()启动新线程和main线程并行，等待争夺时间片。
 
@@ -2936,11 +2980,11 @@ public interface XxxMapper {
 </select>
 
 // 加入log4j.properties日志框架
-7.src/main/resources/log4j.properties
+6.src/main/resources/log4j.properties
 mybatis日志输出工具
 配置好了，会自动加载使用
 
-8.在WEB-INF/web.xml中配置springmvc
+7.在WEB-INF/web.xml中配置springmvc
 <!-- 配置springmvc, 将所有请求交给springmvc来处理 -->
 <servlet>
 	<servlet-name>springmvc</servlet-name>
@@ -2973,7 +3017,7 @@ mybatis日志输出工具
 </filter-mapping>
 
 // springmvc 配置文件
-9.src/main/resources/spring/springmvc-config.xml
+8.src/main/resources/spring/springmvc-config.xml
 <beans>
 	<!-- 1.配置前端控制器放行静态资源(html/css/js等，否则静态资源将无法访问) -->
 	<mvc:default-servlet-handler />
@@ -2992,19 +3036,50 @@ mybatis日志输出工具
 	</bean>
 </beans>
 
-// controller层文件
-10.src/main/java/com.tedu.controller/DoorController.java
+// service层文件接口
+9.src/main/java/com.tedu.service/DoorService.java 
+public interface DoorService {
+	/**
+	 * 根据id查询门店信息
+	 */
+	public Door findById(Integer id);
+}
+
+// service层文件实现类
+10.src/main/java/com.tedu.service/DoorServiceImpl.java
 /**
- * @Controller的作用：表示当前类属于Controller层，Controller方法用于处理请求
+ * @Service的作用：表示当前类属于Service层，Service层对数据操作，增删改查，事务控制
+ */
+ /* spring会扫描service包下的所有类
+ * 将类上带有@Service注解的类, 自动注册到spring容器中, 即由spring创建该类的实例*/
+@Service 
+public class DoorServiceImpl implements DoorService {
+	/*
+	 * @Autowired（自动装配）将当前对象的创建交给spring容器，
+	 * 反射创建DoorMapper实例对象，赋给doorMapper变量
+	 * */
+	@Autowired
+	DoorMapper doorMapper;
+	@Override
+	public Door findById(Integer id) {
+		Door door = doorMapper.findById(id);
+		return door;
+	}
+}
+
+// controller层文件
+11.src/main/java/com.tedu.controller/DoorController.java
+/**
+ * @Controller的作用：表示当前类属于Controller层，Controller层用于处理请求，获取* 前端参数，处理前端参数，返回service处理后的数据
  */
 @Controller
 public class DoorController {
 	/*
 	 * @Autowired（自动装配）将当前对象的创建交给spring容器，
-	 * 反射创建XxxMapper实例对象，赋给dao变量
+	 * 反射创建DoorService实例对象，赋给doorService变量
 	 * */
 	@Autowired
-	private DoorMapper dao;
+	private DoorService doorService;
 	 /*
 	 *@RequestMapping("/doorInfo")作用：映射路径和当前方法的对应关系
 	 *访问 主机名/项目名/doorInfo 时，执行该方法
@@ -3012,25 +3087,41 @@ public class DoorController {
 	@RequestMapping("/doorInfo")
 	public String doorInfo(Integer id,Model model) {// 自动获取请求参数
 		// 根据id查询门店信息
-		Door door = dao.findById(id);
+		Door door = doorService.findById(id);
 		// 将门店对象存入model中
 		model.addAttribute("door",door);// model，Controller层和jsp的共享域
 		// 转发到门店页面进行数据回显
-		return "door_update";
+		return "door_update";// 路径是doorInfo，jsp文件名就是door_info
 		// "forward:/xxx";// 请求转发（一个来回）
 		// "redirect:/xxx";// 重定向（两个来回）
-	}
+	}	
+}
+src/main/java/com.tedu.controller/PageController.java
+@Controller
+public class DoorController {
 	/**
 	 * 通用的页面跳转方法 优先级低
-	 * 通过变量接收浏览器发送的请求资源的名称
-	 * 在方法中return相同名称
+	 * /{pageName}会接收浏览器/后面的值
+	 * @PathVariable 会将/{pageName}值赋值给形参pageName再返回
 	 * */
 	// 作用：由于优先级低，/xxx会在Controller中没有同名方法时，自动跳转/xxx的jsp页面
-	@RequestMapping("/{pageName}")
-	public String page(@PathVariable String pageName) {
-		return pageName;
+	@RequestMapping("/{page}")
+	public String page(@PathVariable String page) {
+		return page;
 	}
 }
+
+除了pojo和interface不用@Xxx注释，
+Controller类和ServiceImpl类开头都要加@Xxx注释
+
+mvc流程：
+Door(pojo实体类) =>
+DoorController(匹配请求，接收处理前端参数，返回service结果) =>
+DoorService(service接口) =>
+DoorServiceImpl(service实现类，对数据操作，增删改查，事务控制) =>
+DoorMapper(DoorMapper接口) =>
+DoorMapper.xml(对应Mapper接口的sql语句)
+door_update.jsp(数据显示页面)
 -------------------------------
 双亲委派机制
 先去最顶层看有没有此类，有就最顶层加载，没有往下，直到AppClassLoader自己加载
@@ -3070,7 +3161,8 @@ Connection的实现类由AppClassLoader加载
 -------------------------------
 延迟加载，懒加载
 方法：
-1.通过内部类
+1.通过静态内部类
+访问类的静态方法时，静态内部类不加载
 
 针对：
 大对象
@@ -3111,4 +3203,40 @@ jvm参数
 输出GC信息:-XX:+PrintGC
 -Xmx10m -Xms10m -XX:+DoEscapeAnalysis -XX:+PrintGC
 -------------------------------
+Java中对象的引用方式
+1)强引用
+Object o1=new Object();
 
+2)弱引用(WeakReference<T>) 只要有GC时,弱引用引用的对象就会被回收。
+WeakReference<ClassB> wr = new WeakReference<ClassB>(new ClassB());
+wr.get();// 取对象
+
+3)软引用(SoftReference<T>) 内存不足时（full gc）,软引用引用的对象自动被回收。
+SoftReference<ClassB> sr = new SoftReference<ClassB>(new ClassB());
+wr.get();// 取对象
+
+4)虚引用(PhantomReference<T>) 当对象被回收时,可以得到通知。
+-------------------------------
+ThreadLocal 对象 线程内部单例
+ * 此对象提供了一种线程绑定机制
+ * 将某个对象绑定到当前线程，也可以从当前线程获取某个对象。
+ * 借助此对象可以实现线程内部单例。
+ * 一个线程共用一个对象
+ * 实现未加锁、未每次方法生成一个对象，实现线程安全且占较少内存方法
+例子：
+private static ThreadLocal<SimpleDateFormat> td=
+new ThreadLocal<SimpleDateFormat>() {
+	//当从当前线程获取SimpleDateFormat对象时
+	//假如当前没有此对象，则调用initialValue方法
+	//创建对象，并将对象绑定到当前线程。
+	@Override
+	protected SimpleDateFormat initialValue() {
+		System.out.println("initialValue()");
+		return new SimpleDateFormat("yyyy-MM-dd");
+	}
+};
+public static String format(Date date) {
+	//从当前线程获取SimpleDateFormat 
+	SimpleDateFormat sdf=td.get();
+	return sdf.format(date);
+}
