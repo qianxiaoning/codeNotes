@@ -540,6 +540,23 @@ parse(日期字符串)  // 得到Date实例
 
 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 Date d = sdf.parse("1991-04-12");
+
+Arrays.copyOf() 返回新数组
+int[] arr1 = {1, 2, 3, 4, 5}; 
+int[] arr2 = Arrays.copyOf(arr1, 5);
+int[] arr3 = Arrays.copyOf(arr1, 10);
+arr2// 1 2 3 4 5 
+arr3// 1 2 3 4 5 0 0 0 0 0
+
+System.arraycopy(Object src,int srcPos,Object dest,int destPos,int length);
+//src源数组，srcPos要复制的起始位置，
+//dest目的数组，目的数组放置的起始位置，length复制的长度
+String src[] = new String[] {"1", "2", "3", "4"};
+String dest[] = new String[]{null, null, null, null, null};
+System.arraycopy(src, 0, dest, 0, 4);
+// dest { "1", "2", "3", null }
+System.arraycopy(src, 0, src, 1, 3);
+// src { "1", "1", "2", "3" }
 -------------------------------
 八种基本类型对应的包装类
 Byte Short Integer Long
@@ -714,7 +731,7 @@ private更便于维护修改，不对其他代码造成影响
 3.在前面增删数据，操作繁琐
 
 三个集合工具：
-LinkedList
+LinkedList// 先进先出，栈结构
 ArrayList
 HashMap
 
@@ -895,6 +912,9 @@ x,y,z=>B=>A 多个父类
 interface A extends X,Y,Z{
 
 }
+jdk8后
+7.可以放入default实现方法
+8.可以放入static静态方法
 		
 例子：
 机器人有个武器接口，接口能接刀，剑，枪
@@ -1116,7 +1136,7 @@ class A{
 }
 A a = new A();
 Weapon w = a.f();// 真实类型是子类实例
-4.匿名内部类（常用）
+4.匿名内部类（常用）// 匿名类是子类
 class A{
 	void f(){
 		// 匿名内部类  是赋值所以要有;号
@@ -1138,6 +1158,23 @@ Weapon w = new Weapon();
 Weapon w = new A(){
 
 };
+例子：
+interface IE{
+	void show();
+}
+public static void main(String[] args) {
+	new IE() {
+		@Override
+		public void show() {
+			System.out.println("show-01");
+		}
+	}.show();
+}
+// 下面就是个IE的子类实现类 的缩写
+IE(){
+	@Override
+	public void show() {}
+}
 -------------------------------
 方法重写：
 1.子类重写父类方法 访问范围不能降低，能提高
@@ -1368,6 +1405,141 @@ oracle分页不用limit，通过rownum分页先在子查询中查询小于满足
 
 getGeneratedKeys()方法获取刚刚插入数据库的记录的自增主键值，
 返回的结果是ResultSet类型的结果集
+
+MVC包括，视图层，模型层，控制层
+
+<context:component-scan base-package="com.tarena"/>
+容器会扫描com.tarena包及其子包下面的类
+
+Spring的事务支持并不依赖于Java EE环境
+
+IOC是控制反转，是将代码中的操控权转到容器里去控制，不是由程序代码直接操控
+
+bean的生命周期：
+销毁方法只适用于singleton模式的bean
+不是每个bean都必须提供相应的生命周期方法
+
+<bean id="bar1" class="ioc.autowire.Bar" autowire="byName"/>
+容器会采取自动装配的方式来建立依赖关系
+byName指定的是查找与属性名称一致的bean，调用set方法来完成注入
+autowire的值还可以是byType和constructor
+因为本题中bar1是bean的id，所以是唯一的，所以不可能找到多个符合要求的bean。
+
+在Spring中，任何的Java类和JavaBean都可以被当成Bean处理，这些Bean通过容器管理和使用
+Spring容器有BeanFactory和ApplicationContext等类型。
+
+IOC 对象只是被动的接收依赖对象
+
+<property set注入
+<constructor-arg 构造注入
+
+spring表达式语法非常类似el表达式。
+
+数据库系统DBS包含 数据库DB，和数据库管理系统DBMS
+
+删除一列
+alter table tableName drop columnName; 
+
+属于DML的是insert 支持事务
+
+DDL 数据定义语言: create drop alter truncate 不支持事务
+DML 数据操作语言: insert update delete 支持事务
+DQL 数据查询语言: select 不支持事务 
+TCL 事务控制语言: commit rollback 等 
+DCL 数据控制语言: 分配用户权限
+
+索引是用来提高查询速度的技术,类似一个目录
+索引会占用磁盘空间,所以创建时需谨慎,根据查询需求和表结构来决定创建什么索引
+索引需要建立在大量数据的表中,如果数据量不够大,有可能会降低查询效率
+
+视图：
+表和视图都是数据库中的对象 
+原表的数据改变时，视图中的数据也会随之改变 
+视图: 数据库中存在多种对象，表和视图都是数据库中的对象,创建视图时名称不能和表名重名,视图实际上是一段sql查询语句的映射,可以理解成视图是一张虚拟的表,表中的数据会随着原表的改变而改变
+
+select语句中的条件，年龄between 22 and 26
+包括22岁和26岁 
+
+select * from person where age in(25,28,30,22); 
+
+默认升序, 指定升序是:asc
+
+判断null
+update emp set bonus=ifnull(bonus,0); 
+update emp set bonus=0 where bonus is null; // null用is判断
+
+Web应用的目录结构。根目录中可以存放html,jsp,css文件，js文件等等
+
+ServletConfig接口默认实现GenericServlet 
+
+web.xml 片断正确地声明 servlet
+初始化参数<init-param>只对应一个Servlet。
+<context-param>对应整个web应用
+
+动态网站技术 CGI  PHP  ASP 
+
+J2EE 现在更多使用的名字是 Java EE 
+JSP 是 JavaEE 设计模式 MVC 中的显示部分，
+Servlet 是控制部分，
+WebService 是 JavaEE 的服务器
+
+request读取路径信息，不是response
+
+<servlet>标签包含servlet-name和servlet-class
+
+Servlet 的生命周期
+service()方法响应客户端发出的请求
+Serlvet 生命周期的三个方法:init()-->service()-->destroy()。 
+Servlet生命周期是由Servlet容器管理的
+调用初始化init()方法时需要传入实现了ServletConfig接口的实例
+
+可以在一个页面中使用多个<%@ page %>指令。 
+
+<jsp:javabean>不属于jsp标签
+
+运行 jsp 需要安装tomcat 和WebLogic  服务器
+Apache 是 PHP 程序运行的服务器
+
+response是用来网页传回用户端的回应
+
+Application 存储 每一个网站访问用户都要访问的变量
+
+Application实现跨机共享数据的JSP对象
+
+JSP 有九个隐藏对象
+request  response  out session  application  pageContext paget  exception  config 对象
+
+隐式对象是 WEB 容器加载的一组类的实例，可以直接在 JSP 页面使用 
+
+session 使user对象中一直存在于会话中，直至其终止或被删除为止
+
+cookie 不能在不同用户之间共享数据，ServletContext可以
+
+HttpSession接口位于javax.servlet.http包中
+
+DHTML不属于AJAX范畴
+
+abort不属于XMLHttpRequest 对象的属性
+responseText 属于
+
+jQuery 	contains()： 匹配包含给定文本的元素。 它所传入的参数是一个用以查找的字符串。
+
+<title>是head标签部分里必不可少的元素
+
+css中clear
+指明该元素周围不可出现浮动元素
+
+以下哪一条Javascript语句会产生运行错误？
+var obj=(); 
+
+undefined值是通过null派生出来的，==时它会自动转化为null，所以返回true
+
+js五种基本类型（原始类型）：String Boolean Number null undefined
+
+js中 同名函数， 后面的函数会覆盖前面定义的函数
+
+setTimeout(A,1000);
+setTimeout({A();},1000);
 -------------------------------
 io:
 io Input/Output 输入/输出
@@ -3240,3 +3412,11 @@ public static String format(Date date) {
 	SimpleDateFormat sdf=td.get();
 	return sdf.format(date);
 }
+-------------------------------
+LinkedHashMap的removeEldestEntry方法
+重写removeEldestEntry，返回true时，当put进新的值会移除该map中最老的键和值。
+
+LinkedHashMap<Object, Object>(size, .75F, true);
+第三个参数false，基于插入删除，true基于访问删除
+
+每次keyMap.put(key, key);时触发内部removeEldestEntry方法，参数为新增的键值对

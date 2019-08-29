@@ -50,13 +50,13 @@ ctrl+f11 运行代码快捷键
 f11 debug运行
 alt+shift+r 改名
 shift按住，鼠标悬浮在方法名上 查看调用的方法
-ctrl+t 看继承结构
+ctrl+t 看继承结构，被谁实现了
+ctrl+shift+t 打开所有仓库类
 ctrl+o 显示成员大纲
 双击大括号 复制方法内部所有代码
 ctrl+n 新建文件
 alt+shift+s generate construct from filed 生成构造函数
 包名上按f2 改包名
-ctrl+shift+t 快速打开类
 alt+shift+m 选中区域提取为方法
 ctrl+shift+o 导包
 syst 打印类的main方法
