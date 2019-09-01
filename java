@@ -1485,7 +1485,11 @@ WebService 是 JavaEE 的服务器
 
 request读取路径信息，不是response
 
-<servlet>标签包含servlet-name和servlet-class
+配置一个Servlet需要
+<servlet></servlet>和<servlet-mapping></servlet-mapping>标签
+
+<servlet>标签包含servlet-name，servlet-class，init-param
+<servlet-mapping>标签包含servlet-name，url-pattern
 
 Servlet 的生命周期
 service()方法响应客户端发出的请求
@@ -1540,6 +1544,19 @@ js中 同名函数， 后面的函数会覆盖前面定义的函数
 
 setTimeout(A,1000);
 setTimeout({A();},1000);
+
+prepareStatement（）方法来构建一个PreparedStatement接口	
+
+每个对象都有唯一的对象锁，而不是多个
+
+Synchronized声明不会被继承，如果一个用synchronized修饰的方法被子类覆盖，那么子类中这个方法不在保持同步，除非用synchronized修饰。
+
+当一个线程开始执行同步代码块时，并不意味着必须以不间断的方式运行，进入同步代码块的线程可以执行Thread.sleep()或执行Thread.yield()方法，此时它并不释放对象锁，只是把运行的机会让给其他的线程。 
+
+FileNotFoundException（文件拒绝访问）  是检查型异常
+ClassCastException（java强制类型转换异常） 是运行型异常 
+
+24题
 -------------------------------
 io:
 io Input/Output 输入/输出
