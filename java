@@ -557,6 +557,9 @@ System.arraycopy(src, 0, dest, 0, 4);
 // dest { "1", "2", "3", null }
 System.arraycopy(src, 0, src, 1, 3);
 // src { "1", "1", "2", "3" }
+
+// 判断xx是否是Collection类
+Collection.class.iSAssignableFrom(xx);
 -------------------------------
 八种基本类型对应的包装类
 Byte Short Integer Long
@@ -1270,7 +1273,7 @@ wait 后进入等待此对象的等待锁定池，只有针对此对象发出 no
 
 Java 提供对多线程同步提供语言级的支持 
 
-线程生命周期：新建状态、可运行状态、运行状态、阻塞状态和终止状态
+线程生命周期：新建状态、可运行状态（就绪状态）、运行状态、阻塞状态和终止状态
 
 当一个线程因为抢先机制而停止运行，只能在轮换队列中排队而不能排在前面。
 
@@ -1556,7 +1559,25 @@ Synchronized声明不会被继承，如果一个用synchronized修饰的方法�
 FileNotFoundException（文件拒绝访问）  是检查型异常
 ClassCastException（java强制类型转换异常） 是运行型异常 
 
-24题
+属于InetAddress类的方法的是
+获取主机对象：getLocalHost()
+主机名：getHostName()
+主机Ip地址：getHostAddress()
+没有getName() 
+
+HTTP协议只规定了浏览器和服务器之间如何通信，而request和response对象是由javaee规范规定的、由javaweb容器负责创建的。 
+
+一个Servlet中不能转发两次
+
+请求转发的过程中转发前写入response中的实体内容数据会丢失掉，最终输出的将是请求转发过程中的最后一个节点资源的数据输出。 
+
+request对象的getSession(false)方法用于获取一个已存在的session, 如果没有session, 将会返回null 
+
+对于get方式提交的请求参数，我们需要自己手动的经过将乱码先编码再解码的过程解决乱码。 
+
+线程run()方法可以产生必须退出的标志来停止一个线程。
+
+request的功能有 获取Session对象 
 -------------------------------
 io:
 io Input/Output 输入/输出
@@ -2871,6 +2892,132 @@ List<? extends Number> data 限定了参数泛型上限为Number
 
 类型通配符下限
 通过形如 List<? super Number>来定义，表示类型只能接受Number及其三层父类类型，如 Object 类型的实例
+
+泛型作用：
+1.灵活传参
+2.后续不用强转
+
+泛型接口
+interface Container<T>{
+	void add(T t);
+	T get(int indexs);
+}
+类继承泛型接口时：两种写法
+1.给接口传参，类不用泛型了
+class AbsContainer implements Container<String>{
+	void add(String t);// t是String类型
+	String get(int indexs);
+}
+2.不给接口传参，类后面也得写泛型<T>
+class AbsContainer<T> implements Container<T>{
+	void add(T t);
+	T get(int indexs);
+}
+另：此时String会被看做泛型，而不是类型
+class AbsContainer<String> implements Container<String>{
+	void add(String t);// t不是String类型
+	String get(int indexs);
+}
+
+应用举例：
+1.String类型的map对象
+class StringMap extends HashMap<String,String>{}
+2.key是String，值不确定，此时可以用泛型
+class StringMap<V> extends HashMap<String,V>{}
+
+单泛型
+interface Container<T>{
+	void add(T t);
+	T get(int indexs);
+}
+多泛型，有两个泛型参数
+interface Task<Param,Result>{
+	Result execute(Param arg1);
+}
+
+泛型常用方式三种：
+1.泛型类
+class A<T,...>{}
+2.泛型接口
+interface A<T,...>{}
+3.泛型方法
+访问修饰符 <T> 返回值类型 A(参数,...){}
+
+类泛型仅作用于实例，不作用于静态方法
+
+泛型方法：
+class MybatisSession{
+	// 方法返回值有泛型
+	public <T> T newInstance(Class<T> cls){}
+	<T> T selectList(String sql){}
+	public static <T> void sort(List<T> List){}
+}
+
+泛型方法避免强转示例：
+// 未用泛型
+class ObjectFactory{
+	public Object newInstance(Class<?> cls)
+}
+public class Test{
+	...main(){
+		ObjectFactory of = new ObjectFactory();
+		Date obj=(Date)of.newInstance(Date.class);//需要强转
+	}
+}
+// 用了泛型
+class ObjectFactory{
+	public <T> T newInstance(Class<T> cls)
+}
+public class Test{
+	...main(){
+		ObjectFactory of = new ObjectFactory();
+		Date obj=of.newInstance(Date.class);//不需要强转
+	}
+}
+
+泛型通配符?
+代表一种任意的参数类型（实参类型）
+
+上边界 -String- CharSequence
+传入必须是CharSequence的子类
+List<? extends CharSequence> list = new ArrayList<String>();
+
+下边界 Integer -Number-
+传入必须是Integer的父类
+List<? super Integer> list = new ArrayList<Number>();
+
+List<Object> list = new ArrayList<String>(); 错
+String或者Class等等是放不入Object泛型中的
+问号?可以
+List<?> list = new ArrayList<String>(); 对
+或者指定上界
+List<? extends Object> list = new ArrayList<String>(); 对
+
+泛型是编译类型，运行时无效，运行时都会变成Object
+泛型擦除（规避泛型）
+例子：
+1.List<String> 放入100
+List<String> list = ArrayList<>();
+list.add(100);// 加不了
+思路用反射，因为反射在运行时执行，绕过泛型的编译检查
+Class<?> cls = list.getClass();
+Method method = cls.getDeclaredMethod("add",Object.class);
+method.invoke(list,100);
+// 这就将100放入了list
+
+2.List<String> 100放在第一个位置
+...
+Method method = cls.getDeclaredMethod("add",int.class,Object.class);
+method.invoke(list,0,100);
+
+泛型警告擦除
+定义时有泛型，应该写Class<?>
+省略<?>会有警告，写@SuppressWarnings("rawtypes/unchecked");忽略警告
+Class cls = List.getClass();
+
+数组不支持泛型
+Object[] array = new Object[]{1,2}; //对
+T[] array = new T[]{1,2}; //错，不能这么写
 -------------------------------
 mvc设计模式
 通用软件编程思想：
@@ -3437,3 +3584,370 @@ LinkedHashMap<Object, Object>(size, .75F, true);
 第三个参数false，基于插入删除，true基于访问删除
 
 每次keyMap.put(key, key);时触发内部removeEldestEntry方法，参数为新增的键值对
+-------------------------------
+mybatis进阶
+1.依赖：
+mysql-connector-java 8.0.17
+mybatis 3.5.2
+junit 4.12
+
+2.mybatis核心配置 xml方式配置
+src/main/resources/mybatis-configs.xml
+头...
+<configuration>
+	<!-- 开发环境 -->
+	<environments default="development">
+		<environment id="development">
+			<!-- 事务处理JDBC -->
+			<transactionManager type="JDBC" />
+			<!-- 数据源：mybatis自带连接池，PooledDataSource -->
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.cj.jdbc.Driver" />
+				<property name="url"
+					value="jdbc:mysql:///database?serverTimezone=GMT%2B8" />
+				<property name="username" value="root" />
+				<property name="password" value="root" />
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+		<mapper resource="mapper/GoodsMapper.xml"></mapper>
+	</mappers>
+</configuration>
+
+3.测试类 用xml构建SqlSessionFactory
+src/test/java/包/TestBaseWithXml.java
+public class TestBaseWithXml {	
+	//此对象创建SqlSession(通过此对象 实现与数据库之间的会话)
+	protected SqlSessionFactory sqlSessionFactory;	
+	@Before//此方法在@Test注解修饰的方法之前执行, 通常用于做一些初始化操作
+	public void init() throws IOException {
+		//mybatis中对象Resources
+		//InputStream流对象
+		InputStream in = Resources.getResourceAsStream("mybatis-configs.xml");
+		//SqlSessionFactory对象
+		//接口：SqlSessionFactory
+		//接口实现类：DefaultSqlSessionFactory
+		sqlSessionFactory = new SqlSessionFactoryBuilder().build(in);
+		System.out.println(sqlSessionFactory);
+	}
+	@Test
+	public void testSqlSessionConnection() {
+		SqlSession session = sqlSessionFactory.openSession();
+		//接口：SqlSession
+		//接口实现类：sqlSessionFactory.openSession();
+		//如何看接口的实现类：DefaultSqlSession
+		//1.session.getClass()
+		//2.在那行打断点 Debug As 鼠标移到session上
+		//DefaultSqlSession默认autoCommit=false，需要手动提交事务
+		Connection conn = session.getConnection();
+		System.out.println(conn);
+	}
+}
+参照SqlSessionFactory和SqlSession对外提供接口，对内自己写实现
+
+4.pojo类
+src/main/java/pojo包/Goods.java
+public class Goods implements Serializable{
+	private static final long serialVersionUID = -6842819582290804587L;
+	private Long id;
+	private String name;
+	private String remark;
+	private Date createdTime;
+	setter/getter/toString...
+}
+
+5.映射文件mapper.xml
+src/main/resources/mapper/GoodsMapper.xml
+头...
+<mapper namespace="com.cy.pj.goods.dao.GoodsDao">
+	<select id="findPageObjects" resultType="com.cy.pj.goods.pojo.Goods">
+		select *
+		from tb_goods
+		limit #{startIndex},#{pageSize}
+	</select>	
+	<!--系统底层会将每个元素封装为一个 MappedStatement对象(映射语句对象) -->
+	<insert id="insertObject">
+		insert into tb_goods
+		(id,name,remark,createdTime)
+		values
+		(#{id},#{name},#{remark},now())
+	</insert>
+</mapper>
+
+6.测试类 
+src/test/java/包/TestGoodsDao01.java
+public class TestGoodsDao01 extends TestBaseWithXml {
+	//直接通过xml，session.selectList(statement,map);
+	@Test// 单元测试方法不能有参数、返回值、private修饰，否则No tests异常
+	public void testFindPageObjects01() { 
+		//1.获取session对象
+		SqlSession session = sqlSessionFactory.openSession();//openSession没有创建连接
+		//2.执行删除操作
+		String statement="com.cy.pj.goods.dao.GoodsDao.findPageObjects";
+		try {
+			Map<String,Object> map=new HashMap<String,Object>();
+			map.put("startIndex", 0);
+			map.put("pageSize", 3);
+			//List<Goods> list=session.selectList(statement,new Object[]{0,3}); 
+			//sql中limit #{array[0]},#{array[1]}
+			List<Goods> list=session.selectList(statement,map);//业务方法时才创建的连接
+			//sql中limit #{startIndex},#{pageSize}。map中的kay，或者pojo中的getXxx()
+			System.out.println(list);
+			//3.提交事务
+			session.commit();//connection.commint，真正commit的是connection对象
+			//4.释放资源
+		}finally {
+			session.close();//把连接放入连接池
+		}
+	}
+	//通过接口，session.getMapper(GoodsDao.class);
+	@Test
+	public void testFindPageObjects02() { 
+		//1.获取session对象
+		SqlSession session = 
+		sqlSessionFactory.openSession();
+		try {
+			//2.执行删除操作
+			//有了接口的方法，1.不用手动提供全路径，2.创建map对象
+			GoodsDao gDao=session.getMapper(GoodsDao.class);
+			List<Goods> list=gDao.findPageObjects(0, 3);
+			System.out.println(list);
+			//3.提交事务
+			session.commit();//connection.commint
+			//4.释放资源
+		}finally {
+			session.close();
+		}
+	}	
+}
+
+7.dao接口
+src/main/java/包/GoodsDao.java
+public interface GoodsDao {//接口的包+接口名要=mapper.xml中的namespace
+	//简单sql，不用mapper映射文件，接口中用注解也行
+	@Select("select count(*) from tb_goods")
+	int getRowCount();
+
+	//List<Goods> findPageObjects(
+	//	@Param("startIndex") int startIndex,
+	//	@Param("pageSize") int pageSize
+	//);
+	//对应的xml：list #{arg0},#{arg1}
+	List<Goods> findPageObjects(
+		@Param("startIndex") int startIndex,
+		@Param("pageSize") int pageSize
+	);
+	//对应的xml：limit #{startIndex},#{pageSize}
+}
+
+8.测试类 不用xml构建SqlSessionFactory，用java构建SqlSessionFactory
+src/test/java/包/TestBaseWithJava.java
+public class TestBaseWithJava {
+    protected SqlSessionFactory sqlSessionFactory;
+	@Before
+	public void init() {
+		//1.构建数据源对象
+		PooledDataSource dataSource=new PooledDataSource();
+		dataSource.setDriver("com.mysql.cj.jdbc.Driver");
+		dataSource.setUrl("jdbc:mysql:///dbgoods?serverTimezone=GMT&characterEncoding=utf8");
+		dataSource.setUsername("root");
+		dataSource.setPassword("root");
+		//2.创建事务管理工厂
+		JdbcTransactionFactory transactionFactory=new JdbcTransactionFactory();
+		//3.创建一个环境对象
+		Environment env=new Environment("development",transactionFactory, dataSource);
+		//4.创建配置对象
+		Configuration config=new Configuration(env);
+		//注册Dao
+		config.addMapper(GoodsDao.class);
+		//5.创建sqlSessionFactory对象
+		sqlSessionFactory=new SqlSessionFactoryBuilder().build(config);
+	}
+	@Test
+	public void testConnection(){
+		Connection conn=sqlSessionFactory.openSession().getConnection();
+		System.out.println(conn);
+	}
+}
+-------------------------------
+spring进阶
+IOC控制反转
+.class->BeanFactory->Bean
+资源整合源于IOC模块，IOC要实现对象生命周期的管理
+创建对象，销毁对象
+
+xml配置
+ClassPathXmlApplicationContext读spring-config.xml
+<bean class="">
+注解配置
+AnnotationConfigApplicationContext读SpringConfig.java
+@ComponentScan("com.spring")
+
+1.pom依赖
+spring-context 5.1.9.RELEASE
+junit 4.12
+
+2.java配置类
+src/main/java/com.cy.spring.config/SpringConfig //代替spring-configs.xml
+//@ComponentScan 告诉spring容器从指定包及子包进行bean的扫描
+//这里面仅做包扫描和启动配置
+@ComponentScan("com.cy.spring.beans")
+public class SpringConfig {
+
+}
+
+3.测试基类
+src/test/java/包/TestBase
+public class TestBase {
+	protected AnnotationConfigApplicationContext ctx;
+	@Before
+	public void init() {
+		ctx = new AnnotationConfigApplicationContext(SpringConfig.class);
+	}
+	@After
+	public void close() {
+		ctx.close();
+	}
+	@Test
+	public void testCtx() {
+		System.out.println(ctx);
+	}
+}
+
+4.创建DefaultCache对象交给Spring容器管理
+src/main/java/com.cy.spring.beans/DefaultCache
+@Lazy //延迟加载，不在启动时创建
+@Scope("singleton") //bean的作用域:1)singleton (单例作用域-默认,会存储到池中)2)prototype (多例作用域,每次获取都创建新对象)
+@Component //此类由spring管理，@Controller,@Service,...
+public class DefaultCache {
+	 public DefaultCache() {
+		 System.out.println("DefaultCache()");
+	 }
+	 //生命周期方法
+	 @PostConstruct //告诉spring 此对象初始化后执行init方法
+	 public void init() {
+		 System.out.println("init()");
+	 }
+	 @PreDestroy//告诉spring 此对象容器销毁时执行close方法
+	 public void close() {
+		 System.out.println("close()");
+	 }
+}
+
+5.测试类 测试DefaultCache
+src/test/java/包/TestDefaultCache
+public class TestDefaultCache extends TestBase {
+	@Test
+	public void testDefaultCahce() {		
+		//getBean("类名")返回Object，需要强转
+		//getBean("类名",类型)返回泛型T，不用强转
+		DefaultCache cache01=ctx.getBean("defaultCache",DefaultCache.class);
+		System.out.println(cache01);
+		//junit中的一个类Assert断言，为null异常，为true继续执行
+	    Assert.assertNotEquals(null, cache01);
+	    DefaultCache cache02=ctx.getBean("defaultCache",DefaultCache.class);
+	    Assert.assertNotEquals(null, cache02);
+	    System.out.println(cache01==cache02);//单例true
+	}
+}
+
+spring+DRUID连接池：
+spring+HikariCP连接池：
+6.pom依赖
+mysql-connection-java 8.0.17
+druid 1.1.19
+HikariCP 3.3.1
+
+7.数据源配置类
+src/main/java/com.cy.spring.beans/DataSourceConfig.java
+@Configuration//第三方资源给spring管理方式。自己写的用@Component
+public class DataSourceConfig {    
+	@Scope("singleton")
+	//@Bean用于描述第三方资源对象，描述的方法的返回值可以存储到Spring容器
+	//@Bean可以指定生命周期方法，对象的初始化，资源的销毁操作
+	@Bean(value="druid",initMethod="init",destroyMethod="close")
+	public DataSource newDruid() {
+		DruidDataSource ds=new DruidDataSource();
+		ds.setUrl("jdbc:mysql:///dbgoods?serverTimezone=GMT");
+		ds.setUsername("root");
+		ds.setPassword("root");
+		ds.setMaxWait(3000);
+		return ds;
+	}
+	@Lazy(value=false)//实时加载
+	@Bean(value="hikari",destroyMethod="close")
+	public DataSource newHiKariCP() {
+		HikariDataSource hds= new HikariDataSource();
+		hds.setJdbcUrl("jdbc:mysql:///test?serverTimezone=GMT");
+		hds.setUsername("root");
+		hds.setPassword("root");
+	    return hds;
+	}
+}
+
+8.测试上面的DataSource
+src/test/java/包/TestDataSource
+public class TestDataSource extends TestBase {
+	@Test
+	public void testDruid() throws Exception {
+		//DataSource ds = ctx.getBean(DataSource.class);
+		//getBean时还可以指定名字，默认名字是方法名"newDruid"
+		//也可以用@Bean(value="xxx")中的value值，如"druid"
+		DataSource ds = ctx.getBean("druid", DataSource.class);
+		System.out.println(ds.getConnection());
+	}
+	@Test
+	public void testHiKariCP() throws Exception {
+		//有两个DataSource时，必须指定名字"hikari"
+		DataSource ds = ctx.getBean("hikari", DataSource.class);
+		System.out.println(ds.getConnection());
+	}
+}
+
+spring IOC应用原理分析
+控制反转，谁控制谁，控制权的变化
+解耦方式：
+1.耦合于接口
+2.耦合于工厂
+spring中耦合于工厂BeanFactory
+对象与对象之间耦合于接口
+
+spring Bean工厂的初始化
+1.基于xml方式
+2.基于注解方式
+
+spring中两大map对象
+1.一个用来存储Bean的配置信息
+2.一个用来存储Bean的实例信息
+
+Bean对象的创建
+1.未实现FactoryBean接口（直接构造方法）
+2.实现FactoryBean接口（调用FactoryBean对象的getObject方法），如myBatis的SqlSessionFactoryBean
+
+两大bean对象的描述方式
+1.xml <bean id="xx" class="xx.xx">
+2.注解@Xxxx
+@Component:
+	@Bean描述方法，第三方资源
+	@Controller修饰控制层
+	@Respository修饰数据层
+	@Service修饰业务层
+@Configuration:
+	@Bean
+
+spring中Bean对象的依赖注入DI
+通过set方法、构造方法为对象属性赋值的过程
+1.手动方式
+2.反射方式，自动依赖注入
+
+主线程（producer生产者）分配任务到容器队列中
+工作线程（consumer消费者）从容器中取
+
+比如：
+service耦合于dao层的接口，但是注入的是dao层的实现
+接口是稳定的
+
+bean对象依赖注入实践
+
+

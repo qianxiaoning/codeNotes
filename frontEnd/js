@@ -2070,3 +2070,5 @@ parseInt('23',10); // 返回23
 2.把10进制数转为x进制数
 (3).toString(x);
 (3).toString(2);// 返回"111"
+
+debugger js打断点
