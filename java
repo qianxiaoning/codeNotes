@@ -3771,7 +3771,7 @@ public class TestBaseWithJava {
 	}
 }
 -------------------------------
-spring进阶
+spring原理
 IOC控制反转
 .class->BeanFactory->Bean
 资源整合源于IOC模块，IOC要实现对象生命周期的管理
@@ -3784,12 +3784,144 @@ ClassPathXmlApplicationContext读spring-config.xml
 AnnotationConfigApplicationContext读SpringConfig.java
 @ComponentScan("com.spring")
 
+spring IOC应用原理分析
+控制反转，谁控制谁，控制权的变化
+解耦方式：
+1.耦合于接口
+2.耦合于工厂
+spring中耦合于工厂BeanFactory
+对象与对象之间耦合于接口
+
+spring Bean工厂的初始化
+1.基于xml方式
+2.基于注解方式
+
+spring中两大map对象
+1.一个用来存储Bean的配置信息
+2.一个用来存储Bean的实例信息
+
+Bean对象的创建
+1.未实现FactoryBean接口（直接构造方法）
+2.实现FactoryBean接口（调用FactoryBean对象的getObject方法），如myBatis的SqlSessionFactoryBean
+
+两大bean对象的描述方式
+1.xml <bean id="xx" class="xx.xx">
+2.注解@Xxxx
+@Component:
+	@Bean描述方法，第三方资源
+	@Controller修饰控制层
+	@Respository修饰数据层
+	@Service修饰业务层
+	@Configuration:
+
+spring中Bean对象的依赖注入DI
+通过set方法、构造方法为对象属性赋值的过程
+1.手动方式
+2.反射方式，自动依赖注入
+
+主线程（producer生产者）分配任务到容器队列中
+工作线程（consumer消费者）从容器中取
+
+比如：
+service耦合于dao层的接口，但是注入的是dao层的实现
+接口是稳定的
+
+bean对象依赖注入实践
+@Autowired原理：
+
+1.Cache接口
+src/main/java/com.cy.spring.beans/Cache.java
+public interface Cache {
+
+}
+
+2.让DefaultCache继承Cache接口
+src/main/java/com.cy.spring.beans/DefaultCache
+@Lazy
+@Component
+public class DefaultCache implements Cache{
+	 public DefaultCache() {
+		 System.out.println("DefaultCache()");
+	 }
+	 //生命周期方法
+	 @PostConstruct //告诉spring 此对象初始化后执行init方法
+	 public void init() {
+		 System.out.println("init()");
+	 }
+	 @PreDestroy//告诉spring 此对象容器销毁时执行close方法
+	 public void close() {
+		 System.out.println("close()");
+	 }
+}
+
+3.DefaultSearchService类
+src/main/java/com.cy.spring.beans/DefaultSearchService
+@Service
+public class DefaultSearchService implements SearchService {	
+	/**@Autowired 可以修饰属性，set方法，构造方法等
+	* 默认按照属性类型，方法参数类型为对象属性注入值,
+	* 假如相同类型的对象有多个，还会按属性名或方法参数名等进行查找。
+	* @Qualifier 配合@Autowired，用于指定要注入的对象的名字。
+	*/
+	//@Autowired
+	//@Qualifier("defaultCache")//引入defaultCache实现类
+	//private Cache cache;
+	private Cache defaultCache;//引入defaultCache实现类，两种方式
+	//@Autowired//修饰set方法
+	//public void setCache(Cache cache){
+	//	this.cache=cache;
+	//}
+	@Override
+	public  String toString() {
+		return "DefaultSearchService [cache=" + cache + "]";
+	}
+}
+
+4.测试SearchService
+src/main/java/com.cy.spring.beans/TestSearchService
+public class TestSearchService extends TestSearchService{
+	@Test
+	public void testSearchService(){
+		DefaultSearchService ds = ctx.getBean("defaultSearchService",DefaultSearchService.class);
+		syso(ds);
+	}
+}
+
+5.线程安全的Cache对象
+src/main/java/com.cy.spring.beans/SynchronizedCache
+@Component
+public class SynchronizedCache implements Cache {
+
+}
+
+6.此时运行src/main/java/com.cy.spring.beans/TestSearchService会出错
+因为Cache接口的实现类有两个了，DefaultCache和SynchronizedCache，
+@Autowire不知道该注入哪一个了
+
+7.给SynchronizedCache加名字
+@Component("cache")//作用本来名字是synchronizedCache，现在为cache
+public class SynchronizedCache implements Cache {
+
+}
+再运行就成功了
+
+@Autowired
+private Cache cache;	
+/**@Autowired 可以修饰属性，set方法，构造方法等
+* 默认按照属性类型，方法参数类型为对象属性注入值,
+* 假如相同类型的对象有多个，还会按属性名或方法参数名等进行查找。
+* @Qualifier 配合@Autowired，用于指定要注入的对象的名字。
+*/
+
+@Autowired实现DI功能，自动依赖注入
+-------------------------------
+spring进阶：
 1.pom依赖
 spring-context 5.1.9.RELEASE
 junit 4.12
 
 2.java配置类
-src/main/java/com.cy.spring.config/SpringConfig //代替spring-configs.xml
+src/main/java/com.cy.spring.config/SpringConfig.java //代替spring-configs.xml
 //@ComponentScan 告诉spring容器从指定包及子包进行bean的扫描
 //这里面仅做包扫描和启动配置
 @ComponentScan("com.cy.spring.beans")
@@ -3815,7 +3947,7 @@ public class TestBase {
 	}
 }
 
-4.创建DefaultCache对象交给Spring容器管理
+4.创建自己写的DefaultCache对象交给Spring容器管理
 src/main/java/com.cy.spring.beans/DefaultCache
 @Lazy //延迟加载，不在启动时创建
 @Scope("singleton") //bean的作用域:1)singleton (单例作用域-默认,会存储到池中)2)prototype (多例作用域,每次获取都创建新对象)
@@ -3852,6 +3984,7 @@ public class TestDefaultCache extends TestBase {
 	}
 }
 
+创建第三方资源对象：
 spring+DRUID连接池：
 spring+HikariCP连接池：
 6.pom依赖
@@ -3904,50 +4037,565 @@ public class TestDataSource extends TestBase {
 		System.out.println(ds.getConnection());
 	}
 }
+-------------------------------
+springMVC原理：
+MVC是一种分层架构思想，按职责各司其职
+-------------------------------
+springMVC初步：
+xml方式：
+1.maven war包
+Generate Deployment Descriptor Stub
+加上tomcat
 
-spring IOC应用原理分析
-控制反转，谁控制谁，控制权的变化
-解耦方式：
-1.耦合于接口
-2.耦合于工厂
-spring中耦合于工厂BeanFactory
-对象与对象之间耦合于接口
+2.项目依赖
+spring-webmvc 5.1.9.RELEASE
+jackson-databind 2.9.9.3
 
-spring Bean工厂的初始化
-1.基于xml方式
-2.基于注解方式
+3.添加springMVC配置文件
+src/main/resource/spring-configs.xml
+头...
+<beans xmlns="...">
+     <!-- 配置Bean对象的扫描 -->
+     <context:component-scan base-package="com.cy"/>
+     <!-- 配置默认静态资源的处理 (images/css/js/html)-->
+     <mvc:default-servlet-handler/>
+     <!-- 注册默认的一些mvc bean对象 -->
+     <mvc:annotation-driven/>
+     <!-- 配置视图解析器 -->
+     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+          <!-- set注入 -->
+          <property name="Prefix" value="/WEB-INF/pages/"/>
+          <property name="Suffix" value=".html"/>
+     </bean>
+     <!-- ..... 拦截器-->
+</beans>
 
-spring中两大map对象
-1.一个用来存储Bean的配置信息
-2.一个用来存储Bean的实例信息
+4.在web.xml中配置springMVC前端控制器DispatcherServlet
+<web-app 头...>
+  <display-name>CGB-SPRINGMVC-01</display-name>
+  <!-- 配置spring mvc 前端控制器 -->
+  <servlet>
+     <servlet-name>frontController</servlet-name>
+     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+     <init-param>
+         <param-name>contextConfigLocation</param-name>
+         <param-value>classpath:spring-configs.xml</param-value>
+     </init-param>
+     <!-- 配置tomcat启动初始化(数字越小优先级越高) -->
+     <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+     <servlet-name>frontController</servlet-name>
+     <url-pattern>/</url-pattern>
+  </servlet-mapping>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+</web-app>
 
-Bean对象的创建
-1.未实现FactoryBean接口（直接构造方法）
-2.实现FactoryBean接口（调用FactoryBean对象的getObject方法），如myBatis的SqlSessionFactoryBean
+5.定义controller类
+@Controller
+@RequestMapping("/search/")
+public class SearchController {
+	@RequestMapping("doSearchUI")
+	public String doSearchUI() {
+			return "search";//返回jsp或html
+	}
+	@RequestMapping("doSearch")
+	@ResponseBody//返回json格式
+	public Object doSearch(String key) {
+		Map<String,Object> map=new HashMap<String,Object>();
+		map.put("state", 1);
+		map.put("message","hello everyone");
+		return map;//{"state":1,"message":"hello everyone"}
+	}
+}
 
-两大bean对象的描述方式
-1.xml <bean id="xx" class="xx.xx">
-2.注解@Xxxx
-@Component:
-	@Bean描述方法，第三方资源
-	@Controller修饰控制层
-	@Respository修饰数据层
-	@Service修饰业务层
-@Configuration:
-	@Bean
+注解方式：
+1.配置maven war包插件 省略web.xml
+pom.xml中选择Insert plugin-搜索"war"-添加failOnMissingWebXml:false
+<project xmlns="头">
+	头...
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies></dependencies>
+</project>
 
-spring中Bean对象的依赖注入DI
-通过set方法、构造方法为对象属性赋值的过程
-1.手动方式
-2.反射方式，自动依赖注入
+2.添加tomcat
 
-主线程（producer生产者）分配任务到容器队列中
-工作线程（consumer消费者）从容器中取
+3.添加依赖
+spring-webmvc 5.1.9.RELEASE
+jackson-databind 2.9.9.3//对象到json串的转换
 
-比如：
-service耦合于dao层的接口，但是注入的是dao层的实现
-接口是稳定的
+4.SpringWebConfig类
+src/main/java/com.cy.pj.common.config/SpringWebConfig.java
+@ComponentScan("com.cy.pj.search.controller")//包的扫描
+@EnableWebMvc//注册默认的mvc bean对象
+public class SpringWebConfig implements WebMvcConfigurer{
+	//实现WebMvcConfigurer接口，并重写configureDefaultServletHandling，使configurer.enable()，完成对静态资源的处理
+	@Override
+	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+		configurer.enable();
+	}
+	//重写configureViewResolvers配置视图解析器
+	@Override
+	public void configureViewResolvers(ViewResolverRegistry registry) {
+		registry.jsp("/WEB-INF/pages/",".html");
+	}
+}
 
-bean对象依赖注入实践
+5.WebInitializer类配置springmvc前端控制器
+src/main/java/com.cy.pj.common.config/WebInitializer.java
+// tomcat启动时会加载此类
+public class WebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+	//默认执行onStartup方法创建DispatcherServlet
+	// 加载service,dao配置，这边没有没配
+	@Override
+	protected Class<?>[] getRootConfigClasses() {
+		return null;
+	}
+	// 加载spring mvc配置
+	@Override
+	protected Class<?>[] getServletConfigClasses() {
+		return new Class[] {SpringWebConfig.class};
+	}
+	// 指定DispatcherServlet对象的请求映射路径
+	@Override
+	protected String[] getServletMappings() {
+		return new String[] {"/"};
+	}
+}
 
+6.定义controller类
+@Controller
+@RequestMapping("/search/")
+public class SearchController {	
+	//返回jsp或html
+	@RequestMapping(value={"doHandleUrl","doWelcomeUrl"})
+	public String doHandleUrl() {
+		return "welcome";
+	}
+	//返回json格式
+	@RequestMapping("doSearch")
+	@ResponseBody
+	public Object doSearch(String key) {
+		Map<String,Object> map=new HashMap<String,Object>();
+		map.put("state", 1);
+		map.put("message","hello everyone");
+		return map;//{"state":1,"message":"hello everyone"}
+	}
+	// Rest风格的url，其格式为{a}/{b}/{c}
+	// 假如希望方法参数获取url中{}值@PathVariable 
+	@RequestMapping("{module}/{page}")
+	public String doMoudleUI(@PathVariable String page
+			,@PathVariable String module) {
+		return module+"/"+page;
+	}
+	//post方法
+	//	@RequestMapping(value="type",method=RequestMethod.POST)
+	@GetMapping("type")
+	//	@PostMapping("type")
+	@ResponseBody
+	public String doRequestMethodType() {
+		return "request type POST";
+	}
+	// 请求参数处理
+	@GetMapping("param")//xxx/param?msg=11&data=2019/01/01&id=1&name=xx
+	@ResponseBody
+	public String doRequestParam(
+			RequestWrapper rw, //id,name
+			@RequestParam(required=true) String msg,
+			@DateTimeFormat(pattern="yyyy-MM-dd")Date data) {
+		return rw+" / "+msg+" / "+data;
+	}
+	//配置类中写了@EnableWebMvc直接return 对象就能返回json
+	//未配置@EnableWebMvc，写下面api
+	//借助jackson中的API将对象转换json格式的字符串
+	@RequestMapping("doDataConvert")
+	@ResponseBody
+	public String doDataConvert()throws Exception {
+		Map<String,Object> map=new HashMap<String,Object>();
+		map.put("id", 100);
+		map.put("msg", "hello jackson");
+		ObjectMapper om=new ObjectMapper();
+		return om.writeValueAsString(map);
+	}
+}
+-------------------------------
+springMVC进阶：
+注解方式：
+spring+mybatis
+1.war包插件+依赖:
+mysql-connection-java 8.0.16
+druid 1.1.19
+mybatis 3.5.2
+mybatis-spring 2.0.2
+spring-jdbc 5.1.9.RELEASE
+spring-webmvc 5.1.9.RELEASE
+jackson-databind 2.9.9
+log4j 1.2.17
+junit 4.12
 
+2.dao层配置类
+src/main/java/com.cy.pj.common.config/SpringRepositoryConfig.java
+@Configuration
+@MapperScan("com.cy.pj.goods.dao") // 扫描dao
+public class SpringRepositoryConfig {
+	@Bean(value = "druid", initMethod = "init", destroyMethod = "close")
+	public DruidDataSource dataSource() {
+		DruidDataSource ds = new DruidDataSource();
+		ds.setUrl("jdbc:mysql:///dbgoods?serverTimezone=GMT%2B8");
+		ds.setUsername("root");
+		ds.setPassword("root");
+		return ds;
+	}
+	@Bean("sqlSessionFactory")
+	public SqlSessionFactory newSqlSessionFactory(DataSource dataSource) throws Exception {
+		// 构建SqlSessionFactoryBean对象
+		SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+		factoryBean.setDataSource(dataSource);
+		// 调用FactoryBean的getObject方法创建SqlSessionFactory
+		// 底层会使用SqlSessionFactoryBuilder创建
+		return factoryBean.getObject();
+	}
+}
+
+3.service层配置类
+src/main/java/com.cy.pj.common.config/SpringServiceConfig.java
+@Configuration
+@ComponentScan("com.cy.pj.goods.service")
+public class SpringServiceConfig {
+	//.....
+}
+
+4.controller层配置类
+src/main/java/com.cy.pj.common.config/SpringWebConfig.java
+@ComponentScan("com.cy.pj.goods.controller")
+@EnableWebMvc
+@Configuration
+public class SpringWebConfig implements WebMvcConfigurer {
+	// <mvc:default-servlet-handler/>
+	@Override
+	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+		configurer.enable();
+	}
+	@Override
+	public void configureViewResolvers(ViewResolverRegistry registry) {
+		registry.jsp("/WEB-INF/pages/", ".html");
+	}
+}
+
+5.WebInitializer启动配置类
+src/main/java/com.cy.pj.common.config/WebInitializer.java
+public class WebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+	// Service,Repository
+	@Override
+	protected Class<?>[] getRootConfigClasses() {
+		return new Class[] { SpringRepositoryConfig.class, SpringServiceConfig.class };
+	}
+	// View,Controller
+	@Override
+	protected Class<?>[] getServletConfigClasses() {
+		return new Class[] { SpringWebConfig.class };
+	}
+	@Override
+	protected String[] getServletMappings() {
+		return new String[] { "/" };
+	}
+}
+
+书写顺序:
+dao->service->controller
+
+把查的数据封装到pojo对象中
+6.建pojo对象
+src/main/java/com.cy.pj.goods.pojo/Goods.java
+public class Goods implements Serializable{
+	private static final long serialVersionUID = 690138036951052829L;
+	private Long id;
+	private String name;
+	private String remark;
+	private Date createdTime;
+	setter/getter/toString();
+}
+
+7.GoodsDao接口
+public interface GoodsDao { 
+	@Select("select * from tb_goods")
+	List<Goods> findGoods();
+}
+
+8.GoodsService接口
+src/main/java/com.cy.pj.goods.service/GoodsService.java
+public interface GoodsService {
+	 List<Goods> findGoods();
+}
+
+9.Service实现类
+src/main/java/com.cy.pj.goods.service.impl/GoodsServiceImpl.java
+@Service
+public class GoodsServiceImpl implements GoodsService {
+	@Autowired
+	private GoodsDao goodsDao;
+	@Override
+	public List<Goods> findGoods() {
+		List<Goods> list=goodsDao.findGoods();
+		return list;
+	}
+}
+
+10.controller层
+src/main/java/com.cy.pj.goods.controller/GoodsController.java
+@Controller
+@RequestMapping("/goods/")
+public class GoodsController {
+	@Autowired
+	private GoodsService goodsService;
+    @RequestMapping("doFindGoods")
+    @ResponseBody
+	public List<Goods> doFindGoods(){
+		return goodsService.findGoods();
+	}//json 串:spring mvc 启动API将对象转换为JSON串
+}
+-------------------------------
+spring boot入门案例：
+核心特征：
+自动配置，起步依赖，健康检查
+
+启动类作用：
+1.基于注解描述实现自动化配置
+	1.一个项目只能有一个启动类
+	2.启动类用@SpringBootApplication描述
+2.读取classpath中的配置文件，application.properties/yml
+
+1.ctrl+n->spring starter project->packaging:jar
+
+2.spring boot启动类
+src/main/java/com.cy/XxxApplication.java
+@SpringBootApplication
+public class CgbSboot01Application {
+	public static void main(String[] args) {
+		SpringApplication.run(CgbSboot01Application.class, args);
+		//args没有指定，扫描com.cy包及子包中的类
+	}
+}
+
+3.测试类
+src/test/java/com.cy/XxxApplicationTests.java
+//@RunWith指定由谁调用测试类的方法进行单元测试
+//SpringRunner调用CgbSboot01ApplicationTests的方法
+//@RunWith可以指定自己的类来运行此对象中的方法
+@RunWith(SpringRunner.class)
+//@SpringBootTest描述的对象交给spring管理，方便spring为此类注入一些对象
+@SpringBootTest
+public class CgbSboot01ApplicationTests {
+	@Autowired
+	private ApplicationContext ctx;
+	@Test
+	public void textCtx() {
+		syso(ctx);
+	}
+}
+
+4.建一个Cache对象
+src/main/java/com.cy.pj.common.cache/DefaultCache.java
+@Component
+public class DefaultCache {
+	public DefaultCache() {
+	   System.out.println("cache()");
+	}	
+}
+
+5.DefaultCache测试类
+src/test/java/com.cy/DefaultCacheTests.java
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class DefaultCacheTests {
+	@Autowired
+	private DefaultCache defaultCache;
+	@Test
+	public void testCache() {
+		System.out.println(defaultCache);
+	}
+}
+-------------------------------
+spring boot整合数据源：
+默认使用HikariCP（世界上最快的连接池）
+
+1.添加依赖MySQL Driver,JDBC API
+pom.xml右击spring->Edit Starters->搜索依赖
+不需要写版本，默认下载最新的
+
+2.配置连接池
+src/main/resources/application.properties
+#spring datasource (HikariCP)
+spring.datasource.url=jdbc:mysql:///dbgoods?serverTimezone=GMT%2B8
+spring.datasource.username=root
+spring.datasource.password=root
+
+3.测试
+src/test/java/com.cy/DataSourceTests.java
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class DataSourceTests {
+	@Autowired
+	private DataSource dataSource;
+	@Test
+	public void testDataSource() throws Exception {
+		System.out.println(dataSource);//HikariDataSource
+		System.out.println(dataSource.getClass());
+		System.out.println(dataSource.getConnection());
+	}
+}
+
+整合druid
+1.添加依赖druid-spring-boot-starter 1.1.20
+spring->Edit Starters不支持
+直接在pom.xml中写入
+-------------------------------
+spring boot整合mybatis
+1.添加mybatis启动依赖
+pom-Edit Starters-mybatis framework-加<version>2.1.0</version>
+
+2.mybatis配置
+application.properties
+#mybatis
+mybatis.configuration.default-statement-timeout=30
+mybatis.configuration.map-underscore-to-camel-case=true
+mybatis.mapper-locations=classpath:/mapper/*.xml
+#Log
+logging.level.com.cy=DEBUG
+
+3.dao接口
+com.cy子包下的dao包
+//@Mapper是Mybatis中新的注解，当spring boot看见这个注解，会自动创建这个接口的实现类
+//没有@Mapper注解，需要定义一个扫描，在spring boot启动类上加一个@MapperScan扫描指定的dao包
+@Mapper
+public interface GoodsDao {
+	@Delete("delete from tb_goods where id=#{id}")
+	int deleteObject(Integer id);
+	int deleteObjects(@Param("ids") Integer... ids);
+}
+
+4.测试mybatis
+测试包下
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class GoodsDaoTests {
+	@Autowired
+	private GoodsDao goodsDao;
+	@Test
+	public void testGoodsDao() {
+		int rows = goodsDao.deleteObject(10);
+		System.out.println("rows=" + rows);
+	}
+	@Test
+	public void testDeleteObjects() {
+		int rows = goodsDao.deleteObjects(17, 18);
+		System.out.println(rows);
+	}
+}
+
+5.写deleteObjects方法的mapper
+resources/mapper/GoodsMapper.xml
+头...
+<mapper namespace="com.cy.pj.goods.dao.GoodsDao">
+   <delete id="deleteObjects">
+       delete from tb_goods
+       where id in <!-- (1,2,3,4,5) -->
+       <foreach collection="ids"
+                open="("
+                close=")"
+                separator=","
+                item="id">
+               #{id}
+       </foreach>
+   </delete>
+</mapper>
+
+6.指定映射文件的路径，在application.properties中
+mybatis.mapper-locations=classpath:/mapper/*.xml
+
+7.在GoodsDaoTests文件测试
+-------------------------------
+spring boot整合web应用
+内嵌tomcat
+
+1.pom.xml添加依赖Edit Starters
+Thymeleaf,Spring Web Starter
+
+2.spring web简易配置，添加视图解析器
+application.properties：
+#spring mvc
+spring.thymeleaf.prefix=classpath:/templates/pages/
+spring.thymeleaf.suffix=.html
+
+页面存在resources/下
+
+3.添加页面及目录
+resources/templates/pages/goods.html
+
+4.controller
+GoodsController.java
+@Controller
+@RequestMapping("/goods/")
+public class GoodsController {
+	@RequestMapping("doDeleteGoods")
+	@ResponseBody
+	public String doDeleteGoods(Integer... ids) {
+		return "delete objects ids "+Arrays.toString(ids);
+	}
+	@RequestMapping("doGoodsUI")
+	public String doGoodsUI() {
+		return "goods";
+	}
+}
+
+5.服务端的简易配置，比如端口号
+application.properties：
+#server
+server.port=80
+server.tomcat.max-threads=1000
+server.servlet.context-path=/
+-------------------------------
+spring boot项目应用扩展
+一、健康检查配置及测试
+看是否有问题
+1.添加依赖
+Spring Boot Actuator
+
+2.在浏览器输入路径
+http://localhost/actuator/health
+输出{"status":"UP"}表明正常
+
+3.查看更多actuator选项
+application.properties：
+management.endpoints.web.exposure.include=*
+
+4.浏览器输入
+http://localhost/actuator/beans
+查看spring容器中所有bean的信息
+
+二、热部署配置
+1.添加依赖
+Spring Boot DevTools
+
+2.配置
+application.properties：
+spring.devtools.restart.enabled=true
+//重启目录
+spring.devtools.restart.additional-paths=src/main/java
+//排除热部署，静态资源。两个**该目录及子目录资源
+spring.devtools.restart.exclude=templates/pages/**
+
+三、Lombok插件
