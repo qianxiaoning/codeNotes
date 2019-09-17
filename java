@@ -4599,3 +4599,29 @@ spring.devtools.restart.additional-paths=src/main/java
 spring.devtools.restart.exclude=templates/pages/**
 
 三、Lombok插件
+1.下载依赖lombok
+复制maven全路径，进入文件夹位置，启动cmd，输入命令java -jar lom...，选中sts4.exe，勾上并install安装，quit完成
+
+2.在java文件中
+@Data=@Setter+@Getter+@ToString
+@AllArgsConstructor全参构造
+@NoArgsConstructor无参构造
+
+@Accessors(chain=true)//链式调用
+如：
+new Goods().setId(10L).setName("aa");
+
+@EqualsAndHashCode
+
+@RequiredArgsConstructor指定构造
+
+@Slf4j//日志
+生成log常量，代替
+private static final Logger log = LoggerFactory.getLogger(类名.class);
+
+log.info("xxx");
+
+四、Mybatis-Plus插件
+Mybatis增强工具
+-------------------------------
+

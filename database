@@ -1,7 +1,4 @@
 ------------------
-数据库软件：
-Navicat for MySQL
-------------------
 Mysql
 数据库>数据表=>（表头：字段，表记录）
 
@@ -65,7 +62,10 @@ select * from tb_door order by tel desc;
 select count(*) from tb_door;
 删除某条指定的记录
 delete from tb_door where id=3;
-
+------------------
+数据库软件：
+Navicat for MySQL
+------------------
 用软件操作数据库：
 navicat for Mysql
 可视化数据库工具
@@ -80,6 +80,17 @@ navicat for Mysql
 三个timestamp只能有一个根据当前时间戳更新
 timestamp, int, double默认值为null
 
+navicat数据库的导入导出
+导出：
+1.连接库（绿了）
+2.右键库，转储sql文件，显示successful点关闭
+3.得到sql文件，导出完毕
+
+导入：
+1.右键连接，新建数据库，填入数据库名
+2.连接库（绿了）
+3.右键库，运行sql文件，显示successful点关闭，导入完成
+------------------
 数据库mysql
 关系型数据库
 用于存储，管理数据的仓库
