@@ -509,3 +509,8 @@ demo:
     </div>
 </body>
 </html>
+
+单行省略号：
+overflow: hidden;
+white-space: nowrap;
+text-overflow: ellipsis;

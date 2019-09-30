@@ -1918,6 +1918,7 @@ out.flush();
 -------------------------------
 Class代表类的类
 反射 Reflect（透视）:
+反射的起点：字节码对象
 配置文件：里面都是字符串 new "字符串" 传统方式不行
 config.txt
 
@@ -3328,7 +3329,7 @@ mybatis日志输出工具
 	<!-- 配置springmvc核心配置文件的位置，默认Springmvc的配置文件是在WEB-INF目录下，默认的名字为springmvc-servlet.xml，如果要放在其他目录，则需要指定如下配置： -->
 	<init-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:springmvc-config.xml</param-value>
+		<param-value>classpath:spring/*.xml</param-value>
 	</init-param>
 </servlet>
 <!-- 其中的斜杠（/）表示拦截所有请求（除JSP以外）, 所有请求都要经过springmvc前端控制器 -->
@@ -4624,4 +4625,30 @@ log.info("xxx");
 四、Mybatis-Plus插件
 Mybatis增强工具
 -------------------------------
+第四阶段
+分布式：
+将项目拆分，实现了软件架构的松耦合
 
+项目的垂直拆分：
+根据功能模块（业务决定的），将项目拆分到不同服务器中
+
+项目的水平拆分：
+根据代码层级进行项目的拆分，web，vo，controller，接口
+
+先有垂直后有水平
+
+单台tomcat服务器并发量180~240之间，实际150/秒
+
+集群：
+由于高并发需求，搭建服务器集群抗击高并发
+
+高可用（HA）：当服务器故障，能够实现自动化故障迁移
+主机 从机 心跳检测机制
+
+海量数据处理：
+大数据
+
+分布式：
+3.xx系统 jar/war看业务
+1.继承自 parent 管理jar包(pom聚合项目)
+2.依赖自 common工具类jar包(继承自parent)
