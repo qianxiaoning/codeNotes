@@ -3068,6 +3068,37 @@ Spring DI依赖注入
 在创建对象的同时，给对象赋值
 
 Spring的本质是管理软件中的对象，即创建对象和维护对象之间的关系
+
+类不交给spring管理
+A.java
+public class A{
+	...
+}
+B.java b方法中用A对象
+public class B{
+	b(){
+		...
+		xxx(new A());
+		...
+	}
+}
+
+类交给spring管理
+A.java
+@Component
+public class A{
+	...
+}
+B.java b方法中用A对象
+public class B{
+	@Autowired
+	private A a;
+	b(){
+		...
+		xxx(a);//即可
+		...
+	}
+}
 -------------------------------
 mybatis
 1.src/main/resources/mybatis-config.xml(mybatis配置文件，可引用jdbc.properties变量)
@@ -4222,6 +4253,7 @@ public class SearchController {
 	//配置类中写了@EnableWebMvc直接return 对象就能返回json
 	//未配置@EnableWebMvc，写下面api
 	//借助jackson中的API将对象转换json格式的字符串
+	//ObjectMapper.writeValueAsString，object->json
 	@RequestMapping("doDataConvert")
 	@ResponseBody
 	public String doDataConvert()throws Exception {
@@ -4652,3 +4684,151 @@ Mybatis增强工具
 3.xx系统 jar/war看业务
 1.继承自 parent 管理jar包(pom聚合项目)
 2.依赖自 common工具类jar包(继承自parent)
+---------------------------
+redis缓存
+编译
+make
+安装
+make install
+启动
+redis-server redis.conf
+进入客户端
+redis-cli -p 6379
+端口号为6379时，快捷进入客户端
+redis-cli
+存数据
+set 
+取数据
+get
+退出
+exit
+关闭redis
+redis-cli -p 6379 shutdown
+redis-cli shutdown
+结束redis进程
+ps -ef | grep redis
+kill -9 pid1 pid2
+
+String类型：
+获取value的长度
+strlen key
+key是否存在
+exists key
+删除
+del key
+查询
+keys *
+查询a开头的
+keys a*
+查询a开头的，两个字符
+keys a?
+多个赋值
+mset a aa b bb
+多个取值
+mget a b
+在key后追加
+append key bbcc
+append key " bbcc"
+检查key类型
+type key
+切换数据库 redis中有16个数据库，默认操作第1个
+select 15
+清空当下数据库
+flushdb
+清空所有数据库
+flushall
+减/加数1
+de/incr num
+减/加数至
+de/incrby num 1221
+数据存活时间s
+expire key seconds
+数据存活时间ms
+pexpire key ms
+查询存活时间
+ttl key
+取消超时时间
+persist key
+
+Hash类型：
+User {id:2,name:"小米"}
+hset user id 2
+hset user name "小米"
+
+hget user name
+
+hexists
+
+hdel user id
+
+hgetall user
+
+hkeys user
+
+hvals user
+
+hmset
+
+hsetnx
+
+hstrlen
+
+List类型(中间件)：
+lpsuh
+lpsuh list 1 2 3 4
+
+rpop
+rpop list//队列1 2 3 4
+
+lpop list//栈4 3 2 1
+
+rpush
+
+事务：
+开启事务
+multi
+提交
+exec
+回滚
+discard
+
+redis持久化
+
+rdb模式 默认 rdb文件
+rdb能定期实现数据的持久化（可能会丢失数据）
+默认的持久化文件名称dump.rdb
+rdb持久化只做内存数据的快照，占用空间较小，效率高
+save 立即持久化 同步（默认）
+bgsave 后台启动持久化 异步
+
+aof模式
+异步，实时
+记录用户操作过程，持久化文件较大
+效率低
+--------------------------
+内存优化策略：
+lru 最近最少使用淘汰
+记录上次访问以来的时间t，淘汰t最大的
+
+lfu 最不经常使用页置换法 置换引用计数最小的页
+
+volatile-lru 设定超时时间中使用lru
+allkeys-lru 所有数据使用lru
+volatile-lfu 设定超时时间中使用lfu
+allkeys-lfu 所有数据使用lfu
+volatile-random 设定超时时间中数据随机删除
+allkeys-random 所有数据随机删除
+volatile-ttl 根据剩余时间多少删除数据（先删除少的）
+noeviction 不自动删除数据，内存溢出时报错返回
+
+redis分片机制
+内存占用大时，一台redis效率低，搭建redis分片实现内存扩容
+
+hash一致性算法
+顺时针节点存取
+
+hash一致性的特点
+均衡性 创建虚拟节点
+单调性 当节点新增时，数据可以实现自动迁移 节点只能新增不能减少（减少得重新划分分片）
+分散性
+负载

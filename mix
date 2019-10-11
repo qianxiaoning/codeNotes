@@ -179,3 +179,6 @@ java项目和应用中，路径有_下划线是没事的
 
 eclipse导入template后，lombok注解不提示
 原因是java-content assist-advanced中的java proposals勾被去掉了，导致内容提示不显示
+
+VMware 当前操作系统运行别的操作系统
+

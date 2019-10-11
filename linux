@@ -1,23 +1,97 @@
 -------------------------------------------------------------------------------------------------
 linux指令
-  拷贝
-  cp -r a b // 把a文件夹复制成b文件夹
+拷贝
+cp -r a b // 把a文件夹复制成b文件夹
 
-  删除
-  rm -rf xxx//-r向下递归-f强制
-  
-  文件列表
-  ll 会列出该地址下所有文件的详细信息
-  ls 只列出文件名或目录名
-  
-  打开vscode
-  code
-  用vscode打开当前项目
-  code .
+删除
+rm -rf xxx//-r向下递归-f强制
+
+文件列表
+ll 会列出该地址下所有文件的详细信息
+ls 只列出文件名或目录名
+
+打开vscode
+code
+用vscode打开当前项目
+code .
+
+撤销
+esc-u
 -------------------------------------------------------------------------------------------------
 新建并编辑文件
 echo "xxx" >> xxx.filetype
 
 cd切运行路径时，按tab键自动补全，匹配文件名
 
+ifconfig 看ip
 
+当前目录
+ls
+
+创建目录
+mkdir xx
+mkdir -m 777 xx可读可改，最高权限
+mkdir -p xx/aa/ss
+
+删除空目录
+rmdir xx
+
+创建/查看/编辑文件
+vim xx
+按i，在光标前开始编辑
+按a，在光标后开始编辑
+按o，在当前行的下一行开始编辑
+底行模式：按  shift+冒号。
+:q! 强制退出
+:wq 保存退出
+
+复制文件
+cp oldName newName
+cp -r oldDirName newDirName 
+
+修改文件名，移动文件
+mv oldName newName
+mv oldFile newFile
+mv oldName dir/newName
+
+浏览文件
+cat a
+
+当前路径
+pwd
+
+清屏
+clear
+
+解压并打印解压信息
+tar -xvf xxx
+
+重新加载文件
+source /etc/profile
+
+运行jar包
+java -jar xxx.war &
+
+下次关防火墙 永久
+chkconfig iptables off
+
+临时关闭防火墙 立即生效
+service iptables stop
+
+查询进程root pid等
+ps -ef
+| 管道
+搜索条件
+ps -ef | grep 8081.war
+ps -ef | grep java*
+
+杀进程
+kill 3592 被使用时，可能不成功
+
+kill -15 3660 友好杀死
+
+kill -9 3660 强制杀死
+
+文本中高亮显示xxx
+:/xxx
+-----------------------------
