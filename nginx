@@ -19,3 +19,4 @@ nginx -s reload
 
 关闭
 nginx -s stop
+--------------------------

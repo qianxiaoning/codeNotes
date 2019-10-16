@@ -112,7 +112,7 @@ $ git config --global user.email "email@example.com"
      ide的自带工具(Xcode苹果的,Visual Studio,webstorm)
   3、改dev
   4、把改动提交到本地
-  $ git add .&&git commit -m 'd'
+  $ git add .&& git commit -m 'init'
   5、推dev
   $ git pull/冲突合并/$ git push
   6、测试完后登master
