@@ -1695,6 +1695,31 @@ transient 临时，只在程序运行期间，在内存中存在，不会随实�
 如果不定义，编译器会自动添加版本id，会根据类的定义信息来计算产生一个id值
 private static final long serialVersionUID = 1L;
 
+为了避免对象结构变化使无法反序列化，人为增加序列化id
+
+序列化的粒度：
+1.transient
+private transient int id;
+2.po/vo类实现Externalizable接口
+id,title,content
+只序列化title,content
+//序列化时
+writeExternal(xx out){
+	out.writeUTF(title);
+	out.writeUTF(content);
+}
+//反序列化时
+readExternal(xx in){
+	title = in.readUTF();//按写的顺序读
+	content=in.readUTF();
+}
+
+kryo序列化框架（快，不跨语言）
+1.pom依赖
+2.kryo.writeClassAndObject(output, obj);
+Object obj=kryo.readClassAndObject(input);
+3.一个线程一份，放入ThreadLocal
+
 文件流按字节读
 
 InputStreamReader,OutputStreamWriter
@@ -1712,6 +1737,128 @@ OutputStreamWriter
 	把Unicode转成其他编码输出
 InputStreamReader
 	读取其他编码的字符，转成Unicode
+-------------------------------
+枚举：
+enum Gender{//Gender.class
+	MALE,FEMALE,NONE;//对象实例(类加载时创建)
+	private Gender() {//必须私有
+		System.out.println("Gender()");
+	}
+}
+/**产品对象*/
+class Product{
+	/**性别要求*/
+	Gender gender=Gender.NONE;
+}
+
+enum Sex{//默认继承Enum
+	MALE("男"),FEMALE("女");
+	private String name;
+	private Sex(String name) {
+		this.name=name;
+	}
+	public String getName() {
+		return name;
+	}
+}
+class Member{//默认继承Object
+	 Sex sex=Sex.MALE;
+}
+//基于枚举实现单例设计
+enum Singleton{
+	INSTANCE;//饿汉单例
+}
+public class TestEnum02 {
+   public static void main(String[] args) {
+	   Member m=new Member();
+	   System.out.println(m.sex.getName());
+	   String sexStr="MALE";
+	   //将字符串转换为枚举(字符串名字必须和枚举对象名相同)
+	   m.sex=Sex.valueOf(sexStr);
+	   m.sex=Enum.valueOf(Sex.class, sexStr);
+	   System.out.println(Sex.MALE instanceof Enum);
+   }
+}
+-------------------------------
+注解（Annotation）
+元数据
+@interface
+@Target(ElementType.FIELD属性)//修饰对象，默认任何对象
+//@Target({ElementType.TYPE类，接口,ElementType.METHOD方法,ElementType.FIELD属性})
+@Retention(RetentionPolicy.RUNTIME运行时生效)//何阶段生效，默认编译时生效
+//@Retention(RetentionPolicy.SOURCE编译时生效)
+@interface Xxx{
+	String value() default "";
+	boolean isOpen() default false;
+}
+
+@Xxx
+...
+
+获取类上的注解：
+//1.获取类字节码对象
+Class<?> clz=Xxx.class;
+//2.获取类上注解
+Entity xxx=clz.getDeclaredAnnotation(Xxx.class);
+
+获取属性上的注解：
+//3.获取属性id上的ID注解
+Field f=clz.getDeclaredField("Xxx");
+ID xxx=f.getDeclaredAnnotation(Xxx.class);
+
+@Xxx("aaa")//默认给value赋值
+@Xxx(value="aaa",isOpen=true)
+...
+
+获取类上注解及注解中属性的值：
+接上：
+xxx.value();
+xxx.isOpen();
+
+注解也能描述注解
+
+包扫描注解：
+没指定值，则扫描当前包下所有类（如要子类，需要递归）
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@interface ComponentScan {// spring框架也有
+	String value() default "";
+}
+
+@ComponentScan("com.company.java.cache")
+//@ComponentScan("")
+class AppConfig {
+}// 配置类
+
+public class TestAnnotation03 {
+	public static void main(String[] args) {
+		// 1.获取AppConfig类的字节码对象
+		Class<?> cls = AppConfig.class;
+		// 2.获取AppConfig类上的@ComponentScan注解
+		ComponentScan componentScan = cls.getDeclaredAnnotation(ComponentScan.class);
+		// 3.获取@ComponentScan注解中value属性的值
+		if (componentScan == null) {
+			return;
+		}
+		String pkg = componentScan.value();
+		if ("".equals(pkg)) {
+			// 没有指定包时，获取cls对应的包名
+			pkg = cls.getPackage().getName();
+		}
+		// 4.输出@ComponentScan注解对应value属性指定的包中所有类
+		// 4.1将包结构中的"."替换为"/"
+		String path = pkg.replace(".", "/");
+		// 4.2基于ClassLoader对象获取指定目录对应的绝对路径
+		URL url = ClassLoader.getSystemResource(path);
+		// 4.3基于File对象获取绝对路径中的Class文件
+		System.out.println(url.getPath());
+		File file = new File(url.getPath());
+		File[] classes = file.listFiles();
+		for (File f: classes) {
+			System.out.println(f.getName());
+		}
+	}
+}
 -------------------------------
 线程（重点）:
 进程：在操作系统里并行执行的任务
@@ -4976,6 +5123,7 @@ zookeeper
 zookeeper宕机后，现有服务器不会受影响
 ------------------------------
 单点登录sso：
+1.0版本：
 第一次登录：
 用户电脑login(username,password)后->nginx中转->web服务器->sso服务器（校验，用u/p查询数据，正确的话将用户对象转至json串，并生成uuid存至redis）->redis服务器<k,v>uuid ticket,用户信息json
 
@@ -4986,3 +5134,149 @@ zookeeper宕机后，现有服务器不会受影响
 用户信息存在直接进入
 
 单点登录 另一服务器 得做cookie数据共享
+
+重复登录问题：
+-------------------------
+拦截器和aop的适用场景：
+处理页面相关，用拦截器
+处理业务相关（事务，缓存），用aop
+-------------------------
+springMVC参数接收：
+1.简单参数接收
+@RequestMapping("/check")
+checkUser(String callback) {}
+
+2.使用对象接收（对象方式）
+@RequestMapping("/update/num/{itemId}/{num}")
+updateCartNum(Cart cart)
+@RequestMapping("/update/num")
+updateCartNum(Cart cart) ？
+
+3.restful风格 微服务常用参数提交方式
+@RequestMapping("/check/{param}")
+checkUser(@PathVariable String param) {}
+或
+checkUser(Cart cart) {}
+
+4.springMVC为对象的引用赋值
+User{
+	...
+	Dog dog;//对象的引用
+}
+Dog{
+	...
+}
+<input name="dog.dogName" />
+--------------------------
+订单超时：
+now() - created > 30 && status=1
+Quartz定时任务
+
+1.调度器：负责统一的管理任务
+2.触发器：负责任务执行，同时设定执行的周期
+3.job：自定义的任务
+4.jobDetail：负责封装job的api
+
+job注册到调度器，调度器调度触发器，触发器触发jobDetail
+
+项目中，每1分钟把数据库中所有now() - created > 30 && status=1的订单status改为6，更新时间更改
+--------------------------
+防止同主机重复登录、开启另一设备登录验证：
+注册时：
+1.输入用户名，密码，其余等
+2.密码经过md5加密，用户数据存入数据库
+
+登录时：
+1.通过IPUtil获取nginx代理的ip地址
+2.把登录输入的用户信息（用户名，密码）和ip地址传入serviceImpl中
+3.将密码md5转码，将用户信息传入QueryWrapper，搜索数据库中用户信息。
+如果无此用户，返回ticket为null，控制层接口返回"用户名或密码错误"
+如果有此用户，生成ticket(uuid的MD5转码)，将查到的用户信息密码替换（脱敏），然后将用户信息转为JSON（userJSON）。生成HashMap<String,String>，放入三对k,v
+{
+	"JT_IP":ip(控制层传入的ip),
+	"JT_TICKET":ticket(生成的uuid md5),
+	"JT_USERJSON":userJSON
+}
+批量存入redis中的Hash类型中，Hash对象名为 用户信息中的用户名
+设定redis的超时时间7天
+返回ticket
+4.控制层中给浏览器存入两对cookie
+{
+	"JT_TICKET":ticket,
+	"JT_USERNAME":用户信息中的用户名
+}
+控制层接口返回成功
+
+首页加载时：
+1.从cookie中获取"JT_TICKET" uuid,"JT_USERNAME" 用户名
+2.两者都不为空，则调用查询登录信息接口传入ticket和username
+3.控制层中，取redis中ticket的值，和传入的ticket比较
+如果不等，返回失败接口信息
+如果相等，继续使用IPUtil和request域获取请求主机的ip，和redis中的ip比较
+ip如果相等，取出redis中的userJSON(用户信息json)，放入成功接口中返回
+
+ip如果不等，增加第三重验证，如短信验证、人脸识别验证...
+
+如果未通过，返回失败接口信息
+如果通过，取出redis中的userJSON(用户信息json)，放入成功接口中返回
+--------------------------------
+普通锁：synchronized,ThreadLocal
+分布式锁：
+思想：将锁交给第三方管理：
+1.交给数据库，通过管理id:1（主键），插入，删除id，保证唯一
+2.交给redis，通过管理key:uuid，设置不能覆盖值且有失效时间，插入，删除，保证唯一
+3.交给zookeeper（主流），通过增加临时节点管理，插入，删除，保证唯一
+-----------------------------
+spring cloud
+微服务整体解决方案
+框架集，集成了一整套框架
+
+springboot简化spring配置，开箱即用
+
+eureka注册中心
+与zookeeper区别
+1.eureka有保护模式
+
+eureka：
+ap 可用性，分区容错性
+集群：对等结构
+zookeeper：
+cp 一致性，分区容错性
+集群：主从结构
+
+restTemplate
+更上层的远程调用
+
+ribbon服务消费者
+提供了负载均衡和重试功能
+负载均衡：
+@LoadBalanced
+http://service-id/xxx
+重试：
+spring-retry依赖
+参数MaxAutoRetries...
+
+hystrix断路器
+降级：请求失败，向客户端直接返回处理响应
+
+熔断：大量失败降级，通路直接断开，不调用后台服务直接降级
+默认10秒20次请求的情况下，50%失败降级触发熔断，断路器打开
+5秒后进入半开状态，会尝试向后台服务请求，如果成功会关闭断路器。如果仍然失败，继续保持打开状态
+
+hystrix超时时间应该大于ribbon重试的最长时间
+
+hystrix dashboard仪表盘 监控
+
+feign
+声明式客户端
+只需要声明一个接口，可以调用远程服务
+feign+ribbon
+feign+hystrix
+
+turbine 集群聚合监控
+turbine聚合了feign服务和order-service服务集群的hystrix监控信息
+
+zuul API网关
+转发调用
+统一权限校验
+
