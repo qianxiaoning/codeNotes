@@ -713,3 +713,25 @@ develop => 新建feature1.2，开发完毕merge到develop，develop => 新建rel
 
 merge合并后会把commit记录也带过去
 如：在master分支，git merge dev，会把dev分支上的commit记录带到master上 
+--------------------------
+eclipse的git操作
+1.初始化：
+仓库右键-team-share project-在工作空间新建文件夹
+2.提交
+仓库右键-team-commit...-双加号-写注释-commit按钮
+3.push
+仓库右键-team-push branch 'master'...-写入远端地址
+在git staging-commit and push...按钮
+4.查看历史
+仓库右键-team-show in history
+5.冲突
+push后红色标志，reject-点开team synchronizing界面-pull-手动修改合并
+6.pull
+仓库右键-team-pull
+7.创建分支
+仓库右键-team-switch to-new branch
+8.合并分支到主分支
+切换到主分支
+仓库右键-team-merge...-选择分支
+9.克隆远程仓库
+右上角open perspective-git-复制远程仓库路径-ctrl v-选择本地位置-切换java视图-import导入项目
