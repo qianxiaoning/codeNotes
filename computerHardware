@@ -209,4 +209,33 @@ cpu-z软件检测真实cpu情况
 
 HDTune软件检测真实硬盘情况
 
-zol中关村可以查所有电脑，实体店购买，如搜i7六代电脑按价格升序排列
+zol中关村在线查笔记本电脑全面参数
+
+买笔记本电脑查各大品牌的官网，按cpu天梯排名看在架的最低价格电脑
+
+http://detail.zol.com.cn/
+zol产品报价网 高级搜索查询相应电脑配置价格升序非常方便
+
+ddr4比ddr3
+外形不一样
+频率变高
+内容容量变大
+功耗下降
+
+sata1，sata2，sata3
+接口形状向下兼容
+传输速率变快
+
+m2比sata的ssd
+接口不同
+体积变小
+速度变快（需支持NVMe协议的走PCIE X4通道的SSD）
+电压变低
+------------------------------------
+我的惠普笔记本 246 G7（6GB51PA）
+惠普售后：http://support.hpicss.com/ascindex_detail.aspx
+i5-8265U 1.6GHz 四核心/八线程
+AMD Radeon R5 M520 2G（不是Radeon 520，是新版）
+一个sata3一个m2 测试最大256g（ssd容量越大功耗越大，得确认供电跟不跟得上）
+m2支持nvme ssd
+两个ddr4 2400 最大8g

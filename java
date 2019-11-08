@@ -5270,6 +5270,7 @@ hystrix dashboard仪表盘 监控
 feign
 声明式客户端
 只需要声明一个接口，可以调用远程服务
+微服务间调用
 feign+ribbon
 feign+hystrix
 
@@ -5277,6 +5278,168 @@ turbine 集群聚合监控
 turbine聚合了feign服务和order-service服务集群的hystrix监控信息
 
 zuul API网关
+部署在最前面
 转发调用
 统一权限校验
+zuul集成ribbon和hystrix
 
+config配置中心
+config client
+客户端不用关机微服务，动态刷新配置数据
+基础配置刷新不了，app-name,port,eureka
+只能刷新自定义属性
+ServiceImpl中加@RefreshScope 
+post请求刷新
+
+服务必须按顺序启动：
+eureka-config-其它
+
+bus
+config bus + rabbitmq 消息总线配置刷新
+rabbitmq群发
+
+消息中间件
+rabbitmq
+activemq
+
+rabbitmq
+
+sleuth 链路跟踪
+
+sleuth + zipkin 链路分析
+--------------------------
+Lucene Solr 倒排索引 中文分词ik
+全文检索
+Lucene Solr官方开发
+electic search个人开发，也是基于lucene
+
+core
+对一类文档生成的索引
+核心对应一张数据库的表
+--------------------------
+rabbitmq
+
+常用订单：流量削峰
+
+redis,rabbitmq是项目中必须要用的
+
+降低耦合都可以通过中间加一个东西来解决，经典的生产者消费者模型
+
+1.服务解耦
+2.订单、流量削峰
+3.异步调用
+
+六种模式：
+1.简单模式
+2.工作队列模式（多个消费者，负载均衡，轮询。合理分发-手动确认qos(1)，数据的持久化-队列持久化，消息持久化）
+3.发布订阅模式（fanout交换机）
+4.路由模式（direct交换机，路由键和绑定建匹配）
+5.主题模式（更复杂的路由模式，topic交换机，键的形式aaa.bbb.ccc,*.*.ccc,aa.#）*一个单词#多个单词
+6.rpc异步调用（两个队列，一个关联键）
+消息携带两个数据：返回队列，关联id
+--------------------------
+docker
+轻量的虚拟机
+
+vmware需要虚拟硬件，操作系统
+
+docker不虚拟硬件，系统资源直接使用宿主资源
+
+docker虚拟机称为容器
+
+docker开发运维一体化（DevOps）核心工具
+
+docker镜像：静态文件
+docker容器：从镜像实例化出来的
+
+镜像仓库：https://hub.docker.com/
+
+下载镜像
+docker pull xxx:yyy
+yyy:标签版本号
+
+docker中存在的镜像
+docker images
+docker image ls
+
+运行进入镜像
+docker run hello-world
+后台运行，不进镜像
+docker run -d xxx
+-d后台
+-i交互
+-t终端
+
+查看容器列表
+docker ps
+查看全部容器
+docker ps -a
+
+退出镜像
+exit
+
+删除镜像
+docker image rm 镜像名/id前三位
+有容器删不了则
+docker image rm -f 镜像名/id前三位
+
+导出
+docker save xxx yyy | gzip > app.tar.gz  
+
+导入xxx到docker
+docker load -i xxx
+docker load < xxx
+
+进入容器
+docker exec -it 77a bash
+
+启动容器
+docker start 77a
+
+停止容器
+docker stop 77a
+
+删除容器
+docker container rm 77a 88a
+删除正在运行的容器
+docker container rm -f 77a
+
+\折行写命令
+
+清理所有终止状态容器
+docker container prune
+
+容器的数据管理：
+数据存到宿主机磁盘上
+宿主机（linux服务器）路径/usr/app
+容器路径/opt/app
+
+启动挂载数据卷的容器
+--name 给容器起名
+-v指定挂载的目录
+docker run -dit --name centos7 -v /usr/app:/opt/app centos:7
+
+创建文件，EOF结束符，向f1输出
+cat <<EOF > f1
+查看文件
+cat f1
+
+数据卷：
+docker在宿主机上创建，不用关心路径
+docker volume create my-vol
+查看所有数据卷
+docker volume ls
+查看指定 数据卷 的信息（挂载目录）
+docker volume inspect my-vol
+启动挂载数据卷的容器
+docker run -dit --name centos7-v2 -v my-vol:/opt/app centos:7
+删除数据卷（如果数据卷被容器使用则无法删除）
+docker volume rm my-vol
+清理无主数据卷
+docker volume prune
+
+端口映射
+宿主机80->容器端口8080
+docker run -dit --name tomcat -p 80:8080 tomcat
+
+浏览器访问80端口
