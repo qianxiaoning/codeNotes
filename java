@@ -888,6 +888,14 @@ ArrayList<Integer> list = new ArrayList<Integer>();
 Collections.addAll(list, 5, 23, 76, 8, 4, 3, 43);
 list.add(i,8);// 在这个位置插入数字8
 -------------------------------
+用父类/接口 接收子类实例
+如：
+List<?> list = new ArrayList<>();
+Map<String, String> map = new HashMap<String, String>();
+优点：
+实现api的解耦，日后改变子类类型时只需改一行，以及尽量使用父类的方法，方便日后维护重构。
+java提倡面向接口编程，不面向实现，利用多态实现对象的解耦
+-------------------------------
 接口 特殊的类:
 是一个结构设计工具，用来解耦合，隔离实现
 我的理解：
@@ -5334,9 +5342,34 @@ redis,rabbitmq是项目中必须要用的
 2.工作队列模式（多个消费者，负载均衡，轮询。合理分发-手动确认qos(1)，数据的持久化-队列持久化，消息持久化）
 3.发布订阅模式（fanout交换机）
 4.路由模式（direct交换机，路由键和绑定建匹配）
-5.主题模式（更复杂的路由模式，topic交换机，键的形式aaa.bbb.ccc,*.*.ccc,aa.#）*一个单词#多个单词
+5.主题模式（更复杂的路由模式，topic交换机，键的形式aaa.bbb.ccc,*.*.ccc,aa.#）*匹配一个单词，#匹配多个单词
 6.rpc异步调用（两个队列，一个关联键）
-消息携带两个数据：返回队列，关联id
+多个客户端公用一个发送队列，
+多个客户端有自己的返回队列
+
+消息携带两个数据：返回队列名，每次消息的关联id
+
+订单存储的解耦：
+流量削峰，先把订单放到rabbitmq队列中
+并同步到redis缓存中，方便用户查询
+
+rabbitmq之前是：
+1.客户端controller-service-dao入数据库
+
+rabbitmq之后是：
+1.客户端(订单生产者)
+通过amqpTemplate.convertAndSend("orderQueue", pdOrder);
+controller-orderId放入rabbitmq队列
+
+2.新建消费者项目(订单消费者)
+通过@RabbitListener(queues="orderQueue")
+从队列取出订单
+再调serive存入数据库
+
+3.yml改成手动确认
+acknowledge-mode: manual
+OrderConsumer save中
+channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
 --------------------------
 docker
 轻量的虚拟机
@@ -5443,3 +5476,75 @@ docker volume prune
 docker run -dit --name tomcat -p 80:8080 tomcat
 
 浏览器访问80端口
+
+容器互联:
+新建网络
+docker network create -d bridge my-net
+启动两个容器连接到网络
+docker run -dit --name centos7-1 --network my-net centos:7
+docker run -dit --name centos7-2 --network my-net centos:7
+进入一个容器ping另一个容器
+宿主机也能连接
+
+自己制作镜像
+镜像中每一个操作会加一层，层数越少越好
+mkdir dockerfile
+mv jdk-8u212-linux-x64.tar.gz dockerfile/
+mv apache-tomcat-8.5.42.tar.gz dockerfile/
+cd dockerfile
+
+cat <<EOF > Dockerfile
+#以centos7为基础
+FROM centos:7
+#ADD命令将压缩包传入镜像中的指定目录,并同时解压缩
+ADD jdk-8u212-linux-x64.tar.gz /opt/
+ADD apache-tomcat-8.5.42.tar.gz /usr/
+#为了方便,把文件夹名称改得简单一点
+RUN mv /usr/apache-tomcat-8.5.42 /usr/tomcat
+#设置环境变量
+ENV JAVA_HOME=/opt/jdk1.8.0_212 \
+    CATALINA_HOME=/usr/tomcat \
+    PATH=$PATH:/opt/jdk1.8.0_212/bin:/usr/tomcat/bin
+#暴露容器的8080端口
+EXPOSE 8080
+#设置启动容器时自动运行tomcat
+ENTRYPOINT /usr/tomcat/bin/startup.sh && tail -F /usr/tomcat/logs/catalina.out
+EOF
+
+构建镜像
+docker build -t tomcat:7 .
+
+Docker案例：
+1.加载redis镜像
+2.启动容器
+3.进入容器并启动redis工具
+cd ~
+docker exec -it redis7000 redis-cli
+
+启动多个 redis 容器
+
+容器互联
+1.创建docker虚拟网络
+2.mysql
+创建数据卷
+3.tomcat
+启动 tomcat 容器
+--------------------------
+k8s 自动化容器部署工具
+
+安装kubernetes集群
+
+<<Kubernetes in action>>
+
+k8s 容器集群管理系统
+为容器化的应用提供
+部署运行、资源调度、服务发现和动态伸缩等一系列完整功能，
+提高了大规模容器集群管理的便捷性
+
+Kubernetes中，Service是分布式集群架构的核心，Service对象特征：
+一个唯一的名字
+一个虚拟IP（Cluster IP、Service IP、或VIP）和端口号
+能够体统某种远程服务能力
+被映射到了提供这种服务能力的一组容器应用上
+--------------------------
+大数据

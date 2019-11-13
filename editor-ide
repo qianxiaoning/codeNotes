@@ -75,6 +75,9 @@ f8连续向下执行，直到断点
 nextint
 int ${cursor} = new Scanner(System.in).nextInt();${:import(java.util.Scanner)}
 
+切换工作空间时导入导出配置：
+windows-preferences-左下方导入导出
+
 设置字体大小
 preferences-colors and fonts-basic-Text font
 --------------------------
