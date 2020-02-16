@@ -52,6 +52,7 @@ alt+shift+r 改名
 shift按住，鼠标悬浮在方法名上 查看调用的方法
 ctrl+t 看继承结构，被谁实现了
 ctrl+shift+t 打开所有仓库类
+ctrl+shift+f 格式化
 ctrl+o 显示成员大纲
 双击大括号 复制方法内部所有代码
 ctrl+n 新建文件
