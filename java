@@ -2784,6 +2784,11 @@ Maven
 公共包管理工具，类似npm install -g：
 一个项目管理工具，jar包管理，简化配置，统一项目结构
 
+Maven坐标主要组成(GAV) -确定一个jar在互联网位置：
+groupId：定义当前Maven组织名称
+artifactId：定义实际项目名称
+version：定义当前项目的当前版本
+
 下载maven
 配置maven
 maven\apache-maven-3.5.3\conf\settings.xml
@@ -5621,6 +5626,7 @@ hive
 下载java1.8，安装
 如：jdk1.8.0_45.zip
 配置环境变量-系统变量-path
+JAVA_HOME
 
 2.安装编辑器
 如eclipse
@@ -5630,3 +5636,49 @@ hive
 3.安装数据库环境
 如mysql
 配置环境变量-系统变量-path
+
+4.安装数据库工具
+连接数据库
+
+5.服务器
+tomcat服务器
+下载解压
+bin/startup.bat启动
+
+conf/logging.properties
+java.util.logging.ConsoleHandler.encoding = GBK
+解决命令行乱码问题
+
+conf/server.xml 69行改端口
+logs/日志
+webapps/管理目录
+
+eclipse添加tomcat
+eclipse-windows-preferences-server-runtime environment-添加tomcat
+修改tomcat文件目录
+
+servers-add and remove添加去除项目
+
+6.maven公共包管理工具
+类似npm install -g
+下载
+
+配置本地仓库位置
+conf-settings.xml
+书写<localRepository>
+
+配置镜像服务器
+conf-settings.xml
+书写<mirror>
+
+配置jdk版本
+conf-settings.xml
+书写<profiles>
+
+maven配置到eclipse中
+windows-preferences-maven
+-installations-选择maven文件位置
+-user settings-选择maven配置文件位置
+
+添加jar包
+pom.xml右键maven-add dependency-search results
