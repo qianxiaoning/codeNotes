@@ -17,7 +17,7 @@ flex布局
 .jc-fe{justify-content: flex-end;}
 .jc-c{justify-content: center;}
 .jc-sb{justify-content: space-between;}
-.jc-fs{justify-content: space-around;}
+.jc-sa{justify-content: space-around;}
 /*单根交叉轴对齐方式*/
 .ai-fs{align-items: flex-start;}
 .ai-fe{align-items: flex-end;}
