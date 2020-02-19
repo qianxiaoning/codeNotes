@@ -1049,9 +1049,11 @@ console 中输入 obj.dispatchEvent(evt)，可以看到 console 中输出“cust
 张旭鑫自定义事件 http://www.zhangxinxu.com/wordpress/2012/04/js-dom%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BA%8B%E4%BB%B6/ 
 --------------------------------------------------------------------
 主页面与iframe子页面互相获取对象。
-iframe获取主页面对象：1.利用window.parent或window.top获取父页面和顶层页面的window对象，然后js则.document.getElementsBy系列获取主页面dom，jq则直接.$("xxx")获取主页面dom，因为jq的类和实例是直接赋给window的。
+iframe获取主页面对象：
+1.利用window.parent或window.top获取父页面和顶层页面的window对象，然后js则.document.getElementsBy系列获取主页面dom，jq则直接.$("xxx")获取主页面dom，因为jq的类和实例是直接赋给window的。
 ----------------------------
-主页面获取iframe对象：（推荐1和3方法）1.获取到主页面iframe对象，利用js方法contentWindow获取iframe文档中的window对象，再.document.getElements系列和.$("xxx")，用js和jq获取iframe里的节点。
+主页面获取iframe对象：（推荐1和3方法）
+1.获取到主页面iframe对象，利用js方法contentWindow获取iframe文档中的window对象，再.document.getElements系列和.$("xxx")，用js和jq获取iframe里的节点。
 ----------------------------
 2.在主页面获取frames，获取主页面引用iframe的数组集合。通过索引如frames[0]得到想要的iframe的window对象，然后js或jq获取iframe节点。
 ----------------------------
