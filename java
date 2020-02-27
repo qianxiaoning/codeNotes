@@ -4722,7 +4722,7 @@ mybatis.mapper-locations=classpath:/mapper/*.xml
 7.在GoodsDaoTests文件测试
 -------------------------------
 spring boot整合web应用
-内嵌tomcat
+内嵌tomcat，添加org.apache.tomcat.embed依赖
 
 1.pom.xml添加依赖Edit Starters
 Thymeleaf,Spring Web Starter
@@ -5682,3 +5682,5 @@ windows-preferences-maven
 
 添加jar包
 pom.xml右键maven-add dependency-search results
+
+pom.xml点下方dependencies-add，剩下同上
