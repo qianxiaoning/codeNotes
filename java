@@ -5684,3 +5684,15 @@ windows-preferences-maven
 pom.xml右键maven-add dependency-search results
 
 pom.xml点下方dependencies-add，剩下同上
+
+1.安装eclipse_sts
+2.工作区编码utf-8
+3.maven安装，设置
+4.lombok插件
+添加依赖lombok
+复制全路径找到lombok-xxx.jar所在目录
+执行java -jar lombok-xxx.jar
+找到sts目录，选中sts.exe文件，install
+安装后，sts.exe目录会有一个lombok.jar文件
+sts.ini最后一行是lombok的安装目录
+pojo对象即可使用lombok注解
