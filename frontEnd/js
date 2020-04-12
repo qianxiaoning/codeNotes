@@ -2076,3 +2076,10 @@ parseInt('23',10); // 返回23
 debugger js打断点
 
 json构建于两种格式：{}和[]
+
+input type=checkbox name可以没有，value一定得有
+
+循环中splice(index,1)删除数组
+正序删，后面的会往前部位，
+倒序删，前面的不会受影响。
+所以可以倒序删
