@@ -1412,7 +1412,7 @@ div开始就有，p和span是后面动态生成的
 //外层
 const dom = document.querySelector('.wrap');
 //addEventListener默认false，是冒泡，事件从内往外传递
-dom.addEventListener('click',function(e){
+dom.addEventListener('click',(e) => {
     //target起初是<span>
     let target = e.target || e.srcElement;
     //如果当前dom的className不是想要的那个className，就一直循环
