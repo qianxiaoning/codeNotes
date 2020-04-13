@@ -1401,6 +1401,40 @@ aaa bbb访问不了，而ccc ddd能够访问。
 事件委托原理
 利用事件冒泡原理
 绑定事件到父级，点击子级，冒泡到父级触发事件，判断事件源的e.target.id或者e.target.className，来触发事件，实现委托。
+
+js版事件委托
+div开始就有，p和span是后面动态生成的
+利用冒泡给<p>附加事件
+结构：
+<div class='wrap'>
+    <p class='middle'>
+        <span class='inner'>
+//外层
+const dom = document.querySelector('.wrap');
+//addEventListener默认false，是冒泡，事件从内往外传递
+dom.addEventListener('click',function(e){
+    //target起初是<span>
+    let target = e.target || e.srcElement;
+    //如果当前dom的className不是想要的那个className，就一直循环
+    while(target.className !== 'middle'){
+        //循环到事件最外层，即<div>处停止
+        if(target === dom){
+            //target赋值null
+            target = null;
+            break;
+        }
+        //每次把当前target赋为自己的父级
+        target = target.parentNode;
+    }
+    //找到想要的target了，即想要的dom
+    if(target){
+        //执行操作，变相达到了给<p>绑定事件的效果
+        console.log(target);
+    }else{
+        //循环到事件最外层未找到，输出未找到
+        console.log('未找到');
+    }
+})
 -------------------------------------------------------------------- 
 parentNode排序
 document=>html=>body=>xxx
@@ -2009,7 +2043,17 @@ for(let i = a.length - 1; i >= 0; i--){
 }
 // 甚至可以在for里面改变a数组，比如每次加1，每次减1这样   
 
-for 循环
+for循环的正序和倒序
+正序：
+for (let index = 0; index < a.length; index++) {
+    console.log(index);
+}
+倒序：
+for (let index = array.length - 1; index > -1; index--) {
+    console.log(index);
+}
+
+for 循环 执行顺序
 for (语句 1; 语句 2; 语句 3){
   被执行的代码块
 }
@@ -2017,7 +2061,7 @@ for (语句 1; 语句 2; 语句 3){
 
 语句 2 定义运行循环（代码块）的条件
 
-语句 3 在循环（代码块）已被执行之后执行
+*语句 3 在循环（代码块）已被执行之后执行
 比如可以这么写：
 // 在开始前定义两个变量
 for (var i=0,len=cars.length; i<len; i++){
