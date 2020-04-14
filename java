@@ -4230,6 +4230,21 @@ public class TestDataSource extends TestBase {
 	}
 }
 -------------------------------
+1.前端请求Content-Type: application/x-www-form-urlencoded;
+参数以form data形式提交，name=sss&age=16
+springmvc controller层可以直接获取参数
+request.getParameter(name);
+
+2.前端请求content-type: application/json;
+参数以request payload形式提交，{name:'sss',age:16}
+springmvc controller层通过 加 @RequestBody 来获取json对象
+底层request.getReader();从流中取
+
+public JsonResult doInsertObject(@RequestBody Person entity) {
+	RoleService.insertObject(entity);
+	return new JsonResult("post ok");
+}
+-------------------------------
 springMVC原理：
 MVC是一种分层架构思想，按职责各司其职
 -------------------------------
