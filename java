@@ -3933,6 +3933,11 @@ public interface GoodsDao {//接口的包+接口名要=mapper.xml中的namespace
 	//对应的xml：limit #{startIndex},#{pageSize}
 }
 
+dao接收从service的参数：
+1.如果只有一个参数，不用写@Param()
+2.如果有多个参数，得写@Param("xxx")
+使得mapper.xml中可以使用#{xxx}名字调用，不然只能用#{arg1}调用
+
 8.测试类 不用xml构建SqlSessionFactory，用java构建SqlSessionFactory
 src/test/java/包/TestBaseWithJava.java
 public class TestBaseWithJava {
@@ -5711,3 +5716,13 @@ pom.xml点下方dependencies-add，剩下同上
 安装后，sts.exe目录会有一个lombok.jar文件
 sts.ini最后一行是lombok的安装目录
 pojo对象即可使用lombok注解
+-------------------------------
+单表查询结果映射：
+resultType=基本类型封装类，po
+
+多表查询结果映射：
+resultType=map，vo
+-------------------------------
+java数据库功能开发顺序
+查-增-改-删
+-------------------------------
