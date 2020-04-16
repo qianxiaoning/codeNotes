@@ -2139,7 +2139,7 @@ while是可以用break的
 const array = [1,2,3,1];
 const newArray = [...new Set(array)];
 -----------------------
-es6数组删除指定数据
+es6数组删除指定数据，数组中一定要有此数据，不然会删除数组最后一位
 1.splice+array.findIndex
 const array=["a","c","w"];
 array.splice(array.findIndex(item => item === "c"), 1);
