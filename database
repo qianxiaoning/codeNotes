@@ -291,8 +291,13 @@ where里面不能使用列的别名
 	
 -- 27.查询emp表中姓名中包含"涛"员工，显示员工姓名。
 	select name from emp where name like '%涛%';
+
+	如果"涛"是变量，得这么写
+	select name from emp where name like concat("%",#{name},"%");
+
 -- 28.查询emp表中姓名以"刘"开头并且姓名为2个字的员工，显示员工姓名。
-	select name from emp where name like '刘_';
+	select name from emp where name like '刘_';	
+	
 -- -----------------------------------
 -- 三、分组查询、聚合函数、排序查询
 -- -----------------------------------

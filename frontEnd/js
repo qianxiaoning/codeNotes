@@ -2127,3 +2127,21 @@ input type=checkbox name可以没有，value一定得有
 正序删，后面的会往前部位，
 倒序删，前面的不会受影响。
 所以可以倒序删
+-----------------------
+while是可以用break的
+-----------------------
+递归：
+1.函数中调自身
+2.while循环递归，待考证
+-----------------------
+数组去重
+1.es6 Set去重，set只允许存储不重复的值
+const array = [1,2,3,1];
+const newArray = [...new Set(array)];
+-----------------------
+es6数组删除指定数据
+1.splice+array.findIndex
+const array=["a","c","w"];
+array.splice(array.findIndex(item => item === "c"), 1);
+array => ["a","w"]
+-----------------------
