@@ -5726,3 +5726,28 @@ resultType=map，vo
 java数据库功能开发顺序
 查-增-改-删
 -------------------------------
+springmvc控制层接收请求体中多个对象时
+前端传递json:
+{
+	roles:{name:"aa",age:12},
+	menusIds:[1,2,3]
+}
+比如后台想接收Roles entity,Integer[] menusIds
+@RequestBody只用写一次，因为一次请求就能拿到请求体中所有数据
+1.用Map<String,Object>接收
+public JsonResult doInsertObject(@RequestBody Map<String, Object> rolesMenus) {
+	System.out.println(rolesMenus);
+	//rolesMenus为{roles:{name:"aa",age:12},menusIds:[1,2,3]}
+	//缺点代码可读性差
+}
+2.用vo类接收
+public class RolesMenus implements Serializable{	
+	private static final long serialVersionUID = -8042095643912018424L;
+	private Roles roles;
+	private Integer[] menusIds; 
+}
+public JsonResult doInsertObject(@RequestBody RolesMenus rolesMenus) {
+	System.out.println(rolesMenus.getRoles());//Roles对象
+	System.out.println(rolesMenus.getMenusIds());//Integer数组
+}
+-------------------------------
