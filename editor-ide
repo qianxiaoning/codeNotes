@@ -68,6 +68,7 @@ ctrl+i 设置缩进
 ctrl+1 给出提示
 ctrl+z 撤销
 ctrl+y 撤销还原
+ctrl+h -file search-scope:enclosing project 整个项目搜索/替换
 
 debug调试
 左侧双击加断点，f11debug执行

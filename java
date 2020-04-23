@@ -1556,7 +1556,7 @@ js中 同名函数， 后面的函数会覆盖前面定义的函数
 setTimeout(A,1000);
 setTimeout({A();},1000);
 
-prepareStatement（）方法来构建一个PreparedStatement接口	
+prepareStatement()方法来构建一个PreparedStatement接口	
 
 每个对象都有唯一的对象锁，而不是多个
 
@@ -5757,13 +5757,20 @@ resultMap内容：
 必须按顺序写
 (constructor?,id*,result*,association*,collection*,discriminator?)
 
+javaType定义po类型
+ofType定义集合中类型
+
 id是id专用映射
 
 result是自定义映射
 
 association是对一
-一个参数转换成一个对象，如把列deptId转换成Dept实体
+用一个参数查询一个对象，赋值到vo的一个属性上，如把deptId查询Dept赋值到vo.dept属性上
+autoMapping="true"，自动映射对应字段
 
 collection是对多
-通过一个参数拿出来，查询一个List赋值到一个属性上
+通过一个参数查询一个集合，赋值到vo的一个属性上，如把userId查询users_roles中间表得到roleIds，把roleIds赋值到vo.roleIds属性上
+
+association*,collection*后property值会被用掉
+得用id*,result*重新给property赋值
 -------------------------------
