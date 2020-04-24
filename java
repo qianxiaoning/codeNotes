@@ -5773,4 +5773,8 @@ collection是对多
 
 association*,collection*后property值会被用掉
 得用id*,result*重新给property赋值
+
+insert和update时
+useGeneratedKeys="true"使用自动生成的主键值
+keyProperty="id" 将获取的主键值赋值给po类中的xx属性，通过setXx方法
 -------------------------------
