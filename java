@@ -5778,3 +5778,24 @@ insert和update时
 useGeneratedKeys="true"使用自动生成的主键值
 keyProperty="id" 将获取的主键值赋值给po类中的xx属性，通过setXx方法
 -------------------------------
+阿里分层领域模型规约：
+do(data object) 与表对应，通过dao层向上传递的数据对象
+dto(data transfer object) 数据传输对象，service向外传输的对象
+bo(business object) 业务对象，由service输出的封装业务逻辑的对象
+ao(application object) 应用对象
+vo(view object) 显示层对象，web向模板渲染引擎层传输的对象
+-------------------------------
+shiro安全框架，完成认证授权
+1.用shiro给密码加密，
+1.1 UUID方法生成盐值 String salt = UUID.randomUUID().toString();
+1.2 用shiro的SimpleHash进行md5加密，把原密码和盐值一起加密存入数据库。MD5只能加密不能解密，相同信息加密结果一致
+SimpleHash sh = new SimpleHash(
+	"md5", //algorithmName算法名称
+	sourcePassword, //source原密码
+	salt, //salt盐值
+	1//iterations加密此数，可以对加密结果进行再加密
+);
+1.3 把加密过的密码和盐值存入vo中存入数据库
+userDeptRoleIds.setSalt(salt);
+userDeptRoleIds.setPassword(sh.toHex());
+-------------------------------
