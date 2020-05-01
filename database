@@ -195,7 +195,7 @@ datetime 格式：年月日 时分秒
 timestamp 时间戳1970-1-1到指定时间的毫秒值   可以设置为自动更新为当前时间，datetime不行
 
 插入记录：
-insert into 表名(列1，列2，列3...) values(值1，值2，值3...);
+insert into 表名 (列1，列2，列3...) values(值1，值2，值3...);
 或：
 insert into 表名 values(值1，值2，值3...);
 insert into 表名 values(值1，值2，值3...),(值1，值2，值3...);
