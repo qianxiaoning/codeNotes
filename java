@@ -5799,3 +5799,12 @@ SimpleHash sh = new SimpleHash(
 userDeptRoleIds.setSalt(salt);
 userDeptRoleIds.setPassword(sh.toHex());
 -------------------------------
+java自定义工具类
+其它类调用时：工具类名.方法
+-------------------------------
+判断实例对象，是否是指定类的对象
+Class clz = object.getClass();
+if(clz==Users.class) {
+	...
+}
+-------------------------------
