@@ -5808,3 +5808,22 @@ if(clz==Users.class) {
 	...
 }
 -------------------------------
+从自身继承的接口中，找需要的方法.parameterTypes()
+Signature s = jp.getSignature();
+1.打断点，s指向内部类MethodSignatureImpl
+2.ctrl+shift+t 打开所有仓库类
+3.输入MethodSignatureImpl，打开这个类看一下
+4.MethodSignatureImpl实现了MethodSignature接口
+MethodSignature继承了CodeSignature
+CodeSignature继承了MemberSignature
+MemberSignature继承了Signature
+用接口接收，
+MethodSignature ms = (MethodSignature)jp.getSignature();
+有ms.getParameterTypes()，就是我们需要的parameterTypes()方法
+-------------------------------
+反射获取注解值
+反射的起点字节码对象Class<?>
+通过字节码对象
+Class<?>.getDeclaredMethod(name,parameterTypes)，获取某一个方法对象
+name方法名，parameterTypes方法参数
+-------------------------------
