@@ -5827,3 +5827,32 @@ MethodSignature ms = (MethodSignature)jp.getSignature();
 Class<?>.getDeclaredMethod(name,parameterTypes)，获取某一个方法对象
 name方法名，parameterTypes方法参数
 -------------------------------
+springboot全局cors跨域
+前端域名localhost:8080
+服务器端口localhost:84
+
+前端请求地址localhost:84
+后台springboot中：
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+	@Override
+	//设置全局跨域
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**")		
+		.allowedOrigins("http://localhost:8080")
+        .allowedMethods("GET","POST","PUT","DELETE")
+        .allowedHeaders("*")
+        .allowCredentials(true);
+	}
+}
+-------------------------------
+springboot项目名不能有数字，括号
+groupId' with value '1212()' does not match a valid id pattern
+意思是groupId名称无效
+-------------------------------
+shiro的setLoginUrl导致的cors跨域、前端proxy跨域失效
+ShiroFilterFactoryBean fBean = new ShiroFilterFactoryBean();
+/*设置登录url，setLoginUrl是redirect操作，基于安全考虑，Response Header的信息会被清除，导致cors跨域、前端proxy跨域失效。nginx反向代理有效
+*/
+fBean.setLoginUrl("/doLogin");
+-------------------------------

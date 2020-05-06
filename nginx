@@ -20,3 +20,37 @@ nginx -s reload
 关闭
 nginx -s stop
 --------------------------
+配nginx反向代理
+http{
+    # 简易版
+    server{
+        listen  85;#浏览器输入端口
+        server_name  localhost;#浏览器输入域名
+
+        location / {
+            proxy_pass http://localhost:8080; #前端页面地址
+        }
+		location /api { #前端页面域名添加上下文
+			proxy_pass   http://localhost:84/; #后台接口地址
+        }
+    }
+    # 旧版
+    server{
+        listen  85;#浏览器输入端口
+        server_name  localhost;#浏览器输入域名
+
+        location / {
+            proxy_pass http://localhost:8080; #前端页面地址
+            proxy_redirect default;
+        }
+
+        location /api { #添加访问目录为/api的代理配置
+			rewrite  ^/api/(.*)$ /$1 break;# 监听所有/api前缀，实则转发后台api接口地址
+			proxy_pass   http://a.cloud.cn/api/; #后台接口地址
+        }        
+    }
+}
+解释：
+location 为本地域名如：localhost:8080
+location /apis就重写为localhost:8080/apis/xxx 实则转发http://a.cloud.cn/api/xxx的接口地址
+--------------------------
