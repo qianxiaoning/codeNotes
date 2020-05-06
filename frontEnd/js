@@ -1195,6 +1195,9 @@ window.location.hash修改hash，路径后面的#，不刷新页面
 --------------------------------------------------------------------
 es6 数据交互
 fetch
+返回json：application/json,res.json()
+返回json：text/html,res.text()
+
 fetchA(obj){
     fetch('api', {
         'method': 'get/post',

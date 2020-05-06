@@ -149,7 +149,7 @@ CSS后处理器框架：
 
 给定位的元素水平垂直居中
 一、margin:auto配合absolute四方位0撑开
-二、利用transform相对于自身变形，left,top:50%,transform: translate(-50%,-50%);position即可
+二、利用transform相对于自身变形，left,top:50%,transform: translate(-50%,-50%);absolute即可
 
 position:fixed弹窗，页面很矮时，弹窗可滚动
 外层fixed层：
