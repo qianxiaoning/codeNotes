@@ -2153,3 +2153,11 @@ input type='text' @input = 'xxx'
 
 vue传常量布尔值也要加冒号
 <a-component :isShow='false'></a-component>
+---------------------
+解决接口返回数据为null，
+使this.xxxData = res.data;保错
+最简单方法，在赋值语句前加上，if(!res.data)return;即可
+
+if(!res.data)return;
+this.xxxData = res.data;
+---------------------
