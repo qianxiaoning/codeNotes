@@ -5856,3 +5856,50 @@ ShiroFilterFactoryBean fBean = new ShiroFilterFactoryBean();
 */
 fBean.setLoginUrl("/doLogin");
 -------------------------------
+ssm中bean对象的创建
+applicationContext.xml中
+<bean class="org.springframework.xxx.xxx.xxx.Aaabbbccc">
+	...
+</bean>
+
+springboot中bean对象的创建
+java类中
+@Bean
+public Aaabbbccc aaabbbccc(){
+	return new Aaabbbccc();
+}
+
+两者是一样的
+-------------------------------
+dao中，一个参数是数组时也要加@Param("xxx")
+List<String> findPermissionsByMenuIds(
+			@Param("menuIds")Integer[] menuIds);
+-------------------------------
+XxxMapper.xml中
+
+第一种不需要separator=","，直接foreach，相当于执行多次select
+<select id="findPermissionsByMenuIds" resultType="string">
+	select permission from menus
+	<where>
+		<foreach collection="menuIds" 
+		item="menuId">
+			or id=#{menuId}
+		</foreach>
+	</where>
+</select>
+
+第二种需要open,close,separator，因为in的格式要求in(1,2,3)，一次select
+<select id="findPermissions"
+		resultType="string">
+		select permission
+		from sys_menus
+		where id in
+		<foreach collection="menuIds"
+				open="("
+				close=")"
+				separator=","
+				item="menuId">
+			#{menuId}
+		</foreach>
+</select>
+-------------------------------
