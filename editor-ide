@@ -87,4 +87,11 @@ windows-preferences-左下方导入导出
 
 设置字体大小
 preferences-colors and fonts-basic-Text font
+
+maven无法下载第三方源码时，查看源码显示"source not found"
+解决办法：
+help-Eclipse marketplace-搜索"Enhanced Class Decompiler"-install-
+window-preferences-general/editor/file associations-选中*.class without source-下方选中class Decompiler viewer，右边点击default
+
+再点击没有source的对象时，就能看到反编译后的源码了
 --------------------------
