@@ -43,11 +43,11 @@ http{
         listen  80;#浏览器输入端口
         server_name  www.springboot02.com;#浏览器输入域名
 
-        # www.springboot02.com/请求映射为http://localhost:8080
+        # www.springboot02.com/请求映射为http://localhost:8080/
         location / { 
             proxy_pass http://localhost:8080/; #前端页面地址		
         }
-        # www.springboot02.com/api/请求映射为http://localhost:84
+        # www.springboot02.com/api/请求映射为http://192.168.0.107:84/
 		location /api/ {
 			proxy_pass   http://192.168.0.107:84/; #后台接口地址            
         }
