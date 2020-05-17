@@ -38,18 +38,18 @@ webpack.devServer.disableHostCheck:true
 
 3.nginx反向代理
 http{
-    # 新版
+    # 新版    
     server{
         listen  80;#浏览器输入端口
         server_name  www.springboot02.com;#浏览器输入域名
 
         # www.springboot02.com/请求映射为http://localhost:8080
         location / { 
-            proxy_pass http://localhost:8080; #前端页面地址		
+            proxy_pass http://localhost:8080/; #前端页面地址		
         }
         # www.springboot02.com/api/请求映射为http://localhost:84
-        location /api/ {
-            proxy_pass   http://localhost:84/; #后台接口地址            
+		location /api/ {
+			proxy_pass   http://192.168.0.107:84/; #后台接口地址            
         }
     }
     # 访问www.springboot02.com正常开发
