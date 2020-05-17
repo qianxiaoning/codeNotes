@@ -20,20 +20,40 @@ nginx -s reload
 关闭
 nginx -s stop
 --------------------------
-配nginx反向代理
-http{
-    # 简易版
-    server{
-        listen  85;#浏览器输入端口
-        server_name  localhost;#浏览器输入域名
+nginx能直接代理端口，
+改域名还得配合hosts文件，如添加
+127.0.0.1       www.springboot02.com
 
-        location / {
-            proxy_pass http://localhost:8080; #前端页面地址
+127.0.0.1 == localhost == 本机域名
+192.168.0.107 局域网下本机ip
+192.168.0.101 局域网下服务器ip
+
+nginx反向代理，结合hosts修改域名和端口
+
+1.hosts添加dns重绑定操作
+127.0.0.1       www.springboot02.com
+
+2.webpack.devServer关闭host检查
+webpack.devServer.disableHostCheck:true
+
+3.nginx反向代理
+http{
+    # 新版
+    server{
+        listen  80;#浏览器输入端口
+        server_name  www.springboot02.com;#浏览器输入域名
+
+        # www.springboot02.com/请求映射为http://localhost:8080
+        location / { 
+            proxy_pass http://localhost:8080; #前端页面地址		
         }
-		location /api { #前端页面域名添加上下文
-			proxy_pass   http://localhost:84/; #后台接口地址
+        # www.springboot02.com/api/请求映射为http://localhost:84
+        location /api/ {
+            proxy_pass   http://localhost:84/; #后台接口地址            
         }
     }
+    # 访问www.springboot02.com正常开发
+
     # 旧版
     server{
         listen  85;#浏览器输入端口

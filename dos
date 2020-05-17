@@ -16,7 +16,13 @@ dir 文件夹名 //查看该目录下所有文件信息
 type 文件名 //查看文件内容
 
 端口占用：
+netstat -ano 查看所有端口
+netstat -aon|findstr "8080" 查看指定端口，记录pid（假设1888）
+tasklist|findstr "1888" 查看pid的进程（如nginx.exe）
+
+
 netstat -ano 查看当前系统活动的进程，pid进程编号
 
 结束进程：
-taskkill /f /pid 进程编号
+taskkill /f /pid 结束进程
+taskkill /t /f /pid 结束进程及子进程

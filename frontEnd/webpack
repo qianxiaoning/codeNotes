@@ -419,3 +419,11 @@ new copyWebpackPlugin([
   },         
 ])
 意为把src/data下的所有文件复制到服务下的data文件夹下
+
+devServer.disableHostCheck//不启用host检查
+当用hosts文件，进行dns重绑定操作，如
+127.0.0.1       www.springboot02.com
+
+此时webpack.devServer为了防止dns攻击，默认只接受来自本地的请求（本地ip和localhost），请求重绑定的dns会报错，Invalid Host/Origin header
+
+将devServer.disableHostCheck:true，不进行host检查，就能访问www.springboot02.com了
