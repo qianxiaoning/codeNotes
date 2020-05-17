@@ -5903,3 +5903,23 @@ XxxMapper.xml中
 		</foreach>
 </select>
 -------------------------------
+cookie map结构
+每个键值对有 过期时间、域、路径、脚本可否访问等描述信息；描述信息存储在客户端，客户端请求时，默认会带上cookie的名称和值，不会带描述信息
+
+cookie的属性：
+Max-Age 过期时间
+Expires 过期日期
+domain 域名
+path 路径
+secure 是否安全传输，安全协议（如https、ssl）浏览器才会传输cookie
+httponly 脚本是否可访问
+
+cookie区分域，不区分端口。自然添加cookie时，无法指定端口
+
+cookie和sessionId
+服务器无法知道是哪个浏览器发起的请求，所以当浏览器发起第一次请求时，服务器会创建sessionId存入浏览器的cookie中，以后浏览器发起请求都会带上sessionId，服务器得以区分是哪个浏览器发起的请求
+
+cookie存储在客户端，session存储在服务器端
+
+session是跟单次浏览器标签绑定的（可以通过persistent cookie 实现跨窗口使用，但是也是对应的同一域名）
+-------------------------------
