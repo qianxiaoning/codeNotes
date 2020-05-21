@@ -98,4 +98,10 @@ window-preferences-general/editor/file associations-选中*.class without source
 
 2.
 通过ctrl+shift+t，打开所有类，搜索类名，从中点开
+
+解决ctrl+c 卡顿
+window-preferences-general-editor-text editors-hyperlinking
+取消Document Link Detector，Go to declaration选项
+--------------------------
+idea
 --------------------------

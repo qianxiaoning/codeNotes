@@ -5903,6 +5903,8 @@ XxxMapper.xml中
 		</foreach>
 </select>
 -------------------------------
+cookie会存在请求的域名下
+
 cookie map结构
 每个键值对有 过期时间、域、路径、脚本可否访问等描述信息；描述信息存储在客户端，客户端请求时，默认会带上cookie的名称和值，不会带描述信息
 
@@ -5912,9 +5914,11 @@ Expires 过期日期
 domain 域名
 path 路径
 secure 是否安全传输，安全协议（如https、ssl）浏览器才会传输cookie
-httponly 脚本是否可访问
+httponly 是否只能请求，脚本不能获取，默认为true
 
 cookie区分域，不区分端口。自然添加cookie时，无法指定端口
+
+cookie可以跨端口跨域，不可跨域名
 
 cookie和sessionId
 服务器无法知道是哪个浏览器发起的请求，所以当浏览器发起第一次请求时，服务器会创建sessionId存入浏览器的cookie中，以后浏览器发起请求都会带上sessionId，服务器得以区分是哪个浏览器发起的请求
@@ -5922,4 +5926,93 @@ cookie和sessionId
 cookie存储在客户端，session存储在服务器端
 
 session是跟单次浏览器标签绑定的（可以通过persistent cookie 实现跨窗口使用，但是也是对应的同一域名）
+-------------------------------
+springboot.application.yml中
+如果
+spring:
+	aop:
+		proxy-target-class: true
+也就是用cglib代理aop		
+项目debug模式，调试断点，可能出现missing line number attributes错误
+改为proxy-target-class: false，用jdk代理aop即可
+-------------------------------
+shiro和JSESSIONID
+
+1.shiro的登录操作
+
+shiro登录成功后，会把请求的用户信息（Subject对象）放入session中，session默认时效30分钟（不进行任何请求30分钟），到期后清除
+
+2.java服务器JSESSIONID
+
+为了识别唯一客户端（浏览器），客户端第一次请求时，服务器会生成一串字符串，Set-Cookie到浏览器cookie中，
+下次再访问服务器，浏览器会带上JSESSIONID，服务器会比对自己内存中的sessionId来标识客户端
+
+3.什么情况会产生JSESSIONID
+
+	1.访问jsp，默认第一次产生jsessionId，客户端没有，服务端会重新set，因为session是jsp九大内置对象之一，jsp先是转换成Servlet，就已经创建了session对象。
+
+	2.访问html或者ajax，默认不产生jsessionId，得用安全框架（如shiro）后产生
+
+4.set-Cookie的Expires属性：
+
+服务器set-Cookie.Expires默认是expires:session，关闭浏览器，浏览器与服务器断开连接，cookie消失，关闭选项卡cookie不会消失，
+如果expires为过去时间，这个cookie不会再发送到服务器，随后浏览器会删除此cookie
+
+未设置cookie过期时间，cookie保存在浏览器内存中
+设置了cookie过期时间，cookie在过期前保存在客户端硬盘中
+
+5.jsessionId的作用
+
+	不用shiro，jesessionId是标识，但消失不会回到登录页
+
+	用了shiro，每次请求都会比对jsessionId，不一致时返回登录页面
+
+6.shiro和jsessionId的关系
+
+第一次请求服务器，shiro会调用tomcat方法生成jsessionId给客户端，之后请求客户端都会带上jsessionId
+如果客户端jsessiomnId消失，shiro发现后会调用tomcat方法生成一个新的jsessionId拼在returnToLogin路由后面，shiro发现和服务器的jsesseionId不匹配，会调setLoginUrl方法，触发tomcatURL重写机制，到登录页
+
+7.shiro的rememberMe
+
+shiro通过UsernamePasswordToken.setRememberMe(true)，开启rememberMe后，会向浏览器set一个cookie（如"rememberMe"），值为用户对象的加密（subject对象）
+
+下次登录，服务器发现有这个cookie，就不会触发subject.login方法，不用比对jsessionId，，通过("/**", "user")user拦截器，访问所有user控制的路径，并在第一次请求时，set新的jsessionId，访问authc需再次登录
+
+需要用户信息时，从rememberMe值中解析出用户信息
+
+shiro的logout方法会消除rememberMe的值
+
+
+8.web浏览器的会话恢复功能
+现在很多浏览器有会话恢复功能，关闭浏览器，会保留所有的tab标签，把cookie存在硬盘上，重新打开浏览器的时候cookie也会恢复，jsessionId一直在，就像没关闭过浏览器，会话一直没有断开
+
+浏览器的会话恢复功能估计也是有时限的，可能为10分钟~48小时
+
+出于安全考虑，在shiro的setSessionManager中设置session的过期时间，保证安全性。
+-------------------------------
+自己对shiro登录认证 加rememberMe功能 流程的猜想：
+
+1.shiro配置类，生成SecurityManager（DefaultWebSecurityManager）认证管理器，
+将realm的AuthenticationInfo认证方法，注入SecurityManager
+
+2.shiro配置类中ShiroFilterFactoryBean过滤器，
+ShiroFilterFactoryBean过滤器注入SecurityManager（realm的AuthenticationInfo认证方法）
+ShiroFilterFactoryBean过滤器，.setFilterChainDefinitionMap，设置FilterChainDefinitionMap过滤规则和过滤失败后登录路由
+
+3.用户登录请求login时，controller接收到的loginVo，封装入UsernamePasswordToken（token）中，借助subject对象，将UsernamePasswordToken传入subject
+通过subject传入SecurityManager
+
+4.shiro的AuthenticationInfo基于token中的username查询数据库user对象，数据库user封装成数据库认证信息SimpleAuthenticationInfo，交给SecurityManager
+
+5.SecurityManager负责比对subject（传入的用户信息）和SimpleAuthenticationInfo（基于传入token中的用户名查询数据库的SimpleAuthenticationInfo用户信息）
+
+6.如果不通过SecurityManager会调用ShiroFilterFactoryBean的过滤失败后返回登录路由
+
+7.以后每次请求都会对比jsessionId是否一致，不一致会返回登录路由。关闭浏览器jsessionId失效
+
+8.配置记住我功能，将shiro.CookieRememberMeManager记住我功能对象，注入SecurityManager
+
+9.将authc过滤器改为user
+
+10.前端选择记住我登录，后台token.setRememberMe(true);，向浏览器中set-cookie(rememberMe)，下次打开浏览器访问页面，有rememberMe这个cookie，就跳过jsessionId对比，能直接访问user权限的路径，再重新向浏览器set jsessionId
 -------------------------------
