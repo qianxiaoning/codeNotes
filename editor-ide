@@ -104,4 +104,13 @@ window-preferences-general-editor-text editors-hyperlinking
 取消Document Link Detector，Go to declaration选项
 --------------------------
 idea
+
+设置eclipse快捷键
+File-settings-keymap-Eclipse
+
+编码格式utf-8
+File-settings-editor-file encodings
+
+新建项目
+new-project-spring initializr-project location:...\projectName
 --------------------------

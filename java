@@ -5972,6 +5972,13 @@ shiro登录成功后，会把请求的用户信息（Subject对象）放入sessi
 第一次请求服务器，shiro会调用tomcat方法生成jsessionId给客户端，之后请求客户端都会带上jsessionId
 如果客户端jsessiomnId消失，shiro发现后会调用tomcat方法生成一个新的jsessionId拼在returnToLogin路由后面，shiro发现和服务器的jsesseionId不匹配，会调setLoginUrl方法，触发tomcatURL重写机制，到登录页
 
+shiro中可以自定义jsessionId这个cookie的名字和过期时间
+DefaultWebSessionManager sManager = new DefaultWebSessionManager();
+SimpleCookie sC = new SimpleCookie();
+sC.setName("myJSESSIONID");
+sC.setMaxAge(24*60*60);//24h
+sManager.setSessionIdCookie(sC);
+
 7.shiro的rememberMe
 
 shiro通过UsernamePasswordToken.setRememberMe(true)，开启rememberMe后，会向浏览器set一个cookie（如"rememberMe"），值为用户对象的加密（subject对象）
@@ -6015,4 +6022,67 @@ ShiroFilterFactoryBean过滤器，.setFilterChainDefinitionMap，设置FilterCha
 9.将authc过滤器改为user
 
 10.前端选择记住我登录，后台token.setRememberMe(true);，向浏览器中set-cookie(rememberMe)，下次打开浏览器访问页面，有rememberMe这个cookie，就跳过jsessionId对比，能直接访问user权限的路径，再重新向浏览器set jsessionId
+-------------------------------
+CompletableFuture处理异步
+
+LogsServiceImpl.java
+@Service
+public Future<Integer> insertLog(Logs entity) {
+	//CompletableFuture.supplyAsync进入默认线程池
+	CompletableFuture<Integer> future = CompletableFuture.supplyAsync(new Supplier<Integer>() {
+		@Override
+		public Integer get() {
+			try {
+				//耗时操作
+				Thread.sleep(10000);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			//耗时操作结束后，才能拿到赋值
+			int rows = logsDao.insertLog(entity);
+			return rows;
+		}
+	});
+	//不阻塞，直接返回
+	return future;
+}	
+
+调用处：
+@Autowired
+private LogsService logsService;
+//不用等上面的耗时操作，直接拿到future
+Future<Integer> future = logsService.insertLog(new Logs());
+//此处代码不会被阻塞
+...
+//在future取值的地方，才会被阻塞
+Integer rows = future.get();
+-------------------------------
+Lambda表达式（类似js中的箭头函数）
+
+public Future<Integer> insertLog(Logs entity) {
+	//CompletableFuture.supplyAsync进入默认线程池
+	CompletableFuture<Integer> future = CompletableFuture.supplyAsync(new Supplier<Integer>() {
+		@Override
+		public Integer get() {
+			try {
+				//耗时操作
+				Thread.sleep(10000);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			//耗时操作结束后，才能拿到赋值
+			int rows = logsDao.insertLog(entity);
+			return rows;
+		}
+	});
+	//不阻塞，直接返回
+	return future;
+}
+
+用Lambda可以简写成：
+public Future<Integer> insertLog(Logs entity){
+	CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> logsDao.insertLog(entity));
+	return future;
+}
+会自动return logsDao.insertLog(entity)的值
 -------------------------------

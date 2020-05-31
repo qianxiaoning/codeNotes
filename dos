@@ -26,3 +26,4 @@ netstat -ano 查看当前系统活动的进程，pid进程编号
 结束进程：
 taskkill /f /pid 结束进程
 taskkill /t /f /pid 结束进程及子进程
+taskkill -t -f /pid
