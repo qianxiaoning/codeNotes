@@ -40,6 +40,9 @@ ctrl+h    把字符转成字节（16进制）来看
 EverEdit
 ctrl+j 复制当前
 --------------------------
+notepad++
+ctrl+l 删除当前行
+--------------------------
 Eclipse
 快捷键：
 alt+/ 自动补全
@@ -99,18 +102,166 @@ window-preferences-general/editor/file associations-选中*.class without source
 2.
 通过ctrl+shift+t，打开所有类，搜索类名，从中点开
 
-解决ctrl+c 卡顿
-window-preferences-general-editor-text editors-hyperlinking
+解决ctrl+c 卡顿：
+1.window-preferences-general-editor-text editors-hyperlinking
 取消Document Link Detector，Go to declaration选项
+2.开启手动编译 ctrl+b
+3.关闭校验
+window-preferences-validation-disable all
+
+代码编辑区最小化后 恢复
+点击左边目录任一文件
 --------------------------
 idea
 
-设置eclipse快捷键
+idea是自动保存的
+
+设置eclipse风格快捷键
 File-settings-keymap-Eclipse
 
-编码格式utf-8
-File-settings-editor-file encodings
+全局编码格式utf-8
+File-new projects-settings-settings for new projects-editor-file encodings
 
 新建项目
+1.网络正常：
 new-project-spring initializr-project location:...\projectName
+2.网络异常：
+2.1 登录https://start.spring.io/，选择配置，generate ctrl，选择目录，导出xxx.zip到项目需要存放的目录下
+解压xxx.zip，打开idea，open or import，选择目录，导入
+2.2 create new project-spring initializr-choose starter service url-custom:https://start.aliyun.com/ -next
+
+调节字体大小
+File-settings-editor-font-size
+
+设置jdk版本
+File-new projects-settings-structure for new projects-project-project sdk
+
+建java class    
+project structure-modules-sources
+在左侧目录，alt+insert新建
+
+光标 project目录和代码编辑区 切换
+alt+1 到目录区
+esc 回到代码编辑区
+
+全局maven配置
+File-new projects-settings-settings for new projects-build,execution,deployment-build tools-maven
+
+maven update
+项目右键-maven-reimport
+
+全局配置tomcat
+File-new projects-settings-run configuration templates for new projects-templates-tomcat server-local-application server
+
+System.out.println();快捷键
+sout补全
+
+启动项目
+alt+shift+x
+
+查看插件
+Settings-plugins
+
+关闭自动更新
+Settings-Appearence & Behavior-System Settings-Updates-Automatically...
+
+ctrl+o 显示成员大纲
+
+fori for循环
+
+iter 增强for循环
+
+alt+insert 生成Getter,Setter,toString,hasCode,equals,constructor,Override
+
+application.yml中快捷写法：
+spring:
+  mvc:
+    view:
+      prefix: /WEB-INF/pages/
+  在相应缩进上写m.v.p看提示
+      suffix: .jsp
+      在这写s看提示
+
+ctrl+h 全局查找
+
+shift+shift 打开所有仓库类
+
+springboot war包项目，生成"src\main\webapp\WEB-INF\pages\"文件夹
+ctrl+alt+shift+s打开project structure
+在project settings-modules-springbootxxx-Web下，复制Web Resource Directory路径，
+路径后面添加"\WEB-INF\pages\web.xml"，删除web.xml，Apply，OK
+
+ctrl+shift+space 查看方法说明
+
+ctrl+f1 查看标红提示
+
+ctrl+alt+左/右 上次打开文件之间切换
+
+ctrl+shift+上/下 光标方法间上下切换
+
+settings-editor-general-smart keys
+-勾选Use "CamelHumps" words 光标按驼峰选择
+-去勾Honor "CamelHumps" words settings when selecting on double click 双击不按驼峰选择
+
+idea创建不同类型maven项目：
+new project-maven:
+1.jar、pom项目
+选maven-archetype-quickstart
+2.war项目
+选maven-archetype-webapp
+
+idea创建springboot项目：
+new project-spring initializr-
+packaging jar/war
+
+ctrl+enter 打开左侧选中的文件
+
+ctrl+f 搜索
+
+f4 看继承结构，被谁实现了
+
+打开settings面板
+ctrl+alt+s
+
+收缩代码
+ctrl+-
+
+展开代码
+ctrl++
+
+文件改名
+alt+shift+r
+
+自动导包
+settings-editor-general-auto import
+
+显示上下文
+光标在类上，alt+enter
+
+拷贝包名+类名
+ctrl+alt+shift+c
+
+生成序列化id
+勾选settings-editor-inspections-serializable class without serialVersionUID
+
+idea项目排除windows defender
+设置-windows安全中心-病毒和威胁防护-“病毒和威胁防护”设置（管理设置）-排除项（添加或删除排除项）-添加路径
+
+导入导出settings
+File-Manage IDE Settings-Import Settings/Export Settings
+
+pom.xml添加maven依赖
+点开pom.xml，alt+insert-dependency-搜索添加
+
+@Autowired mapper对象报错
+
+private UserMapper userMapper;//("Could not autowire. No beans of 'UserMapper' type found.")
+
+@Autowried 默认要求注入对象必须存在，@Autowried是Spring注解，@Mapper是Mybatis注解，识别不了，会报错
+
+目前解决办法：
+settings-editor-inspections-spring core-code-Autowiring for Bean Class-severity:warning
+
+pom聚合项目，启动war包项目时
+修改启动配置类:Run/Debug Configurations-启动类-Working directory:聚合项目的war包子项目
 --------------------------

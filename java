@@ -6086,3 +6086,20 @@ public Future<Integer> insertLog(Logs entity){
 }
 会自动return logsDao.insertLog(entity)的值
 -------------------------------
+maven中的SNAPSHOT和RELEASE
+SNAPSHOT，开发版本（快照版本）：
+<version>1.0-SNAPSHOT</version>
+版本号不用变，每次会自动加上时间戳，引用的jar包会自动更新
+
+RELEASE，正式版本
+<version>1.0</version>
+会锁定jar，不使用更新
+
+<version>1.0-SNAPSHOT</version>，
+<version>0.0.1-SNAPSHOT</version>区别：
+<version>1.0</version>
+<version>0.0.1</version>
+起始版本约定不一样
+-------------------------------
+maven.exclusion
+子项目不需要，父项目的某个依赖时添加
