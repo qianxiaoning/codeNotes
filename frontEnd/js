@@ -2148,3 +2148,6 @@ const array=["a","c","w"];
 array.splice(array.findIndex(item => item === "c"), 1);
 array => ["a","w"]
 -----------------------
+一句话，确定是否删除
+if(!confirm("确认删除吗?"))return;
+-----------------------

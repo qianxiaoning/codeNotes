@@ -159,6 +159,16 @@ sout补全
 启动项目
 alt+shift+x
 
+debug启动项目
+alt+shift+d
+
+idea断点调试
+f6 步进
+f5 进入方法（如果有能进入的方法）
+f7 返回到上层
+ctrl+r 直接跳到鼠标指定行
+drop frame 返回断点开始位置
+
 查看插件
 Settings-plugins
 
