@@ -159,6 +159,16 @@ sout补全
 启动项目
 alt+shift+x
 
+项目启动后，对更改部分编译
+ctrl+f9
+
+项目打包两种方式
+1.Maven-项目名.Lidecycle.clean-项目名.Lidecycle.install
+2.Build-Build Artifacts...
+
+聚合项目中子项目打包
+1.Maven-子项目名.Lidecycle.clean-项目名.Lidecycle.install 即可
+
 debug启动项目
 alt+shift+d
 
@@ -229,6 +239,7 @@ ctrl+enter 打开左侧选中的文件
 ctrl+f 搜索
 
 f4 看继承结构，被谁实现了
+expand all按钮+键盘输入搜索名字
 
 打开settings面板
 ctrl+alt+s
@@ -247,6 +258,9 @@ settings-editor-general-auto import
 
 显示上下文
 光标在类上，alt+enter
+
+生成方法时，带默认参数提示
+Settings-Editor-General-Code Completion-Parameter Info-3个Show都勾上
 
 拷贝包名+类名
 ctrl+alt+shift+c

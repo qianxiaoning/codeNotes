@@ -74,3 +74,24 @@ http{
 location 为本地域名如：localhost:8080
 location /apis就重写为localhost:8080/apis/xxx 实则转发http://a.cloud.cn/api/xxx的接口地址
 --------------------------
+http {
+    # 配置一个代理服务
+    server {
+        # 监听的端口
+        listen 80;
+        # 监听的域名
+        server_name localhost;
+        location / {
+            # 文件目录
+            root html;
+            # 默认访问页面
+            index index.html;
+        }
+    }
+}
+--------------------------
+nginx集群名字不能有"_"符号
+upstream aa_bb {# 改为aa_Bb
+
+}
+--------------------------

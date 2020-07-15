@@ -6112,3 +6112,10 @@ maven.exclusion
 -------------------------------
 idea断点
 断点打在要测试的开头，然后f6步进，往下执行
+-------------------------------
+遍历map
+Map<String,String> params = new HashMap<String,String>();
+for (Map.Entry<String, String> entry : params.entrySet()) {
+	System.out.println(entry.getKey());
+	System.out.println(entry.getValue());
+}
