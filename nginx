@@ -91,7 +91,7 @@ http {
 }
 --------------------------
 nginx集群名字不能有"_"符号
-upstream aa_bb {# 改为aa_Bb
+upstream aa_bb {# 改为aaBb
 
 }
 --------------------------

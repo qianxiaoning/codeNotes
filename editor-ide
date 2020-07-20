@@ -204,6 +204,8 @@ spring:
 
 ctrl+h 全局查找
 
+edit-find-replace in path 全局替换
+
 shift+shift 打开所有仓库类
 
 springboot war包项目，生成"src\main\webapp\WEB-INF\pages\"文件夹
@@ -276,6 +278,7 @@ File-Manage IDE Settings-Import Settings/Export Settings
 
 pom.xml添加maven依赖
 点开pom.xml，alt+insert-dependency-搜索添加
+
 
 @Autowired mapper对象报错
 

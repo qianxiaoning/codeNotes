@@ -6119,3 +6119,14 @@ for (Map.Entry<String, String> entry : params.entrySet()) {
 	System.out.println(entry.getKey());
 	System.out.println(entry.getValue());
 }
+-------------------------------
+java用map实现枚举功能
+
+Map<Integer, String> map = new HashMap<Integer, String>();
+//输入规则
+map.put(1,"username");
+map.put(2,"phone");
+map.put(3,"email");
+//type是传入参数，值为1~3，利用map得到type对应的值
+String column = map.get(type);
+-------------------------------
