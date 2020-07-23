@@ -6130,3 +6130,6 @@ map.put(3,"email");
 //type是传入参数，值为1~3，利用map得到type对应的值
 String column = map.get(type);
 -------------------------------
+restful风格传参时，put、post传参无需@RequestBody接收
+controller可用po对象或@PathVariable注解直接接收
+-------------------------------

@@ -261,6 +261,9 @@ settings-editor-general-auto import
 显示上下文
 光标在类上，alt+enter
 
+查看类的所有方法
+alt+7 或者 点左侧的Structure
+
 生成方法时，带默认参数提示
 Settings-Editor-General-Code Completion-Parameter Info-3个Show都勾上
 
@@ -291,4 +294,12 @@ settings-editor-inspections-spring core-code-Autowiring for Bean Class-severity:
 
 pom聚合项目，启动war包项目时
 修改启动配置类:Run/Debug Configurations-启动类-Working directory:聚合项目的war包子项目
+
+在idea中java/，resources/下创建文件方式：
+给java目录下新建文件时可以：
+aa.bb.c，生成aa/bb/c.java
+
+在resources目录下新建文件时得：
+aa/bb/c，这样是生成aa/bb/c.file
+写成aa.bb.c，是生成了一个名字是aa.bb.c的文件
 --------------------------
