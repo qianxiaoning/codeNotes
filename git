@@ -27,7 +27,7 @@ $ git config --global user.email "email@example.com"
    （$ pwd用于显示当前目录，尽量防止出现中文）
   三、git init初始化，编写.gitignore文件，win创建时.gitignore.，并创建README.md文件（README.md文件里必须要有内容）
   四、添加提交文件到本地
-   $ git add .&&$ git commit -m'd'
+   $ git add .&& git commit -m'd'
   五、设置和修改远端库
    $ git remote add origin git@github.com:qianxiaoning/a.git
    $ git remote set-url origin git@github.com:qianxiaoning/a.git
