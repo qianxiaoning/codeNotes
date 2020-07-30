@@ -6133,3 +6133,4 @@ String column = map.get(type);
 restful风格传参时，put、post传参无需@RequestBody接收
 controller可用po对象或@PathVariable注解直接接收
 -------------------------------
+tomcat=>消息中间件（解决海量数据同步处理问题）=>数据库
