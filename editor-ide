@@ -262,6 +262,9 @@ alt+shift+r
 自动导包
 settings-editor-general-auto import
 
+打开命令行
+alt+f12
+
 显示上下文
 光标在类上，alt+enter
 
@@ -285,7 +288,6 @@ File-Manage IDE Settings-Import Settings/Export Settings
 
 pom.xml添加maven依赖
 点开pom.xml，alt+insert-dependency-搜索添加
-
 
 @Autowired mapper对象报错
 
