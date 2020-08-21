@@ -208,7 +208,7 @@ edit-find-replace in path 全局替换
 
 shift+shift 打开所有仓库类
 替换快捷键：
-keymap-Main menu-Navigate-Search Everywhere-双击add keyboard Shortcut-换为shift+1
+keymap-Main menu-Navigate-Search Everywhere-双击add keyboard Shortcut-换为shift+`
 取消原快捷键：
 ctrl+shift+a，输入Registry回车，找到ide.suppress.double.click.handler，选中，close
 
@@ -222,6 +222,8 @@ ctrl+shift+space 查看方法说明
 ctrl+f1 查看标红提示
 
 ctrl+alt+左/右 上次打开文件之间切换
+
+alt+左/右 返回上一次光标位置
 
 ctrl+shift+上/下 光标方法间上下切换
 
@@ -255,6 +257,12 @@ ctrl+-
 
 展开代码
 ctrl++
+
+跳到文件第一行/最后一行
+ctrl+home/ctrl+end
+
+打开最近打开过的文件
+ctrl+e
 
 文件改名
 alt+shift+r

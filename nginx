@@ -95,3 +95,5 @@ upstream aa_bb {# 改为aaBb
 
 }
 --------------------------
+查看nginx启动没
+netstat  -anptu  |  grep nginx

@@ -233,7 +233,7 @@ mysql出问题
 修改stu表中所有学生的成绩，加10分特长分
 update stu set score=score+10;
 
-update stu set score=88 where name='王海涛';
+update stu set score=88 where name='王海波';
 
 删除记录语法: delete from 表名 [where条件] 
 delete from stu;
@@ -430,15 +430,15 @@ select * from dept right join emp on dept.id=emp.dept_id;
 ...from tableA left join tableB on tableA.a=tableA.b;
 
 子查询、多表查询：
-列出薪资比'王海涛'薪资高的所有员工，显示姓名、薪资
--- 假设王海涛薪资为x，列出薪资比x高的所有员工
+列出薪资比'王海波'薪资高的所有员工，显示姓名、薪资
+-- 假设王海波薪资为x，列出薪资比x高的所有员工
 select name,sal from emp where sal>x;
 -- 合并两条sql，子查询
-select name,sal from emp where sal>(select sal from emp where name='王海涛');	
--- 47.列出与'刘沛霞'从事相同职位的所有员工，显示姓名、职位。
+select name,sal from emp where sal>(select sal from emp where name='王海波');	
+-- 47.列出与'刘某'从事相同职位的所有员工，显示姓名、职位。
 select name,job from emp where job=x;
-select job from emp where name='刘沛霞';
-select name,job from emp where job=(select job from emp where name='刘沛霞');
+select job from emp where name='刘某';
+select name,job from emp where job=(select job from emp where name='刘某');
 -- 48.列出薪资比'大数据部'部门(已知部门编号为30)所有员工薪资都高的员工信息，显示员工姓名、薪资和部门名称。	
 -- 关联查询dept,emp 左外或者右外，有些员工没有部门也满足条件,先查所有
 select emp.name,emp.sal,dept.name from dept right join emp on dept.id=emp.dept_id;
