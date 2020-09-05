@@ -505,7 +505,7 @@ IEEE-754规范
 BigDecimal a = BigDecimal.valueOf(6);
 BigDecimal b = BigDecimal.valueOf(6);
 方法：
-add(BigDecimal bd)
+add(BigDecimal bd) 加
 subtract(BigDecimal bd) 减
 multiply(BigDecimal bd) 乘
 divide(BigDecimal bd) 除（不允许无理数）

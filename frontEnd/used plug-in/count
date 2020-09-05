@@ -398,6 +398,7 @@ function doAjax(url,type,data,sucfn,beforeSend) {
 	beforeSend:beforeSend
     })
 }
+
 -----------------------------------------------------------------
 //正则
 //只判断为空
