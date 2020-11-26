@@ -97,3 +97,15 @@ upstream aa_bb {# 改为aaBb
 --------------------------
 查看nginx启动没
 netstat  -anptu  |  grep nginx
+--------------------------
+root和alias区别
+server{
+    location /a {
+        root /usr/local/src/dist/;
+        alias /usr/local/src/dist/;
+        index index.html;
+    }
+}
+root:到root+location目录寻找资源，为/usr/local/src/dist/a不存在
+alias:到alias定义的目录寻找资源，为/usr/local/src/dist存在，alias后要加"/"
+--------------------------

@@ -102,3 +102,40 @@ kill -9 3660 强制杀死
 执行shell脚本
 sh xxx.sh
 -----------------------------
+centos中
+redis的安装
+1.下载安装包
+2.安装gcc，配置gcc启动？
+3.make && make install prefix=/usr/local/src/redis
+4.修改redis.conf，
+#bind 127.0.0.1
+protected-mode no
+requirepass 密码
+daemonize yes
+5.redis-server redis.conf启动服务
+
+gitlab的安装
+1.安装ssh,postfix
+2.下载gitlab.rpm
+3.安装rpm -i gitlab-ce-13.5.4-ce.0.el7.x86_64.rpm
+4.vim /etc/gitlab/gitlab.rb
+external_url 'http://ip:端口'
+5.gitlab-ctl reconfigure
+gitlab-ctl restart
+6.开启防火墙端口，阿里云端口
+
+nginx的安装
+1.安装插件
+yum -y install gcc pcre pcre-devel zlib zlib-devel openssl openssl-devel
+2.下载安装包
+3.进入安装目录
+./configure --prefix=/usr/local/src/nginx --with-http_stub_status_module --with-http_ssl_module
+make
+make install
+4.切换到安装目录的sbin目录下，
+./nginx启动
+./nginx -s reload重启
+./nginx -s stop停止
+5.vim /etc/profile，配置环境变量
+source /etc/profile生效
+
