@@ -138,4 +138,38 @@ make install
 ./nginx -s stop停止
 5.vim /etc/profile，配置环境变量
 source /etc/profile生效
+---------------
+centos chmod 777 filename
+777的含义
+user    group   everyone
+rwx     rwx     rwx
+421     421     421
+7       7       7
+
+权限数字模式
+rwx
+4210
+读、写、执行、无
+
+查看8进制权限数字
+stat -c "%a" filename
+---------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

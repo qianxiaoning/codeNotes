@@ -109,3 +109,28 @@ server{
 root:到root+location目录寻找资源，为/usr/local/src/dist/a不存在
 alias:到alias定义的目录寻找资源，为/usr/local/src/dist存在，alias后要加"/"
 --------------------------
+nginx指定页面和vue路由的关系
+nginx指定代理路径要与vue router页面路由相匹配
+
+nginx：
+server{
+    location / {
+        alias /usr/local/src/dist/;
+    }
+}
+vue:
+router.path: '/'
+
+nginx：
+server{
+    location /a/a {
+        alias /usr/local/src/dist/;
+    }
+}
+vue:
+router.path: '/a/a'
+
+域名/a/a路径访问时，获取到vue /a/a的路由，页面文件是index.html会找资源文件，资源文件路径
+publicPath:'./', //相对路径，相对index.html
+assetsDir: './a/a/', //生成./a/a资源目录，index.html会去./a/a寻找资源
+--------------------------

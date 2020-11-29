@@ -738,3 +738,14 @@ push后红色标志，reject-点开team synchronizing界面-pull-手动修改合
 --------------------------
 idea的git操作
 vcs-git-resolve conflicts
+--------------------------
+git切换远端仓库
+当远端仓库需要删除时，如何将本地的.git同步到新建仓库
+在项目中输入下面指令：
+1.删原仓库之前
+一次拉取所有远端分支到本地
+git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
+2.删除原仓库，新建仓库
+git remote set-url origin git@47.111.235.96:qxn/c.git//修改远端路径
+git push -u origin --tags//推送所有tag
+git push -u origin --all//推送所有分支
