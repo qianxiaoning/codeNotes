@@ -1775,6 +1775,9 @@ onUnload() {
     //离开page时，把data的初始值覆盖data对象，达到数据重置效果    
 }
 
+快速恢复初始值
+this.$data.obj = this.$options.data().obj;
+
 ui框架 use全局引用后，
 有组件调用 和 函数调用
 组件调用 import引入
