@@ -6137,3 +6137,94 @@ tomcat=>消息中间件（解决海量数据同步处理问题）=>数据库
 -------------------------------
 (@RequestParam String name)，post请求传递单个参数
 ---------------------
+在静态方法中获取yml配置文件的值
+public static Object getYmlValue(Object key){
+	Resource resource = new ClassPathResource("application-dev.yml");
+	Properties properties = null;
+	try {
+		YamlPropertiesFactoryBean yamlFactory = new YamlPropertiesFactoryBean();
+		yamlFactory.setResources(resource);
+		properties =  yamlFactory.getObject();
+	} catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	}
+	return properties.get(key);
+}
+public static void main(String[] args) {
+	System.out.println(getYmlValue("server.port"));//9011
+}
+---------------------
+sha512算法配置文件密码加密
+1.java1.8\jre\lib\security下
+加入US_export_policy.jar，local_policy.jar两个jar包
+2.pom依赖
+<dependency>
+	<groupId>com.github.ulisesbocchio</groupId>
+	<artifactId>jasypt-spring-boot-starter</artifactId>
+	<version>3.0.3</version>
+</dependency>
+3.配置文件
+...
+	username: ENC(...)
+	password: ENC(...)
+jasypt:
+  encryptor:
+    algorithm: PBEWITHHMACSHA512ANDAES_256
+4.java指令添加参数，jasypt盐值
+java -jar -Djasypt.encryptor.password=salt xxx.jar	
+
+sha512算法加解密
+public class JasypUtil {
+
+    private static final String PBEWITHHMACSHA512ANDAES_256 = "PBEWITHHMACSHA512ANDAES_256";
+    public static String encryptWithSHA512(String plainText, String factor) {
+        // 1. 创建加解密工具实例
+        PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
+        // 2. 加解密配置
+        SimpleStringPBEConfig config = new SimpleStringPBEConfig();
+        config.setPassword(factor);
+        config.setAlgorithm(PBEWITHHMACSHA512ANDAES_256);
+        // 为减少配置文件的书写，以下都是 Jasyp 3.x 版本，配置文件默认配置
+        config.setKeyObtentionIterations( "1000");
+        config.setPoolSize("1");
+        config.setProviderName("SunJCE");
+        config.setSaltGeneratorClassName("org.jasypt.salt.RandomSaltGenerator");
+        config.setIvGeneratorClassName("org.jasypt.iv.RandomIvGenerator");
+        config.setStringOutputType("base64");
+        encryptor.setConfig(config);
+        // 3. 加密
+        return encryptor.encrypt(plainText);
+    }
+
+    public static String decryptWithSHA512(String encryptedText, String factor) {
+        // 1. 创建加解密工具实例
+        PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
+        // 2. 加解密配置
+        SimpleStringPBEConfig config = new SimpleStringPBEConfig();
+        config.setPassword(factor);
+        config.setAlgorithm(PBEWITHHMACSHA512ANDAES_256);
+        // 为减少配置文件的书写，以下都是 Jasyp 3.x 版本，配置文件默认配置
+        config.setKeyObtentionIterations( "1000");
+        config.setPoolSize("1");
+        config.setProviderName("SunJCE");
+        config.setSaltGeneratorClassName("org.jasypt.salt.RandomSaltGenerator");
+        config.setIvGeneratorClassName("org.jasypt.iv.RandomIvGenerator");
+        config.setStringOutputType("base64");
+        encryptor.setConfig(config);
+        // 3. 解密
+        return encryptor.decrypt(encryptedText);
+    }
+    public static void main(String[] args) {
+        //盐值
+        String factor = "input_salt";
+        //需要加密的明文
+        String plainText = "123456";
+        String encryptWithSHA512Str = encryptWithSHA512(plainText, factor);
+        String decryptWithSHA512Str = decryptWithSHA512(encryptWithSHA512Str, factor);
+        System.out.println();
+        System.out.println("采用SHA512加密前原文密文：" + encryptWithSHA512Str);
+        System.out.println("采用SHA512解密后密文原文:" + decryptWithSHA512Str);
+    }
+}
+---------------------

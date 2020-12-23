@@ -267,6 +267,9 @@ ctrl+e
 文件改名
 alt+shift+r
 
+生成main方法
+psvm
+
 自动导包
 settings-editor-general-auto import
 java下面的两个勾
