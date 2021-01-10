@@ -1,5 +1,5 @@
 ----------------------------
-vs code
+vscode
 打开google调试
 在行末写debugger，然后打开浏览器，按f5调试
 
@@ -14,7 +14,7 @@ ctrl+p 搜文件名
 自动换行
 文件-首选项-设置-Editor: Word Wrap（控制折行的方式），off改为on即可。
 
-ctrl+x 删除当前行
+ctrl+shift+k 删除行
 
 shift+alt+f 格式化
 
