@@ -21,6 +21,7 @@ ui库
 二维码  
   qrcode
 -----------------------------------------------------------------
+echarts图标提示框格式函数
 echarts-iconTip-formatFunction
 var option = {
             tooltip: {
@@ -41,6 +42,7 @@ var option = {
         series: myarr
     };
 -----------------------------------------------------------------
+echarts折线图实例和折线图的标线markline
 echarts-line-ins&markline
 // 基于准备好的dom，初始化echarts图表    
     var myChart1 = echarts.init($('.total_energy')[1]);
