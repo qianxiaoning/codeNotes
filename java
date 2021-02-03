@@ -2099,8 +2099,8 @@ c.getName() 包名加类名
 c.getSimpleName()
 
 获取成员变量的定义信息:
-getFields() 获取所有可见的成员变量，包含继承的变量
-getDeclaredFields() 获得本类定义的成员变量，不包含继承的，包含私有变量
+getFields() 获取所有public的字段，包含父类
+getDeclaredFields() 获得所有声明的字段，包括public、private、proteced，不包含父类
 getField(变量名) 获得指定的一个变量
 getDeclaredField(变量名)
 
@@ -6227,4 +6227,21 @@ public class JasypUtil {
         System.out.println("采用SHA512解密后密文原文:" + decryptWithSHA512Str);
     }
 }
+---------------------
+工具类中静态方法赋值
+将@Value("${qxn.jasypt.factor}")赋在静态属性的set方法上，因为set方法不是静态的，等spring容器启动，静态属性会赋上值
+eg:
+@Component
+public class JasypUtil {
+	private static String factor;
+	@Value("${qxn.jasypt.factor}")
+	public void setFactor(String factor){
+		this.factor = factor;
+	}
+	public static void main() {
+		System.out.println(factor);
+	}
+}
+容器启动后，调方法时能获取到配置文件的值：
+JasypUtil.main();
 ---------------------

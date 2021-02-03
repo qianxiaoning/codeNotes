@@ -267,6 +267,9 @@ ctrl+e
 文件改名
 alt+shift+r
 
+try catch
+选中代码块ctrl+alt+t
+
 生成main方法
 psvm
 
