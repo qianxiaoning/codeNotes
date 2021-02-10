@@ -267,6 +267,9 @@ ctrl+e
 文件改名
 alt+shift+r
 
+选择需要重写的方法
+alt+shift+p
+
 try catch
 选中代码块ctrl+alt+t
 

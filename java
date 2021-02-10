@@ -6245,3 +6245,10 @@ public class JasypUtil {
 容器启动后，调方法时能获取到配置文件的值：
 JasypUtil.main();
 ---------------------
+子类实例用接口接收的原因
+List list = new ArrayList();
+Map map = new HashMap();
+方便日后重构，如果哪天ArrayList需要换成LinkedList或者Vector，
+只需改List list = new LinkedList();这一行代码即可。
+如果用ArrayList list = new ArrayList();接收，后面每行都得改。
+这就是面向接口编程。方便代码重构。
