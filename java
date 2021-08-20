@@ -6252,3 +6252,80 @@ Map map = new HashMap();
 只需改List list = new LinkedList();这一行代码即可。
 如果用ArrayList list = new ArrayList();接收，后面每行都得改。
 这就是面向接口编程。方便代码重构。
+---------------------
+简单redis分布式锁
+场景：司机取消议价，货主确认议价
+议价状态，0议价待确认，1议价已确认，2议价未通过，3议价失效
+1、轮询拿锁（往指定key写入值），key为这笔议价单编号，值为当前用户编号（保证操作当前议价单的是唯一线程），等到写入值成功，就是加锁成功
+2、拿到锁后，就可以放心修改了，查看议价状态，如果是0议价待确认，可以取消议价，修改议价表状态为3议价失效。操作好准备解锁，在redis查key为议价单号的值，和当前用户编号比对，相同则删除key解锁，确保是同一线程在操作，返回接口
+3、议价状态是1议价已通过，删除key解锁，返回货主议价已通过，无法取消议价
+---------------------
+jpa 注解添加实体类索引
+@Entity
+@Table(name = "sys_user", indexes = {@Index(name = "usercode",columnList = "usercode"), @Index(name = "deptcode",columnList = "deptcode")})
+public class User {
+
+}
+---------------------
+BeanUtils.copyProperties对象之间的属性赋值
+BeanUtils.copyProperties(Object source, Object target)
+---------------------
+OpenFeign调用
+调用方：
+1.OrderController
+@RequestMapping("/order")
+
+@Autowired
+private PriceFeignClient priceFeignClient;
+
+@RequestMapping("/getPrice.do")
+@ResponseBody
+public ExecuteResult getPrice(String orderId) {
+	ExecuteResult res = priceFeignClient.getPrice(orderId);
+	return res;
+}
+
+2.PriceFeignClient
+@FeignClient(value = "my-project-order", fallbackFactory = PriceFeignClientFallbackFactory.class)
+public interface PriceFeignClient {
+
+    @RequestMapping("/price/price/getPrice.do")
+    ExecuteResult getPrice(@RequestParam("orderId") String orderId);
+}
+
+3.PriceFeignClientFallbackFactory
+调取失败，服务降级
+@Component
+public class PriceFeignClientFallbackFactory implements FallbackFactory<PriceFeignClient> {
+
+    /**
+     * @Fields LOGGER : 日志
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PriceFeignClientFallbackFactory.class);
+
+    @Override
+    public PriceFeignClient create(Throwable throwable) {
+        LOGGER.error("服务异常，异常原因：" + throwable);
+        return new PriceFeignClient(){
+            @Override
+            public ExecuteResult getPrice(String orderId) {
+                return ExecuteResult.createFail("feign调用失败");
+            }
+        };
+    }
+}
+
+被调用方：
+4.PriceController 或 PriceFeignController
+@Controller
+@RequestMapping("/price")
+public class PriceController {
+
+    @RequestMapping("/getPrice")
+    @ResponseBody
+    public ExecuteResult getPrice(@RequestParam("orderId") orderId){
+		PriceVo vo = super.findOne(orderId);
+        return ExecuteResult.create(vo);
+    }
+}
+---------------------

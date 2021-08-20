@@ -765,4 +765,9 @@ mysql名称连接用_，不用驼峰
 ----------------------------
 mysql没有布尔类型
 ----------------------------
-
+mysql添加索引
+普通单列索引：
+ALTER TABLE sys_user ADD INDEX index_usercode (usercode)
+组合索引（最左前缀原则）：
+ALTER TABLE sys_user ADD INDEX index_usercode_deptcode (usercode,deptcode)
+----------------------------

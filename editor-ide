@@ -326,4 +326,13 @@ aa.bb.c，生成aa/bb/c.java
 在resources目录下新建文件时得：
 aa/bb/c，这样是生成aa/bb/c.file
 写成aa.bb.c，是生成了一个名字是aa.bb.c的文件
+
+查找文件
+ctrl+shift+r
+
+关闭当前活动tab页
+ctrl+f4
+
+新项目不用配置启动类
+直接在启动类右键运行，启动类会自己配置好
 --------------------------

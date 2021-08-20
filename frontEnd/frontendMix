@@ -235,3 +235,6 @@ echart移动端横屏展示
 触发方法：
 1.window.onresize触发比较屏幕宽高
 2.监听横竖屏事件
+---------------------------
+google浏览器-sources查找运行的js文件
+ctrl+o，输入js文件名

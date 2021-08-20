@@ -1042,7 +1042,7 @@ evt.initEvent('customEvent', true, true);
 // 3. 在元素上监听事件，绑定监听
 var obj = document.getElementById('testBox');
 obj.addEventListener('customEvent', function(){
-console.log('customEvent 事件触发了'+event.type);
+    console.log('customEvent 事件触发了'+event.type);
 }, false);
 console 中输入 obj.dispatchEvent(evt)，可以看到 console 中输出“customEvent 事件触发了”，表示自定义事件成功触发
 //自定义如click一样的原生事件
