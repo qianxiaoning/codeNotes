@@ -771,3 +771,64 @@ ALTER TABLE sys_user ADD INDEX index_usercode (usercode)
 组合索引（最左前缀原则）：
 ALTER TABLE sys_user ADD INDEX index_usercode_deptcode (usercode,deptcode)
 ----------------------------
+分组排名
+分组取最新
+//INNER JOIN表连接
+SELECT o.driver_code,o.STATUS,o.create_at 
+FROM th_xdhy_order o 
+INNER JOIN (SELECT driver_code,MAX(create_at) max_time FROM th_xdhy_order GROUP BY driver_code) m
+ON o.driver_code=m.driver_code AND o.create_at=m.max_time
+
+//EXISTS函数
+SELECT o.driver_code,o.status,o.create_at
+FROM th_xdhy_order o
+WHERE EXISTS
+(SELECT 1 FROM 
+(SELECT MAX(create_at) max_time,driver_code FROM th_xdhy_order GROUP BY driver_code) t
+WHERE o.driver_code = t.driver_code AND o.create_at=t.max_time)
+
+//窗口函数
+SELECT driver_code,STATUS,create_at 
+FROM (SELECT driver_code,STATUS,create_at,dense_rank() over (PARTITION BY driver_code ORDER BY create_at DESC) AS ranking 
+FROM th_xdhy_order)
+NEW WHERE ranking=1
+----------------------------
+建表优化
+条件列表查询中的字段可以冗余，因为列表查询人数多，单人根据条件查询的次数也多，又是返回List，所以可以字段冗余
+详情一般可以通过关联表查询，不用冗余，因为详情查询次数少，也没有条件重新查询。
+
+发布文章，文章表的正文这一字段可以独立出一张表，因为正文文本量大，会导致主表慢。
+----------------------------
+一条语句执行多个update操作
+如：
+update table set creator_name = '1', a = '1' where id = 1;update table set creator_name = '2', a = '2' where id = 2;
+
+写法1：
+update table set 
+creator_name = (case id when 1 then '1' when 2 then '2' else creator_name end),
+creator = (case id when 1 then 1 when 2 then 2 else creator end)
+
+写法2（推荐）：
+UPDATE table SET 
+creator_name = CASE id 
+WHEN 1 THEN '2value'
+WHEN 2 THEN '3value'
+end,
+creator = CASE id 
+WHEN 1 THEN 3
+WHEN 2 THEN 4
+end
+WHERE id IN (1, 2)
+---------------------
+数据量大时，一条sql多次left join，比分成多条sql计算量大很多
+订单表1万
+货源表1万
+订单节点7万
+
+一条sql三个left join计算量：
+订单left join货源left join订单节点 = 1万*1万*7万 = 70000万万
+
+分两条sql计算量：
+订单left join货源 = 1万*1万
+用订单id单独查订单节点表 = 7万
+1万*1万+7万 = 10007万

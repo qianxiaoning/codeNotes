@@ -1,0 +1,148 @@
+-------------
+spring cloud
+微服务整体解决方案
+框架集，集成了一整套框架
+
+springboot简化spring配置，开箱即用
+
+eureka注册中心
+与zookeeper区别
+1.eureka有保护模式
+
+eureka：
+ap 可用性，分区容错性
+集群：对等结构
+zookeeper：
+cp 一致性，分区容错性
+集群：主从结构
+
+restTemplate
+更上层的远程调用
+
+ribbon服务消费者
+提供了负载均衡和重试功能
+负载均衡：
+@LoadBalanced
+http://service-id/xxx
+重试：
+spring-retry依赖
+参数MaxAutoRetries...
+
+hystrix断路器
+降级：请求失败，向客户端直接返回处理响应
+
+熔断：大量失败降级，通路直接断开，不调用后台服务直接降级
+默认10秒20次请求的情况下，50%失败降级触发熔断，断路器打开
+5秒后进入半开状态，会尝试向后台服务请求，如果成功会关闭断路器。如果仍然失败，继续保持打开状态
+
+hystrix超时时间应该大于ribbon重试的最长时间
+
+hystrix dashboard仪表盘 监控
+
+feign
+声明式客户端
+只需要声明一个接口，可以调用远程服务
+微服务间调用
+feign+ribbon
+feign+hystrix
+
+turbine 集群聚合监控
+turbine聚合了feign服务和order-service服务集群的hystrix监控信息
+
+zuul API网关
+部署在最前面
+转发调用
+统一权限校验
+zuul集成ribbon和hystrix
+
+config配置中心
+config client
+客户端不用关机微服务，动态刷新配置数据
+基础配置刷新不了，app-name,port,eureka
+只能刷新自定义属性
+ServiceImpl中加@RefreshScope 
+post请求刷新
+
+服务必须按顺序启动：
+eureka-config-其它
+
+bus
+config bus + rabbitmq 消息总线配置刷新
+rabbitmq群发
+
+消息中间件
+rabbitmq
+activemq
+
+rabbitmq
+
+sleuth 链路跟踪
+
+sleuth + zipkin 链路分析
+---------------------
+OpenFeign调用
+调用方：
+1.OrderController
+@RequestMapping("/order")
+
+@Autowired
+private PriceFeignClient priceFeignClient;
+
+@RequestMapping("/getPrice.do")
+@ResponseBody
+public ExecuteResult getPrice(String orderId) {
+	ExecuteResult res = priceFeignClient.getPrice(orderId);
+	return res;
+}
+
+2.PriceFeignClient
+@FeignClient(value = "my-project-order", fallbackFactory = PriceFeignClientFallbackFactory.class)
+public interface PriceFeignClient {
+
+    @RequestMapping("/price/price/getPrice.do")
+    ExecuteResult getPrice(@RequestParam("orderId") String orderId);
+}
+
+3.PriceFeignClientFallbackFactory
+调取失败，服务降级
+@Component
+public class PriceFeignClientFallbackFactory implements FallbackFactory<PriceFeignClient> {
+
+    /**
+     * @Fields LOGGER : 日志
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PriceFeignClientFallbackFactory.class);
+
+    @Override
+    public PriceFeignClient create(Throwable throwable) {
+        LOGGER.error("服务异常，异常原因：" + throwable);
+        return new PriceFeignClient(){
+            @Override
+            public ExecuteResult getPrice(String orderId) {
+                return ExecuteResult.createFail("feign调用失败");
+            }
+        };
+    }
+}
+
+被调用方：
+4.PriceController 或 PriceFeignController
+@Controller
+@RequestMapping("/price")
+public class PriceController {
+
+    @RequestMapping("/getPrice")
+    @ResponseBody
+    public ExecuteResult getPrice(@RequestParam("orderId") orderId){
+		PriceVo vo = super.findOne(orderId);
+        return ExecuteResult.create(vo);
+    }
+}
+---------------------
+OpenFeign调用后，返回的是经过序列化的数据
+比如传来List<Entity>，可直接用List接收，但是里面会自动转为LinkedHashMap
+Map强转bean转不了，不像本身是bean用Object接的，可以强转
+Map转bean需要工具类
+可以将Map转为json字符串，再将json字符串解析为指定bean，JSONObject会将能匹配的键赋值入bean，不能匹配的忽略
+ExecuteResult res = aFeignClient.getData(param);
+List<MyDto> list = JSONObject.parseArray(JSONObject.toJSONString(res.getData()), MyDto.class);

@@ -1,0 +1,215 @@
+-----------------
+redis缓存
+编译
+make
+安装
+make install
+启动
+redis-server redis.conf
+进入客户端
+redis-cli -p 6379
+端口号为6379时，快捷进入客户端
+redis-cli
+存数据
+set 
+取数据
+get
+退出
+exit
+关闭redis
+redis-cli -p 6379 shutdown
+redis-cli shutdown
+结束redis进程
+ps -ef | grep redis
+kill -9 pid1 pid2
+
+String类型：
+获取value的长度
+strlen key
+key是否存在
+exists key
+删除
+del key
+查询
+keys *
+查询a开头的
+keys a*
+查询a开头的，两个字符
+keys a?
+多个赋值
+mset a aa b bb
+多个取值
+mget a b
+在key后追加
+append key bbcc
+append key " bbcc"
+检查key类型
+type key
+切换数据库 redis中有16个数据库，默认操作第1个
+select 15
+清空当下数据库
+flushdb
+清空所有数据库
+flushall
+减/加数1
+de/incr num
+减/加数至
+de/incrby num 1221
+数据存活时间s
+expire key seconds
+数据存活时间ms
+pexpire key ms
+查询存活时间
+ttl key
+取消超时时间
+persist key
+
+Hash类型：
+User {id:2,name:"小米"}
+hset user id 2
+hset user name "小米"
+
+hget user name
+
+hexists
+
+hdel user id
+
+hgetall user
+
+hkeys user
+
+hvals user
+
+hmset
+
+hsetnx
+
+hstrlen
+
+List类型(中间件)：
+lpsuh
+lpsuh list 1 2 3 4
+
+rpop
+rpop list//队列1 2 3 4
+
+lpop list//栈4 3 2 1
+
+rpush
+
+事务：
+开启事务
+multi
+提交
+exec
+回滚
+discard
+
+redis持久化
+
+rdb模式 默认 rdb文件
+rdb能定期实现数据的持久化（可能会丢失数据）
+默认的持久化文件名称dump.rdb
+rdb持久化只做内存数据的快照，占用空间较小，效率高
+save 立即持久化 同步（默认）
+bgsave 后台启动持久化 异步
+
+aof模式
+异步，实时
+记录用户操作过程，持久化文件较大
+效率低
+--------------------------
+内存优化策略：
+lru 最近最少使用淘汰
+记录上次访问以来的时间t，淘汰t最大的
+
+lfu 最不经常使用页置换法 置换引用计数最小的页
+
+volatile-lru 设定超时时间中使用lru
+allkeys-lru 所有数据使用lru
+volatile-lfu 设定超时时间中使用lfu
+allkeys-lfu 所有数据使用lfu
+volatile-random 设定超时时间中数据随机删除
+allkeys-random 所有数据随机删除
+volatile-ttl 根据剩余时间多少删除数据（先删除少的）
+noeviction 不自动删除数据，内存溢出时报错返回
+
+redis分片机制
+内存占用大时，一台redis效率低，搭建redis分片实现内存扩容
+
+hash一致性算法
+顺时针节点存取
+
+hash一致性的特点
+均衡性 创建虚拟节点
+单调性 当节点新增时，数据可以实现自动迁移 节点只能新增不能减少（减少得重新划分分片）
+分散性 一key多位置
+负载 多key一位置
+--------------------------
+redis哨兵
+用了redis分片，一台宕机服务器就会报错
+增加备用机：一主二从
+哨兵重新选主，使其余当从
+
+不能向从机set数据
+
+1.实现redis高可用，先配置主从结构
+2.哨兵通过心跳检测机制实时向主机发出心跳检测机制，ping-pong，如果连续3次主机没有回应，重新推选
+3.哨兵连接主机后，知道主机信息，哨兵重新选主，使其余当从
+
+检测redis节点的状态
+info replication
+role:主机
+
+slaveof ip port做从机
+
+sentinel monitor mymaster 192.168.72.130 6379 1
+1当前哨兵选举的票数，只有一个哨兵，一票生效
+哨兵奇数，哨兵数-1生效
+
+启动哨兵
+redis-sentinel sentinel.conf
+
+redis集群
+redis集群设计时主机实现分片功能，每台主机之后都有对应从机，并且在内部实现高可用（不需要依赖第三方监控）
+
+通用概念（不适用redis集群）
+通常集群数量奇数台（包含主从）
+
+集群正常工作条件：
+n是总数
+存活的服务器的数量>n/2
+1台，2台不能搭建集群
+3台可以，最多允许宕1台
+4台可以，最多允许宕1台
+所以通常集群是奇数
+
+redis集群内存不能少机器，得有替补
+
+redis集群搭建计划
+3台主机 3台从机 共6台 端口划分7000~7005
+
+redis集群原理（分区）
+集群信息都在nodes.conf中
+
+redis集群宕机条件
+最少超半数
+最多可以 主机数-1
+
+redis集群 用的hash槽存储数据原理 主机最多16384
+均分三槽，数字可以重复
+
+分片效率高：运算发生在服务器，redis只负责存取
+集群：运算发生在redis内部，效率稍低
+
+脑裂现象
+连续三次投票没有结果，选举失败，出现脑裂现象，都做主机
+如何降低脑裂现象：增加主机数量
+---------------------
+简单redis分布式锁
+场景：司机取消议价，货主确认议价
+议价状态，0议价待确认，1议价已确认，2议价未通过，3议价失效
+1、轮询拿锁（往指定key写入值），key为这笔议价单编号，值为当前用户编号（保证操作当前议价单的是唯一线程），等到写入值成功，就是加锁成功
+2、拿到锁后，就可以放心修改了，查看议价状态，如果是0议价待确认，可以取消议价，修改议价表状态为3议价失效。操作好准备解锁，在redis查key为议价单号的值，和当前用户编号比对，相同则删除key解锁，确保是同一线程在操作，返回接口
+3、议价状态是1议价已通过，删除key解锁，返回货主议价已通过，无法取消议价

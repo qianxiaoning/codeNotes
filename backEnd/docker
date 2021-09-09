@@ -1,0 +1,158 @@
+docker
+轻量的虚拟机
+
+vmware需要虚拟硬件，操作系统
+
+docker不虚拟硬件，系统资源直接使用宿主资源
+
+docker虚拟机称为容器
+
+docker开发运维一体化（DevOps）核心工具
+
+docker镜像：静态文件
+docker容器：从镜像实例化出来的
+
+镜像仓库：https://hub.docker.com/
+
+下载镜像
+docker pull xxx:yyy
+yyy:标签版本号
+
+docker中存在的镜像
+docker images
+docker image ls
+
+运行进入镜像
+docker run hello-world
+后台运行，不进镜像
+docker run -d xxx
+-d后台
+-i交互
+-t终端
+
+查看容器列表
+docker ps
+查看全部容器
+docker ps -a
+
+退出镜像
+exit
+
+删除镜像
+docker image rm 镜像名/id前三位
+有容器删不了则
+docker image rm -f 镜像名/id前三位
+
+导出
+docker save xxx yyy | gzip > app.tar.gz  
+
+导入xxx到docker
+docker load -i xxx
+docker load < xxx
+
+进入容器
+docker exec -it 77a bash
+
+启动容器
+docker start 77a
+
+停止容器
+docker stop 77a
+
+删除容器
+docker container rm 77a 88a
+删除正在运行的容器
+docker container rm -f 77a
+
+\折行写命令
+
+清理所有终止状态容器
+docker container prune
+
+容器的数据管理：
+数据存到宿主机磁盘上
+宿主机（linux服务器）路径/usr/app
+容器路径/opt/app
+
+启动挂载数据卷的容器
+--name 给容器起名
+-v指定挂载的目录
+docker run -dit --name centos7 -v /usr/app:/opt/app centos:7
+
+创建文件，EOF结束符，向f1输出
+cat <<EOF > f1
+查看文件
+cat f1
+
+数据卷：
+docker在宿主机上创建，不用关心路径
+docker volume create my-vol
+查看所有数据卷
+docker volume ls
+查看指定 数据卷 的信息（挂载目录）
+docker volume inspect my-vol
+启动挂载数据卷的容器
+docker run -dit --name centos7-v2 -v my-vol:/opt/app centos:7
+删除数据卷（如果数据卷被容器使用则无法删除）
+docker volume rm my-vol
+清理无主数据卷
+docker volume prune
+
+端口映射
+宿主机80->容器端口8080
+docker run -dit --name tomcat -p 80:8080 tomcat
+
+浏览器访问80端口
+
+容器互联:
+新建网络
+docker network create -d bridge my-net
+启动两个容器连接到网络
+docker run -dit --name centos7-1 --network my-net centos:7
+docker run -dit --name centos7-2 --network my-net centos:7
+进入一个容器ping另一个容器
+宿主机也能连接
+
+自己制作镜像
+镜像中每一个操作会加一层，层数越少越好
+mkdir dockerfile
+mv jdk-8u212-linux-x64.tar.gz dockerfile/
+mv apache-tomcat-8.5.42.tar.gz dockerfile/
+cd dockerfile
+
+cat <<EOF > Dockerfile
+#以centos7为基础
+FROM centos:7
+#ADD命令将压缩包传入镜像中的指定目录,并同时解压缩
+ADD jdk-8u212-linux-x64.tar.gz /opt/
+ADD apache-tomcat-8.5.42.tar.gz /usr/
+#为了方便,把文件夹名称改得简单一点
+RUN mv /usr/apache-tomcat-8.5.42 /usr/tomcat
+#设置环境变量
+ENV JAVA_HOME=/opt/jdk1.8.0_212 \
+    CATALINA_HOME=/usr/tomcat \
+    PATH=$PATH:/opt/jdk1.8.0_212/bin:/usr/tomcat/bin
+#暴露容器的8080端口
+EXPOSE 8080
+#设置启动容器时自动运行tomcat
+ENTRYPOINT /usr/tomcat/bin/startup.sh && tail -F /usr/tomcat/logs/catalina.out
+EOF
+
+构建镜像
+docker build -t tomcat:7 .
+
+Docker案例：
+1.加载redis镜像
+2.启动容器
+3.进入容器并启动redis工具
+cd ~
+docker exec -it redis7000 redis-cli
+
+启动多个 redis 容器
+
+容器互联
+1.创建docker虚拟网络
+2.mysql
+创建数据卷
+3.tomcat
+启动 tomcat 容器

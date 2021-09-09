@@ -1,0 +1,10 @@
+---------------------
+jpa 注解添加实体类索引
+@Entity
+@Table(name = "sys_user", indexes = {@Index(name = "usercode",columnList = "usercode"), @Index(name = "deptcode",columnList = "deptcode")})
+public class User {
+
+}
+---------------------
+jpa生成表注释
+@org.hibernate.annotations.Table(appliesTo = "user",comment = "用户表")

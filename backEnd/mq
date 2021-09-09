@@ -1,0 +1,46 @@
+--------------------------
+rabbitmq
+
+常用订单：流量削峰
+
+redis,rabbitmq是项目中必须要用的
+
+降低耦合都可以通过中间加一个东西来解决，经典的生产者消费者模型
+
+1.服务解耦
+2.订单、流量削峰
+3.异步调用
+
+六种模式：
+1.简单模式
+2.工作队列模式（多个消费者，负载均衡，轮询。合理分发-手动确认qos(1)，数据的持久化-队列持久化，消息持久化）
+3.发布订阅模式（fanout交换机）
+4.路由模式（direct交换机，路由键和绑定建匹配）
+5.主题模式（更复杂的路由模式，topic交换机，键的形式aaa.bbb.ccc,*.*.ccc,aa.#）*匹配一个单词，#匹配多个单词
+6.rpc异步调用（两个队列，一个关联键）
+多个客户端公用一个发送队列，
+多个客户端有自己的返回队列
+
+消息携带两个数据：返回队列名，每次消息的关联id
+
+订单存储的解耦：
+流量削峰，先把订单放到rabbitmq队列中
+并同步到redis缓存中，方便用户查询
+
+rabbitmq之前是：
+1.客户端controller-service-dao入数据库
+
+rabbitmq之后是：
+1.客户端(订单生产者)
+通过amqpTemplate.convertAndSend("orderQueue", pdOrder);
+controller-orderId放入rabbitmq队列
+
+2.新建消费者项目(订单消费者)
+通过@RabbitListener(queues="orderQueue")
+从队列取出订单
+再调serive存入数据库
+
+3.yml改成手动确认
+acknowledge-mode: manual
+OrderConsumer save中
+channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
