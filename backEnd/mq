@@ -1,4 +1,4 @@
---------------------------
+---------------
 rabbitmq
 
 常用订单：流量削峰
@@ -44,3 +44,127 @@ controller-orderId放入rabbitmq队列
 acknowledge-mode: manual
 OrderConsumer save中
 channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+---------------
+RocketMQ
+参考https://blog.csdn.net/autfish/article/details/89226461 系列
+
+基础：
+1.下载安装包安装
+2.设置环境变量，ROCKETMQ_HOME
+3.启动NameServer和Broker
+4.创建topic
+5.引入pom.xml依赖
+
+6.生产者
+创建ProducerService
+
+private DefaultMQProducer producer = null;
+@PostConstruct
+public void initMQProducer() {
+    producer = new DefaultMQProducer("defaultGroup");
+    producer.setNamesrvAddr("localhost:9876");
+    producer.setRetryTimesWhenSendFailed(3);
+
+    try {
+        producer.start();
+    } catch (MQClientException e) {
+        e.printStackTrace();
+    }
+}
+
+public boolean send(String topic, String tags, String content) {
+    Message msg = new Message(topic, tags, "", content.getBytes());
+    try {
+        producer.send(msg);
+        return true;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
+7.启动Producer
+boolean result = producerService.send("demo", "TAG-A", "Hello RocketMQ");
+assertTrue(result);
+
+8.消费者
+创建ConsumerService
+
+private DefaultMQPushConsumer consumer = null;
+@PostConstruct
+public void initMQConsumer() {
+    consumer = new DefaultMQPushConsumer("defaultGroup");
+    consumer.setNamesrvAddr("localhost:9876");
+    try {
+        consumer.subscribe("demo", "*");
+        consumer.registerMessageListener(new MessageListenerConcurrently() {
+
+            @Override
+            public ConsumeConcurrentlyStatus consumeMessage(
+                    List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+                for (MessageExt msg : msgs) {
+                    System.out.println("Message Received: " + new String(msg.getBody()));
+
+                }
+                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+            }
+        });
+        consumer.start();
+    } catch (MQClientException e) {
+        e.printStackTrace();
+    }
+}
+
+@PreDestroy
+public void shutDownConsumer() {
+    if (consumer != null) {
+        consumer.shutdown();
+    }
+}
+
+9.启动项目
+输出
+
+进阶：
+RocketMQ概念：Producer, Consumer, Broker, Topic, Message Queue
+NameServer，负责Producer、Consumer和Broker之间的协调
+
+Producer饲养员
+
+Broker管道: [
+    {
+        Topic: 水果,
+        Queue: [
+            {
+                Queue1: [苹果,香蕉],
+                Queue2: [香蕉],
+                Queue3: [香蕉,苹果],
+                Queue4: [香蕉]
+            }
+        ]
+    },
+    {
+        Topic: 肉食,
+        Queue: [
+            {
+                Queue1: [香肠],
+                Queue2: [鱼肉],
+                Queue3: [],
+                Queue4: []
+            }
+        ]
+    }
+]
+
+Consumer:[
+    {
+        name: 猴子,
+        Topic: 水果,
+        Tags: 香蕉
+    },
+    {
+        name: 狗,
+        Topic: 肉食,
+        Tags: 香肠
+    }
+]

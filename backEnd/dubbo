@@ -1,3 +1,4 @@
+--------------
 Dubbo框架：
 soa思想(微服务)模型：
 1.
@@ -28,3 +29,262 @@ dubbo:
 6.当后台服务器宕机时，注册中心基于心跳检测机制，发现服务器宕机，同步更新自己的服务器列表的数据，同时全网广播。消费者接口接口注册中心的信息之后，也同步更新自己的本地数据，方便下次调用。
 
 注意事项：对象必须实现序列化接口
+--------------
+dubbo框架
+浏览器 => web.controller => 接口.service => sso.serviceImpl => sso.mapper
+soa思想：服务消费者（web） => 接口 => 服务生产者（sso）
+接口采用中立方式定义
+http是应用层（7层）协议得用controller接收
+
+osi模型：
+物理层，2进制数据在物理媒体上传输数据
+数据链路层，有地址的帧，错误检测。将要传输的数据，拆分成小包（帧），游戏中卡顿就是掉帧
+网络层，为数据包选择路由。发往的地址
+传输层，提供端对端的接口。tcp/udp。tcp3次握手，在？在，好。udp直接请求，不管对方状态，可能失败
+会话层，解除或建立与其它接点的联系。
+表示层，数据格式化，代码转换，数据解密。数据加密/解密
+应用层，文件传输，电子邮件，文件服务，虚拟终端。http/ftp
+
+系统A（应用层=>物理层）=>系统A（物理层=>应用层）
+
+rpc是传输层（4层）协议，rpc可以直接调用中立接口（代码） 
+rpc是长连接，一个连接上可以连续发送多个数据包，连接保持期间，没有数据包发送，需要双方发送链路检测包
+rpc加密压缩传输，http协议大量请求头信息
+rpc协议有注册中心，监控机制
+
+http协议传对象，rpc协议传对象，对象得实现序列化接口
+
+dubbo介绍，高性能服务框架（soa），通过rpc实现服务的输入输出
+web服务器（消费者）=> 通过rpc协议连接多个订单服务器，也需要负载均衡，需要额外的注册中心 => [order服务器（生产者）,order服务器]
+注册中心，记录服务的列表
+生成者：ip地址，端口，服务名称，启动时会将信息写到注册中心服务列表中
+注册中心把服务列表写到消费者中，
+浏览器访问web服务器时，消费者会在列表中选择一个生产者访问，实现负载均衡
+如果某一个生产者宕机了，
+注册中心通过心跳检测机制，检测到了，将列表状态更新，让消费者更新数据
+正向代理
+
+生产者启动，将ip、端口号、服务名称写入注册中心
+注册中心接收服务器请求，将信息写入服务列表
+消费者启动，连接注册中心，获取服务列表，保存到本地内存中
+用户发起请求，消费者查询列表，基于负载均衡选择ip、端口，发起rpc请求
+生产者处理请求，返回数据
+注册中心基于心跳检测机制，发现生产者宕机，更新服务列表，并全网广播
+------------------
+dubbo使用方法：
+31.1.2.1.定义接口
+31.1.2.2.服务提供者，引入接口子项目
+没有controller
+引入dubbo的@Service
+application.yml添加dubbo配置：包扫描，定义服务名，设置注册中心，rpc调用端口
+31.1.2.3.服务消费者
+主启动类去数据库
+@Reference注解注入service
+application.yml：定义服务名，连接zookeeper
+
+dubbo负载均衡策略
+随机（默认）：
+@Reference(loadbalance="random")
+轮询：
+@Reference(loadbalance="roundrobin")
+一致性hash：
+相同参数的请求发到同一个提供者上，该提供者宕机时，它的请求平摊到其他提供者
+@Reference(loadbalance="consistenthash")
+最少使用：
+选择上次响应时长最短服务器
+@Reference(loadbalance="leastactive")
+----------------
+c2c-system中加入dubbo
+接口写在common.DubboUserService
+
+sso是生产者
+引入dubbo依赖
+配置sso配置文件，增加dubbo配置
+增加实现类DubboUserServiceImpl
+
+web是消费者
+修改配置文件
+
+31.1.4.dubbo控制台
+dubbo服务监控，包括服务者、消费者
+是一个tomcat服务器，在阿里下载，
+将tomcat-dubbo\webapps\ROOT\WEB-INF\dubbo.properties中的ip更改
+启动tomcat-dubbo\bin\startup.sh，访问http://localhost:8090/
+设置权重，权重越大，访问越多
+
+31.1.5.用户信息注册
+密码加密
+String md5Pass = DigestUtils.md5DigestAsHex(user.getPassword().getBytes());
+user.setPassword(md5Pass);
+
+31.1.6.单点登录实现
+登录一次，可访问其它信任的系统，sso
+在web服务器集群中任一台登录后，可直接登录其它web服务器，或者直接登录backgroundSystem服务器
+
+流程：
+第一次登录：
+浏览器=>nginx=>前台服务器=>sso单点登录服务器=>数据库=>sso单点登录服务器，user的json对象和全球唯一的ticket=>
+[
+存入redis服务器(k:v。key唯一，ticket，也叫token，user对象json)
+
+sso同时返回ticket给web=>nginx=>浏览器，web将ticket交给用户的浏览器cookie中，设置过期时间，设置数据共享？
+]
+
+后面登录：
+浏览器中的ticket=>nginx=>前台服务器=>用ticket查询redis服务器，
+没值，跳转到登录页面？
+有值，直接判断登录成功
+
+其它信任系统需要，cookie数据共享
+
+设置cookie生命周期
+new Cookie("key", value)
+    .setMaxAge(>0);存活的生命周期
+    .setMaxAge(0);立即删除
+    .setMaxAge(-1);会话关闭时，删除cookie;
+
+DubboUserServiceImpl：
+cookie共享
+//cookie的权限设定（路径）根目录下
+new Cookie("key", value).setPath("/");
+//cookie实现共享，不写www，二级域名可用
+new Cookie("key", value).setDomain("c2c-system.com");
+
+ticket是uuid生成后再md5加密
+String uuid = UUID.randomUUID().toString();
+String ticket = DigestUtils.md5DigestAsHex(uuid.getBytes());
+
+敏感数据脱敏，不用返回给用户
+userDB.setPassword("***");	
+sso服务器查到数据，存入redis服务器
+jedisCluster.setex(ticket, 7*24*3600, userJSON);
+
+登录成功后，用户信息在首页的展现
+jsonp访问sso接口，查询redis服务器中是否含有对应数据，返回
+sso中UserController.queryByCookie1
+
+用户登出
+删除浏览器cookie信息，redis记录，前端重定向到首页
+web.UserController.logout1
+
+31.基于dubbo，新建c2c-system-cart，购物车服务器
+
+创建子jar包项目，c2c-system-cart
+引入common子项目依赖，common中引用了redis.properties文件，添加redis.properties
+添加application.yml配置文件，改端口
+
+添加hosts文件
+nginx.conf不需要加了，因为web服务器通过dubbo访问cart
+
+添加主启动类，C2cSystemCartApplication
+配置run configurations中C2cSystemCartApplication启动类
+
+在common中添加pojo/Cart，接口DubboCartService
+cart中写mapper,xml,serviceImpl，修改application.yml中dubbo服务名和端口
+web中写controller，CartController
+
+商品，类型、尺寸分别不同id
+购物车表记录，用户id和商品id是联合主键，两个id确定一个记录
+
+更新购物车商品数量
+CartController.updateCartNum
+修改一条购物记录，需要两个ak，itemId和userId
+前端传入itemId、num，后台获取userId，注入Cart对象，传入service更改
+
+common.pojo.Product
+//爬虫中使用最多
+@JsonIgnoreProperties(ignoreUnknown=true) //表示JSON转化时，忽略未知属性（images）
+
+新增购物车商品
+DubboCartServiceImpl.addItem
+根据item_id和user_id查询表，无记录则新增记录，有记录则更新记录的num和updated
+
+31.1.权限控制，不登录不能看购物车、订单等个人页面
+拦截器：
+条件：客户端是否有cookie，redis中是否有记录
+web.xml => 拦截器类，拦截器配置文件
+由于只对web站点生效，加在web项目中
+
+拦截器类：
+web.UserInterceptor implements HandlerInterceptor
+
+HandlerInterceptor：
+preHandle controller前
+postHandle service业务方法后
+afterCompletion 视图渲染后
+
+拦截器配置文件：
+web.MvcConfigurer implements WebMvcConfigurer
+MvcConfigurer.addInterceptors
+
+cookie工具类
+web.CookieUtil
+
+31.2.动态获取用户id
+将UserInterceptor.preHandle拦截器中查到的redis.userJson，存储起来，给web.CartController中的方法提供userId使用
+31.2.1.存入request域中
+CartController中，
+(User)request.getAttribute(C2CSYSTEM_USER);取对象
+31.2.2.存入ThreadLocal线程池中（推荐）
+ThreadLocal在线程内实现数据共享
+在web中写ThreadLocalUtil工具类
+
+CartController中，
+User user = ThreadLocalUtil.get();取对象
+
+31.2.3.页面渲染完后销毁域中数据，结束ThreadLocalUtil线程
+UserInterceptor.afterCompletion
+request.removeAttribute(C2CSYSTEM_USER);
+ThreadLocalUtil.remove();
+
+32.基于dubbo，新建c2c-system-order，订单服务器
+
+创建子jar包项目，c2c-system-order
+引入common子项目依赖，common中引用了redis.properties文件，添加redis.properties
+添加application.yml配置文件，改端口
+
+添加hosts文件
+nginx.conf不需要加了，因为web服务器通过dubbo访问cart
+
+添加主启动类，C2cSystemOrderApplication
+配置run configurations中C2cSystemOrderApplication启动类
+
+web中写OrderController
+在common中添加pojo/Order,OrderItem订单商品信息,OrderShipping订单物流信息，接口DubboOrderService
+order中写mapper,xml,serviceImpl，修改application.yml中dubbo服务名和端口
+
+32.1.提交订单
+
+生成orderId
+不用uuid，有字母不便用户输入和订单查找
+用userId+时间戳
+
+Order
+@TableField(exist=false)	//入库操作忽略该字段
+private OrderShipping orderShipping;
+
+Order,OrderItem订单商品信息,OrderShipping订单物流信息
+OrderId唯一，3张表入库，事务控制
+
+32.2.订单查询
+根据OrderId查询数据库，3表查询，然后展现数据
+32.2.1.mybatisPlus方式
+DubboOrderServiceImpl.queryOrderByIdMybatisPlus
+32.2.2.手写sql方式
+DubboOrderServiceImpl.queryOrderByIdSql
+OrderMapper.xml中resultMap用法
+----------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -86,3 +86,234 @@ ShiroFilterFactoryBean过滤器，.setFilterChainDefinitionMap，设置FilterCha
 
 10.前端选择记住我登录，后台token.setRememberMe(true);，向浏览器中set-cookie(rememberMe)，下次打开浏览器访问页面，有rememberMe这个cookie，就跳过jsessionId对比，能直接访问user权限的路径，再重新向浏览器set jsessionId
 -------------------------------
+shiro 密码加密，认证，授权，shiro异常处理，授权信息缓存，会话管理，rememberMe
+配置类
+SpringShiroConfig.java
+密码加密
+new SimpleHash
+认证
+ShiroUserRealm.AuthenticationInfo
+授权
+@RequiresPermissions("sys:log:delete")
+@RequiresPermissions("sys:user:valid")
+ShiroUserRealm.AuthorizationInfo
+shiro异常处理
+GlobalExceptionHandler.java
+授权信息缓存
+CacheManager
+会话管理
+ShiroUtils.java
+SessionManager
+取session中用户信息
+rememberMe
+CookieRememberMeManager
+---------------
+20.用shiro给密码加密
+20.1 生成盐值 String salt = UUID.randomUUID().toString();
+20.2 用shiro的SimpleHash进行md5加密
+SimpleHash sh = new SimpleHash(
+	"md5", //algorithmName算法名称
+	sourcePassword, //source原密码
+	salt, //salt盐值
+	1//iterations加密此数，可以对加密结果进行再加密
+);
+----------------
+28.shiro apache推出的安全框架，认证，授权
+原理：客户端向服务端请求=>过滤器
+流程：
+用户访问=>身份认证：
+	通过=>权限控制：
+		有权限能访问
+		无权限抛出异常
+	未通过回到登录页面
+	
+shiro架构：	
+Subject,SecurityManager,Realm
+
+Subject主体对象，封装认证信息（如用户名、密码、指纹、刷脸）
+提交给SecurityManager安全管理器，完成认证和授权操作
+Realm查询数据库，可以调用dao，提交给SecurityManager
+SecurityManager负责比对
+
+SecurityManager详细架构：
+1.Autenticator认证管理器
+2.Authorizer授权管理器
+3.SessionManager会话管理器，记录用户信息，已登录的依据
+4.CacheManager，保存用户权限，提高查询性能
+5.pluggable realms对接数据层
+6.cryptography加密对象
+
+shiro认证拦截实现：
+1.添加shiro依赖，shiro-spring
+2.shiro核心对象配置
+com.qxn.pj.common.config.SpringShiroConfig配置类
+配置SecurityManager对象，shiro核心管理器
+配置ShiroFilterFactoryBean对象，对请求信息进行过滤：
+	前端静态资源允许匿名访问
+	其它资源要认证
+将SecurityManager注入ShiroFilterFactoryBean
+3.创建SpringWebConfig类，即web.xml中filter配置，
+进行spring过滤器配置，
+将ShiroFilterFactoryBean注入到
+spring的FilterRegistrationBean中
+完成shiro的初始化操作
+
+认证失败调用，返回登录页方法
+fBean.setLoginUrl("/users/returnToLogin");
+返回给前端登录失效json，前端控制路由跳回登录页
+
+浏览器第一次请求，服务器会set-cookie:jsessionId到浏览器，
+服务器发现浏览器没带jsessionId这个cookie，会再生成一个set给浏览器
+
+每次请求都会对比jsessionId，不一致会跳回登录页
+
+现在springboot内置了FilterRegistrationBean这个对象，
+SpringWebConfig这个类可以不要了，
+
+用actuator查看系统底层是否注册这个bean:
+1.依赖spring-boot-starter-actuator
+2.application.yml配置加actuator配置
+3.点boot dashboard中的项目，再点击
+window-show view-other-properties打开视图
+在beans中搜索bean名称
+
+认证操作：
+UsersController=>
+subject.login(token)，token封装的username和password
+=>提交给Security Manager的子类DefaultWebSecurityManager
+=>找Realm，通过Realm访问数据库=>写ShiroUserRealm实现Realm接口
+=>把ShiroUserRealm实现Realm注入到DefaultWebSecurityManager
+=>此时DefaultWebSecurityManager有了用户提交的信息，和数据库取的信息
+=>将信息传给authenticate()验证
+
+可以把ShiroUserRealm看成一个普通的service，调UsersDao
+
+实例：
+1.写UsersDao方法，基于用户名查到用户对象
+2.写realm.ShiroUserRealm继承AuthorizingRealm
+3.控制层UsersController.doLogin(@RequestBody Users user)
+4.登录成功，前端路由跳转
+
+退出登录：
+1.在SpringShiroConfig.ShiroFilterFactoryBean中添加
+cMap.put("/users/returnToLogin","logout");
+2.前端调"/users/doLoginOut"接口，后台匹配到会自动执行"logout"操作，
+调用fBean.setLoginUrl("/users/returnToLogin");方法
+
+登录错误的统一异常处理：
+com.qxn.pj.common.web.GlobalExceptionHandler
+
+授权：
+shiro授权标识格式："sys:user:valid"
+"一级菜单名称:二级菜单名称:三级菜单名称"
+1.UsersServiceImpl.updateValidByUserId上
+加@RequiresPermissions("sys:user:valid")
+告诉shiro授权检测，访问方法需要"sys:user:valid"权限
+	1."sys:user:valid"提交给shiro框架
+	2.基于用户找到用户的权限信息
+	
+LogsServiceImpl.deleteObjects上也
+@RequiresPermissions("sys:log:delete")
+
+在Security Manager中的Authorizer对用户的权限信息进行检测
+当方法上加了@RequiresPermissions注解时检测
+aop实现
+
+2.SpringShiroConfig中追加：
+生命周期LifecycleBeanPostProcessor，
+代理对象创建器DefaultAdvisorAutoProxyCreator，
+配置Advisor对象，AuthorizationAttributeSourceAdvisor
+3.dao实现
+UserdRolesDao.findRoleIdsByUsersId()
+RolesMenusDao.selectMenusIdsByRoleIds()
+MenusDao.findPermissionsByMenuIds()
+
+Mapper.xml实现
+RolesMenusMapper.selectMenusIdsByRoleIds
+MenusMapper.findPermissionsByMenuIds()
+
+4.在ShiroUserRealm.AuthorizationInfo中调用dao
+查出permissions List<String>
+注入权限
+return new SimpleAuthorizationInfo()
+.setStringPermissions(permissionsSet);
+
+比如在运行
+@RequiresPermissions("sys:log:delete")
+LogsServiceImpl.deleteObjects()方法时，
+就会比对当前用户的Permissions中是否包含"sys:log:delete"
+
+29.前端=>后台流程：
+浏览器=>filterChain(过滤规则，SpringShiroConfig)=>
+DispatcherServlet(spring的)=>interceptor chain(拦截器)
+=>Handler(controller)
+
+30.shiro缓存配置
+授权操作时，每次都会查询数据库的用户权限信息，
+可以将第一次查询的用户权限信息进行缓存，以后登录授权时从缓存中读取
+
+SpringShiroConfig中
+1.添加shiro缓存管理器对象，cacheManager，
+对用户权限信息进行缓存操作
+2.将缓存管理器注入securityManager对象
+
+后面再进行登录时，
+就不会执行ShiroUserRealm.doGetAuthorizationInfo方法了，
+从业务层设置了缓存
+
+31.shiro rememberMe
+用户请求doLogin时，通过认证后，
+服务端把加密用户信息加密成的rememberMe这个cookie给浏览器，
+Set-Cookie存在浏览器的请求的域名下，关闭浏览器，下次请求时，浏览器会带上rememberMe，
+服务端拿到rememberMe这个cookie，能直接访问user匹配的路由，不会比对jsession值
+
+前端：
+登录时提交，用户名、密码、isRemember值
+
+后台：
+1.在UsersServiceImpl.doLogin中，设置token的
+如果isRemember=true;
+UsernamePasswordToken token = 
+new UsernamePasswordToken();
+token.setRememberMe(true);
+
+2.SpringShiroConfig中
+添加cookieRememberMeManager
+将cookieRememberMeManager注入securityManager
+
+3.修改shiro的过滤级别
+shiroFilterFactoryBean中
+cMap.put("/**", "authc");改为
+cMap.put("/**", "user");
+
+chrome查看cookie
+chrome://settings/siteData
+"rememberMe"中是用户信息subject对象的加密
+
+32.shiro会话时长配置
+shiro用户认证之后，会将用户信息写入服务端session中，默认时长为30分钟，
+自定义配置：
+SpringShiroConfig中
+1.添加session管理器对象
+SpringShiroConfig.sessionManager
+2.将sessionManager注入securityManager
+
+33.从session中获取用户信息
+1.登录时填入用户名，密码封装成UsernamePasswordToken，
+传入Subject.login(token)
+2.Subject.login会调用ShiroUserRealm.doGetAuthenticationInfo认证方法，
+doGetAuthenticationInfo方法里，将传入的token取出用户名，
+根据用户名查users表的user po对象，放入SimpleAuthenticationInfo对象中
+3.在session有效期中，通过SecurityUtils.getSubject().getPrincipal()，
+能取出登录的user po对象，使用
+场景：
+4.动态用户禁用启用修改对象
+UsersController.updateValidByUserId中取出user.getUsername()，
+users.setModifiedUser(user.getUsername());
+5.动态日志用户名LogsAspect.insertLog中，
+new Logs().setUsername()
+6.//获取整个session对象
+SecurityUtils.getSubject().getSession()
+7.将(Users)SecurityUtils.getSubject().getPrincipal();提取出去
+com.qxn.pj.common.util.ShiroUtils.getUser()
+---------------

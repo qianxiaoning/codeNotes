@@ -5643,3 +5643,98 @@ Object obj = new Object();
 JSONObject jo = (JSONObject) JSON.toJSON(obj);
 Map<String, Object> map = JSON.<Map<String, Object>>parseObject(jo.toJSONString(), Map.class);
 ---------------------
+4 过滤器
+法1 @WebFilter法
+启动类添加@ServletComponentScan注解
+类实现Filter接口，在类上加@WebFilter注解
+通过@WebFilter注解配置过滤器信息，名称filterName、url匹配模式urlPatterns、过滤器初始化参数initParams
+doFilter方法执行顺序看类名称排序
+过滤器中可直接引入spring的bean对象
+法2 FilterRegistrationBean对象注册法
+类实现Filter接口，加上@Component，交给spring管理。
+注册FilterRegistrationBean对象，自动注入过滤器对象，将引入的过滤器注入FilterRegistrationBean对象中，
+由FilterRegistrationBean对象配置过滤器信息，setName(String)、setUrlPatterns(Collection)、
+setInitParameters(Map)
+doFilter方法执行顺序由setOrder(int)方法中数字决定，越小越优先
+过滤器中可引入spring的bean对象
+4.1 过滤器init方法中能获取到过滤器信息filterConfig，将初始化参数存入ThreadLocal，供doFilter方法使用
+4.2 doFilter方法，能对request/response作预处理，或者请求拦截
+
+5 拦截器
+5.1 类上加@Component交给spring管理，类实现HandlerInterceptor接口，重写preHandle、postHandle、afterCompletion方法
+5.2 类实现WebMvcConfigurer接口，重写addInterceptors方法，自动注入拦截器对象
+@Autowired
+private AInterceptor aInterceptor;
+注入拦截器
+registry.addInterceptor(aInterceptor)
+//添加拦截路径
+.addPathPatterns("/**")
+//排除拦截路径
+.excludePathPatterns("/login");
+5.3 拦截器交给spring管理后，拦截器中可以引入spring的bean对象
+
+6 监听器
+系统监听器：
+监听servletContext、HttpSession、servletRequest等域对象的创建和销毁事件
+法1：
+将MyServletContextListener监听器
+通过ServletListenerRegistrationBean.setListener(new MyServletContextListener());注册
+法2：
+监听器上添加@WebListener注解，启动类添加@ServletComponentScan注解
+自定义监听事件：
+6.1 AEvent定义事件
+6.2 AEventListener定义监听器，获取事件中的信息，进行逻辑处理，或者通知别的微服务
+6.3 ATrigger触发事件
+6.4 BeanTest.test2测试
+
+7 过滤器，拦截器，监听器使用场景
+总结：
+设计模式：
+过滤器Filter：对请求进行预处理，对响应进行后处理
+拦截器Interceptor：获取请求的上下文，拦截不符合要求的请求，实现需要的业务逻辑
+监听器Listener：当一个事件发生的时候，获得这个事件发生的详细信息，实现业务逻辑，但不干预这个事件本身的进程
+
+7.1 过滤器：
+过滤器基于函数回调
+过滤器依赖servlet，只能在servlet容器中，在Servlet前后起作用，
+对用户请求进行预处理，对HttpServletResponse进行后处理。
+不能定义业务逻辑执行前、后等，仅仅是请求到达就执行
+太细的话，还是建议用interceptor
+
+过滤器可以对几乎所有的请求起作用，拦截器只能对action请求起作用
+Filter可以通过通配符对web服务器管理的所有web资源：例如Jsp，Servlet，静态图片文件，静态html文件等进行拦截
+
+作用场景：
+过滤器设置字符编码（CharacterEncodingFilter），解决post乱码，过滤敏感低俗危险词汇，过滤掉没用的参数，
+压缩响应信息。
+
+7.2 拦截器：
+拦截器基于反射，拦截器属于spring组件，不依赖servlet
+拦截器更细，在controller，service，mapper层都可以使用拦截器，对该层进行拦截
+拦截器能够深入到方法前后、异常抛出前后等
+
+拦截器，可以访问action上下文、值栈里的对象，而过滤器不能
+可以判断用户是否登录，用户访问权限验证，判断当前是否是购票时间，登录日志功能，安全功能。
+
+拦截器和过滤器的一个区别：
+拦截器不一定会到达目标，可以拒绝请求，过滤器一定会到达目标，但是在到达目标前后会进行一些操作
+
+在action的生命周期中，拦截器可以多次被调用，而过滤器只能在容器初始化时被调用一次？
+
+拦截器只能针对URL做拦截，而AOP能针对具体的代码，更灵活
+拦截器一般位于Controller层，aop一般作用与Service层
+
+aop：
+优势在于可以获取执行方法的参数
+日志记录，性能统计，安全控制，事务处理，异常处理
+
+拦截器只能用在controller层，aop能用在service层
+
+7.3 监听器：
+统计统计网站访问量、在线人数和在线用户，利用HttpSessionLisener
+系统启动时加载初始化信息，利用ServletContextListener
+记录用户访问路径。
+
+监听器用于监听web应用中某些对象、信息的创建、销毁、增加，修改，删除等动作的发生，然后作出相应的响应处理。
+当范围对象的状态发生变化的时候，服务器自动调用监听器对象中的方法。
+-----------------

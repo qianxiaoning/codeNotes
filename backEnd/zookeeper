@@ -1,0 +1,73 @@
+-----------
+zookeeper注册中心
+zookeeper，自动化服务调度器
+
+在linux安装java.jdk
+cd /usr/local/src/
+上传zookeeper安装文件
+拖入zookeeper-3.4.14.tar.gz
+解压tar -xvf zookeeper-3.4.14.tar.gz
+rm -rf zookeeper-3.4.14.tar.gz
+改名mv zookeeper-3.4.14 zookeeper
+创建zookeeper信息和日志文件夹
+cd zookeeper/
+mkdir data log
+复制配置文件并改名
+cd conf/
+cp zoo_sample.cfg zoo.cfg
+vim zoo.cfg
+配置数据、日志文件夹
+dataDir=/usr/local/src/zookeeper/data
+dataLogDir=/usr/local/src/zookeeper/log
+
+cd ../bin/
+启动sh zkServer.sh start
+查看状态 sh zkServer.sh status
+关闭sh zkServer.sh stop
+
+搭建zookeeper集群，3台
+zookeeper功能一样，redis有扩容作用
+cd ..
+mkdir zkCluster
+cd zkCluster/
+mkdir zk1 zk2 zk3
+在zk1 zk2 zk3中创建data,log文件夹
+mkdir {zk1,zk2,zk3}/{data,log}
+标识文件myid
+vim zk1/data/myid，输入1
+vim zk2/data/myid，输入2
+vim zk3/data/myid，输入3
+
+cd ../../../conf/
+准备3个配置文件
+cp zoo.cfg zoo1.cfg
+vim zoo1.cfg
+
+dataDir=/usr/local/src/zookeeper/zkCluster/zk1/data
+dataLogDir=/usr/local/src/zookeeper/zkCluster/zk1/log
+# the port at which the clients will connect
+clientPort=2181
+ip:通信端口:选举端口
+server.1=192.168.89.129:2887:3887
+server.2=192.168.89.129:2888:3888
+server.3=192.168.89.129:2889:3889
+
+复制改zoo2.cfg,zoo3.cfg
+
+cd ../bin/
+sh zkServer.sh start zoo1.cfg
+sh zkServer.sh start zoo2.cfg
+sh zkServer.sh start zoo3.cfg
+查看状态
+sh zkServer.sh status zoo3.cfg
+主机leader，从机follower
+
+停止
+sh zkServer.sh stop zoo1.cfg
+查看错误日志
+cat zookeeper.out
+------------
+zookeeper宕机时，现有服务器仍能工作，因为列表在消费者内存中
+
+zookeeper，树形结构保存信息
+------------

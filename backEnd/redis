@@ -213,3 +213,488 @@ redis集群 用的hash槽存储数据原理 主机最多16384
 1、轮询拿锁（往指定key写入值），key为这笔议价单编号，值为当前用户编号（保证操作当前议价单的是唯一线程），等到写入值成功，就是加锁成功
 2、拿到锁后，就可以放心修改了，查看议价状态，如果是0议价待确认，可以取消议价，修改议价表状态为3议价失效。操作好准备解锁，在redis查key为议价单号的值，和当前用户编号比对，相同则删除key解锁，确保是同一线程在操作，返回接口
 3、议价状态是1议价已通过，删除key解锁，返回货主议价已通过，无法取消议价
+-----------------
+添加redis缓存
+准备工作：
+application.yml文件，端口、数据库url改回windows，启动项目
+nginx.conf不启用集群，重启
+
+作用：
+为了高并发，做了tomcat服务器集群，但是连接的都是一个数据库，数据库并发压力大
+添加redis缓存服务器，降低数据库压力
+结构变为：
+浏览器=>tomcat服务器=>redis缓存服务器=>数据库
+
+29.1.linux安装redis
+切换到工作目录
+cd /usr/local/src/
+将redis-5.0.4.tar.gz传入
+解压tar -xvf redis-5.0.4.tar.gz
+改名mv redis-5.0.4/ redis
+redis的编译、安装
+cd redis/
+编译make
+安装redis
+make install
+29.2.redis常规命令
+29.2.1.修改redis配置文件
+vim redis.conf
+注释ip绑定，#bind 127.0.0.1
+关闭保护模式，protected-mode no
+后台启动，daemonize yes
+:wq
+29.2.2.常规命令
+启动服务redis-server redis.conf
+默认端口号 6379
+进入redis客户端，redis-cli -p 6379。默认端口时，redis-cli即可
+29.2.2.1.String类型：
+存数据set key value
+取数据get key
+获取key长度，strlen key
+是否存在(1存在)，exists key
+删除del key
+查询keys *
+以a开头，*n个字符，?一个字符，keys a*
+多个复值mset a a b b c c
+多个取值mget a b c
+追加append a " xxx"
+查看类型type a
+redis中有16个数据库，数据不共通，默认操作第1个
+切换到第16个数据库，select 15
+清空当下数据库flushdb
+清空所有数据库flushall
+加1，incr a
+减1，decr a，用于记录访问人数
+加100，incrby a 100
+指定key生效时间，expire a seconds
+指定key失效时间，pexpire a milliseconds
+检测key失效时间，-1无失效时间，-2数据不存在，ttl key
+取消key失效时间，persist key
+
+windows上浏览器调用：
+pom.xml引入redis包redis.clients.jedis,spring-data-redis
+测试类：
+TestRedis.testString
+//setnx()值已经存在，不允许覆盖
+jedis.setnx("qxn", "qw");
+//赋值和超时同时执行
+jedis.setex("time", 100, "超时测试");
+//赋值，是否可以覆盖，时间单位，超时时间
+//NX不允许覆盖，XX可以覆盖
+//EX单位秒，PX单位毫秒
+jedis.set("时间","测试是否有效","NX","EX",100);
+
+29.2.2.2.Hash类型：
+存储对象{id:1,name:"jack"}
+hset user id 1
+hset user name jack
+hget user id
+hget user name
+hexists属性是否存在
+hdel删除属性
+del key删除集合
+hgetAll user获取全部键和值
+hkeys获取全部keys
+hvals获取全部值
+hmget获取多个属性
+hmset设置多个属性
+hsetnx不存在时允许设置
+hstrlen获取key的长度
+
+测试类：
+TestRedis.testHash
+
+29.2.2.3.List类型：
+lpush队列左侧入一个或多个
+lpush list 1 2 3
+rpush队列右侧入一个或多个
+lpop队列左侧出一个或多个
+rpop队列右侧出一个或多个
+rpop list
+
+测试类：
+TestRedis.testList
+
+29.2.3.redis事务命令
+multi标记一个事务开始
+exec提交
+discard回滚
+
+测试类：
+TestRedis.testTx
+
+29.3.redis实现商品类目回显
+29.3.1.redis等第三方交给spring管理
+引入pom依赖
+配置类common.RedisConfig
+配置文件war_pro_test.redis.properties
+思路，java对象UITree =>json =>redis.string
+
+29.3.2.对象转json测试类，TestJSON
+通过ObjectMapper对象：
+//对象=>json
+String json = mapper.writeValueAsString(ProductDesc);
+//json=>对象
+ProductDesc desc = mapper.readValue(json, ProductDesc.class);
+29.3.3.将ObjectMapper对象方法，封装成ObjectMapperUtil
+工具类异常处理
+try {
+    ...
+} catch (Exception e) {
+    e.printStackTrace();
+    throw new RuntimeException(e);//将检查异常，转化为运行时异常，通知开发者
+}
+ObjectMapperUtil.toObject用泛型转化
+29.3.4.redis菜单类目回显，serviceImpl实现
+@GetMapping("/list")时，
+//用加上缓存的方法
+productCategoryService.findUITreeCacheList(parentId);
+serviceImpl中逻辑
+先查缓存，
+无数据，调数据库findUITreeList(parentId);再将结果存入redis缓存，parentId为key
+有数据，读redis缓存，parentId为key
+29.3.5.aop实现redis菜单类目回显
+目的：缓存不要和业务逻辑写在一起，降低耦合
+29.3.5.1.自定义注解CacheFind
+29.3.5.2.在findUITreeList上加上@CacheFind注解
+29.3.5.3.写切面CacheAspect.around
+自定义key名，包名.类名.方法名::parentId
+29.4.redis持久化
+redis运行在内存中，默认关闭后会持久化到硬盘上
+rdb模式（默认）快照空间小，效率高
+默认名dump.rdb（定期实现持久化，数据可能会丢失）
+持久化命令：
+save 立即持久化，阻塞其它操作，同步，默认
+bgsave 后台启动持久化，异步
+
+redis.conf中持久化配置：
+save 900 1，900s内执行1次操作，持久化1次
+save 300 10，300s内执行10次操作，持久化1次
+save 60 10000，60s内执行10000次操作，持久化1次
+
+dbfilename dump.rdb默认文件名
+
+aof模式（异步，可以实时持久化，效率低）
+记录用户的操作过程，文件较大
+
+配置：
+appendonly no
+appendfilename "appendonly.aof"默认文件名
+
+aof策略
+appendfsync always 用户一更新就持久化
+appendfsync everysec 每秒持久化一次（效率高）
+appendfsync no 持久化操作，交给操作系统
+
+数据要求高：aof，要求低就默认rdb
+
+29.5.redis内存策略
+redis数据在内存中，不清会溢出，所以需要定期清空数据
+内存优化策略
+lru算法，最近最少使用，用字段t记录访问时间，淘汰t值最大的
+29.5.1.volatile-lru，在设定超时时间的数据中使用lru算法，删除数据
+29.5.2.allkeys-lru，所有数据都使用lru算法，删除数据
+lfu算法，最不经常使用，记录引用次数
+29.5.3.volatile-lfu，在设定超时时间的数据中使用lfu算法，删除数据
+29.5.4.allkeys-lfu，所有数据都使用lfu算法，删除数据
+29.5.5.volatile-random，在设定超时时间的数据，随机删除
+ttl算法，根据剩余时间删除
+29.5.7.volatile-ttl，在设定超时时间的数据中，根据剩余时间删除
+29.5.8.noeviction，不会自动删除数据，内存溢出报错返回（默认）
+
+修改redis内存策略
+redis.conf:
+maxmemory-policy xxx
+
+29.6.redis分片机制
+扩大内存和执行效率
+3个g空间，分给3个redis服务器，一人1个g，提高效率
+6379,6380,6381
+准备3台：
+在redis目录中：
+mkdir shards
+准备3份配置文件
+cp redis.conf shards/6379.conf
+cp redis.conf shards/6380.conf
+cp redis.conf shards/6381.conf
+区分端口：
+:/port回车
+port 6380
+port 6381
+
+启动3台redis
+redis-server 6379.conf
+redis-server 6380.conf
+redis-server 6381.conf
+
+检查服务是否正常
+ps -ef |grep redis
+
+redis开始分片
+测试类TestRedis.testShards
+new ShardedJedis(JedisShardInfoList);
+三台redis存的数据都是不同的
+
+hash一致性算法
+hash值32位数据，2进制中，2^32种可能
+key:value
+存数据：服务器将key进行hash计算，均匀分配到各节点中
+取数据：拿到key，计算hash，找到最近节点
+不是随机存储，有规则
+
+hash一致性的特性
+均衡性：
+节点都是计算hash划分的，可能分布不均，导致数据命中率低
+此时会引入虚拟节点，实现数据平衡
+
+单调性：
+节点只能增，不能减
+虚拟节点新增时，数据可以自动迁移
+
+分散性：
+分布式系统中，某些系统不能使用全部内存空间时，一个key可能导致多个位置
+
+负载：
+分布式系统中，某些系统不能使用全部内存空间时，一个位置可能有多个key
+
+让分布式系统尽可能使用全部的内存空间，可以降低分散性和负载的概率
+
+29.7.spring整合redis分片
+RedisConfig.shardedJedis
+redis.properties配置文件，配置redis.nodes
+CacheAspect切片中，注入private ShardedJedis jedis; //分片机制
+
+将redis分片关闭 kill -9 pid pid pid
+
+29.8.redis哨兵
+场景：
+3个分片，如果1个宕机了，分片就不能用了
+保证服务器不宕机
+主从机：
+6379主机
+6380,6381从机
+
+原理：
+主从备份，平时6379的数据得时刻向6380,6381同步
+用户通过哨兵连接集群主机
+哨兵实时和主机进行心跳检测，ping-pong，如果连续3次未受到主机回应，则表示宕机，开始推选
+哨兵连接主机时，能获取主机的所有从机信息，选一个从机做主机，其它再次作为从机
+
+步骤：
+29.8.1.主从结构
+在redis目录下，复制目录并改名
+cp -r shards/ sentinel
+删备份文件
+rm -f dump.rdb appendonly.aof
+启动3台服务器
+redis-server 6379.conf
+redis-server 6380.conf
+redis-server 6381.conf
+进入redis中info replication看主从role:master
+将80，81的主机修改为6379
+redis-cli -p 6380
+SLAVEOF 192.168.89.129 6379
+redis-cli -p 6381
+SLAVEOF 192.168.89.129 6379
+主从数据会自动同步
+从机不能写入数据
+
+29.8.2.配置哨兵
+将redis目录下哨兵配置文件sentinel.conf，复制到sentinel/下
+cp sentinel.conf sentinel
+编辑配置文件
+vim sentinel.conf
+protected-mode no，注解去掉，保护模式关闭
+daemonize yes，开启后台启动
+
+设定哨兵监控sentinel monitor mymaster 192.168.89.129 6379 1
+1表示当前哨兵选举的票数，几票生效，涉及选举的设置为奇数
+
+30s主机没响应，开始推选，sentinel down-after-milliseconds mymaster 30000
+
+sentinel failover-timeout mymaster 180000哨兵选举失败时间（新主机上任失败，等待时间）3分钟
+
+哨兵测试：
+1.启动哨兵
+redis-sentinel sentinel.conf
+查看是否正常ps -ef |grep redis
+关闭79主机，查看80/81是否变为主机，再次开启79，看79是否变为从
+redis-cli -p 6379 shutdown
+redis-cli -p 6380
+INFO replication 变为主机role:master
+重新启动79
+redis-server 6379.conf
+redis-cli
+info replication
+在vim sentinel.conf最后，有主从记录
+
+测试类TestRedis.testSentinel
+
+交给spring管理
+RedisConfig.jedisSentinelPool导入RedisConfig.jedis，高效
+redis.properties配置文件，配置redis.sentinel
+CacheAspect切片中，注入private Jedis jedis; //哨兵机制
+
+浏览器访问商品目录，测试
+
+redis分片，实现内存的扩容，没有实现高可用
+redis哨兵，实现redis高可用（不怕宕机），没有实现内存扩容，哨兵没有实现高可用
+
+退出redis服务
+退出命令行，exit/ctrl+c
+关闭redis服务
+redis-cli -p 6379 shutdown。默认端口时，redis-cli shutdown即可
+关闭多个，kill -9 pid1 pid2
+
+29.9.redis集群（现在最主流的）
+redis集群，分片并且每台主机都有对应从机，在内部实现高可用，不需要第三方监控
+模拟3主，3从，端口7000~7005
+
+集群通用情况（不适用redis集群），集群数量是奇数台（包含主从）
+集群正常工作的条件，存活的服务器数量 > 总数/2
+3台 2>1.5 搭建集群的最小数量3台 最多宕机1台
+
+redis主机分片，一台都不能少
+
+步骤：
+29.9.1.停掉哨兵相关服务
+ps -ef |grep redis
+kill -9 10038 10043 10174 10190
+29.9.1.进到redis目录下，准备集群文件夹
+mkdir cluster
+29.9.2.在cluster目录下，创建7000~7005文件夹
+mkdir cluster/7000
+29.9.3.修改配置文件
+cp redis.conf cluster/7000/
+cd cluster/
+vim 7000/redis.conf
+注释本地绑定ip，#bind 127.0.0.1
+关闭保护模式，protected-mode no
+端口号改为7000，port 7000
+后台启动，daemonize yes
+修改pid文件位置，pidfile /usr/local/src/redis/cluster/7000/redis.pid
+修改持久化文件路径，dir /usr/local/src/redis/cluster/7000/
+设定内存优化策略，maxmemory-policy volatile-lru
+关闭aof模式，appendonly no
+开启集群配置，cluster-enabled yes
+开启集群配置文件，cluster-config-file nodes.conf
+修改集群超时时间，cluster-node-timeout 15000
+29.9.4.复制配置文件
+在cluster目录下
+cp -r 7000/ 7001
+cp -r 7000/ 7002
+cp -r 7000/ 7003
+cp -r 7000/ 7004
+cp -r 7000/ 7005
+29.9.5.修改配置文件
+vim 7001/redis.conf
+:%s/7000/7001/g
+:wq
+改7001~7005
+29.9.6.启动节点
+批量启动节点
+编写shell启动脚本
+vim start.sh
+#!/bin/sh
+redis-server 7000/redis.conf &
+redis-server 7001/redis.conf &
+redis-server 7002/redis.conf &
+redis-server 7003/redis.conf &
+redis-server 7004/redis.conf &
+redis-server 7005/redis.conf &
+
+编写shell结束脚本
+vim stop.sh
+#!/bin/sh
+redis-cli -p 7000 shutdown &
+redis-cli -p 7001 shutdown &
+redis-cli -p 7002 shutdown &
+redis-cli -p 7003 shutdown &
+redis-cli -p 7004 shutdown &
+redis-cli -p 7005 shutdown &
+
+启动脚本
+sh start.sh
+
+29.9.7.设定主从规则
+到redis/下，
+1代表一个从机，一对就2个
+redis-cli --cluster create --cluster-replicas 1 192.168.89.129:7000 192.168.89.129:7001 192.168.89.129:7002 192.168.89.129:7003 192.168.89.129:7004 192.168.89.129:7005
+[OK] All 16384 slots covered.完成
+29.9.8.拍摄快照
+VMware(时钟+)，拍摄快照
+快照完成，点击快照管理，选中快照，转到
+29.9.9.测试
+redis-cli -p 7000
+info replication从机是7004
+redis-cli -p 7000 shutdown 15秒后看7004是否变为主机
+redis-cli -p 7004
+info replication
+启动7000，看是否变为从机
+cd cluster/
+redis-server 7000/redis.conf
+redis-cli -p 7000
+info replication
+29.9.10.redis集群（就是redis分区）高可用推选原理
+redis中所有节点，都会保存当前redis集群中全部的主从状态信息
+在每个节点中的nodes.conf文件
+半数以上节点认为宕机，则剩余主节点在 宕机的从机们 中选举新主机
+
+连续3次投票没有结果，表示选举失败，会出现脑裂现象。增加主机数量，可降低脑裂发生
+
+redis集群宕机条件，最少超半数，9宕5，可以从其它主机借从机，但是其它主机必须留1个从机
+最多9宕7，所有主机的从机都宕了
+29.9.11.redis hash槽存储数据原理
+redis分片用的hash一致性
+redis集群用的hash槽存储
+16384个节点等分
+key =>hash()算出槽数 =>槽（16384 3等分之一）=>存入key:value
+算出槽数可能相同，key名不同
+
+redis分片效率较高：分布运算在服务器上，redis只负责取
+redis集群：在redis内部，效率低
+
+测试TestRedis.testCluster
+
+29.9.12.spring整合redis集群
+RedisConfig.jedisCluster
+redis.properties redis.cluster
+CacheAspect private JedisCluster jedis;	//集群
+-----------------
+1 结合redis
+1.1 centos安装redis
+重点部分：
+修改redis.conf
+#bind 127.0.0.1
+protected-mode no
+requirepass 密码
+daemonize yes
+1.2
+pom.xml spring-boot-starter-data-redis依赖
+1.3
+application.yml增加redis配置
+1.4
+引入spring-boot-starter-data-redis后，
+会自动注入redisTemplate(String,Object)和stringRedisTemplate(String,String)对象
+redisTemplate(String,Object)的keyJsonResult,value默认序列化方式是JdkSerializationRedisSerializer，会显示乱码
+libs.redis.RedisConfig重写redisTemplate对象，
+将RedisTemplate的key,value的序列化方式指定为StringRedisSerializer和GenericJackson2JsonRedisSerializer
+使用方式：
+redisTemplate:
+redisTemplate.opsForValue().set("obj",obj);
+Object obj = redisTemplate.opsForValue().get("obj");
+
+stringRedisTemplate:
+stringRedisTemplate.opsForValue().set("stringRedis","stringRedis");
+String stringRedis = stringRedisTemplate.opsForValue().get("stringRedis");
+
+引入RedisUtil，libs.redis.RedisUtil工具类
+RedisUtil:
+redisUtil.set("userRedisUtil",user);
+User userRedisUtil = (User) redisUtil.get("userRedisUtil");
+redisUtil.hset("a", "a", "b");
+redisUtil.hget("a", "a");
+redisUtil.expire("userRedisUtil",1000);
+redisUtil.hasKey("userRedisUtil");
+redisUtil.del("userRedisUtil");
+------------------
