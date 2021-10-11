@@ -2151,3 +2151,39 @@ array => ["a","w"]
 一句话，确定是否删除
 if(!confirm("确认删除吗?"))return;
 -----------------------
+获取多个jquery对象中的一个
+jquery对象：$("a").eq(0) 
+dom对象：$("a")[0]
+-----------------------
+<div>
+    <input id='a'>
+    <label for='a'></label>
+</div>
+在jq中给div绑定click事件，点击div会触发label的指向效果，导致div上的click事件被执行两次。
+-----------------------
+写前端页面众多函数方法的时候，可以一种dom的事件作为一个函数方法，以dom事件分函数，一个dom事件触发的功能可以都写在一个函数里，清晰
+比如：
+navClick();
+sectionClick();
+如果有多个事件都要进行的操作，再抽出来封装
+
+多个事件里都需要用的变量，提取到公共变量中
+-----------------------
+js的对象{}，动态存取值
+
+动态存值：
+当想动态值为key存值时，可以obj[variable]这样存值
+
+动态取值：
+当想动态值为key取值时，可以直接obj.variable取值
+-----------------------
+将ajax返回的所有null转为空字符串
+success: function (res) {
+    const removeNullString = JSON.stringify(res).replace(/null/ig,'""');
+    res = JSON.parse(removeNullString);
+}
+-----------------------
+jquery
+prop处理固有属性
+attr处理自定义属性
+-----------------------

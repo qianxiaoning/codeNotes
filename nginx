@@ -137,4 +137,66 @@ assetsDir: './a/a/', //生成./a/a资源目录，index.html会去./a/a寻找资�
 405 not allowed
 没有请求到服务接口，请求到静态文件（比如页面）上去了，不允许静态文件响应post，所以返回405
 一般是nginx映射匹配问题
---------------------------
+------------------
+nginx中的root, alias, index搭配使用规则
+
+如：
+前端项目包结构：
+newPro:{
+    libs: [...第三方库],
+    skin: [css文件夹, js文件夹, imgs文件夹],
+    pages: [
+        a.html,
+        b.html,
+        index.html
+    ]
+}
+
+nginx.conf:
+# newPro项目
+server{
+    listen  8888; # 浏览器输入端口
+    server_name  localhost; # 浏览器输入域名        			
+            
+    location /newPro { # 浏览器访问项目上下文，区分后可以同时访问多个项目
+
+        alias D:/desktop/newPro/; # root也好，alias也好，此处设置项目根路径，在项目根路径起服务。如果此处设置了内层文件，比如alias D:/desktop/newPro/pages/，项目里使用了相对路径的文件，可能会404报错，因为服务起在了内层，相对路径../往外找资源就找不到了
+
+        index  pages/index.html; # 相对于项目的主页地址，访问时要完整加上
+
+    }
+    location /newPro-api {
+        proxy_pass   http://ip:9001; #后台接口地址
+    }
+    # 上面项目在浏览器的访问地址，server_name + listen + location + index，也就是：http://ip:8888/newPro/pages/index.html，由于公司可能会做的限制，用localhost请求ip接口地址仍可能是跨域，所以前端用ip访问
+
+    # 下面可以同时映射另一个项目
+    location /bPro {
+    
+        alias D:/desktop/bPro/;
+
+        index  pages/index.html;
+
+    }
+    location /bPro-api {
+        proxy_pass   http://ip:9002; #后台接口地址
+    }
+    # 浏览器访问路径是：http://ip:8888/bPro/pages/index.html
+}
+------------------
+由于公司可能会做的限制
+server{
+    listen  8888;#浏览器输入端口
+    server_name  localhost;#浏览器输入域名        			
+            
+    location /bPro {
+        alias D:/desktop/bPro/;
+        index  pages/index.html;
+    }
+    location /bPro-api {
+        proxy_pass   http://ip:9002; #后台接口地址
+    }
+}
+浏览器用ip访问，用localhost请求ip接口地址仍可能是跨域。
+前端项目里请求后台接口时，直接用前端的域请求，如：http://ip:8888/bPro-api/...，会被proxy_pass代理到http://ip:9002/bPro-api/...，实现成功请求通。
+------------------

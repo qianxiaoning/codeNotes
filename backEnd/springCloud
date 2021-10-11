@@ -146,3 +146,12 @@ Map转bean需要工具类
 可以将Map转为json字符串，再将json字符串解析为指定bean，JSONObject会将能匹配的键赋值入bean，不能匹配的忽略
 ExecuteResult res = aFeignClient.getData(param);
 List<MyDto> list = JSONObject.parseArray(JSONObject.toJSONString(res.getData()), MyDto.class);
+---------------------
+nacos配置白名单
+telehot.sso.ignoreds[5]=/front/studio/**
+"/front/studio"为去服务名后，controller顶部的RequestMapping
+---------------------
+开发环境、测试环境、生产环境，是不同的nacos地址，ip不同，同一服务不同环境的项目配置是不同的，在不同的nacos里，服务名（应用名）（spring.application.name）是一样的，
+server.servlet.context-path是url请求的上下文
+openFeign只能在同一nacos调，同一环境的服务可以互相调，feign不能跨环境调
+---------------------
