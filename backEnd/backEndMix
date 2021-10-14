@@ -1,0 +1,90 @@
+----------
+25.准备linux环境
+25.1.安装VMware，导入linux文件-dsCentOS.vmx
+25.2.选中dsCentOS-empty，开启此虚拟机，我已复制该虚拟机
+25.3.linux终端ifconfig，eth2: inet addr:192.168.89.128，正常显示ip，完成
+选中dsCentOS-empty，开启此虚拟机，我已复制该虚拟机
+25.4.选中系统，电源-关机
+修改内存：1G
+网络适配器-网络连接（解释）
+桥接模式：虚拟机直接连入当前局域网，分配独立ip，局域网中ip都可访问此虚拟机
+NAT模式：在本机中开辟一块私有网络空间，给开启的虚拟机分配ip，192.168.xxx.xxx
+本机通过VMnet8和虚拟机通信，局域网其它机器不能连入虚拟机，更安全
+25.5.克隆系统文件
+选中系统，管理-克隆-虚拟机当前状态-创建链接克隆（保留公共部分，只提取修改部分）-选择路径、修改文件名-开启此虚拟机
+
+ifconfig查看linux ip：
+windows机器VMnet8网卡，ip地址192.168.89.1
+虚拟机ip，192.168.89.129
+同一网段连接
+
+25.6.配置虚拟机的静态ip，防止ip改变
+VMware-两台电脑-VPN Connections-Configure VPN-Auto eth3-edit-IPv4 Settings-Method:Manual
+-add Address:
+Address/Netmask子虚掩码（校验）/Gateway网关（出口）
+192.168.89.129/255.255.255.0/192.168.89.2
+DNS servers 192.168.89.2
+
+26.XShell远程连接工具
+26.1.连接虚拟机，名字、ip、账号、密码
+26.2.文件-打开，多建立几个连接
+27.项目部署到linux服务器，nginx集群ip地址修改
+27.1.安装lrzsz插件，拖拽文件上传
+27.2.cd /usr/local/src/
+27.3.将jdk1.8安装包传入
+解压tar -xvf jdk-8u51-linux-x64.tar.gz
+删除压缩包，rm -f jdk-8u51-linux-x64.tar.gz
+改名mv jdk1.8.0_51/ jdk1.8
+配置环境变量，vim /etc/profile
+#set java env下
+JAVA_HOME=/usr/local/src/jdk1.8
+JAVA_BIN=/usr/local/src/jdk1.8/bin
+PATH=$JAVA_HOME/bin:$PATH
+CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+export JAVA_HOME JAVA_BIN PATH CLASSPATH
+27.4.环境变量生效
+source /etc/profile
+查看是否安装成功 java -version
+27.5.搭建linux集群
+linux连接windows数据库，将项目application.yml中的ip地址改为VMnet8网卡ip
+url: jdbc:mysql://192.168.89.1:3306/...
+将端口改为8061,8062,8063
+然后项目打包命名为8061.war,8062.war,8063.war
+
+远程访问权限配置
+windows浏览器=>linux tomcat=>windows Mysql，两道操作系统防火墙，Mysql数据库权限
+windows防火墙，选择性关闭
+Mysql数据库权限：
+grant [权限] on [数据库名].[表名] to ['用户名']@['web服务器的ip地址'] identified by ['密码'];
+在SQLyog中
+grant all on *.* to 'root'@'%' identified by 'root';
+关闭linux防火墙
+永久关闭防火墙，下次生效 chkconfig iptables off/on
+临时关闭linux防火墙，立即生效 service iptables stop/start
+
+在src/下
+mkdir tomcats
+cd tomcats/
+将8061.war传入
+java -jar 8061.war运行
+java -jar 8061.war & 运行后可继续输入指令
+浏览器http://192.168.89.129:8061/port访问测试
+8062,8063同样传入，运行
+
+nginx.conf中新增linux集群
+upstream c2cSystemLinux 虚拟机ip 192.168.89.129，启用c2cSystemLinux，重启nginx
+
+正常访问http://manage.c2c-system.com/，文件上传接口用不了
+
+28.关闭java -jar 8061.war & 开启的进程
+28.1.查询进程
+ps -ef |grep 8061.war
+ps -ef |grep java*
+28.2.结束进程
+kill 3183 被使用时，可能不成功
+kill -15 3183 正常步骤关闭
+kill -9 3183 强制结束
+29.9.8.拍摄快照
+VMware(时钟+)，拍摄快照
+快照完成，点击快照管理，选中快照，转到
+----------

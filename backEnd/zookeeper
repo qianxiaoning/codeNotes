@@ -71,3 +71,73 @@ zookeeper宕机时，现有服务器仍能工作，因为列表在消费者内�
 
 zookeeper，树形结构保存信息
 ------------
+参考自https://blog.csdn.net/java_66666/article/details/81015302
+
+分布式服务框架
+Hadoop 的一个子项目
+处理数据管理问题
+分布式应用配置项管理、统一命名服务、状态同步服务、集群管理、分布式应用配置项的管理等。
+
+一、zookeeper概要
+zookeeper = 文件系统 + 监听通知机制
+
+（一）、Zookeeper维护一个类似文件系统的数据结构:
+
+/NameService
+    /Server1
+    /Server2
+
+/configuration
+
+/GroupMembers
+    /Member1
+    /Member2
+    
+/Apps
+    /App1
+    /App2
+    /App3
+        /SubApp1
+        /SubApp2
+
+/NameService被称为znode（目录节点），znode可以存储数据，znode有四种类型：
+1.PERSISTENT，持久化目录节点
+客户端与zookeeper断开连接后，该节点依旧存在
+2.PERSISTENT_SEQUENTIAL，持久化顺序编号目录节点
+客户端与zookeeper断开连接后，该节点依旧存在，只是Zookeeper给该节点名称进行顺序编号
+3.EPHEMERAL，临时目录节点
+客户端与zookeeper断开连接后，该节点被删除
+4.EPHEMERAL_SEQUENTIAL，临时顺序编号目录节点
+客户端与zookeeper断开连接后，该节点被删除，只是Zookeeper给该节点名称进行顺序编号
+
+（二）、监听通知机制
+客户端注册监听它关心的目录节点，当目录节点发生变化（数据改变、被删除、子目录节点增加删除）时，zookeeper会通知客户端。
+
+二、zookeeper作用
+分布式应用配置项管理、
+统一命名服务、
+状态同步服务、
+集群管理、
+分布式应用配置项的管理等。
+
+（一）、分布式应用配置项的管理
+需求：程序是分布式部署在多台机器上，需要改变程序的配置文件，
+需要逐台机器去修改，比较麻烦，
+现在把这些配置全部放到zookeeper上去，保存在zookeeper的某个目录节点中，
+然后所有相关应用程序对这个目录节点进行监听，一旦配置信息发生变化，每个应用程序就会收到 zookeeper 的通知，然后从 zookeeper 获取新的配置信息应用到系统中。
+
+zookeeper service:
+/Configuration(Config Data) <---watch---- [client,client,client]
+
+实例：
+Zookeeper单机模式安装：
+1.java
+2.下载并解压zookeeper
+3.到配置目录 cd zookeeper/conf/
+4.重命名配置文件zoo_sample.cfg
+cp conf/zoo_sample.cfg conf/zoo.cfg
+5.启动zookeeper
+bin/zkServer.sh start
+6.检测是否成功启动，用zookeeper客户端连接下服务端
+bin/zkCli.sh
+
