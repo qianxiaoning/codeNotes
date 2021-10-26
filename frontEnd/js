@@ -2120,7 +2120,9 @@ parseInt('23',10); // 返回23
 (3).toString(x);
 (3).toString(2);// 返回"111"
 
-debugger js打断点
+js打断点
+debugger;
+浏览器f12打开，按f5调试
 
 json构建于两种格式：{}和[]
 

@@ -5745,3 +5745,24 @@ controller中
 @RequestMapping("/xxx.do")
 请求的时候只有/xxx.do能匹配到
 -----------------
+对List<Map<String, Object>>排序
+Collections.sort(list, new Comparator<Map<String, Object>>() {
+	public int compare(Map<String, Object> map1, Map<String, Object> map2) {
+		Integer value1 = Integer.valueOf(map1.get("id").toString());
+		Integer value2 = Integer.valueOf(map2.get("id").toString());
+		return value1.compareTo(value2);
+	}
+});
+-----------------
+atlas编译
+mvn clean -DskipTests install
+编译到Apache Atlas JanusGraph DB Impl失败 
+解决方法：
+pom.xml添加repository配置
+<repository>
+    <id>oracleReleases</id>
+    <name>Oracle Released Java Packages</name>
+    <url>http://download.oracle.com/maven</url>
+    <layout>default</layout>
+</repository> 
+-----------------

@@ -10,11 +10,6 @@ rm -rf xxx//-r向下递归-f强制
 ll 会列出该地址下所有文件的详细信息
 ls 只列出文件名或目录名
 
-打开vscode
-code
-用vscode打开当前项目
-code .
-
 撤销
 esc-u
 --------------------
@@ -196,7 +191,195 @@ esc
 /关键字
 n（下一项）
 N（上一项）
+
+查找文件
+find /查找目录/ -name 文件名
+查找目录
+find /查找目录/ -name 路径名 -type d（路径名不能加/？）
+查找内容
+find . | xargs grep -ril '文件内容' 只显示文件名称
+
+查看文件
+less 文件
+f 下一页
+b 上一页
+g 文件头部
+G 文件尾部
+q 退出
+
+按时间排序
+ll -rt 时间降序
+
+查看防火墙的状态
+systemctl status firewalld.service
+关闭防火墙（本次）
+systemctl stop firewalld service
+开机禁止防火墙服务器
+systemctl disable firewalld.service
+开机启动防火墙服务器
+systemctl enable firewalld.service
+
+centos开服务时，一定要将防火墙的对应端口打开，不然客户端连接不上
+比如在centos上开启了zookeeper（2181端口），
+操作：
+1.永久开启2181端口
+firewall-cmd --zone=public --add-port=2181/tcp --permanent
+2.重启防火墙
+systemctl restart firewalld.service
+3.查看防火墙开放端口
+firewall-cmd --list-ports
 ---------------
+扩容虚拟机
+虚拟机如有快照，完整克隆
+
+看硬盘大小及使用情况
+df -h
+
+分区
+fdisk /dev/sda
+p 查看已分区数量
+n 新增加一个分区
+p 分区类型我们选择为主分区
+3（因为1,2已经用过了,sda1是分区1,sda2是分区2,sda3分区3）
+回车 默认（起始扇区）
+回车 默认（结束扇区）
+t 修改分区类型
+3 选分区3
+8e 修改为LVM（8e就是LVM）
+w 写分区表 (有时写入后会自动退出，就可以省略最后一步了)
+q 完成，退出fdisk命令
+
+reboot 重启虚拟机
+mkfs.ext3 /dev/sda3 格式化分区3
+
+添加新LVM到已有的LVM组，实现扩容：
+lvm 进入lvm管理
+lvm>pvcreate /dev/sda3 这是初始化刚才的分区3
+lvm>vgextend centos /dev/sda3 将初始化过的分区加入到虚拟卷组centos (卷和卷组的命令可以通过 vgdisplay )
+lvm>vgdisplay -v 查看free PE /Site（注意最后的Free PE） 
+lvm>lvextend -l+变量 /dev/mapper/centos-root　　扩展已有卷的容量（ 变量 是通过vgdisplay查看free PE /Site的大小）
+lvm>pvdisplay 查看卷容量，这时可以看到一个很大的卷
+lvm>quit 　退出
+
+上面只是卷扩容了，下面是文件系统的真正扩容，输入以下命令：
+xfs_growfs /dev/mapper/centos-root
+df -h
+
+参考自https://blog.csdn.net/IDMANOR/article/details/106690344
+---------------
+yum install失败
+如果原因是：
+报错最下行：
+Cannot retrieve metalink for repository: epel/x86_64. Please verify its path and try again
+
+是因为/etc/yum.repos.d/epel.repo 配置源的问题
+将[epel]下面，baseurl解开注释，metalink加上注释即可
+[epel]
+name=Extra Packages for Enterprise Linux 7 - $basearch
+baseurl=http://download.fedoraproject.org/pub/epel/7/$basearch
+#metalink=https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch
+
+EPEL 全称 Extra Packages for Enterprise Linux
+相当于添加了一个第三方源
+CentOS 源包含的大多数的库都是比较旧的。并且，很多流行的库也不存在。EPEL 在其基础上不仅全，而且还够新，解决了很多人安装库的烦恼。
+
+source /etc/profile
+不单会重新读取profile文件，还会遍历读取profile.d下面所有.sh文件
+---------------
+配置ssh免密登录
+
+找到.ssh文件夹
+find / -name .ssh -type d
+
+cd /root/.ssh/
+
+生成公钥
+ssh-keygen -t rsa
+
+将公钥复制到远程机器的authorized_keys文件中，也能有到远程机器的home, ~./ssh , 和 ~/.ssh/authorized_keys的权利
+ssh-copy-id bigDataNew102
+ssh-copy-id bigDataNew103
+ssh-copy-id bigDataNew104
+
+现在bigDataNew102账号能免密登录bigDataNew103，bigDataNew104
+
+将bigDataNew103，bigDataNew104重复上面命令
+---------------
+scp 可以实现服务器与服务器之间的数据拷贝
+[root@bigDataNew102 module]# scp -r /opt/module/java8/ root@bigDataNew103:/opt/module/
+
+rsync
+rsync 和 scp 区别：用 rsync 做文件的复制要比 scp 的速度快，rsync 只对差异文件做更新。scp 是把所有文件都复制过去
+
+xsync 集群分发 脚本
+循环复制文件到所有节点的相同目录下
+
+期望脚本在任何路径都能使用（脚本放在声明了全局环境变量的路径）
+echo $PATH
+/usr/local/bin
+在这创建 xsync 文件
+vim xsync
+#!/bin/bash
+#1. 判断参数个数
+if [ $# -lt 1 ]
+then
+	echo Not Enough Arguement!
+	exit;
+fi
+#2. 遍历集群所有机器
+for host in bigDataNew102 bigDataNew103 bigDataNew104
+do
+	echo ==================== $host ====================
+	#3. 遍历所有目录，挨个发送
+	for file in $@
+	do
+		#4. 判断文件是否存在
+		if [ -e $file ]
+		then
+			#5. 获取父目录
+			pdir=$(cd -P $(dirname $file); pwd)
+			#6. 获取当前文件的名称
+			fname=$(basename $file)
+			ssh $host "mkdir -p $pdir"
+			rsync -av $pdir/$fname $host:$pdir
+		else
+			echo $file does not exists!
+			fi
+	done
+done
+
+给脚本添加执行权限
+chmod +x xsync
+
+试一下，把bin目录发到bigDataNew103 bigDataNew104
+cd ..
+xsync bin
+
+xshell工具-发送键输入到所有会话
+只有键输入有效，粘贴无效
+---------------
+/root 系统管理员的主目录
+/home 普通用户主目录的基点
+---------------
+cd ~ 用户家目录
+
+如果普通用户/home/root下面没有.ssh文件夹
+ssh localhost即可生成
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -132,12 +132,87 @@ zookeeper service:
 实例：
 Zookeeper单机模式安装：
 1.java
-2.下载并解压zookeeper
+2.下载并解压zookeeper-3.4.12.tar.gz
 3.到配置目录 cd zookeeper/conf/
-4.重命名配置文件zoo_sample.cfg
-cp conf/zoo_sample.cfg conf/zoo.cfg
+4.复制配置文件cp zoo_sample.cfg zoo.cfg
 5.启动zookeeper
 bin/zkServer.sh start
 6.检测是否成功启动，用zookeeper客户端连接下服务端
 bin/zkCli.sh
+7.zookeeper客户端操作
 
+查看zookeeper中包含的znode（目录节点）
+ls / => [zookeeper]
+
+创建一个新的目录节点 zkPro
+create /zkPro myData（值）
+
+再次查看zookeeper中包含的znode（目录节点）
+ls / => [zookeeper, zkPro]
+
+获取znode中的内容
+get /zkPro => myData
+
+修改znode中的内容
+set /zkPro myNewData
+
+删除znode
+delete /zkPro
+
+8.使用Java API操作zookeeper
+8.1 pom添加org.apache.zookeeper.zookeeper:3:4:12
+8.2 进入bin/zkCli.sh，增加一个目录节点，并且把配置信息存储在里面
+create /username qxn
+8.3 启动java程序
+/**
+ * 分布式配置中心demo
+ */
+public class ZookeeperApplicationTests implements Watcher {
+
+	/*
+	 * countDownLatch 这个类使一个线程等待其他线程各自执行完毕后再执行，
+	 * 通过计数器实现，计数器的初始值是线程的数量。
+	 * 每当一个线程执行完毕后，计数器的值就-1，
+	 * 当计数器的值为0时，表示所有线程都执行完毕，然后在闭锁上等待的线程就可以恢复工作了。
+	 */
+	private static CountDownLatch connectedSemaphore = new CountDownLatch(1);
+	private static ZooKeeper zk = null;
+	// ZooKeeper命名空间中的每个znode都有一个与之关联的stat结构
+	private static Stat stat = new Stat();
+
+	public static void main(String[] args) throws Exception {
+		// zookeeper配置数据存放路径
+		String path = "/username";
+		// 连接zookeeper并且注册一个默认的监听器
+		zk = new ZooKeeper("192.168.137.131:2181", 5000, //
+				new ZookeeperApplicationTests());
+		/* 等待zk连接成功的通知，
+		调用CountDownLatch.await()方法，将线程挂起，它会等待直到count值为0才继续执行 */
+		connectedSemaphore.await();
+		// 连接上zookeeper后，获取path目录节点的配置数据，并注册默认的监听器
+		System.out.println(new String(zk.getData(path, true, stat)));
+		// 使当前线程休眠，进入阻塞状态（暂停执行）
+		Thread.sleep(Integer.MAX_VALUE);
+	}
+
+	public void process(WatchedEvent event) {
+		// 当前event.getState()为zk连接成功通知事件时
+		if (KeeperState.SyncConnected == event.getState()) {
+			// EventType.None没有事件变化
+			if (EventType.None == event.getType() && null == event.getPath()) {
+				// 调用CountDownLatch.countDown()，将count值减1
+				connectedSemaphore.countDown();
+			} else if (event.getType() == EventType.NodeDataChanged) {  // zk目录节点数据变化通知事件
+				try {
+					System.out.println("配置已修改，新值为：" + new String(zk.getData(event.getPath(), true, stat)));
+				} catch (Exception e) {
+				}
+			}
+		}
+	}
+}
+8.4 程序启动后正确的读取到了zookeeper的/username目录节点下的数据"qxn"
+8.5 在zookeeper里修改下目录节点/username下的数据
+set /username qxn1
+修改完成后，在java程序后台及时收到了他们监听的目录节点数据变更后的值
+"qxn1"

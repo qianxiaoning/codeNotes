@@ -1,7 +1,10 @@
 ----------------------------
 vscode
-打开google调试
-在行末写debugger，然后打开浏览器，按f5调试
+
+打开vscode
+code
+用vscode打开当前项目
+code .
 
 ctrl+` 打开vscode 终端控制台
 

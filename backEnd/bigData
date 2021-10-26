@@ -1,0 +1,1529 @@
+----------
+hadoop:
+1.海量数据的存储，tb,pb,eb
+2.海量数据的分析计算
+
+4高，高可靠性，高扩展性，高效性，高容错性
+
+hdfs 
+NameNode（nn）元数据，如文件名，文件目录结构，文件属性（生成时间、副本数、文件权限），以及每个文件的块列表和块所在的DataNode等
+DataNode(dn)：在本地文件系统存储文件块数据，以及块数据的校验和。
+Secondary NameNode(2nn)：每隔一段时间对NameNode元数据备份
+
+MapReduce
+MapReduce 将计算过程分为两个阶段：Map 和 Reduce
+
+Map 阶段并行处理输入数据（拆数据）
+Reduce 阶段对 Map 结果进行汇总（合数据）
+----------
+atlas概念和架构
+搭建atlas（元数据管理：组建大数据数据字典，查看大数据资产目录，数据质量监控，自动生成大数据表和字段的血缘关系图）
+
+hive做元数据仓库
+atlas将hive中的元数据做成数据字典，方便查询管理
+
+atlas为组织提供开放式元数据管理和治理功能，构建资产目录，形成数据字典
+
+数据字典：可以查到hive库的释义，表介绍，字段解释说明
+表与表间血缘依赖
+字段和字段间血缘依赖
+
+atlas架构
+核心：【导入/导出模块，分类系统模块，图引擎模块】
+
+1.导入/导出模块:
+可导入元数据源：【hive,sqoop,falcon,storm,hbase】
+
+atlas能对于hive中表结构改变，而增量导入，通过kafka消息队列
+
+atlas的 hive hook钩子，能把hive变动的元数据同步到kafka中，做消息缓冲，atlas导入导出会消费kafka	
+
+atlas本身不存储元数据，还要导出数据，用hbase存储（metadata store元数据存储库）
+
+2.分类系统模块：
+atlas对元数据分类
+库，表，字段，路径
+
+每一张hive表都指向hdfs的一个存储路径
+
+3.图引擎模块：
+生成对应图表
+表与表间血缘依赖图
+字段间血缘依赖图
+
+因为hbase底层kv结构，线性结构不能存储图结构
+
+简单结构：线性结构
+复杂：树结构
+最复杂：图结构（点，线）
+
+要存入图数据库（janusGraph），经过图数据库转变，再存入hbase里
+
+atlas搭建数据字典，solr全文检索数据库，类似es，帮助搜索元数据
+
+solr给所有元数据做索引（index store索引数据库）
+
+atlas提供的api接口（http/rest协议）
+
+上层对接
+ranger tag
+admin ui(查询atlas元数据库)
+业务分类系统
+
+流程总结：
+1.metadata sources:atlas支持一下来源提取：hive,sqoop,falcon,storm,hbase,kafka,spark
+
+2.messaging:与kafka对接的消息队列
+
+3.导入/导出，类型系统分裂，图形引擎
+
+4.hbase元数据库，solr索引数据库
+
+5.http/rest的api
+
+6.admin UI，ranger权限管理模块，业务分类模块
+
+atlas2更新
+支持hadoop3，hive3，hbase2，solr7.5,kafka2，janusGraph0.3.1
+身份验证可信代理
+指标模块收集通知
+atlas增量导出元数据模式
+
+hadoop三组件：
+hdfs[nameNode,dataNode,secondaryNameNode],
+yarn[resourceManager.nodeManager],
+historyServer[jobHistoryServer]
+
+安装顺序：
+jdk, hadoop, mysql, hive, zookeeper, kafka, hbase, solr, atlas
+kafka, hbase, solr把自己的元数据（配置信息）存入zookeeper中
+hive会把元数据存入mysql
+----------
+atlas搭建步骤
+1.搭建前准备
+2.jdk-8u212-linux-x64.tar.gz
+3.hadoop-3.1.3.tar.gz集群
+
+4.mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar
+按照顺序安装
+sudo rpm -ivh mysql-community-common-5.7.28-1.el7.x86_64.rpm 
+sudo rpm -ivh mysql-community-libs-5.7.28-1.el7.x86_64.rpm 
+sudo rpm -ivh mysql-community-libs-compat-5.7.28-1.el7.x86_64.rpm 
+sudo rpm -ivh mysql-community-client-5.7.28-1.el7.x86_64.rpm 
+如果linux最小化安装，额外装 sudo yum install -y libaio
+sudo rpm -ivh mysql-community-server-5.7.28-1.el7.x86_64.rpm 
+
+5.apache-hive-3.1.2-bin.tar.gz
+6.apache-zookeeper-3.5.7-bin.tar.gz集群
+7.kafka_2.11-2.4.1.tgz集群
+8.hbase-2.0.5-bin.tar.gz集群
+9.solr-7.7.3.tgz集群
+10.apache-atlas-2.1.0-sources.tar.gz
+
+1.搭建前准备
+准备bigData100模板虚拟机（centos7，CentOS-7.5-x86-1804）
+内存/处理器/硬盘：4 8 60
+
+安装必要环境
+vim /etc/yum.repos.d/epel.repo
+baseurl解开注释，metalink加上注释即可
+yum install -y epel-release
+yum install -y psmisc nc net-tools rsync vim lrzsz ntp libzstd openssl-static tree iotop git
+
+关闭centos防火墙
+systemctl stop firewalld
+systemctl disable firewalld.service
+
+添加用户，修改用户密码
+useradd shonqian
+passwd shonqian
+
+配置shonqian用户root权限
+vim /etc/sudoers
+大约91行，%wheel 这行下面加上
+shonqian ALL=(ALL) NOPASSWD:ALL
+
+在/opt目录下创建文件夹，module，software
+software放安装包
+module是安装目录
+
+修改 module、software 文件夹的所有者和所属组均为 shonqian 用户（-R对子文件夹也起作用）
+sudo chown -R shonqian:shonqian /opt/module
+sudo chown -R shonqian:shonqian /opt/software
+
+查看 module、software 文件夹的所有者和所属组，是否已为shonqian
+cd /opt/
+ll
+
+卸载虚拟机自带的 JDK
+查看是否有：
+rpm -qa | grep -i java
+卸载：
+rpm -qa | grep -i java | xargs -n1 sudo rpm -e --nodeps
+
+reboot看是否成功
+
+配置/etc/hosts 文件，建立ip地址和主机名映射
+vim /etc/hosts
+后面加上
+192.168.137.100 bigData100
+192.168.137.101 bigData101
+192.168.137.102 bigData102
+192.168.137.103 bigData103
+192.168.137.104 bigData104
+192.168.137.105 bigData105
+192.168.137.106 bigData106
+192.168.137.107 bigData107
+192.168.137.108 bigData108
+
+把bigData100模板虚拟机克隆三台虚拟机
+内存/处理器/硬盘
+8 8 60
+4 8 60
+4 8 60
+
+固定ip
+cd /etc/sysconfig/network-scripts/
+vim ifcfg-eno16777736
+
+BOOTPROTO="static"
+IPADDR=192.168.137.102
+GATEWAY=192.168.137.2
+
+改主机名
+vim /etc/hostname
+bigData102
+
+reboot
+
+其它两台参照配置
+
+ping www.baidu.com 看能否连接外网
+
+联不通可以右上角网络设置，设置下dns（223.5.5.5/223.6.6.6阿里的dns），再把飞行模式和有线连接开关下
+
+xshell连接
+
+配置windows hosts文件
+C:\Windows\System32\drivers\etc\hosts
+
+192.168.137.100 bigData100
+192.168.137.101 bigData101
+192.168.137.102 bigData102
+192.168.137.103 bigData103
+192.168.137.104 bigData104
+192.168.137.105 bigData105
+192.168.137.106 bigData106
+192.168.137.107 bigData107
+192.168.137.108 bigData108
+192.168.137.109 bigData109
+
+在102机器上把所有软件安装包通过xftp传到/opt/software中
+
+配置ssh免密登录
+
+找到.ssh文件夹
+find / -name .ssh -type d
+
+cd /root/.ssh/
+
+生成公钥
+ssh-keygen -t rsa
+
+将公钥复制到远程机器的authorized_keys文件中，也能有到远程机器的home, ~./ssh , 和 ~/.ssh/authorized_keys的权利
+ssh-copy-id bigData102
+ssh-copy-id bigData103
+ssh-copy-id bigData104
+返回普通用户
+exit
+
+2.jdk8安装
+在102上安装java1.8
+在/opt/software中
+tar -zxvf jdk-xxxx.tar.gz -C /opt/module/
+
+vim my_env.sh
+添加
+# JAVA_HOME
+export JAVA_HOME=/opt/module/java8/jdk1.8
+export PATH=$PATH:$JAVA_HOME/bin
+
+source /etc/profile
+
+集群分发脚本xsync
+
+echo $PATH 查到现有的path路径
+cd /usr/local/bin
+
+vim xsync
+#!/bin/bash
+#1. 判断参数个数
+if [ $# -lt 1 ]
+then
+	echo Not Enough Arguement!
+	exit;
+fi
+#2. 遍历集群所有机器
+for host in bigData102 bigData103 bigData104
+do
+	echo ==================== $host ====================
+	#3. 遍历所有目录，挨个发送
+	for file in $@
+	do
+		#4. 判断文件是否存在
+		if [ -e $file ]
+		then
+			#5. 获取父目录
+			pdir=$(cd -P $(dirname $file); pwd)
+			#6. 获取当前文件的名称
+			fname=$(basename $file)
+			ssh $host "mkdir -p $pdir"
+			rsync -av $pdir/$fname $host:$pdir
+		else
+			echo $file does not exists!
+			fi
+	done
+done
+
+给脚本添加执行权限
+chmod +x xsync
+
+cd ..
+xsync bin	
+
+cd /opt/module
+xsync java8
+//普通用户没有权限发送etc目录。而sudo xsync也不行，因为xsync是配在普通用户的PATH里，root用户的家目录里没有，所以要将xsync向root的PATH发一份
+sudo cp /usr/local/bin/xsync  /usr/bin/
+sudo xsync /etc/profile.d/my_env.sh
+
+xshell-工具-发送键输入到所有会话
+source /etc/profile
+
+3.安装hadoop3.1.3集群部署
+在102机器
+cd /opt/software/2_hadoop
+tar -zxvf hadoop-3.1.3.tar.gz -C /opt/module/
+
+给hadoop配置环境变量
+vim /etc/profile.d/my_env.sh
+
+#HADOOP_HOME
+export HADOOP_HOME=/opt/module/hadoop-3.1.3
+export PATH=$PATH:$HADOOP_HOME/bin
+export PATH=$PATH:$HADOOP_HOME/sbin
+
+source下
+hadoop version
+
+配置hadoop完全分布式集群
+cd /opt/module/hadoop-3.1.3/etc/hadoop
+核心配置文件
+core-site.xml
+vim core-site.xml
+<configuration>
+	<!-- 指定 NameNode 的地址 -->
+	<property>
+		<name>fs.defaultFS</name>
+		<value>hdfs://bigData102:8020</value>
+	</property>
+	<!-- 指定 hadoop 数据的存储目录 -->
+	<property>
+		<name>hadoop.tmp.dir</name>
+		<value>/opt/module/hadoop-3.1.3/data</value>
+	</property>
+	<!-- 配置 HDFS 网页登录使用的静态用户为 shonqian -->
+	<property>
+		<name>hadoop.http.staticuser.user</name>
+		<value>shonqian</value>
+	</property>
+	<!-- 配置 该shonqian（superUser）允许通过代理访问的主机节点 -->
+	<property>
+		<name>hadoop.proxyuser.shonqian.hosts</name>
+		<value>*</value>
+	</property>
+	<!-- 配置 该shonqian（superUser）允许通过代理用户所属组 -->
+	<property>
+		<name>hadoop.proxyuser.shonqian.groups</name>
+		<value>*</value>
+	</property>
+	<!-- 配置 该shonqian（superUser）允许通过代理的用户 -->
+	<property>
+		<name>hadoop.proxyuser.shonqian.groups</name>
+		<value>*</value>
+	</property>
+</configuration>
+
+hdfs配置文件
+vim hdfs-site.xml
+<configuration>
+	<!-- namenode web 端访问地址-->
+	<property>
+		<name>dfs.namenode.http-address</name>
+		<value>bigData102:9870</value>
+	</property>
+	<!-- 2nn(secondaryNameNode) web 端访问地址-->
+	<property>
+		<name>dfs.namenode.secondary.http-address</name>
+		<value>bigData104:9868</value>
+	</property>
+</configuration>
+
+yarn配置文件
+vim yarn-site.xml
+<configuration>
+    <!-- 指定 MR 走 shuffle -->
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+    <!-- 指定 ResourceManager 的地址-->
+    <property>
+        <name>yarn.resourcemanager.hostname</name>
+        <value>bigData103</value>
+    </property>
+    <!-- 环境变量的继承 -->
+    <property>
+        <name>yarn.nodemanager.env-whitelist</name> <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME</value>
+    </property>
+	<!-- yarn容器允许分配的最大最小内存 -->
+    <property>
+        <name>yarn.scheduler.minimum-allocation-mb</name>
+        <value>512</value>
+    </property>
+	<property>
+        <name>yarn.scheduler.maximum-allocation-mb</name>
+        <value>4096</value>
+    </property>
+	<!-- yarn容器允许管理的物理内存大小 -->
+    <property>
+        <name>yarn.nodemanager.resource.memory-mb</name>
+        <value>4096</value>
+    </property>	
+	<!-- 关闭yarn对物理内存和虚拟内存的限制检查 -->
+    <property>
+        <name>yarn.nodemanager.pmem-check-enabled</name>
+        <value>false</value>
+    </property>
+	<property>
+        <name>yarn.nodemanager.vmem-check-enabled</name>
+        <value>false</value>
+    </property>
+</configuration>
+
+MapReduce配置文件
+vim mapred-site.xml	
+<configuration>
+    <!-- 指定 MapReduce 程序运行在 Yarn 上 -->
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+</configuration>
+
+workers配置文件
+vim workers
+删去localhost
+bigData102
+bigData103
+bigData104
+表示集群有3台机器
+
+配置历史服务器
+vim mapred-site.xml
+<!-- 历史服务器端地址 -->
+<property>
+	<name>mapreduce.jobhistory.address</name>
+	<value>bigData102:10020</value>
+</property>
+<!-- 历史服务器web端地址 -->
+<property>
+	<name>mapreduce.jobhistory.webapp.address</name>
+	<value>bigData102:19888</value>
+</property>
+
+配置日志聚集功能
+vim yarn-site.xml
+<!-- 开启日志聚集功能 -->
+<property>
+	<name>yarn.log-aggregation-enabled</name>
+	<value>true</value>
+</property>
+<!-- 设置日志聚集服务器地址 -->
+<property>
+	<name>yarn.log.server.url</name>
+	<value>http://bigData102:19888/jobhistory/logs</value>
+</property>
+<!-- 设置日志保留时间为7天 -->
+<property>
+	<name>yarn.log-aggregation.retain-seconds</name>
+	<value>604800</value>
+</property>
+
+hadoop文件分发
+cd /opt/module
+xsync hadoop-3.1.3/
+sudo xsync /etc/profile.d/my_env.sh
+
+工具-发送键输入到所有会话
+source /etc/profile
+hadoop version 检测下
+
+cd hadoop-3.1.3/
+
+第一次启动前，102机器格式化namenode
+hdfs namenode -format
+
+启动hadoop
+群起
+102上
+sbin/start-dfs.sh
+103
+sbin/start-yarn.sh
+102开启历史服务器
+mapred --daemon start historyserver
+
+群起脚本
+myhadoop.sh
+
+cd /usr/local/bin
+
+vim myhadoop.sh
+
+#!/bin/bash
+if [ $# -lt 1 ]
+then
+  echo "No Args Input..."
+  exit ;
+fi
+case $1 in
+"start")
+  echo " =================== 启动 hadoop 集群 ==================="
+  echo " --------------- 启动 hdfs ---------------"
+  ssh bigData102 "/opt/module/hadoop-3.1.3/sbin/start-dfs.sh"
+  echo " --------------- 启动 yarn ---------------"
+  ssh bigData103 "/opt/module/hadoop-3.1.3/sbin/start-yarn.sh"
+  echo " --------------- 启动 historyserver ---------------"
+  ssh bigData102 "/opt/module/hadoop-3.1.3/bin/mapred --daemon start historyserver"
+;;
+"stop")
+  echo " =================== 关闭 hadoop 集群 ==================="
+  echo " --------------- 关闭 historyserver ---------------"
+  ssh bigData102 "/opt/module/hadoop-3.1.3/bin/mapred --daemon stop historyserver"
+  echo " --------------- 关闭 yarn ---------------"
+  ssh bigData103 "/opt/module/hadoop-3.1.3/sbin/stop-yarn.sh"
+  echo " --------------- 关闭 hdfs ---------------"
+  ssh bigData102 "/opt/module/hadoop-3.1.3/sbin/stop-dfs.sh"
+;;
+*)
+  echo "Input Args Error..."
+;;
+esac
+
+chmod +x myhadoop.sh
+
+102上
+myhadoop.sh start 开启hadoop集群
+myhadoop.sh stop 关闭hadoop集群
+
+jpsall查看3台机器java进程
+cd /usr/local/bin
+
+vim jpsall
+
+#!/bin/bash
+for host in bigData102 bigData103 bigData104
+do
+	echo =============== $host ===============
+	ssh $host jps
+done
+
+chmod +x jpsall
+
+如果未格式化启动了hadoop，去102，103，104删除data和logs目录
+
+===============
+正常启动jpsall显示：
+bigData102
+NodeManager
+JobHistoryServer
+DataNode
+NameNode
+
+bigData103
+ResourceManager
+DataNode
+NodeManager
+
+bigData104
+SecondaryNameNode
+NodeManager
+DataNode
+
+一个NameNode，三个DateNode
+一个ResourceManager，三个NodeManager
+一个Secondary	NameNode，一个JobHistoryServer
+
+102，103，104 => 4，3，3架构（hadoop集群）
+===============
+
+浏览器访问hdfs
+http://bigData102:9870/dfshealth.html#tab-overview
+
+创建目录，上传文件
+http://bigData102:9870/explorer.html#/
+能上传就说明hdfs没问题
+
+yarn
+http://bigData103:8088/cluster
+
+历史服务器
+http://bigData102:19888/jobhistory
+
+4.安装mysql
+因为hive元数据是存入mysql中
+
+102上装mysql
+检查是否安装过mysql
+rpm -qa | grep mariadb
+如有需卸载
+sudo rpm -e --nodeps mariadb-libs
+
+cd /opt/software/3_mysql
+里面有mysql安装包、连接驱动
+
+tar -xvf mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar
+
+按照顺序安装
+sudo rpm -ivh mysql-community-common-5.7.28-1.el7.x86_64.rpm 
+sudo rpm -ivh mysql-community-libs-5.7.28-1.el7.x86_64.rpm 
+sudo rpm -ivh mysql-community-libs-compat-5.7.28-1.el7.x86_64.rpm 
+sudo rpm -ivh mysql-community-client-5.7.28-1.el7.x86_64.rpm 
+如果linux最小化安装，额外装 sudo yum install -y libaio
+sudo rpm -ivh mysql-community-server-5.7.28-1.el7.x86_64.rpm 
+
+检查mysql指向目录，是否干净
+cd /var/lib/mysql
+sudo ls
+如果有东西，sudo rm -rf ./*
+
+初始化mysql
+sudo mysqld --initialize --user=mysql
+查看临时生成的root用户的密码
+sudo cat /var/log/mysqld.log
+
+启动mysql服务
+sudo systemctl start mysqld
+查看状态
+sudo systemctl status mysqld
+
+mysql -uroot -p
+输入初始密码
+
+重置密码
+set password = password("root");
+
+修改mysql库下user表中的root用户允许任意ip连接，'%'表示允许所有机器访问
+update mysql.user set host = '%' where user = 'root';
+刷新mysql表权限
+flush privileges;
+quit;
+
+mysql -uroot -proot
+
+5.hive3.1.2安装部署
+102机器
+cd /opt/software/4_hive
+tar -zxvf apache-hive-3.1.2-bin.tar.gz -C /opt/module/
+cd /opt/module/
+mv apache-hive-3.1.2-bin/ hive
+
+添加hive环境变量
+sudo vim /etc/profile.d/my_env.sh
+#HIVE_HOME
+export HIVE_HOME=/opt/module/hive
+export PATH=$PATH:$HIVE_HOME/bin
+source /etc/profile
+hive --version
+
+hive元数据配置到mysql
+
+给hive拷贝mysql连接驱动
+cp /opt/software/3_mysql/mysql-connector-java-5.1.37.jar /opt/module/hive/lib/
+
+配置hive配置文件
+cd /opt/module/hive/conf
+vim hive-site.xml
+
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<!-- jdbc连接的url -->
+  <property>
+      <name>javax.jdo.option.ConnectionURL</name>
+      <value>jdbc:mysql://bigData102:3306/metastore?useSSL=false</value>
+  </property>
+<!-- jdbc连接的Driver -->
+  <property>
+      <name>javax.jdo.option.ConnectionDriverName</name>
+      <value>com.mysql.jdbc.Driver</value>
+  </property>
+<!-- jdbc连接的username -->
+  <property>
+      <name>javax.jdo.option.ConnectionUserName</name>
+      <value>root</value>
+  </property>
+<!-- jdbc连接的password -->
+  <property>
+      <name>javax.jdo.option.ConnectionPassword</name>
+      <value>root</value>
+  </property>
+<!-- Hive默认在HDFS的工作目录 -->
+  <property>
+      <name>hive.metastore.warehoues.dir</name>
+      <value>/user/hive/warehouse</value>
+  </property>
+<!-- 指定hiveserver2连接的端口号 -->
+  <property>
+    <name>hive.server2.thrift.port</name>
+    <value>10000</value>
+  </property>
+<!-- 指定hiveserver2连接的host -->
+  <property>
+    <name>hive.server2.thrift.bind.host</name>
+    <value>bigData102</value>
+  </property>
+
+<!-- 指定存储元数据要连接的地址 -->
+<!-- <property>
+  <name>hive.metastore.uris</name>
+  <value>thrift://bigData102:9083</value>
+</property>-->
+
+<!-- 元数据存储授权 -->
+ <property>
+   <name>hive.metastore.event.db.notification.api.auth</name>
+   <value>false</value>
+ </property> 
+<!-- Hive元数据存储版本的验证 -->
+ <property>
+   <name>hive.metastore.schema.verification</name>
+   <value>false</value>
+ </property>
+<!-- hiveserver2的高可用参数，开启此参数可以提高hiveserver2的启动速度 -->
+ <property>
+   <name>hive.server2.active.passive.ha.enable</name>
+   <value>true</value>
+ </property>
+</configuration>
+
+hive调优：
+mv hive-env.sh.template hive-env.sh
+vim hive-env.sh
+放开hadoop堆内存大小注释：
+export HADOOP_HEAPSIZE=1024
+默认256MB，运行大型sql会报错
+
+mv hive-log4j2.properties.template hive-log4j2.properties
+vim hive-log4j2.properties
+
+修改hive运行日志目录
+property.hive.log.dir = /opt/module/hive/logs
+默认在/tmp/user/hive/log
+
+初始化hive元数据库
+mysql -uroot -proot
+新建hive元数据库
+create database metastore;
+quit;
+初始化hive元数据库，创建对应表（存储元数据所需要的表）
+schematool -initSchema -dbType mysql -verbose
+
+启动hive客户端
+hadoop是正常运行的
+
+进到hive客户端
+hive
+show databases; (一个default库)
+
+show tables;(没有表)
+
+在hive创建用户表
+create TABLE test_user (
+	`id` STRING COMMENT '编号',
+	`name` STRING COMMENT '姓名',
+	`province_id` STRING COMMENT '省份ID',
+	`province_name` STRING COMMENT '省份名称'
+) COMMENT '用户表'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t';
+
+既create TABLE test_user (`id` STRING COMMENT '编号',`name` STRING COMMENT '姓名',`province_id` STRING COMMENT '省份ID',`province_name` STRING COMMENT '省份名称') COMMENT '用户表' ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t';
+
+向用户表装载数据
+insert into table test_user values('1','zhangsan','001','北京');
+此时需要跑mapReduce，mapReduce跑在yarn上
+可打开http://bigData103:8088/cluster，看任务是否进入yarn集群
+state为FINISHED，表示插入成功
+select * from test_user;
+元数据存在mysql
+数据存在hdfs上，http://bigData102:9870/explorer.html#/user/hive/warehouse/test_user
+
+设置元数据支持中文显示
+desc test_user;
+中文显示??，atlas也会乱码
+用dbe打开metastore-COLUMNS_V2表
+打开metastore属性，字符集默认是latin1
+只能修改对应字段的字符集，把需要存中文的列改为utf8
+
+在metastore库下运行sql
+# 修改字段注释字符集
+alter table COLUMNS_V2 modify column COMMENT varchar(256) character set utf8;
+# 修改表注释字符集
+alter table TABLE_PARAMS modify column PARAM_VALUE varchar(20000) character set utf8;
+# 修改分区参数，支持分区建用中文表示
+alter table PARTITION_PARAMS modify column PARAM_VALUE varchar(20000) character set utf8;
+alter table PARTITION_KEYS modify column PKEY_COMMENT varchar(20000) character set utf8;
+#修改索引名注释，支持中文表示
+alter table INDEX_PARAMS modify column PARAM_VALUE varchar(4000) character set utf8;
+#修改视图，支持视图中文
+ALTER TABLE TBLS modify COLUMN VIEW_EXPANDED_TEXT mediumtext CHARACTER SET utf8;
+ALTER TABLE TBLS modify COLUMN VIEW_ORIGINAL_TEXT mediumtext CHARACTER SET utf8;
+
+修改hive-site.xml中Hive读取元数据的编码
+<property>
+    <name>javax.jdo.option.ConnectionURL</name>
+    <value>jdbc:mysql://bigData102:3306/metastore?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
+</property>
+
+cd /opt/module/hive/conf
+vim hive-site.xml
+第一天添加&amp;useUnicode=true&amp;characterEncoding=UTF-8
+修改后支持存读中文
+
+hive
+desc test_user;(还是乱码，因为是以latin1存入，已损坏)
+
+create TABLE test_user2 (`id` STRING COMMENT '编号',`name` STRING COMMENT '姓名',`province_id` STRING COMMENT '省份ID',`province_name` STRING COMMENT '省份名称') COMMENT '用户表' ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t';
+
+desc test_user2;
+
+6.安装zookeeper3.5.7
+zookeeper集群
+分布式安装部署
+cd /opt/software/5_zookeeper
+tar -zxvf apache-zookeeper-3.5.7-bin.tar.gz -C /opt/module/
+mv apache-zookeeper-3.5.7-bin/ zookeeper-3.5.7
+mkdir zkData
+cd zkData
+vim myid(服务器编号)
+2
+cd /opt/module/zookeeper-3.5.7/conf
+mv zoo_sample.cfg zoo.cfg 
+vim zoo.cfg 
+dataDir=/opt/module/zookeeper-3.5.7/zkData
+#######cluster集群模式#########
+server.2=bigData102:2888:3888
+server.3=bigData103:2888:3888
+server.4=bigData104:2888:3888
+
+2888 是主从服务交换信息端口号
+3888 如果leader挂了，选举leader的端口号
+
+cd /opt/module/
+xsync zookeeper-3.5.7/
+
+去103，104机器，改myid
+vim /opt/module/zookeeper-3.5.7/zkData/myid
+分别
+3
+4
+
+#启动zookeeper
+#cd /opt/module/zookeeper-3.5.7/
+#bin/zkServer.sh start
+
+在102机器
+cd /usr/local/bin
+sudo vim zk.sh
+#!/bin/bash
+if [ $# -lt 1 ]
+then
+  echo "No Args Input..."
+  exit ;
+fi
+
+case $1 in
+"start")
+        for i in bigData102 bigData103 bigData104
+        do
+        echo ---------- zookeeper $i 启动 ------------
+                ssh $i "source /etc/profile && /opt/module/zookeeper-3.5.7/bin/zkServer.sh start"
+        done
+;;
+"stop")
+        for i in bigData102 bigData103 bigData104
+        do
+        echo ---------- zookeeper $i 停止 ------------    
+                ssh $i "source /etc/profile && /opt/module/zookeeper-3.5.7/bin/zkServer.sh stop"
+        done
+;;
+"status")
+        for i in bigData102 bigData103 bigData104
+        do
+        echo ---------- zookeeper $i 状态 ------------    
+                ssh $i "source /etc/profile && /opt/module/zookeeper-3.5.7/bin/zkServer.sh status"
+        done
+;;
+*)
+	echo "Input Args Error..."
+;;
+esac
+
+sudo chmod +x zk.sh
+
+jpaall
+是否有3个 QuorumPeerMain
+
+zk.sh status 一主两从
+
+7.安装kafka2.4.1
+集群规划
+hadoop 3台
+zk 3台
+kafka 3台
+
+在102
+cd /opt/software/6_kafka
+tar -zxvf kafka_2.11-2.4.1.tgz -C /opt/module/
+
+cd /opt/module/
+mv kafka_2.11-2.4.1/ kafka
+cd kafka
+mkdir logs
+
+修改配置文件
+cd config/
+vim server.properties
+不同的broker.id，0，1，2
+broker.id=0
+
+#删除topic功能
+delete.topic.enable=true
+
+#修改kafka运行日志存放的路径
+delete.topic.enable=true
+
+#kafka日志存放的路径（kafka存的topic的消息，既topic数据。错误信息存logs目录）
+log.dirs=/opt/module/kafka/data
+
+# 配置连接zookeeper集群地址（将kakfa的元数据放在zookeeper根节点下面的kafka目录下）
+zookeeper.connect=bigData102:2181,bigData103:2181,bigData104:2181/kafka
+
+配置环境变量
+sudo vim /etc/profile.d/my_env.sh 
+
+#KAFKA_HOME
+export KAFKA_HOME=/opt/module/kafka
+export PATH=$PATH:$KAFKA_HOME/bin
+
+分发
+xsync /opt/module/kafka/
+sudo xsync /etc/profile.d/my_env.sh
+
+103机器
+vim /opt/module/kafka/config/server.properties
+broker.id=1
+104机器
+vim /opt/module/kafka/config/server.properties
+broker.id=2
+
+工具-发送所有会话
+source /etc/profile
+
+启动kafka
+bin/kafka-ser
+# bin/kafka-server-start.sh -daemon /opt/module/kafka/config/server.properties
+
+群起脚本
+cd /usr/local/bin/
+sudo cp zk.sh kf.sh
+sudo vim kf.sh
+
+#!/bin/bash
+
+case $1 in
+"start"){
+        for i in bigData102 bigData103 bigData104
+        do
+        echo ---------- kafka $i 启动 ------------
+                ssh $i "/opt/module/kafka/bin/kafka-server-start.sh -daemon /opt/module/kafka/config/server.properties"
+        done
+};;
+"stop"){
+        for i in bigData102 bigData103 bigData104
+        do
+        echo ---------- kafka $i 停止 ------------    
+                ssh $i "/opt/module/kafka/bin/kafka-server-stop.sh stop"
+        done
+};;
+esac
+
+sudo chmod +x kf.sh
+
+kf.sh start
+
+kafka起来后，去zookeeper客户端看下
+cd /opt/module/zookeeper-3.5.7/
+bin/zkCli.sh
+ls /  可以看见有kafka节点
+ls /kafka  查看kafka元数据
+
+kafka 命令行操作
+cd /opt/module/zookeeper-3.5.7
+查看kafka下topic
+kafka-topics.sh --zookeeper bigData102:2181/kafka --list
+创建topic，3个副本，1个分区，名字叫first的topic。--topic 名字，--replication-factor 副本数，--partitions 分区数
+kafka-topics.sh --zookeeper bigData102:2181/kafka --create --replication-factor 3 --partitions 1 --topic first
+
+向topic发送消息，kafka-console-producer.sh kafka生产者脚本
+kafka-console-producer.sh --broker-list bigData102:9092 --topic first
+1
+2
+3
+4
+5
+
+103机器上，消费者脚本，--from-beginning从头开始消费
+cd /opt/module/kafka/
+bin/kafka-console-consumer.sh --bootstrap-server bigData102:9092 --from-beginning --topic first
+
+查看topic详情
+kafka-topics.sh --zookeeper bigData102:2181/kafka --describe --topic first
+
+修改分区数
+kafka-topics.sh --zookeeper bigData102:2181/kafka --alter --topic first --partitions 6
+
+8.安装Hbase2.0.5
+atlas会把元数据存入hbase
+前提：
+1.zookeeper正常启动，因为hbase和kafka一样，要把元数据存入zookeeper中
+2.hadoop正常启动，hbase本身是hdfs的高级应用
+
+cd /opt/software/7_hbase
+tar -zxvf hbase-2.0.5-bin.tar.gz -C /opt/module/
+cd /opt/module/
+mv hbase-2.0.5/ hbase
+
+配置环境变量
+sudo vim /etc/profile.d/my_env.sh
+
+#HBASE_HOME
+export HBASE_HOME=/opt/module/hbase
+export PATH=$PATH:$HBASE_HOME/bin
+
+修改配置文件
+/opt/module/hbase/conf
+vim hbase-env.sh
+将 内部hbase管理zk 关闭，用的是外部的zk
+export HBASE_MANAGES_ZK=false
+
+
+vim hbase-site.xml
+
+<configuration>
+	<!--hbase在hdfs上的跟路径-->
+	<property>
+		<name>hbase.rootdir</name>
+		<value>hdfs://bigData102:8020/HBase</value>
+	</property>
+	<!--是否部署分布式hbase-->
+	<property>
+		<name>hbase.cluster.distributed</name>
+		<value>true</value>
+	</property>
+	<!--指定外部zk集群-->
+	<property>
+		<name>hbase.zookeeper.quorum</name>
+		<value>bigData102,bigData103,bigData104</value>
+	</property>
+</configuration>
+
+hbase有两个角色组成：hmaster,hregionservers
+
+vim regionservers
+删去localhost
+bigData102
+bigData103
+bigData104
+
+分发
+/opt/module
+xsync hbase/
+sudo xsync /etc/profile.d/my_env.sh 
+工具-发送键输入到所有会话
+source /etc/profile
+
+启动hbase
+单点启动：
+bin/hbase-daemon.sh start master
+
+群起：
+bin/start-hbase.sh
+jpsall能看到三台分别
+HMaster NodeManager / NodeManager / NodeManager
+
+hBase集群正常启动
+http://bigData102:16010/master-status
+
+9.安装solr7.7.3
+atlas的索引数据库是solr
+
+为solr创建系统用户solr
+分别102，103，104上
+sudo useradd solr
+
+#--stdin读取echo输出，为solr用户的密码
+分别102，103，104上
+echo solr | sudo passwd --stdin solr
+
+102上
+cd /opt/software/8_solr
+tar -zxvf solr-7.7.3.tgz -C /opt/module/
+cd /opt/module
+mv solr-7.7.3/ solr
+
+把solr的所属主和所属组改为solr用户
+sudo chown -R solr:solr /opt/module/solr/
+ll
+
+修改solr配置文件
+cd /opt/module/solr/bin
+//shonqian用户没有权限
+sudo vim solr.in.sh
+//solr也要将元数据存入zk，配置zk地址
+ZK_HOST="bigData102:2181,bigData103:2181,bigData104:2181"
+sudo xsync /opt/module/solr/
+
+启动zk集群
+zk.sh start
+3台机器用solr用户启动solr
+sudo -i -u solr /opt/module/solr/bin/solr start
+//出现Happy searching!，表示启动成功
+
+===============
+//如想按照推荐值修改
+//修改打开文件数限制
+vim /etc/security/limits.conf
+增加
+soft nofile 65000
+hard nofile 65000
+//修改进程数数限制
+vim /etc/security/limits.d/20-nproc.conf
+增加
+soft nproc 65000
+重启solr服务生效
+===============
+
+访问solr web页面
+http://bigData102:8983/solr/#/
+ui界面出现cloud菜单栏，说明solr集群部署成功
+
+关闭所有solr
+sudo -i -u solr /opt/module/solr/bin/solr stop -all
+
+
+10.安装atlas2.1.0
+10.1 atlas安装：
+cd /opt/software/9_atlas
+tar -zxvf apache-atlas-2.1.0-server.tar.gz -C /opt/module/
+atlas的其它hook安装包是对接其它的钩子程序
+
+cd /opt/module/
+mv apache-atlas-2.1.0/ atlas
+文件构成：
+bin脚本
+conf配置文件
+models模块
+server服务器
+tools工具
+
+atlas配置其它服务的集成
+atlas集成Hbase
+atlas要把元数据存入hbase
+
+vim /opt/module/atlas/conf/atlas-application.properties
+# 要存入hbase，配的是zk地址，因为hbase会把元数据放入zk中
+atlas.graph.storage.hostname=bigData102:2181,bigData103:2181,bigData104:2181
+
+vim /opt/module/atlas/conf/atlas-env.sh
+# 让atlas能找到hbase的conf目录
+最后行加上
+export HBASE_CONF_DIR=/opt/module/hbase/conf
+
+atlas集成solr
+vim /opt/module/atlas/conf/atlas-application.properties
+# 因为solr的元数据也放在的zk中，能找到zk就能找到solr
+atlas.graph.index.search.solr.zookeeper-url=bigData102:2181,bigData103:2181,bigData104:2181
+
+创建solr collection，用来存储索引文件，-c指定名字，-d指定配置文件，shards 3个分片，replicationFactor两个副本
+# vertex_index 存的是点
+sudo -i -u solr /opt/module/solr/bin/solr create -c vertex_index -d /opt/module/atlas/conf/solr/ -shards 3 -replicationFactor 2
+# vertex_index 存的是线
+sudo -i -u solr /opt/module/solr/bin/solr create -c edge_index -d /opt/module/atlas/conf/solr/ -shards 3 -replicationFactor 2
+# vertex_index 存的是全文检索
+sudo -i -u solr /opt/module/solr/bin/solr create -c fulltext_index -d /opt/module/atlas/conf/solr/ -shards 3 -replicationFactor 2
+去 http://bigData102:8983/solr/#/~cloud 看，能看到刚建的索引
+
+这样atlas的元数据的索引信息可以存到solr的collection中了，可以做全文检索了
+
+
+atlas集成kafka
+atlas需要kafka做数据缓冲，所以atlas需要kafka
+vim /opt/module/atlas/conf/atlas-application.properties
+atlas.notification.embedded=false
+# kafka数据的存储位置
+atlas.kafka.data=/opt/module/kafka/data
+# kafka元数据在zk的位置
+atlas.kafka.zookeeper.connect=bigData102:2181,bigData103:2181,bigData104:2181/kafka
+# kafka本身broker连接地址
+atlas.kafka.bootstrap.servers=bigData102:9092,bigData103:9092,bigData104:9092
+
+atlas server配置
+vim /opt/module/atlas/conf/atlas-application.properties
+# 设置atlas主机名、端口号
+atlas.rest.address=http://bigData102:21000
+# 是否每次都初始化
+atlas.server.run.setup.on.start=false
+# 给atlas设置zk连接地址
+atlas.audit.hbase.zookeeper.quorum=bigData102:2181,bigData103:2181,bigData104:2181
+
+开启atlas日志中的记录性能指标
+vim /opt/module/atlas/conf/atlas-log4j.xml
+放开下面注释
+<appender name="perf_appender" class="org.apache.log4j.DailyRollingFileAppender">
+	<param name="file" value="${atlas.log.dir}/atlas_perf.log" />
+	<param name="datePattern" value="'.'yyyy-MM-dd" />
+	<param name="append" value="true" />
+	<layout class="org.apache.log4j.PatternLayout">
+		<param name="ConversionPattern" value="%d|%t|%m%n" />
+	</layout>
+</appender>
+
+<logger name="org.apache.atlas.perf" additivity="false">
+	<level value="debug" />
+	<appender-ref ref="perf_appender" />
+</logger>
+
+
+atlas集成hive，钩取hive元数据
+vim /opt/module/atlas/conf/atlas-application.properties
+在最后加上
+#########  Hive Hook Configs ########
+# 关闭hive钩子自动同步，改为手动同步
+atlas.hook.hive.synchronous=false
+# 重试次数3
+atlas.hook.hive.numRetries=3
+# 队列大小10000
+atlas.hook.hive.queueSize=10000
+# 集群名称
+atlas.cluster.name=primary
+
+修改Hive配置文件，配置Hive Hook
+vim /opt/module/hive/conf/hive-site.xml
+在最后一个<property>后面加上
+<!-- 让hive知道启用atlas的hook程序 -->	
+<property>
+   <name>hive.exec.post.hooks</name>
+   <value>org.apache.atlas.hive.hook.HiveHook</value>
+ </property>
+
+安装hive hook程序
+cd /opt/software/9_atlas
+tar -zxvf apache-atlas-2.1.0-hive-hook.tar.gz
+cp -r apache-atlas-hive-hook-2.1.0/* /opt/module/atlas/
+修改hive-env.sh，把atlas/hook/hive给到hive第三方jar包路径，这样hive才能使用atlas的钩子程序，让atlas实时钩取hive元数据的变化
+vim /opt/module/hive/conf/hive-env.sh
+export HIVE_AUX_JARS_PATH=/opt/module/atlas/hook/hive
+
+把atlas的配置文件拷贝到hive/conf目录
+让hive能使用atlas的配置文件
+cp /opt/module/atlas/conf/atlas-application.properties /opt/module/hive/conf/
+
+10.2 atlas启动
+前提：
+启动hadoop集群
+myhadoop.sh start
+启动zk集群
+zk.sh start
+启动kafka集群
+kf.sh start
+启动hbase集群
+/opt/module/hbase/bin/start-hbase.sh
+启动solr集群，3台机器
+sudo -i -u solr /opt/module/solr/bin/solr stop -all
+sudo -i -u solr /opt/module/solr/bin/solr start
+
+jpsall
+包含jps的话，进程数9 7 7
+
+/opt/module/atlas/bin/atlas_start.py
+错误信息路径：
+/opt/module/atlas/logs/*.out
+和
+application.log
+
+停止atlas
+#bin/atlas_stop.py
+
+atlas启动后只在102机器有一个进程
+
+web页面
+http://bigData102:21000/
+
+如果jpsall，进程数为10 7 7
+服务都起了，页面还是不出来，就是要等比较久，我等了七八分钟，页面就能正常访问了
+
+只要application.log中没有error，就能耐心等待
+第一次启动很慢，第二次启动就快了
+
+初始账户密码，admin admin
+
+左侧界面三tab:搜索（主用，查看数据字典，元数据管理和查询，血缘依赖的查看）、查看标签、查看商业分类，右侧是展示
+
+10.3 atlas使用：
+atlas使用
+同步hive的元数据，构建元数据实体之间的关联关系，对所存储的元数据建立索引，最终为用户提供数据血缘查看和元数据检索
+
+atlas刚装好后，需手动执行一次元数据的全量导入，后面atlas会利用hive hook增量同步hive的元数据
+
+现在hive中有两张表test_user,test_user2
+
+hive元数据初次导入
+当公司数据仓库发展到一定阶段（hive中有很多表），才会需要元数据管理这个功能（导入atlas）
+/opt/module/atlas/hook-bin/import-hive.sh
+输入用户名、密码：admin admin
+#Hive Meta Data imported successfully!!! 表示成功
+
+点右上角statistics，查看元数据信息（数据资产目录）
+hive_column(8) 8个列
+hive_db(1) 1个库
+hive_storagedesc(2) hive存储位置
+hive_column(2) 2个表
+
+查看血缘关系
+点进表，点lineage，后面是关系图、分类、审计日志、元数据信息（数据字典）
+跑了sql才有血缘关系
+
+hive元数据增量同步
+只要hive元数据发生变化，hive hook会把元数据变动通知atlas。atlas会根据dml获取数据之间的血缘关系
+
+生成血缘依赖
+进入hive客户端
+hive
+
+创建订单表
+create table dwd_order_info (
+    `id` string COMMENT '订单编号',
+    `final_amount` decimal(16,2) COMMENT '订单最终金额',
+    `order_status` string COMMENT '订单状态',
+    `user_id` string COMMENT '用户id' ,
+    `payment_way` string COMMENT '支付方式',
+	`delivery_address` string COMMENT '送货地址',
+    `out_trade_no` string COMMENT '支付流水号',
+    `create_time` string COMMENT '创建时间',	
+    `operate_time` string COMMENT '操作时间',
+	`expire_time` string COMMENT '过期时间',
+	`tracking_no` string COMMENT '物流单编号',
+	`province_id` string COMMENT '省份id',
+	`activity_reduce_amount` decimal(16,2) COMMENT '活动减免金额',
+	`coupou_reduce_amount` decimal(16,2) COMMENT '优惠券减免金额',
+	`original_amount` decimal(16,2) COMMENT '订单原价金额',
+	`feight_fee` decimal(16,2) COMMENT '运费',
+	`feight_fee_reduce` decimal(16,2) COMMENT '运费减免'    
+) COMMENT '订单表'
+row format delimited fields terminated by '\t';
+
+既 create table dwd_order_info ( `id` string COMMENT '订单编号',`final_amount` decimal(16,2) COMMENT '订单最终金额',`order_status` string COMMENT '订单状态',`user_id` string COMMENT '用户id' ,`payment_way` string COMMENT '支付方式',`delivery_address` string COMMENT '送货地址',`out_trade_no` string COMMENT '支付流水号',`create_time` string COMMENT '创建时间',`operate_time` string COMMENT '操作时间',`expire_time` string COMMENT '过期时间',`tracking_no` string COMMENT '物流单编号',`province_id` string COMMENT '省份id',`activity_reduce_amount` decimal(16,2) COMMENT '活动减免金额',`coupou_reduce_amount` decimal(16,2) COMMENT '优惠券减免金额',`original_amount` decimal(16,2) COMMENT '订单原价金额',`feight_fee` decimal(16,2) COMMENT '运费',`feight_fee_reduce` decimal(16,2) COMMENT '运费减免' ) COMMENT '订单表' row format delimited fields terminated by '\t';
+
+创建地区维度表
+# DROP TABLE IF EXISTS `dim_base_province`;
+CREATE TABLE `dim_base_province` (
+`id` string COMMENT '编号',
+`name` string COMMENT '省份名称',
+`region_id` string COMMENT '地区 id',
+`area_code` string COMMENT '地区编码',
+`iso_code` string COMMENT 'ISO-3166编码，供可视化使用',
+`iso_3166_2` string COMMENT 'ISO-3166-2编码，供可视化使用'
+) COMMENT '省份表'
+row format delimited fields terminated by '\t';
+
+既CREATE TABLE `dim_base_province` (`id` string COMMENT '编号',`name` string COMMENT '省份名称',`region_id` string COMMENT '地区 id',`area_code` string COMMENT '地区编码',`iso_code` string COMMENT 'ISO-3166编码，供可视化使用',`iso_3166_2` string COMMENT 'ISO-3166-2编码，供可视化使用') COMMENT '省份表' row format delimited fields terminated by '\t';
+
+这些建表语句就是ddl，数据的定义源
+
+在atlas页面右上角Statistics点开，hive_table(4)，由2变为4，atlas已能实时获取hive元数据变化
+
+给两张表填充数据，将base_province.txt和order_info.txt上传到hive表对应目录下
+http://bigData102:9870/explorer.html#/user/hive/warehouse
+路径/user/hive/warehouse下面，上传到对应目录
+
+去hive看一下
+hive
+select * from dwd_order_info;
+select * from dim_base_province;
+
+假设需求指标：
+根据订单事实表，地区维度表，求出每个省份的订单次数和订单金额
+
+建表：
+create table `ads_order_by_province` (
+	`dt` string comment '统计日期',
+	`province_id` string comment '省份id',
+	`province_name` string comment '省份名称',
+	`area_code` string comment '地区编码',
+	`iso_code` string comment '国际标准地区编码',
+	`iso_code_3166_2` string comment '国际标准地区编码',
+	`order_count` bigint comment '订单数',
+	`order_amount` decimal(16,2) comment '订单金额'
+) comment '各省份订单统计' 
+row format delimited fields terminated by '\t';
+既create table `ads_order_by_province` (`dt` string comment '统计日期',`province_id` string comment '省份id',`province_name` string comment '省份名称',`area_code` string comment '地区编码',`iso_code` string comment '国际标准地区编码',`iso_code_3166_2` string comment '国际标准地区编码',`order_count` bigint comment '订单数',`order_amount` decimal(16,2) comment '订单金额') comment '各省份订单统计' row format delimited fields terminated by '\t';
+
+数据装载
+insert into table ads_order_by_province
+select 
+	'2021-08-30' dt,
+	bp.id,
+	bp.name,
+	bp.area_code,
+	bp.iso_code,
+	bp.iso_3166_2,
+	count(*) order_count,
+	sum(oi.final_amount) order_amount
+from dwd_order_info oi 
+left join dim_base_province bp 
+on oi.province_id=bp.id 
+group by bp.id,bp.name,bp.area_code,bp.iso_code,bp.iso_3166_2;
+既insert into table ads_order_by_province select '2021-08-30' dt,bp.id,bp.name,bp.area_code,bp.iso_code,bp.iso_3166_2,count(*) order_count,sum(oi.final_amount) order_amount from dwd_order_info oi left join dim_base_province bp on oi.province_id=bp.id group by bp.id,bp.name,bp.area_code,bp.iso_code,bp.iso_3166_2;
+
+hive里执行sql，atlas中可以实时获取到血缘关系
+
+select * from ads_order_by_province;
+
+表的血缘关系，数据来自哪些表
+http://bigData102:21000/index.html#!/detailPage/c41f2548-39f6-4033-aaef-b17bfad8f544?tabActive=lineage
+
+数据质量监控
+字段的血缘关系
+这一字段分别来源于哪些字段，源头字段来自哪张表
+http://bigData102:21000/index.html#!/detailPage/87939055-4108-4230-a8af-682f13ad146a?tabActive=lineage
+
+atlas主要功能：
+1.右上角查看数据资产目录（数据字典）
+2.左边搜索框（数据字典）
+3.表或字段的血缘关系图
+
+atlas源码编译（将atlas源码包编译成安装包，官网只有源码包）
+将maven3.6.1下到/opt/software/下
+解压到/opt/module/中
+改名为maven
+添加环境变量到/etc/profile
+#MAVEN_HOME
+export MAVEN_HOME=/opt/module/maven
+export PATH=$PATH:$MAVEN_HOME/bin
+刷新环境变量
+修改maven setting.xml
+vim /opt/module/maven/conf/settings.xml
+<!--阿里云镜像-->
+<mirror>
+ <id>nexus-aliyun</id>
+ <mirrorOf>central</mirrorOf>
+ <name>Nexus aliyun</name>
+<url>http://maven.aliyun.com/nexus/content/groups/public</url>
+</mirror>
+<mirror>
+ <id>UK</id>
+ <name>UK Central</name>
+ <url>http://uk.maven.org/maven2</url>
+ <mirrorOf>central</mirrorOf>
+</mirror>
+<mirror>
+ <id>repo1</id>
+ <mirrorOf>central</mirrorOf>
+ <name>Human Readable Name for this Mirror.</name>
+ <url>http://repo1.maven.org/maven2/</url>
+</mirror>
+<mirror>
+ <id>repo2</id>
+ <mirrorOf>central</mirrorOf>
+ <name>Human Readable Name for this Mirror.</name>
+ <url>http://repo2.maven.org/maven2/</url>
+</mirror>
+
+把 apache-atlas-2.1.0-sources.tar.gz 上传到 bigData102 的/opt/software 目录下
+解压 apache-atlas-2.1.0-sources.tar.gz 到/opt/module/目录下面
+下载 Atlas 依赖
+export MAVEN_OPTS="-Xms2g -Xmx2g"
+cd /opt/module/apache-atlas-sources2.1.0/
+mvn clean -DskipTests install
+mvn clean -DskipTests package -Pdis
+#一定要在${atlas_home}执行
+cd distro/target/
+mv apache-atlas-2.1.0-server.tar.gz /opt/software/
+mv apache-atlas-2.1.0-hive-hook.tar.gz /opt/software/
+
+提示：执行过程比较长，会下载很多依赖，大约需要半个小时，期间如果报错很有可能是因为 TimeOut 造成的网络中断，重试即可。
+
+atlas内存配置
+
+atlas存储数万个元数据对象，建议调整参数值获得最佳的 JVM GC（垃圾回收器） 性能。以下是常见的服务器端选项
+1）修改配置文件/opt/module/atlas/conf/atlas-env.sh
+
+#设置 Atlas 内存
+export ATLAS_SERVER_OPTS="-server -XX:SoftRefLRUPolicyMSPerMB=0
+-XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -
+XX:+CMSParallelRemarkEnabled -XX:+PrintTenuringDistribution -
+XX:+HeapDumpOnOutOfMemoryError -
+XX:HeapDumpPath=dumps/atlas_server.hprof -Xloggc:logs/gcworker.log -verbose:gc -XX:+UseGCLogFileRotation -
+XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=1m -
+XX:+PrintGCDetails -XX:+PrintHeapAtGC -XX:+PrintGCTimeStamps"
+
+#建议 JDK1.7 使用以下配置
+export ATLAS_SERVER_HEAP="-Xms15360m -Xmx15360m -
+XX:MaxNewSize=3072m -XX:PermSize=100M -XX:MaxPermSize=512m"
+#建议 JDK1.8 使用以下配置
+export ATLAS_SERVER_HEAP="-Xms15360m -Xmx15360m -
+XX:MaxNewSize=5120m -XX:MetaspaceSize=100M -
+XX:MaxMetaspaceSize=512m"
+#如果是 Mac OS 用户需要配置
+export ATLAS_SERVER_OPTS="-Djava.awt.headless=true -
+Djava.security.krb5.realm= -Djava.security.krb5.kdc="
+
+参数说明：-XX:SoftRefLRUPolicyMSPerMB 此参数对管理具有许多并发用户的查询繁重工作负载的 GC 性能特别有用。
+
+4.3 配置新用户名密码
+
+#Atlas 支持以下身份验证方法：File、Kerberos 协议、LDAP 协议
+#通过修改配置文件 atlas-application.properties 文件开启或关闭三种验证方法
+#atlas.authentication.method.kerberos=true|false
+#atlas.authentication.method.ldap=true|false
+#atlas.authentication.method.file=true|false
+#如果两个或多个身份证验证方法设置为 true，如果较早的方法失败，则身份验证将回退到后一种方法。
+#例如，如果 Kerberos 身份验证设置为 true 并且 ldap 身份验证也设置为 true，那么，如果对于没有 kerberos principal 和 keytab 的请求，LDAP #身份验证将作为后备方案。
+
+本文主要讲解采用文件方式修改用户名和密码设置。其他方式可以参见官网配置即可。
+1）打开/opt/module/atlas/conf/users-credentials.properties 文件
+vim users-credentials.properties
+
+admin=ADMIN::8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+#用户名=组名::密码（sha256加密后）
+linux中得到sha256密文方式：echo -n "shonqian"|sha256sum
+
+重启atlas生效
+
+修改用户名和密码
+vim users-credentials.properties
+#username=group::sha256-password
+shonqian=ADMIN::2628be627712c3555d65e0e5f9101dbdd403626e6646b72fdf728a20c5261dc2
+
+rangertagsync=RANGER_TAG_SYNC::e3f67240f5117d1753c940dae9eea772d36ed5fe9bd9c94a300e40413f1afb9d
