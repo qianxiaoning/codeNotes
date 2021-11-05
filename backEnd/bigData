@@ -10,11 +10,58 @@ NameNode（nn）元数据，如文件名，文件目录结构，文件属性（�
 DataNode(dn)：在本地文件系统存储文件块数据，以及块数据的校验和。
 Secondary NameNode(2nn)：每隔一段时间对NameNode元数据备份
 
+yarn
+ResourceManager：负责整个集群的资源管理与调度
+NodeManager：管理Hadoop集群中单个计算节点
+
 MapReduce
 MapReduce 将计算过程分为两个阶段：Map 和 Reduce
 
 Map 阶段并行处理输入数据（拆数据）
 Reduce 阶段对 Map 结果进行汇总（合数据）
+
+部署方式：
+单机:
+无hdfs，yarn，只能测试MapReduce
+修改配置文件：
+hadoop-env.sh添加上JAVA_HOME
+
+伪分布式:
+进程全，都在一台机器上
+修改配置文件：
+hadoop-env.sh
+hdfs-site.xml
+core-site.xml
+mapred-site.xml	
+yarn-site.xml
+
+启动：
+sbin/start-all.sh
+
+jobhistory历史服务器默认是不启动的
+
+分布式:
+进程全，在多台机器上
+修改配置文件：
+
+核心配置文件
+core-site.xml
+
+hdfs配置文件
+hdfs-site.xml
+
+yarn配置文件，配置日志聚集功能
+yarn-site.xml
+
+MapReduce配置文件，配置历史服务器
+mapred-site.xml	
+
+workers配置文件
+
+Hadoop三种访问方式：
+1.命令行方式
+2.java api 访问
+3.web 浏览器
 ----------
 atlas概念和架构
 搭建atlas（元数据管理：组建大数据数据字典，查看大数据资产目录，数据质量监控，自动生成大数据表和字段的血缘关系图）
@@ -95,7 +142,16 @@ yarn[resourceManager.nodeManager],
 historyServer[jobHistoryServer]
 
 安装顺序：
-jdk, hadoop, mysql, hive, zookeeper, kafka, hbase, solr, atlas
+1.搭建前准备
+2.jdk
+3.hadoop
+4.mysql
+5.hive
+6.zookeeper
+7.kafka
+8.hbase
+9.solr
+10.atlas
 kafka, hbase, solr把自己的元数据（配置信息）存入zookeeper中
 hive会把元数据存入mysql
 ----------
@@ -124,6 +180,15 @@ sudo rpm -ivh mysql-community-server-5.7.28-1.el7.x86_64.rpm
 准备bigData100模板虚拟机（centos7，CentOS-7.5-x86-1804）
 内存/处理器/硬盘：4 8 60
 
+添加用户，修改用户密码
+useradd shonqian
+passwd shonqian
+
+配置shonqian用户root权限
+vim /etc/sudoers
+大约91行，%wheel 这行下面加上
+shonqian ALL=(ALL) NOPASSWD:ALL
+
 安装必要环境
 vim /etc/yum.repos.d/epel.repo
 baseurl解开注释，metalink加上注释即可
@@ -133,15 +198,6 @@ yum install -y psmisc nc net-tools rsync vim lrzsz ntp libzstd openssl-static tr
 关闭centos防火墙
 systemctl stop firewalld
 systemctl disable firewalld.service
-
-添加用户，修改用户密码
-useradd shonqian
-passwd shonqian
-
-配置shonqian用户root权限
-vim /etc/sudoers
-大约91行，%wheel 这行下面加上
-shonqian ALL=(ALL) NOPASSWD:ALL
 
 在/opt目录下创建文件夹，module，software
 software放安装包
@@ -222,10 +278,12 @@ C:\Windows\System32\drivers\etc\hosts
 
 配置ssh免密登录
 
+ssh localhost
+
 找到.ssh文件夹
 find / -name .ssh -type d
 
-cd /root/.ssh/
+cd /home/root/.ssh/
 
 生成公钥
 ssh-keygen -t rsa
@@ -241,18 +299,22 @@ exit
 在102上安装java1.8
 在/opt/software中
 tar -zxvf jdk-xxxx.tar.gz -C /opt/module/
+cd /opt/module
+mv jdk1.8.0_212/ jdk1.8
 
-vim my_env.sh
+cd /etc/profile.d/
+
+sudo vim my_env.sh
 添加
 # JAVA_HOME
-export JAVA_HOME=/opt/module/java8/jdk1.8
+export JAVA_HOME=/opt/module/jdk1.8
 export PATH=$PATH:$JAVA_HOME/bin
 
 source /etc/profile
 
 集群分发脚本xsync
 
-echo $PATH 查到现有的path路径
+echo $PATH 查到现有的path路径，在path路径下添加脚本，可到处执行
 cd /usr/local/bin
 
 vim xsync
@@ -306,7 +368,7 @@ cd /opt/software/2_hadoop
 tar -zxvf hadoop-3.1.3.tar.gz -C /opt/module/
 
 给hadoop配置环境变量
-vim /etc/profile.d/my_env.sh
+sudo vim /etc/profile.d/my_env.sh
 
 #HADOOP_HOME
 export HADOOP_HOME=/opt/module/hadoop-3.1.3
@@ -477,11 +539,11 @@ hdfs namenode -format
 启动hadoop
 群起
 102上
-sbin/start-dfs.sh
+#sbin/start-dfs.sh
 103
-sbin/start-yarn.sh
+#sbin/start-yarn.sh
 102开启历史服务器
-mapred --daemon start historyserver
+#mapred --daemon start historyserver
 
 群起脚本
 myhadoop.sh
@@ -740,7 +802,7 @@ quit;
 schematool -initSchema -dbType mysql -verbose
 
 启动hive客户端
-hadoop是正常运行的
+前提：hadoop是正常运行的
 
 进到hive客户端
 hive
@@ -797,7 +859,7 @@ ALTER TABLE TBLS modify COLUMN VIEW_ORIGINAL_TEXT mediumtext CHARACTER SET utf8;
 
 cd /opt/module/hive/conf
 vim hive-site.xml
-第一天添加&amp;useUnicode=true&amp;characterEncoding=UTF-8
+第一条添加&amp;useUnicode=true&amp;characterEncoding=UTF-8
 修改后支持存读中文
 
 hive
@@ -812,7 +874,9 @@ zookeeper集群
 分布式安装部署
 cd /opt/software/5_zookeeper
 tar -zxvf apache-zookeeper-3.5.7-bin.tar.gz -C /opt/module/
+cd /opt/module/
 mv apache-zookeeper-3.5.7-bin/ zookeeper-3.5.7
+cd zookeeper-3.5.7
 mkdir zkData
 cd zkData
 vim myid(服务器编号)
@@ -838,10 +902,11 @@ vim /opt/module/zookeeper-3.5.7/zkData/myid
 3
 4
 
-#启动zookeeper
-#cd /opt/module/zookeeper-3.5.7/
+启动zookeeper
+cd /opt/module/zookeeper-3.5.7/
 #bin/zkServer.sh start
 
+群起脚本：
 在102机器
 cd /usr/local/bin
 sudo vim zk.sh
@@ -886,7 +951,7 @@ jpaall
 
 zk.sh status 一主两从
 
-7.安装kafka2.4.1
+7.安装kafka2.4.1（单机安装方式同）
 集群规划
 hadoop 3台
 zk 3台
@@ -906,13 +971,11 @@ cd config/
 vim server.properties
 不同的broker.id，0，1，2
 broker.id=0
-
+下行加上
 #删除topic功能
 delete.topic.enable=true
 
 #修改kafka运行日志存放的路径
-delete.topic.enable=true
-
 #kafka日志存放的路径（kafka存的topic的消息，既topic数据。错误信息存logs目录）
 log.dirs=/opt/module/kafka/data
 
@@ -941,7 +1004,6 @@ broker.id=2
 source /etc/profile
 
 启动kafka
-bin/kafka-ser
 # bin/kafka-server-start.sh -daemon /opt/module/kafka/config/server.properties
 
 群起脚本
@@ -981,7 +1043,7 @@ ls /kafka  查看kafka元数据
 kafka 命令行操作
 cd /opt/module/zookeeper-3.5.7
 查看kafka下topic
-kafka-topics.sh --zookeeper bigData102:2181/kafka --list
+bin/kafka-topics.sh --zookeeper bigData102:2181/kafka --list
 创建topic，3个副本，1个分区，名字叫first的topic。--topic 名字，--replication-factor 副本数，--partitions 分区数
 kafka-topics.sh --zookeeper bigData102:2181/kafka --create --replication-factor 3 --partitions 1 --topic first
 
@@ -1022,7 +1084,7 @@ export HBASE_HOME=/opt/module/hbase
 export PATH=$PATH:$HBASE_HOME/bin
 
 修改配置文件
-/opt/module/hbase/conf
+cd /opt/module/hbase/conf
 vim hbase-env.sh
 将 内部hbase管理zk 关闭，用的是外部的zk
 export HBASE_MANAGES_ZK=false
@@ -1031,17 +1093,17 @@ export HBASE_MANAGES_ZK=false
 vim hbase-site.xml
 
 <configuration>
-	<!--hbase在hdfs上的跟路径-->
+	<!--hbase在hdfs上的根路径-->
 	<property>
 		<name>hbase.rootdir</name>
 		<value>hdfs://bigData102:8020/HBase</value>
 	</property>
-	<!--是否部署分布式hbase-->
+	<!--是否部署分布式hbase，如果为false，会去启动内置zk，如用外置zk，得设为true-->
 	<property>
 		<name>hbase.cluster.distributed</name>
 		<value>true</value>
 	</property>
-	<!--指定外部zk集群-->
+	<!--指定外部zk集群，单机版hbase只需把zk集群改为一个就行-->
 	<property>
 		<name>hbase.zookeeper.quorum</name>
 		<value>bigData102,bigData103,bigData104</value>
@@ -1057,25 +1119,29 @@ bigData103
 bigData104
 
 分发
-/opt/module
+cd /opt/module
 xsync hbase/
 sudo xsync /etc/profile.d/my_env.sh 
 工具-发送键输入到所有会话
 source /etc/profile
 
 启动hbase
-单点启动：
-bin/hbase-daemon.sh start master
+只启动HMaster：
+#bin/hbase-daemon.sh start master
 
-群起：
+起HMaster和NodeManager：
 bin/start-hbase.sh
+
+关闭hbase
+#bin/stop-hbase.sh
+
 jpsall能看到三台分别
 HMaster NodeManager / NodeManager / NodeManager
 
 hBase集群正常启动
 http://bigData102:16010/master-status
 
-9.安装solr7.7.3
+9.安装solr7.7.3（单机安装方式同）
 atlas的索引数据库是solr
 
 为solr创建系统用户solr
@@ -1110,6 +1176,7 @@ zk.sh start
 sudo -i -u solr /opt/module/solr/bin/solr start
 //出现Happy searching!，表示启动成功
 
+jps查看，会多一个jar的进程
 ===============
 //如想按照推荐值修改
 //修改打开文件数限制
@@ -1266,7 +1333,9 @@ sudo -i -u solr /opt/module/solr/bin/solr start
 jpsall
 包含jps的话，进程数9 7 7
 
+启动atlas：
 /opt/module/atlas/bin/atlas_start.py
+
 错误信息路径：
 /opt/module/atlas/logs/*.out
 和
@@ -1364,6 +1433,33 @@ row format delimited fields terminated by '\t';
 在atlas页面右上角Statistics点开，hive_table(4)，由2变为4，atlas已能实时获取hive元数据变化
 
 给两张表填充数据，将base_province.txt和order_info.txt上传到hive表对应目录下
+
+base_province.txt：
+1	北京	1	110000	CN-11	CN-BJ
+2	天津	1	120000	CN-12	CN-TJ
+3	山西	1	140000	CN-14	CN-SX
+4	内蒙古	1	150000	CN-15	CN-NM
+5	河北	1	130000	CN-13	CN-HE
+6	上海	2	310000	CN-31	CN-SH
+7	江苏	2	320000	CN-32	CN-JS
+8	浙江	2	330000	CN-33	CN-ZJ
+9	安徽	2	340000	CN-34	CN-AH
+10	福建	2	350000	CN-35	CN-FJ
+11	江西	2	360000	CN-36	CN-JX
+12	山东	2	370000	CN-37	CN-SD
+14	台湾	2	710000	CN-71	CN-TW
+15	黑龙江	3	230000	CN-23	CN-HL
+
+order_info.txt:
+4934	12033.00	1004	11	\N	第14大街第6号楼5单元647门	366893968325668	2020-06-10 22:39:20.0	2020-06-10 22:39:20.0	2020-06-10 22:54:20.0	\N	8	200.00	0.00	12218.00	15.00	\N
+4935	12065.00	1005	22	\N	第6大街第11号楼2单元864门	845678229874954	2020-06-10 22:39:20.0	2020-06-12 22:43:57.0	2020-06-10 22:54:20.0	\N	11	0.00	70.00	12115.00	20.00	\N
+4936	8308.00	1005	24	\N	第1大街第1号楼6单元562门	886898254767124	2020-06-10 22:39:20.0	2020-06-11 22:42:49.0	2020-06-10 22:54:20.0	\N	25	0.00	0.00	8298.00	10.00	\N
+4937	3442.00	1005	37	\N	第17大街第23号楼7单元518门	333789257252777	2020-06-10 22:39:20.0	2020-06-10 22:39:20.0	2020-06-10 22:54:20.0	\N	17	0.00	30.00	3453.00	19.00	\N
+4938	21014.00	1005	39	\N	第1大街第39号楼3单元294门	334997784963613	2020-06-10 22:39:20.0	2020-06-10 22:39:20.0	2020-06-10 22:54:20.0	\N	8	0.00	0.00	20997.00	17.00	\N
+4939	2255.00	1005	47	\N	第11大街第7号楼7单元661门	456112632711976	2020-06-10 22:39:20.0	2020-06-13 22:44:29.0	2020-06-10 22:54:20.0	\N	21	0.00	70.00	2309.00	16.00	\N
+4940	24904.00	1005	57	\N	第14大街第37号楼5单元536门	232551552927594	2020-06-10 22:39:20.0	2020-06-13 22:44:29.0	2020-06-10 22:54:20.0	\N	3	500.00	0.00	25390.00	14.00	\N
+4941	8401.00	1005	58	\N	第12大街第18号楼4单元334门	711941717753122	2020-06-10 22:39:20.0	2020-06-12 22:43:57.0	2020-06-10 22:54:20.0	\N	12	0.00	0.00	8385.00	16.00	\N
+
 http://bigData102:9870/explorer.html#/user/hive/warehouse
 路径/user/hive/warehouse下面，上传到对应目录
 
@@ -1387,6 +1483,7 @@ create table `ads_order_by_province` (
 	`order_amount` decimal(16,2) comment '订单金额'
 ) comment '各省份订单统计' 
 row format delimited fields terminated by '\t';
+
 既create table `ads_order_by_province` (`dt` string comment '统计日期',`province_id` string comment '省份id',`province_name` string comment '省份名称',`area_code` string comment '地区编码',`iso_code` string comment '国际标准地区编码',`iso_code_3166_2` string comment '国际标准地区编码',`order_count` bigint comment '订单数',`order_amount` decimal(16,2) comment '订单金额') comment '各省份订单统计' row format delimited fields terminated by '\t';
 
 数据装载
@@ -1404,6 +1501,7 @@ from dwd_order_info oi
 left join dim_base_province bp 
 on oi.province_id=bp.id 
 group by bp.id,bp.name,bp.area_code,bp.iso_code,bp.iso_3166_2;
+
 既insert into table ads_order_by_province select '2021-08-30' dt,bp.id,bp.name,bp.area_code,bp.iso_code,bp.iso_3166_2,count(*) order_count,sum(oi.final_amount) order_amount from dwd_order_info oi left join dim_base_province bp on oi.province_id=bp.id group by bp.id,bp.name,bp.area_code,bp.iso_code,bp.iso_3166_2;
 
 hive里执行sql，atlas中可以实时获取到血缘关系
@@ -1527,3 +1625,126 @@ vim users-credentials.properties
 shonqian=ADMIN::2628be627712c3555d65e0e5f9101dbdd403626e6646b72fdf728a20c5261dc2
 
 rangertagsync=RANGER_TAG_SYNC::e3f67240f5117d1753c940dae9eea772d36ed5fe9bd9c94a300e40413f1afb9d
+--------------
+大数据项目理解：
+1.数据采集：
+数据不像业务系统那样一条条产生，通过文件或者数据库形式导入
+1.1建立hive数据仓库
+在hive中建立表结构，把数据导入hdfs对应路径
+
+2.数据处理
+2.1根据需求，通过hive语句把现有数据进行联合查询、合并到一张新表
+2.2atlas通过hive hook，可以自动获取到hive的表结构和数据，包括后续更新
+--------------
+hive
+
+内部表
+create table
+内部表数据由Hive自身管理
+存储的位置
+hive.metastore.warehouse.dir（默认：/user/hive/warehouse）
+删除内部表会直接删除元数据（metadata）及存储数据；
+分建表和数据载入
+
+外部表
+create external table
+外部表数据由HDFS管理
+存储位置由自己制定
+删除外部表仅仅会删除元数据，HDFS上的文件并不会被删除；
+同时完成创建和数据载入
+--------------
+Azkaban与Oozie对比
+市面上最流行的两种调度器
+--------------
+sqoop数据传递工具
+(mysql,oracle) <=> (hdfs,hive,hbase)互导工具
+
+sqoop版本
+sqoop1（1.9之前）
+sqoop2（1.9之后）
+1与2不兼容
+
+sqoop的导入/导出就是对mapreduce的inputformat和outputformat进行定制
+
+安装：
+0.安装前提，已有java和hadoop环境
+1.下载安装包，一般使用sqoop1.4.6
+2.解压
+3.配置环境变量
+4.修改配置文件
+sqoop/conf/下
+mv sqoop-env-template.sh sqoop-env.sh
+配置入hadoop和hive等需要的地址
+export HADOOP_COMMON_HOME=/opt/module/hadoop-3.1.3
+export HADOOP_MAPRED_HOME=/opt/module/hadoop-3.1.3
+export HIVE_HOME=/opt/module/hive
+5.拷贝jdbc驱动到sqoop/lib/下
+6.查看sqoop是否配置正确
+sqoop help
+
+用法：
+1.查出所有库
+sqoop list-databases --connect jdbc:mysql://192.168.30.95:3306/ --username root --password root
+#list-tables查出所有表
+
+2.导入import（一般指关系型数据库 => 大数据仓库hdfs,hive,hbase）
+
+2.1单表到hdfs
+sqoop import \
+--connect jdbc:mysql://192.168.30.95:3306/jtdb \
+--username root \
+--password root \
+--table section \
+--target-dir /user/sqoop \ #--target-dir指定目录，已有会报错
+--fields-terminated-by "\t" #每字段结束符是tab键
+
+2.2全库到hdfs
+sqoop import-all-tables --connect "jdbc:mysql://192.168.30.95:3306/user01" --username root --password root --warehouse-dir "/user/hive/warehouse"  -m 1 --fields-terminated-by "\t"
+#--warehouse-dir指定父目录
+#-m 指定mapreduce进程数
+
+2.3单表到hive
+sqoop-import --connect 'jdbc:mysql://192.168.30.95:3306/dababase_a' --username root --password root --table table_a --hive-import --hive-overwrite  --hive-table default.table_a --null-string '\\N' --null-non-string '\\N' -m 1
+#--table指定关系型数据库的表名
+#--hive-table指定hive的表名
+#--hive-import 数据导入hdfs后，再载入hive目录
+
+2.4全库到hive
+sqoop import-all-tables \
+-Dorg.apache.sqoop.splitter.allow_text_splitter=true \
+--connect jdbc:mysql://192.168.30.95:3306/user01 \
+--username root \
+--password root \
+--hive-import \
+-m 1
+
+3.其它用法
+
+3.1查询
+--query 'select name,sex from staff where id <=1 and $CONDITIONS;'
+# $CONDITIONS为固定用法
+
+3.2导入指定列
+--columns id,sex
+
+3.3常用参数、命令 => 百度
+
+增量导入
+1.按数值类型增长（比如id）
+append追加模式
+append --check-column id --last-value 1201
+更新数据追加到新文件，会造成重复数据
+
+2.按时间（比如xxxTime）
+2.1Lastmodified上次更新模式
+时间+1秒，会取>=的记录
+更新数据追加到新文件，会造成重复数据
+
+2.2merge-key形式
+把增量数据合并到原文件中
+导入增量数据和更新变化的数据，且数据不会重复，
+底层相当于做了一次完整的mapreduce
+
+sqoop当中job作业
+用其它调度软件工作调度这个job
+----------

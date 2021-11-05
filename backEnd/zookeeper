@@ -1,4 +1,21 @@
 -----------
+zookeeper
+
+单机：
+解压
+根目录下建zkData,zkLog
+将conf下zoo_sample.cfg改为zoo.cfg
+在zoo.cfg下指定data和log的目录
+
+集群：
+在单机基础上：
+zkData中建立myid(1,2,3)
+zoo.cfg最下面加上
+#######cluster集群模式#########
+server.2=bigData102:2888:3888
+server.3=bigData103:2888:3888
+server.4=bigData104:2888:3888
+-----------
 zookeeper注册中心
 zookeeper，自动化服务调度器
 
