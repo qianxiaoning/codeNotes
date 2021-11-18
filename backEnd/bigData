@@ -1652,8 +1652,24 @@ create external table
 存储位置由自己制定
 删除外部表仅仅会删除元数据，HDFS上的文件并不会被删除；
 同时完成创建和数据载入
+
+hiveserver2提供了一个新的命令行工具beeline，增加了权限控制
+要使用beeline需要先启动hiverserver2，再使用beeline连接
+
+启动hiveserver2
+hiveserver2 &
+或
+$HIVE_HOME/bin/hiveserver2 &
+
+jdbc方式连接hive
+bin/beeline
+或
+beeline -u jdbc:hive2://bigData101:10000 -n shonqian
+
+hive UI
+http://192.168.30.99:10002/
 --------------
-Azkaban与Oozie对比
+Azkaban与oozie对比
 市面上最流行的两种调度器
 --------------
 sqoop数据传递工具
@@ -1748,3 +1764,5 @@ append --check-column id --last-value 1201
 sqoop当中job作业
 用其它调度软件工作调度这个job
 ----------
+
+
