@@ -1656,21 +1656,75 @@ create external table
 hiveserver2提供了一个新的命令行工具beeline，增加了权限控制
 要使用beeline需要先启动hiverserver2，再使用beeline连接
 
-启动hiveserver2
+启动hiveserver2服务
 hiveserver2 &
 或
 $HIVE_HOME/bin/hiveserver2 &
 
+启动beeline，连接hiveserver2
 jdbc方式连接hive
-bin/beeline
+beeline
+!connect jdbc:hive2://hadoop101:10000
 或
 beeline -u jdbc:hive2://bigData101:10000 -n shonqian
 
 hive UI
 http://192.168.30.99:10002/
+
+向表中装载数据（Load）
+hive> load data [local] inpath '/opt/module/datas/student.txt' overwrite | into table student [partition (partcol1=val1,…)];
+（1）load data:表示加载数据
+（2）local:表示从本地加载数据到hive表；否则从HDFS加载数据到hive表
+（3）inpath:表示加载数据的路径
+（4）overwrite:表示覆盖表中已有数据，否则表示追加
+（5）into table:表示加载到哪张表
+（6）student:表示具体的表
+（7）partition:表示上传到指定分区
+
+创建一张表
+hive (default)> create table student(id string, name string) row format delimited fields terminated by '\t';
+加载HDFS文件到hive中
+上传文件到HDFS
+hive (default)> dfs -put /opt/module/datas/student.txt /user/atguigu/hive;
+加载HDFS上数据
+hive (default)> load data inpath '/user/atguigu/hive/student.txt' into table default.student;
+
+创建表时通过Location指定加载数据路径
+1．创建表，并指定在hdfs上的位置
+hive (default)> create table if not exists student5(
+              id int, name string
+              )
+              row format delimited fields terminated by '\t'
+              location '/user/hive/warehouse/student5';
+2．上传数据到hdfs上
+hive (default)> dfs -put /opt/module/datas/student.txt
+/user/hive/warehouse/student5;
+3．查询数据
+hive (default)> select * from student5;
 --------------
-Azkaban与oozie对比
-市面上最流行的两种调度器
+Azkaban（轻）与oozie（重）对比
+市面上最流行的两种工作流调度系统
+
+简单调度：
+Linux的Crontab
+
+一个完整的数据分析系统通常都是由大量任务单元组成：
+Shell脚本程序，Java程序，MapReduce程序、Hive脚本等
+
+大数据工作流调度流程：
+某业务系统每天产生20G原始数据，我们每天对其进行处理
+1.先将原始数据同步到HDFS上
+HDFS
+2.对原始数据进行计算
+MapReduce
+3.生成的数据以分区表形式存储到多张Hive表中
+[Hive表，Hive表，Hive表]
+4.对Hive中多个表的数据进行JOIN处理，得到一张明细数据Hive大表
+明细数据Hive大表
+5.将明细数据进行复杂的统计分析，得到结果报表信息
+结果报表
+6.将统计分析得到的结果数据同步到业务系统中
+业务系统
 --------------
 sqoop数据传递工具
 (mysql,oracle) <=> (hdfs,hive,hbase)互导工具
