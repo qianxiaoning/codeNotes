@@ -125,3 +125,25 @@ PowerDesigner
 
 sql转模型
 file-reverse engineer-database-选择sql文件-选择需要的表-自动生成模型图
+---------------
+Maven Helper可以搜索查看发生冲突的依赖
+---------------
+<optional>true</optional>作用：
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-configuration-processor</artifactId>
+    <optional>true</optional>
+</dependency>
+
+父模块依赖声明了<optional>true</optional>，该依赖不会被子模块所引入
+---------------
+maven引入指定jar包
+https://repo.maven.apache.org/maven2/org/apache/sqoop/sqoop/1.4.6/sqoop-1.4.6-hadoop200.jar
+写法：
+<dependency>
+    <groupId>org.apache.sqoop</groupId>
+    <artifactId>sqoop</artifactId>
+    <version>1.4.6</version>
+    <classifier>hadoop200</classifier>
+</dependency>
+---------------

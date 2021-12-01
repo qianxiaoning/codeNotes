@@ -341,3 +341,7 @@ ctrl+f4
 
 maven窗口不见，在pom.xml文件右键add as maven project，识别为maven项目
 --------------------------
+idea快速格式化（两个连用）
+去掉空白： Ctrl + Shift + J
+格式化代码： Ctrl + Alt + L
+--------------------------

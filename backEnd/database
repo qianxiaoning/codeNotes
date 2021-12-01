@@ -861,3 +861,10 @@ kv型nosql redis
 常以JSON或者XML格式存储数据
 
 扩展字段容易，对于非索引字段的查询，快于关系型数据库
+---------------------
+union 去重
+union all 不去重
+---------------------
+查看mysql日志错误和警告部分
+tail -n500 /var/log/mysqld.log|grep -E 'Warning|ERROR'
+---------------------
