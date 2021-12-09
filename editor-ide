@@ -345,3 +345,16 @@ idea快速格式化（两个连用）
 去掉空白： Ctrl + Shift + J
 格式化代码： Ctrl + Alt + L
 --------------------------
+idea maven项目明明依赖在仓库里都有，打开右侧Maven-Dependencies里面依赖还是全部标红
+方法：
+将pom.xml里的
+<dependency>或者<parent>剪切掉，Reimport，依赖全部消失
+再在maven窗口右键项目Reimport
+或者
+Unlink maven projects，右键pom文件add as a maven project，在把依赖粘贴回去，标红消失
+--------------------------
+idea maven项目打包，不含版本号
+<build>
+    <!-- 默认值是${artifactId}-${version} -->
+    <finalName>${artifactId}</finalName>
+</build>

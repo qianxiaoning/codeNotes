@@ -1695,7 +1695,190 @@ rangertagsync=RANGER_TAG_SYNC::e3f67240f5117d1753c940dae9eea772d36ed5fe9bd9c94a3
 2.1根据需求，通过hive语句把现有数据进行联合查询、合并到一张新表
 2.2atlas通过hive hook，可以自动获取到hive的表结构和数据，包括后续更新
 --------------
-hive
+hive用法：
+
+数据采集阶段：
+1.入mysql库
+2.入hdfs
+3.在hive中建表（外部表）
+4.hdfs数据导入hive表
+load data local inpath '/opt/module/datas/dept.txt' into table default.dept;
+
+数据查询阶段：
+1.操作hive
+根据hive查询结果建表
+
+hive根据数据建表结构
+1hive中create建表
+2本地文件到hdfs
+hadoop fs -put xxx.txt /
+3hdfs到hive，会将/下文件移动到hive目录下
+load data inpath "/xxx.txt" into table a;
+
+命令：
+hdfs dfs -ls /;
+hive中dfs -ls /;
+
+hive中数组：
+a_b_c   意思[a,b,c]
+friend array<string>
+
+hive中map：
+tom:18_jerry:19   意思{tom:18,jerry:19}
+children map<string,int>
+
+hive中struct：
+hui long guan_beijing   意思{street:hui long guan,city:beijing}
+address struct<string:string,city:string>
+
+if not exists
+
+查询表结构
+desc a;
+添加列
+alter table a add columns (bbb string);
+更新列：
+alter table a change bbb ccc string;
+删除表：
+drop table a;
+hive中不能删除列？
+只能删除最后一列，
+
+dfs -mkdir -p /a/b/c;
+
+内外部表
+create table if not exists a ()
+create external table if not exists a ()
+
+建内外部表时，hdfs上文件都会移到hive目录下，但是外部表删后，hive目录下还是有文件
+
+建表时指定文件存放路径location '/xx/ss';
+
+指定location后就会自动执行load操作
+指定location后建外部表好，删除hive，原目录不删除
+
+重命名表名
+alter table a rename to b;
+
+查询插入数据：
+insert into table a select s,c from k; 
+插入覆盖原数据
+insert overwrite table a select s,c from k; 
+同时插入两张表
+from k insert into table a select s into table b select c;
+直接插入
+insert into table xx values ('1','ss'),('2','ssv'),('3','ssw');
+
+hive导出数据，数据备份，将查询结构存放到本地
+insert into/overwrite local directory '/root/xx/data' select * from a;
+将查询结构存放到hdfs上：
+hdfs dfs -mkdir -p /xxx/aaa
+insert into/overwrite directory '/root/xx/data' select * from a;
+hdfs备份hive目录数据
+hdfs dfs -cp /hive/warehouse/xxx/* /sds/sss
+表结构和数据同时备份
+export tabke x to '/ssds/sss';
+恢复表结构和数据(表从无到有)
+import from '/ssds/sss';
+
+详细信息
+desc formatted a;
+
+hive分区表（在目录的表现是多文件夹）
+把数据按每天或者每小时分文件，或按部门、业务等
+静态分区sp
+create table...
+partitioned by(grade int)//分区字段不能和表字段相同
+载入数据
+load data inpath '/as/sss.txt' into table a partition(grade=1);
+多分区
+partitioned by(grade int,clazz int)//前后为父子关系
+分区表查询，可以把分区当字段用
+select * .... where grade=1 and clazz=2;
+查看分区
+show partitions table_a;
+添加分区
+alter table a add partition (day='121212');
+删除分区
+alter table a drop partition (day='121212');
+动态分区dp
+静态：insert overwrite table a partition(gender=1) select id,name from b;
+动态：
+set hive.exec.dynamic.partition=true;
+set hive.exec.dynamic.partition.mode=nonstrict;
+insert overwrite table a partition(gender) select id,name from b;
+
+分桶表
+按照数据按照字段，划分到多个文件中
+set hive.enforce.bucheting=true;
+mapreduce数量和桶数量要一致
+set mapreduce.job.reduce=3;
+
+指定xx为桶值，aa降序排，16个桶
+create table a...clustered by(xx) sorted by (aa desc) into 16 buckets
+数据块抽样
+随机抽取10%数据
+create table xx as select * from xxx tablesample(10 percent);
+根据桶的数量抽样
+select * from xx tablesample(bucket 1 out of 16 on aa);
+
+排序
+全局排序order by
+局部排序sort by，进入reduce前排序，只保证每个reduce有序，不保证全局有序
+分区排序distribute by，reduce间有序
+分区并排序cluster by=distribute by + sort by，只能升序，不能倒序
+
+hive自带函数
+show functions;
+显示用法
+desc function upper;
+详细显示用法
+desc function extended upper;
+
+udtf，一分多
+explode将一组数组的数据变成多行表记录
+select explode(split(types,"-")) from a;
+lateral view，将explode的数据生成一个列表
+
+utaf，多合一
+concat_ws(':',collect_set(type))
+
+hive窗口函数
+排序开窗函数
+当分数为：81，73，73，66时
+rank() // 1224
+dense_rank() // 1223
+row_number() // 1234 
+
+自定义函数
+udf一进一出
+udaf多进一出
+udtf一进多出
+udf
+1.pom依赖
+hadoop-client
+hadoop-hdfs
+hive-exec
+2.继承UDF，重写evaluate
+3.将jar包传到hdfs上指定jar包目录
+udaf
+继承udaf
+
+hive参数设置
+hiveconf,system,hivevar
+1.配置文件方式：重启生效
+在${HIVE_HOME}/conf/hive-site.xml配置
+2.命令行：当前一次生效
+3.set设置
+
+hive数据倾斜
+单个节点处理的任务量，远大于其他
+原因，相同key，或者不支持分割的大文件
+
+hive内外部表转换
+alter table a set tblproperties('external'='true/false');
+
+tez代替mapreduce，提升速度
 
 内部表
 create table
@@ -1762,6 +1945,17 @@ hive (default)> dfs -put /opt/module/datas/student.txt
 /user/hive/warehouse/student5;
 3．查询数据
 hive (default)> select * from student5;
+
+hive建表三种方式
+1.create命令
+
+2.查询用as接收
+create table test 
+        as   
+       select...
+
+3.like复制表结构
+create table test like default.a;
 --------------
 把hive的mapreduce替换成spark：
 
@@ -2052,7 +2246,7 @@ sqoop import \
 --fields-terminated-by "\t" #每字段结束符是tab键
 
 2.2全库到hdfs
-sqoop import-all-tables --connect "jdbc:mysql://192.168.30.95:3306/user01" --username root --password root --warehouse-dir "/user/hive/warehouse"  -m 1 --fields-terminated-by "\t"
+sqoop import-all-tables --connect "jdbc:mysql://192.168.40.113:3306/pra" --username root --password root --warehouse-dir "/test/4" -m 1 --fields-terminated-by "\t"
 #--warehouse-dir指定父目录
 #-m 指定mapreduce进程数
 
@@ -2065,7 +2259,7 @@ sqoop-import --connect 'jdbc:mysql://192.168.30.95:3306/dababase_a' --username r
 2.4全库到hive
 sqoop import-all-tables \
 -Dorg.apache.sqoop.splitter.allow_text_splitter=true \
---connect jdbc:mysql://192.168.30.95:3306/user01 \
+--connect jdbc:mysql://192.168.40.113:3306/pra \
 --username root \
 --password root \
 --hive-import \
@@ -2391,7 +2585,6 @@ public void mysql2hdfs() {
                 "--target-dir", /test/5,
                 "--fields-terminated-by","\t",
                 "--hadoop-mapred-home", "/opt/module/hadoop-3.1.3"
-//                    "--hadoop-mapred-home", "$HADOOP_MAPRED_HOME"
         };
         String[] expandArguments = OptionsFileUtil.expandArguments(args);
         Configuration conf = new Configuration();
@@ -2403,7 +2596,7 @@ public void mysql2hdfs() {
 }
 
 3.问题
-windows下需要hadoop运行所需文件和环境变量：
+3.1windows下需要hadoop运行所需文件和环境变量：
 安装winutils，看看对应版本有没有hadoop.dll和winutils.exe这两个文件
 将winutils下对应hadoop版本添加到系统变量
 HADOOP_HOME C:\qxn\myPro\winutils\hadoop-3.0.0
@@ -2412,7 +2605,10 @@ HADOOP_HOME C:\qxn\myPro\winutils\hadoop-3.0.0
 重启idea
 还不行的话，试试重启电脑
 
-打成jar包后运行：
+在Windows下给hadoop指定用户，解决权限问题
+System.setProperty("HADOOP_USER_NAME","shonqian");
+
+3.2打成jar包后运行：
 在sqoop运行过程中，会在/tmp/下生成一个mysql表名.java文件，文件头部有
 import org.apache.hadoop.io.BytesWritable;
 import com.cloudera.sqoop.lib.JdbcWritableBridge;等

@@ -382,10 +382,37 @@ Crontab
 给文件添加行号
 :set nu
 ---------------
+ubuntu找apt源
+进 https://developer.aliyun.com/mirror/
+ubuntu和k8s是分开的源
 
+ubuntu的apt源配置文件地址
+/etc/apt/sources.list
+也支持多个源
+sources.list.d/kubernetes.list
 
+替换源后需要
+apt-get update
+从服务器更新最新的下载索引
 
+apt报错：
+Unable to locate package xxx 找不到xxx包
+原因：
+1.源不对
+2.源没有更新
 
+apt报错：
+Temporary failure resolving 'mirrors.aliyun.com' 无法用阿里云下载
+方式：
+1.ping一下百度试试
+2.给网卡加dns（223.5.5.5，223.6.6.6）
+---------------
+ubuntu apt查找所有安装的包
+apt list --installed
+
+ubuntu apt查找是否安装某个包
+apt list docker
+---------------
 
 
 
