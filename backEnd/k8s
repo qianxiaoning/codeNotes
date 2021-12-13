@@ -65,3 +65,15 @@ kube-proxy、主要负责为Pod对象提供代理
 Fluentd、主要负责日志收集、存储与查询。
 kube-dns（可选），
 ------------
+命令
+主节点查看节点
+kubectl get node
+
+查看kubelet状态
+systemctl status kubelet
+
+查看k8s版本
+kubectl version
+
+节点重置初始化过程
+kubeadm reset

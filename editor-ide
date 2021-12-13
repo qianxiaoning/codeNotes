@@ -358,3 +358,9 @@ idea maven项目打包，不含版本号
     <!-- 默认值是${artifactId}-${version} -->
     <finalName>${artifactId}</finalName>
 </build>
+--------------------------
+我的idea快捷键
+f 方法
+s 实体类熟悉
+ss 普通属性
+--------------------------

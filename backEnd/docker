@@ -35,6 +35,9 @@ docker ps
 查看全部容器
 docker ps -a
 
+删除本地镜像
+docker rmi xxx
+
 退出镜像
 exit
 
@@ -58,6 +61,9 @@ docker start 77a
 
 停止容器
 docker stop 77a
+
+查看docker状态
+systemctl status docker
 
 删除容器
 docker container rm 77a 88a

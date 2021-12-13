@@ -2238,11 +2238,11 @@ sqoop list-databases --connect jdbc:mysql://192.168.30.95:3306/ --username root 
 
 2.1单表到hdfs
 sqoop import \
---connect jdbc:mysql://192.168.30.95:3306/jtdb \
+--connect jdbc:mysql://192.168.40.113:3306/pra \
 --username root \
 --password root \
---table section \
---target-dir /user/sqoop \ #--target-dir指定目录，已有会报错
+--table emp \
+--target-dir /test/6/ \ #--target-dir指定目录，已有会报错
 --fields-terminated-by "\t" #每字段结束符是tab键
 
 2.2全库到hdfs
@@ -2250,11 +2250,14 @@ sqoop import-all-tables --connect "jdbc:mysql://192.168.40.113:3306/pra" --usern
 #--warehouse-dir指定父目录
 #-m 指定mapreduce进程数
 
-2.3单表到hive
-sqoop-import --connect 'jdbc:mysql://192.168.30.95:3306/dababase_a' --username root --password root --table table_a --hive-import --hive-overwrite  --hive-table default.table_a --null-string '\\N' --null-non-string '\\N' -m 1
+2.3单表到hive（包括数据）
+sqoop-import --connect 'jdbc:mysql://192.168.40.113:3306/pra' --username root --password root --table emp --delete-target-dir --hive-import --hive-overwrite  --hive-table default.qqq --null-string '\\N' --null-non-string '\\N' -m 1
 #--table指定关系型数据库的表名
 #--hive-table指定hive的表名
 #--hive-import 数据导入hdfs后，再载入hive目录
+
+单表到hive（仅表结构）
+sqoop create-hive-table --connect 'jdbc:mysql://192.168.40.113:3306/pra' --username root --password root --table emp --hive-table default.qqq2
 
 2.4全库到hive
 sqoop import-all-tables \

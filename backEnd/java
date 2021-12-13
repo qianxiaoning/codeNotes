@@ -5630,6 +5630,9 @@ BeanUtils.copyProperties(Object source, Object target)
 Map.entrySet()后，可直接在jsp循环
 ${item.key}${item.value}取值
 ---------------------
+JdbcTemplate 常用方法，参数放数组中，sql中按顺序?表示
+
+单条数据或记录 jdbcTemplate.queryForObject
 避免jdbcTemplate.queryForObject为空或者返回多条报错
 try {
 	Object paperPath = jdbcTemplate.queryForObject(sql, new Object[]{code, id}, String.class);
@@ -5637,6 +5640,21 @@ try {
 	LOGGER.error(e.getMessage(), e);
 	return null;
 }
+ManageOrderDetailDto dto = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ManageOrderDetailDto.class), id);
+
+多条数据，基本类型或Map
+List<Map<String, Object>> maps = jdbcTemplate.queryForList(statusSql);
+
+单条或多条，可查实体类
+List<UserHistoryOrderDto> historyList = jdbcTemplate.query(historySql, new BeanPropertyRowMapper<>(UserHistoryOrderDto.class));
+
+改、删
+jdbcTemplate.update(sql);
+
+NamedParameterJdbcTemplate 常用方法，基本同JdbcTemplate，区别在于参数放入Map中，sql用:xxx表示
+
+NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+Integer total = namedParameterJdbcTemplate.queryForObject(totalSql, Map<String, Object>, Integer.class);
 ---------------------
 对象（或任意bean）转Map
 Object obj = new Object();
@@ -5765,4 +5783,11 @@ pom.xml添加repository配置
     <url>http://download.oracle.com/maven</url>
     <layout>default</layout>
 </repository> 
+-----------------
+jpa 条件构造器 Criteria用法
+Criteria<OrderHistory> criteria = Criteria.forClass(OrderHistory.class);
+criteria.add(Restrictions.eq("orderNo", orderNo));
+criteria.add(Restrictions.eq("isDisabled", Constants.INT_FALSE));
+criteria.addOrder("createAt", true);
+Page<OrderHistory> all = super.findAll(criteria, searchable.getPage());
 -----------------
