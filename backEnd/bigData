@@ -1949,12 +1949,12 @@ hive (default)> select * from student5;
 hive建表三种方式
 1.create命令
 
-2.查询用as接收
+2.查询用as接收（不能把原hive表的列注释带过去）
 create table test 
         as   
        select...
 
-3.like复制表结构
+3.like复制表结构（能把原hive表的列注释带过去）
 create table test like default.a;
 --------------
 把hive的mapreduce替换成spark：
@@ -2045,12 +2045,14 @@ set hive.spark.client.server.connect.timeout=300000;？
 或者vim /opt/module/hive/conf/hive-site.xml中增加
 <property>
     <name>hive.spark.client.connect.timeout</name>
-    <value>100000ms</value>
+    <value>200000ms</value>
 </property>？
 或者
 cd /opt/module/spark/conf
 mv spark-env.sh.template spark-env.sh
 最后增加export SPARK_DIST_CLASSPATH=${hadoop classpath}？
+可能是hive连接数只能1个？断开sql编辑器看看？
+看看报错日志在哪，hive或者spark？
 --------------
 Azkaban（轻）与oozie（重）对比
 市面上最流行的两种工作流调度系统
@@ -2250,7 +2252,7 @@ sqoop import-all-tables --connect "jdbc:mysql://192.168.40.113:3306/pra" --usern
 #--warehouse-dir指定父目录
 #-m 指定mapreduce进程数
 
-2.3单表到hive（包括数据）
+2.3单表到hive（包括数据），（sqoop把mysql=>hive，不能把mysql注释带过去）
 sqoop-import --connect 'jdbc:mysql://192.168.40.113:3306/pra' --username root --password root --table emp --delete-target-dir --hive-import --hive-overwrite  --hive-table default.qqq --null-string '\\N' --null-non-string '\\N' -m 1
 #--table指定关系型数据库的表名
 #--hive-table指定hive的表名
@@ -2258,6 +2260,15 @@ sqoop-import --connect 'jdbc:mysql://192.168.40.113:3306/pra' --username root --
 
 单表到hive（仅表结构）
 sqoop create-hive-table --connect 'jdbc:mysql://192.168.40.113:3306/pra' --username root --password root --table emp --hive-table default.qqq2
+
+java api调sqoop，单表到hive（仅表结构），表已有的话不会同步，也不报错
+"create-hive-table",
+"--connect", "jdbc:mysql://192.168.40.113:3306/pra?serverTimezone=Asia/Shanghai",
+"-username", "root",
+"-password", "root",
+"--table", "emp",
+"--hive-table","xxx",
+"--fields-terminated-by","\t"
 
 2.4全库到hive
 sqoop import-all-tables \

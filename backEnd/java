@@ -5791,3 +5791,95 @@ criteria.add(Restrictions.eq("isDisabled", Constants.INT_FALSE));
 criteria.addOrder("createAt", true);
 Page<OrderHistory> all = super.findAll(criteria, searchable.getPage());
 -----------------
+通过反射，传入方法名字符串调用该方法，实现变相达到将方法当作参数传入目的
+public class HiveTest {
+    public void first() {
+        System.out.println("first");
+    }
+    public void last() {
+        System.out.println("last");
+    }
+	public void wayA() {
+        System.out.println("wayA");
+    }
+
+	public void jobA(String wayName,Class clzName) {
+		// 每个方法开始前都要执行的
+        first();
+        try {
+			// 执行目标方法
+            Method method = clzName.getMethod(wayName);
+            Object invoke = method.invoke(clzName.newInstance());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		// 每个方法结束后都要执行的
+        last();
+    }
+
+	// 模拟调用
+	@Test
+    public void whereRun() {
+        jobA("wayA", HiveTest.class);
+    }
+}
+-----------------
+spring启动前读取application.properties文件，并给static变量赋值
+
+application.properties:
+# xxx setting
+xxx.a=a
+
+PropertiesUtil文件：
+import java.util.Properties;
+public class PropertiesUtil {
+	private static Properties PROPERTIES = new Properties();
+
+	static {
+		try {
+			InputStream inputStream = PropertiesUtil.class.getClassLoader().getResourceAsStream("application.properties");
+
+			if (inputStream != null) {
+				try {
+					// 将文件以键值对形式，加载入Properties
+					PROPERTIES.load(inputStream);
+				} catch (IOException var3) {
+					var3.printStackTrace();
+				}
+
+				try {
+					inputStream.close();
+				} catch (IOException var2) {
+					var2.printStackTrace();
+				}
+			}
+		} catch (Exception var1) {
+			var1.printStackTrace();
+		}
+	}
+
+	public static String prop(String name) {
+        return PROPERTIES.getProperty(name);
+    }
+}
+
+X文件：
+private static A a;
+static {
+	a = PropertiesUtil.prop("xx.a");
+}
+-----------------
+Map获取key名称数组
+Map<String, String> map = new HashMap<String, String>();
+map.put("a", "aa");
+map.put("b", "bb");
+map.put("c", "cc");
+map.put("d", "dd");
+
+System.out.println(map.keySet());//[a, b, c, d]
+for (String s : map.keySet()) {
+	System.out.println(s);
+	System.out.println(map.get(s));
+	System.out.println("==========");
+}
+-----------------
