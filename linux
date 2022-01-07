@@ -413,6 +413,9 @@ apt list --installed
 ubuntu apt查找是否安装某个包
 apt list docker
 ---------------
+centos设置简单密码
+echo 'newPassword'|passwd --stdin user
+---------------
 
 
 

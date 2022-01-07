@@ -147,3 +147,5 @@ https://repo.maven.apache.org/maven2/org/apache/sqoop/sqoop/1.4.6/sqoop-1.4.6-ha
     <classifier>hadoop200</classifier>
 </dependency>
 ---------------
+windows cmd执行mstsc，微软远程桌面控制
+---------------

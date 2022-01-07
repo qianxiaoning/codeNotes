@@ -459,6 +459,7 @@ append() 在内部数组中追加新的字符
 StringBuilder sb = new StringBuilder("xxx");
 sb.append("xxxxx");
 setCharAt(2,xx) 设置下标位置的值
+sb.deleteCharAt(sb.length() - 1); 删除最后一位
 delete(5,26) 删除下标区间
 toString() 转成String对象
 
@@ -5636,11 +5637,15 @@ JdbcTemplate 常用方法，参数放数组中，sql中按顺序?表示
 避免jdbcTemplate.queryForObject为空或者返回多条报错
 try {
 	Object paperPath = jdbcTemplate.queryForObject(sql, new Object[]{code, id}, String.class);
+	// 或查类对象
+	ManageOrderDetailDto dto = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ManageOrderDetailDto.class), id);
 } catch (DataAccessException e) {
 	LOGGER.error(e.getMessage(), e);
 	return null;
 }
-ManageOrderDetailDto dto = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ManageOrderDetailDto.class), id);
+
+查找Map
+Map<String, Object> map = jdbctemplate.queryForMap("SELECT userid,username from user");
 
 多条数据，基本类型或Map
 List<Map<String, Object>> maps = jdbcTemplate.queryForList(statusSql);
@@ -5876,10 +5881,11 @@ map.put("b", "bb");
 map.put("c", "cc");
 map.put("d", "dd");
 
-System.out.println(map.keySet());//[a, b, c, d]
-for (String s : map.keySet()) {
-	System.out.println(s);
-	System.out.println(map.get(s));
+Set<String> keys = map.keySet();
+System.out.println(keys);//[a, b, c, d]
+for (String key : keys) {
+	System.out.println(key);
+	System.out.println(map.get(key));
 	System.out.println("==========");
 }
 -----------------

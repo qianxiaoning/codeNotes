@@ -868,3 +868,7 @@ union all 不去重
 查看mysql日志错误和警告部分
 tail -n500 /var/log/mysqld.log|grep -E 'Warning|ERROR'
 ---------------------
+查询结果按照in里的顺序输出
+select id,en_name from table_a where id in(152224,152225,152220) 
+order by field(id,152224,152225,152220);
+---------------------
