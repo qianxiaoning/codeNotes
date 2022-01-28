@@ -416,8 +416,9 @@ apt list docker
 centos设置简单密码
 echo 'newPassword'|passwd --stdin user
 ---------------
-
-
+端口占用
+查得到服务，却没有pid的，看看是不是其它用户起的，比如切换到root用户看看。
+---------------
 
 
 

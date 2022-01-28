@@ -872,3 +872,20 @@ tail -n500 /var/log/mysqld.log|grep -E 'Warning|ERROR'
 select id,en_name from table_a where id in(152224,152225,152220) 
 order by field(id,152224,152225,152220);
 ---------------------
+with as创建临时表
+with
+A的临时表 as
+(
+	select 需要的A表字段... from A表 where 某一分区
+),
+B的临时表 as
+(
+	select 需要的B表字段... from B表 where 某一分区
+),
+insert overwrite table xx partition(dt='2020-06-14')
+select
+    A的临时表.id,
+    B的临时表.price
+from A的临时表
+left join B的临时表 on A的临时表.spu_id=B的临时表.id;
+---------------------

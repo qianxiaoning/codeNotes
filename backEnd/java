@@ -1617,7 +1617,7 @@ getParent() 获得父目录
 getAbsolutePath() 绝对路径
 创建/删除文件或文件件：
 createNewFile() 创建文件，已经存在不会新建，返回false。路径前面文件夹不存在
-mkdirs() 只建一层
+mkdir() 只建一层
 mkdirs() 新建多层目录，逐层创建 指定多层路径"d:/a/a/a/"
 delete() 删除文件，或空文件夹
 文件夹列表：
