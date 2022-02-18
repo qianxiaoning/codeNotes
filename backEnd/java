@@ -5889,3 +5889,26 @@ for (String key : keys) {
 	System.out.println("==========");
 }
 -----------------
+jmx远程监控jvm信息
+
+1.启动jar包时添加management相关参数
+nohup java -jar -Xms128m -Xmx512m \
+-Dcom.sun.management.jmxremote \
+-Dcom.sun.management.jmxremote.port=9010 \
+-Dcom.sun.management.jmxremote.local.only=false \
+-Dcom.sun.management.jmxremote.authenticate=false \
+-Dcom.sun.management.jmxremote.ssl=false \
+-Djava.rmi.server.hostname=192.168.30.117 \
+test.jar &
+
+2.java代码远程获取jvm运行指标
+private final static String SERVICE_1 = "service:jmx:rmi:///jndi/rmi://192.168.30.117:9010/jmxrmi";
+JMXServiceURL ServiceURL = new JMXServiceURL(SERVICE_1);
+jmxConnector = JMXConnectorFactory.connect(ServiceURL);
+MBeanServerConnection mBeanServerConnection = jmxConnector.getMBeanServerConnection();
+MemoryMXBean memoryMXBean = ManagementFactory.newPlatformMXBeanProxy(mBeanServerConnection,
+                            ManagementFactory.MEMORY_MXBEAN_NAME,
+                            MemoryMXBean.class);
+MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
+System.out.println("heapMemoryUsage :committed = " + convertKB(heapMemoryUsage.getCommitted()));
+-----------------

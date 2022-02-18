@@ -99,16 +99,58 @@ sh xxx.sh
 -----------------------------
 centos中
 redis的安装
-1.下载安装包
-2.安装gcc，配置gcc启动？
-3.make && make install prefix=/usr/local/src/redis
-4.修改redis.conf，
+1.安装gcc依赖
+yum install -y gcc
+2.下载安装包
+wget http://download.redis.io/releases/redis-5.0.3.tar.gz
+tar -zxvf redis-5.0.3.tar.gz
+3.编译
+cd redis-5.0.3
+make
+4.安装到指定目录
+make install prefix=/opt/module/redis/redisInstall
+5.1前台启动
+/opt/module/redis/redisInstall/bin/redis-server
+5.2后台启动
+修改redis.conf，
 #bind 127.0.0.1
 protected-mode no
 requirepass 密码
 daemonize yes
-5.redis-server redis.conf启动服务
 
+/opt/module/redis/redisInstall/bin/redis-server /opt/module/redis/redis-5.0.3/redis.conf
+6.开机启动
+vi /etc/systemd/system/redis.service
+[Unit]
+Description=redis-server
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/opt/module/redis/redisInstall/bin/redis-server /opt/module/redis/redis-5.0.3/redis.conf
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+
+systemctl daemon-reload
+systemctl start redis.service
+systemctl enable redis.service
+
+创建 redis 命令软链接
+ln -s /opt/module/redis/redisInstall/bin/redis-cli /usr/bin/redis
+7.测试
+redis
+ping
+
+8.服务操作命令
+systemctl start redis.service   #启动redis服务
+systemctl stop redis.service   #停止redis服务
+systemctl restart redis.service   #重新启动服务
+systemctl status redis.service   #查看服务当前状态
+systemctl enable redis.service   #设置开机自启动
+systemctl disable redis.service   #停止开机自启动
+-----------------------------
 gitlab的安装
 1.安装ssh,postfix
 2.下载gitlab.rpm
@@ -118,7 +160,7 @@ external_url 'http://ip:端口'
 5.gitlab-ctl reconfigure
 gitlab-ctl restart
 6.开启防火墙端口，阿里云端口
-
+-----------------------------
 nginx的安装
 1.安装插件
 yum -y install gcc pcre pcre-devel zlib zlib-devel openssl openssl-devel
@@ -419,9 +461,14 @@ echo 'newPassword'|passwd --stdin user
 端口占用
 查得到服务，却没有pid的，看看是不是其它用户起的，比如切换到root用户看看。
 ---------------
+linux软链接，类似于windows下的快捷方式
+ln -s a b
+a是源文件，b是链接文件名，其作用是当进入b目录，实际上是链接进入了a目录
+创建软连接时，a目录已经建立，目录b没有建立
 
-
-
+删除软链接
+rm -rf b，不是rm -rf  b/
+---------------
 
 
 
