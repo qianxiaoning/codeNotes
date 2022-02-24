@@ -5912,3 +5912,55 @@ MemoryMXBean memoryMXBean = ManagementFactory.newPlatformMXBeanProxy(mBeanServer
 MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
 System.out.println("heapMemoryUsage :committed = " + convertKB(heapMemoryUsage.getCommitted()));
 -----------------
+docker java api，获取远程服务器docker相关信息
+1.暴露远程服务器docker 2375端口
+vi /lib/systemd/system/docker.service
+Execstart=/usr/bin/dockerd 后加上
+-H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock 
+2.如有需要在服务器添加安全证书，指定特定主机能连接，dockerAPI安全连接方法
+参考：https://blog.csdn.net/qq_43323720/article/details/104318343?spm=1001.2014.3001.5502
+
+步骤：
+2.1在docker服务器建立一个certs文件夹存放密钥
+在该文件夹目录输入openssl genrsa -aes256 -out ca-key.pem 4096
+输入和确认密码
+输入openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem
+输入密码
+最后输入docker服务器ip
+输入openssl genrsa -out server-key.pem 4096
+输入openssl req -subj "/CN=docker服务器ip" -sha256 -new -key server-key.pem -out server.csr
+输入echo subjectAltName = DNS:docker服务器ip,IP:docker服务器ip,IP:0.0.0.0,IP:127.0.0.1 >> extfile.cnf
+输入echo extendedKeyUsage = serverAuth >> extfile.cnf
+输入openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile extfile.cnf 这里会再次确认一次密码
+输入openssl genrsa -out key.pem 4096
+输入openssl req -subj '/CN=client' -new -key key.pem -out client.csr
+输入echo extendedKeyUsage = clientAuth >> extfile.cnf
+输入openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out cert.pem -extfile extfile.cnf 再次确认密码
+rm -v client.csr server.csr //删除临时文件
+chmod -v 0400 ca-key.pem key.pem server-key.pem //配置权限
+chmod -v 0444 ca.pem server-cert.pem cert.pem //配置权限
+此时在certs文件夹下，会有八个文件
+2.2将ca.pem、ca-key.pem、cert.pem、key.pem拷至运行java程序的机器某个文件夹上，赋予访问权限
+vi /lib/systemd/system/docker.service
+去掉-H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock
+加上-D --tlsverify=true --tlscert=/目录/server-cert.pem --tlskey=/目录/server-key.pem --tlscacert=/目录/ca.pem -H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock
+systemctl daemon-reload && service docker restart
+2.3 java调用DockerClientConfig安全认证连接docker
+
+3.重启docker
+systemctl daemon-reload && systemctl restart docker
+4.引入pom依赖
+com.github.docker-java:docker-java
+5.java连接docker
+DockerClient dockerClient = DockerClientBuilder.getInstance("tcp://xxx.xxx.xxx.xxx:2375").build();
+// docker info
+Info info = dockerClient.infoCmd().exec();
+System.out.println(info);
+// 镜像
+List<Image> imageInfo = dockerClient.listImagesCmd().exec();
+System.out.println(imageInfo);
+// 容器
+List<Container> containerInfo = dockerClient.listContainersCmd().exec();
+System.out.println(containerInfo);
+// dockerClient.等等
+-----------------
