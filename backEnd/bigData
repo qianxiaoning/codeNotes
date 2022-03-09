@@ -3833,3 +3833,103 @@ ads_activity_stats(
 `reduce_amount` DECIMAL(16,2) COMMENT '优惠金额',
 `reduce_rate` DECIMAL(16,2) COMMENT '补贴率'
 -------------
+搭建hadoop2.7.2单机
+1.ssh, rsync, jdk8
+2.配置hadoop环境变量
+3./etc/hadoop/core-site.xml
+<configuration> 
+    <property> 
+        <name>fs.defaultFS</name> 
+        <value>hdfs://bigdata101:9000</value> 
+    </property> 
+    <!-- 配置 HDFS 网页登录使用的静态用户为 shonqian -->
+    <property>
+            <name>hadoop.http.staticuser.user</name>
+            <value>root</value>
+    </property>
+    <!-- 配置 该shonqian（superUser）允许通过代理访问的主机节点 -->
+    <property>
+            <name>hadoop.proxyuser.root.hosts</name>
+            <value>*</value>
+    </property>
+    <!-- 配置 该shonqian（superUser）允许通过代理用户所属组 -->
+    <property>
+            <name>hadoop.proxyuser.root.groups</name>
+            <value>*</value>
+    </property>
+</configuration>
+4./etc/hadoop/hdfs-site.xml
+<configuration> 
+    <property> 
+        <name>dfs.replication</name> 
+        <value>1</value> 
+    </property> 
+</configuration>
+4.ssh主机授权
+5.在本地MapReduce运行作业
+格式化文件系统
+bin/hdfs namenode -format
+启动NameNode和DataNode进程
+sbin/start-dfs.sh
+
+jps：
+3080 DataNode
+3273 SecondaryNameNode
+2988 NameNode
+
+进程日志输出在$HADOOP_LOG_DIR目录（默认为$HADOOP_HOME/logs）
+
+NameNode 的 Web 界面
+http://ip:50070/
+
+6.创建hdfs文件目录
+bin/hdfs dfs -mkdir /user 
+bin/hdfs dfs -mkdir /user/shon
+
+将本地文件放入hdfs中
+bin/hdfs dfs -put etc/hadoop /user/shon
+
+运行示例：
+bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar grep /user/shon/a /output 'dfs[az.]+'
+
+将hdfs文件复制到本地
+bin/hdfs dfs -get /hdfsUrl /serverUrl
+
+直接查看hdfs上文件
+bin/hdfs dfs -cat /user/shon/a
+
+7.关闭hdfs
+sbin/stop-dfs.sh
+
+8.运行ResourceManager进程和 NodeManager进程
+/etc/hadoop/mapred-site.xml
+<configuration> 
+    <property> 
+        <name>mapreduce.framework.name</name> 
+        <value>yarn</value> 
+    </property> 
+</configuration>
+
+/etc/hadoop/yarn-site.xml
+<configuration> 
+    <property> 
+        <name>yarn.nodemanager.aux-services</name> 
+        <value>mapreduce_shuffle</value> 
+    </property> 
+</configuration>
+
+sbin/start-yarn.sh
+
+jps：
+5410 NodeManager
+3080 DataNode
+5304 ResourceManager
+3273 SecondaryNameNode
+2988 NameNode
+
+ResourceManager 的 Web 界面
+http://192.168.30.117:8088/
+
+9.关闭yarn进程
+sbin/stop-yarn.sh
+-------------

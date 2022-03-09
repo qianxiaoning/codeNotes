@@ -165,8 +165,10 @@ nginx的安装
 1.安装插件
 yum -y install gcc pcre pcre-devel zlib zlib-devel openssl openssl-devel
 2.下载安装包
-3.进入安装目录
-./configure --prefix=/usr/local/src/nginx --with-http_stub_status_module --with-http_ssl_module
+比如wget https://nginx.org/download/nginx-1.19.9.tar.gz --no-check-certificate
+tar -zxvf 解压，进入
+3.设置安装目录
+./configure --prefix=/opt/module/nginx --with-http_stub_status_module --with-http_ssl_module
 make
 make install
 4.切换到安装目录的sbin目录下，
@@ -278,6 +280,15 @@ firewall-cmd --zone=public --add-port=2181/tcp --permanent
 systemctl restart firewalld.service
 3.查看防火墙开放端口
 firewall-cmd --list-ports
+
+对指定ip开放防火墙
+firewall-cmd --zone=public --add-rich-rule 'rule family="ipv4" source address="192.168.20.10" accept' --permanent
+
+防火墙重新载入生效规则
+firewall-cmd --reload
+
+查看防火墙所有规则
+firewall-cmd --list-all
 ---------------
 扩容虚拟机
 虚拟机如有快照，完整克隆
@@ -471,12 +482,75 @@ rm -rf b，不是rm -rf  b/
 ---------------
 查看文件或目录大小
 du -sh file
+---------------
+将服务添加到 service（老模式，不推荐使用） 和 systemctl
+以nginx举例：
 
+service方式：
+1.添加nginx启动脚本
+vim /etc/init.d/nginx
+2.添加内容
+#!/bin/bash
+#Startup script for the nginx Web Server
+#chkconfig: 2345 85 15
+nginx=/opt/module/nginx/sbin/nginx
+conf=/opt/module/nginx/conf/nginx.conf
+case $1 in
+start)
+echo -n "Starting Nginx"
+$nginx -c $conf
+echo " done."
+;;
+stop)
+echo -n "Stopping Nginx"
+killall -9 nginx
+echo " done."
+;;
+test)
+$nginx -t -c $conf
+echo "Success."
+;;
+reload)
+echo -n "Reloading Nginx"
+ps auxww | grep nginx | grep master | awk '{print $2}' | xargs kill -HUP
+echo " done."
+;;
+restart)
+$nginx -s reload
+echo "reload done."
+;;
+*)
+echo "Usage: $0 {start|restart|reload|stop|test|show}"
+;;
+esac
+3.添加执行权限
+chmod +x nginx
+4.启动和关闭
+service nginx start
+service nginx stop
 
-
-
-
-
+systemctl方式：
+1.添加启动文件
+vim /usr/lib/systemd/system/nginx.service
+2.添加内容
+[Unit]
+Description=nginx
+After=network.target
+[Service]
+Type=forking
+PIDFile=/opt/module/nginx/logs/nginx.pid
+ExecStart=/opt/module/nginx/sbin/nginx
+ExecReload=/opt/module/nginx/sbin/nginx -s reload
+ExecStop=/opt/module/nginx/sbin/nginx -s stop
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target
+3.启动和关闭
+systemctl start nginx
+systemctl stop nginx
+---------------
+linux遇到PATH缓存问题，当前xshell重新连接即可
+---------------
 
 
 

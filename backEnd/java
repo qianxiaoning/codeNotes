@@ -5916,7 +5916,7 @@ docker java api，获取远程服务器docker相关信息
 1.暴露远程服务器docker 2375端口
 vi /lib/systemd/system/docker.service
 Execstart=/usr/bin/dockerd 后加上
--H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock 
+-H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock \
 2.如有需要在服务器添加安全证书，指定特定主机能连接，dockerAPI安全连接方法
 参考：https://blog.csdn.net/qq_43323720/article/details/104318343?spm=1001.2014.3001.5502
 
