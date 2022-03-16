@@ -3842,17 +3842,17 @@ ads_activity_stats(
         <name>fs.defaultFS</name> 
         <value>hdfs://bigdata101:9000</value> 
     </property> 
-    <!-- 配置 HDFS 网页登录使用的静态用户为 shonqian -->
+    <!-- 配置 HDFS 网页登录使用的静态用户为 root -->
     <property>
             <name>hadoop.http.staticuser.user</name>
             <value>root</value>
     </property>
-    <!-- 配置 该shonqian（superUser）允许通过代理访问的主机节点 -->
+    <!-- 配置 该root（superUser）允许通过代理访问的主机节点 -->
     <property>
             <name>hadoop.proxyuser.root.hosts</name>
             <value>*</value>
     </property>
-    <!-- 配置 该shonqian（superUser）允许通过代理用户所属组 -->
+    <!-- 配置 该root（superUser）允许通过代理用户所属组 -->
     <property>
             <name>hadoop.proxyuser.root.groups</name>
             <value>*</value>

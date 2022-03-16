@@ -250,6 +250,8 @@ find /查找目录/ -name 文件名
 find /查找目录/ -name 路径名 -type d（路径名不能加/？）
 查找内容
 find . | xargs grep -ril '文件内容' 只显示文件名称
+指定目录查找内容
+grep -r 192.168.30.81 /opt/module/DataSphereStudio/linkis | less
 
 查看文件
 less 文件
@@ -551,14 +553,27 @@ systemctl stop nginx
 ---------------
 linux遇到PATH缓存问题，当前xshell重新连接即可
 ---------------
+查找指定指令
+history | grep 'ln -snf'
+---------------
+查看服务器所有python软链
+ls -al /usr/bin | grep python
+将python软链修改指向为python2或者python3
+ln -snf python2 /usr/bin/python
+ln -snf /opt/module/python3/bin/python3 /usr/bin/python
 
+python软链修改为python3后，修改yum配置文件，使yum能正常使用
+vi /usr/bin/yum
+vi /usr/libexec/urlgrabber-ext-down
+将 #!/usr/bin/python 改为 #!/usr/bin/python2.7
 
-
-
-
-
-
-
-
-
-
+yum install可正常使用
+---------------
+查看端口占用
+netstat -lnp|grep 20303
+---------------
+两台服务器传输文件
+进本地/a/下b文件，传到192.168.10.211的/c/目录下
+rsync -av --progress /a/b root@192.168.10.211:/c/
+再输入root密码
+---------------
