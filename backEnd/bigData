@@ -351,6 +351,8 @@ ssh-keygen -t rsa
 ssh-copy-id bigData102
 ssh-copy-id bigData103
 ssh-copy-id bigData104
+ssh-copy-id 192.168.30.117(其它机器ip))
+ssh-copy-id localhost(自身)
 返回普通用户
 exit
 
@@ -896,6 +898,7 @@ desc test_user;
 打开metastore属性，字符集默认是latin1
 只能修改对应字段的字符集，把需要存中文的列改为utf8
 
+=====二次安装直接在这开始======
 在metastore库下运行sql
 # 修改字段注释字符集
 alter table COLUMNS_V2 modify column COMMENT varchar(256) character set utf8;
@@ -3932,4 +3935,35 @@ http://192.168.30.117:8088/
 
 9.关闭yarn进程
 sbin/stop-yarn.sh
+-------------
+scala-2.11.12安装
+环境变量
+#scala
+export SCALA_HOME=/opt/module/scala-2.11.12
+export PATH=$PATH:$SCALA_HOME/bin
+
+验证
+scala -version 
+-------------
+spark-2.4.3安装
+环境变量
+#spark
+export SPARK_HOME=/opt/bigdata/spark-2.4.3
+export PATH=$PATH:$SPARK_HOME/bin
+
+验证
+spark-shell
+
+vim conf/spark-env.sh
+export SPARK_HOME=/opt/bigdata/spark-2.4.3
+export SCALA_HOME=/opt/bigdata/scala-2.11.12
+export JAVA_HOME=/opt/java/jdk1.8.0_212
+export HADOOP_HOME=/opt/bigdata/hadoop-2.7.2
+export PATH=$PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$SCALA_HOME/bin
+export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+export YARN_CONF_DIR=$YARN_HOME/etc/hadoop
+#export SPARK_MASTER_IP=218.199.92.227
+#SPARK_LOCAL_DIRS=/home/haodop/spark-1.6.1-bin-hadoop2.6
+#SPARK_DRIVER_MEMORY=1G
+export SPARK_LIBARY_PATH=.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib:$HADOOP_HOME/lib/native
 -------------

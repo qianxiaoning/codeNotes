@@ -73,6 +73,9 @@ chkconfig iptables off
 临时关闭防火墙 立即生效
 service iptables stop
 
+centos6 iptables开放某一端口
+iptables -I INPUT -p tcp --dport 50070 -j ACCEPT
+
 查询进程root pid等
 ps -ef
 | 管道
@@ -92,7 +95,7 @@ kill -9 3660 强制杀死
 -----------------------------
 文本中
 全文替换，s表替换，%表整个文件，g当前行全局
-:%s/7000/7001/g
+:%s/7000/7001/g（特殊字符\转义，比如\/）
 
 执行shell脚本
 sh xxx.sh
@@ -576,4 +579,7 @@ netstat -lnp|grep 20303
 进本地/a/下b文件，传到192.168.10.211的/c/目录下
 rsync -av --progress /a/b root@192.168.10.211:/c/
 再输入root密码
+---------------
+vim批量操作
+esc - ctrl+v - shift+i - 输入操作 - esc
 ---------------
