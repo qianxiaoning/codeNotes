@@ -147,5 +147,51 @@ https://repo.maven.apache.org/maven2/org/apache/sqoop/sqoop/1.4.6/sqoop-1.4.6-ha
     <classifier>hadoop200</classifier>
 </dependency>
 ---------------
+本地jar包安装到maven仓库
+1.在maven官网下载jar包后
+2.cmd执行指令（参照maven官网groupId和artifactId坐标）
+mvn install:install-file -Dfile=C:\Users\Administrator\Desktop\opendj-core-3.0.0.jar -DgroupId=org.forgerock.opendj -DartifactId=opendj-core -Dversion=3.0.0 -Dpackaging=jar
+-----------------
+maven仓库官网搜索的时候
+可以带上groupId
+比如搜org.forgerock.opendj
+-----------------
+maven仓库搜groupId下面某jar包找不到时
+搜artifactId，然后看列表里的groupId，有没有非常相近的，有时候groupId会有小改动
+-----------------
 windows cmd执行mstsc，微软远程桌面控制
 ---------------
+gradle安装配置
+1.下载gradle
+2.配置环境变量
+k:GRADLE_HOME
+v:gradle安装目录
+
+k:GRADLE_USER_HOME
+v:gradle仓库目录
+
+k:PATH
+v:添加%GRADLE_HOME%\bin;
+
+在Gradle安装目录下的 init.d 文件夹下，新建一个 init.gradle 文件
+allprojects {
+    repositories {
+        maven { url 'file:///C:/Java/maven_repository'}
+        mavenLocal()
+        maven { name "Alibaba" ; url "https://maven.aliyun.com/repository/public" }
+        maven { name "Bstek" ; url "http://nexus.bsdn.org/content/groups/public/" }
+        mavenCentral()
+    }
+
+    buildscript { 
+        repositories { 
+            maven { name "Alibaba" ; url 'https://maven.aliyun.com/repository/public' }
+            maven { name "Bstek" ; url 'http://nexus.bsdn.org/content/groups/public/' }
+            maven { name "M2" ; url 'https://plugins.gradle.org/m2/' }
+        }
+    }
+}
+
+3.idea-settings-gradle
+Gradle user home里配置gradle仓库地址
+下面指定gradle本机安装路径
