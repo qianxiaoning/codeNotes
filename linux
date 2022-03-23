@@ -75,6 +75,12 @@ service iptables stop
 
 centos6 iptables开放某一端口
 iptables -I INPUT -p tcp --dport 50070 -j ACCEPT
+或者
+vim /etc/sysconfig/iptables
+添加
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 10000 -j ACCEPT
+重启
+service iptables restart
 
 查询进程root pid等
 ps -ef
@@ -582,4 +588,15 @@ rsync -av --progress /a/b root@192.168.10.211:/c/
 ---------------
 vim批量操作
 esc - ctrl+v - shift+i - 输入操作 - esc
+---------------
+按时间顺序列出日志文件
+ll -t | less
+---------------
+centos yum源不正确时
+去https://developer.aliyun.com/mirror/ 更换阿里镜像
+或者搜索框搜索如nginx对应源到本地
+1.rpm -ivh http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+2.yum info nginx
+3.yum install nginx
+4.service nginx start
 ---------------

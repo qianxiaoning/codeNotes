@@ -233,3 +233,8 @@ public class ZookeeperApplicationTests implements Watcher {
 set /username qxn1
 修改完成后，在java程序后台及时收到了他们监听的目录节点数据变更后的值
 "qxn1"
+-----------------
+修改zookeeper默认8080端口
+zoo.cfg文件添加
+admin.serverPort=端口号
+-----------------

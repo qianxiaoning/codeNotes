@@ -1176,6 +1176,7 @@ hbase有两个角色组成：hmaster,hregionservers
 
 vim regionservers
 删去localhost
+加上
 bigData102
 bigData103
 bigData104
@@ -3966,4 +3967,24 @@ export YARN_CONF_DIR=$YARN_HOME/etc/hadoop
 #SPARK_LOCAL_DIRS=/home/haodop/spark-1.6.1-bin-hadoop2.6
 #SPARK_DRIVER_MEMORY=1G
 export SPARK_LIBARY_PATH=.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib:$HADOOP_HOME/lib/native
+-------------
+修改hbase默认端口
+vim conf/hbase-site.xml
+
+<property>
+    <name>hbase.master.port</name>
+    <value>16000</value>
+</property>
+<property>
+    <name>hbase.master.info.port</name>
+    <value>16010</value>
+</property>
+<property>
+    <name>hbase.regionserver.port</name>
+    <value>16201</value>
+</property>
+<property>
+    <name>hbase.regionserver.info.port</name>
+    <value>16301</value>
+</property>
 -------------

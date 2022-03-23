@@ -195,3 +195,13 @@ allprojects {
 3.idea-settings-gradle
 Gradle user home里配置gradle仓库地址
 下面指定gradle本机安装路径
+---------------
+maven install/gradle install打包后，还会在本地maven仓库生成jar包，给别的项目引用使用
+---------------
+官方推荐使用 Hadoop-2.7.2、Hive-1.2.1、Spark-2.4.3 和 Scala-2.11.12 对 Linkis 进行编译
+说明Linkis需要在linux编译，windows没有这些环境
+cd incubator-linkis-x.x.x
+mvn -N  install
+
+cd也说明是在linux环境操作的
+---------------
