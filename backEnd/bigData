@@ -1910,6 +1910,7 @@ hiveserver2 &
 或
 $HIVE_HOME/bin/hiveserver2 &
 或
+nohup hive --service metastore & ?
 nohup hive --service hiveserver2 &
 
 启动beeline，连接hiveserver2
@@ -3920,6 +3921,15 @@ sbin/stop-dfs.sh
         <name>yarn.nodemanager.aux-services</name> 
         <value>mapreduce_shuffle</value> 
     </property> 
+    <!-- 关闭yarn对物理内存和虚拟内存的限制检查 -->
+    <property>
+        <name>yarn.nodemanager.pmem-check-enabled</name>
+        <value>false</value>
+    </property>
+	<property>
+        <name>yarn.nodemanager.vmem-check-enabled</name>
+        <value>false</value>
+    </property>
 </configuration>
 
 sbin/start-yarn.sh

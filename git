@@ -1,4 +1,4 @@
---------------------------
+--------------
 git快捷入手（核心）
 一、安装对应操作系统git
  一、下载
@@ -153,7 +153,7 @@ $ git config --global user.email "email@example.com"
   11、删除新功能分支
   $ git branch -d newTip
 七、工作结束
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
 廖雪峰git操作总结
  查看状态$ git status
  查看未add的修改$ git diff
@@ -252,7 +252,7 @@ $ git config --global user.email "email@example.com"
   st表示status
   $ git config --global alias.st status
   git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit" 
----------------------------------------------
+---------------------------------
 git基本操作（手册）
 使用 Git 来获取 Git 的升级
 $ git clone git://git.kernel.org/pub/scm/git/git.git
@@ -488,25 +488,25 @@ $ git rebase master
 用变基解决变基
 服务器上的 Git - 协议
 等等
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
 指令
 创建文件
 在'其它'文件夹下创建文件qqq
 $ echo '其他'>qqq
 $ ls 查看文件夹目录
 $ touch README.md 添加一个文件
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
 vim快捷键
 撤销：esc状态下按u
 保存并退出：esc，:wq
 全部保存退出：esc:wqa
 强制退出：:q!
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
 bash快捷键
 ctrl+u删除光标左边
 ctrl+k删除光标右边
 ctrl+w删除一个单词
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
 git的不同种类
 指令版
 cmd中不能运行git命令，除非安装配置时选择第二个
@@ -516,7 +516,7 @@ gui界面版
 git gui,git extensions,TortoiseGit,Sourcetree
 git gui获取SSH pub KEY
 git gui-help-show ssh key添加到github里的settings-ssh and gpg keys里
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
 git概念原理
 CVS、Subversion、Perforce、Bazaar 等等，将它们保存的信息看作是一组基本文件和每个文件随时间逐步累积的差异
 git把数据看作是对小型文件系统的一组快照
@@ -541,25 +541,25 @@ $ git pull和$ git push简写都只会拉推对应远端分支，不会拉推所
 
 服务器没有a文件，本地有a，但是版本落后于远端，git pull不冲突直接删除本地a文件，需要的话用reset或者revert版本回退。
 如果我们本地文件版本更新，这时git pull时就会提示冲突
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
 github界面
 github仓库里的new pull request按钮是，别人fork了你的仓库，对你提了一些修改，希望你能拉取合并的。
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
 git拉取规则
 针对项目一期，二期修改的
 改一期，本地pc-qxn拉远端master，推远端pc-qxn，推远端master，登本地dev，拉取最新dev,选择pc-qxn节点右击选择“和分支合并”选择pc-qxn，合并本地pc-qxn，然后推送远端dev。
 改二期，登本地dev，拉远端dev，推远端dev。
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
 git多人协作
 一、仓库合作
  settings-collaborators-输入用户名添加-对方bellNotice-accept invitation
 二、创建组织organization
  创建好后把组织地址发给被邀请的人，如https://github.com/qxnTestOrganization，对方跳转url点击接收邀请。
 三、发起pull request
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
 github快捷键
 shift+/打开快捷键面板
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
 git报错
 warning: LF will be replaced by CRLF in README.md.
 The file will have its original line endings in your working directory.
@@ -568,11 +568,11 @@ $ rm -rf .git  // 删除.git
 $ git config --global core.autocrlf false  //禁用自动转换 
 $ git init    
 $ git add .  
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
 测试ssh是否添加成功
 ssh -T git@github.com
 返回Hi qianxiaoning!成功 
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
 $ git config --global user.name "Your Name"
 $ git config --global user.email "email@example.com"
 在公司电脑全局设置email时，会把自己项目的email地址也改变，从而使github面板能提交但是不会显示贡献值
@@ -713,7 +713,7 @@ develop => 新建feature1.2，开发完毕merge到develop，develop => 新建rel
 
 merge合并后会把commit记录也带过去
 如：在master分支，git merge dev，会把dev分支上的commit记录带到master上 
---------------------------
+--------------
 eclipse的git操作
 1.初始化：
 仓库右键-team-share project-在工作空间新建文件夹
@@ -735,10 +735,10 @@ push后红色标志，reject-点开team synchronizing界面-pull-手动修改合
 仓库右键-team-merge...-选择分支
 9.克隆远程仓库
 右上角open perspective-git-复制远程仓库路径-ctrl v-选择本地位置-切换java视图-import导入项目
---------------------------
+--------------
 idea的git操作
 vcs-git-resolve conflicts
---------------------------
+--------------
 git切换远端仓库
 当远端仓库需要删除时，如何将本地的.git同步到新建仓库
 在项目中输入下面指令：
@@ -749,7 +749,15 @@ git branch -r | grep -v '\->' | while read remote; do git branch --track "${remo
 git remote set-url origin git@47.111.235.96:qxn/c.git//修改远端路径
 git push -u origin --tags//推送所有tag
 git push -u origin --all//推送所有分支
---------------------------
+--------------
 gitlab版本回滚
 git reset --hard 3628164
 git push -f//线上也回滚
+--------------
+git提示
+ERROR: You're using an RSA key with SHA-1, which is no longer allowed. Please use a newer client or a different key type.
+时，
+执行ssh-keygen -t ecdsa -C "xxx@qq.com"
+cat /root/.ssh/id_ecdsa.pub
+即可
+--------------
