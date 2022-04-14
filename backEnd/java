@@ -5239,10 +5239,10 @@ keyProperty="id" 将获取的主键值赋值给po类中的xx属性，通过setXx
 -------------------------------
 阿里分层领域模型规约：
 do(data object) 与表对应，通过dao层向上传递的数据对象
-dto(data transfer object) 数据传输对象，service向外传输的对象
+dto(data transfer object) 数据传输对象，service向外传输的对象（service传给前端的）
 bo(business object) 业务对象，由service输出的封装业务逻辑的对象
 ao(application object) 应用对象
-vo(view object) 显示层对象，web向模板渲染引擎层传输的对象
+vo(view object) 显示层对象，web向模板渲染引擎层传输的对象（前端传到controller的）
 -------------------------------
 shiro安全框架，完成认证授权
 1.用shiro给密码加密，
@@ -5963,4 +5963,20 @@ System.out.println(imageInfo);
 List<Container> containerInfo = dockerClient.listContainersCmd().exec();
 System.out.println(containerInfo);
 // dockerClient.等等
+-----------------
+字符串不为空
+StringUtils.isNotEmpty()//空格不为空
+StringUtils.isNotBlank()//空格为空
+-----------------
+集合是否为空
+CollectionUtils.isEmpty(List)//null和空集合都为空
+-----------------
+LinkedHashSet对List去重
+LinkedHashSet<String> names = new LinkedHashSet<>();
+for (Vo vo : List) {
+	names.add(vo.getName());
+}
+if (List.size() != names.size()) {
+	// 有重复
+}
 -----------------

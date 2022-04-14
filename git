@@ -761,3 +761,6 @@ ERROR: You're using an RSA key with SHA-1, which is no longer allowed. Please us
 cat /root/.ssh/id_ecdsa.pub
 即可
 --------------
+git clone指定分支
+git clone -b v2.8.1 https://git.xxx.git
+--------------

@@ -3998,3 +3998,10 @@ vim conf/hbase-site.xml
     <value>16301</value>
 </property>
 -------------
+配置spark-sql读取hive的元数据
+//将hive-site.xml软连接到spark的conf配置目录中：
+cd $SPARK_HOME/conf
+ln -s /opt/bigdata/hive2.3.3/conf/hive-site.xml hive-site.xml
+//将mysql驱动包拷贝到spark的jars目录下
+cp $HIVE_HOME/lib/mysql-connector-java-5.1.35-bin.jar $SPARK_HOME/jars
+-------------

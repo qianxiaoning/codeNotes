@@ -799,6 +799,10 @@ NEW WHERE ranking=1
 
 发布文章，文章表的正文这一字段可以独立出一张表，因为正文文本量大，会导致主表慢。
 ----------------------------
+批量insert
+insert into 表名 (列1，列2，列3...) values(值1，值2，值3...),(值1，值2，值3...);
+
+批量update
 一条语句执行多个update操作
 如：
 update table set creator_name = '1', a = '1' where id = 1;update table set creator_name = '2', a = '2' where id = 2;
