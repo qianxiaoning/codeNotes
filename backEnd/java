@@ -3137,6 +3137,16 @@ public class Test{
 	}
 }
 
+泛型<T>和T
+<T>代表传入参数泛型T
+<T> T functionA(Class<T> cls);
+
+Object用泛型接收
+T value = (T) jdbcTemplate.queryForObject(sqlText, Object.class);
+
+如果没有传入的泛型，直接返回泛型就是
+T functionA(String s);这么写
+
 泛型通配符?
 代表一种任意的参数类型（实参类型）
 
@@ -5645,7 +5655,7 @@ try {
 }
 
 查找Map
-Map<String, Object> map = jdbctemplate.queryForMap("SELECT userid,username from user");
+Map<String, Object> map = jdbcTemplate.queryForMap("SELECT userid,username from user");
 
 多条数据，基本类型或Map
 List<Map<String, Object>> maps = jdbcTemplate.queryForList(statusSql);
