@@ -752,7 +752,7 @@ git push -u origin --all//推送所有分支
 --------------
 gitlab版本回滚
 git reset --hard 3628164
-git push -f//线上也回滚
+git push -f//线上也回滚（线上提交删除）
 --------------
 git提示
 ERROR: You're using an RSA key with SHA-1, which is no longer allowed. Please use a newer client or a different key type.

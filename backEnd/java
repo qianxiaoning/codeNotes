@@ -3744,17 +3744,17 @@ jvm参数
 -------------------------------
 Java中对象的引用方式
 1)强引用
-Object o1=new Object();
+Object o1 = new Object();
 
-2)弱引用(WeakReference<T>) 只要有GC时,弱引用引用的对象就会被回收。
+2)弱引用(WeakReference<T>) 只要有GC时，弱引用引用的对象就会被回收。
 WeakReference<ClassB> wr = new WeakReference<ClassB>(new ClassB());
 wr.get();// 取对象
 
-3)软引用(SoftReference<T>) 内存不足时（full gc）,软引用引用的对象自动被回收。
+3)软引用(SoftReference<T>) 内存不足时（full gc），软引用引用的对象自动被回收。
 SoftReference<ClassB> sr = new SoftReference<ClassB>(new ClassB());
 wr.get();// 取对象
 
-4)虚引用(PhantomReference<T>) 当对象被回收时,可以得到通知。
+4)虚引用(PhantomReference<T>) 当对象被回收时，可以得到通知。
 -------------------------------
 ThreadLocal 对象 线程内部单例
  * 此对象提供了一种线程绑定机制
@@ -5989,4 +5989,68 @@ for (Vo vo : List) {
 if (List.size() != names.size()) {
 	// 有重复
 }
+-----------------
+java枚举类，根据code获取对应name
+public enum SymbolConstant {
+
+    Symbol_0(0, "大于"),
+    Symbol_1(1, "等于");
+
+    SymbolConstant(int code, String codeString) {
+        this.code = code;
+        this.codeString = codeString;
+    }
+
+    int code;
+    String codeString;
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getCodeString() {
+        return codeString;
+    }
+
+    public void setCodeString(String codeString) {
+        this.codeString = codeString;
+    }
+}
+
+测试类
+System.out.println(Enum.valueOf(SymbolConstant.class,"Symbol_"+"0"));
+System.out.println(Enum.valueOf(SymbolConstant.class,"Symbol_"+"0").getCodeString());//大于
+-----------------
+递归循环，生成嵌套括号
+// formulasCode最终字符串
+private static String generate(List<OneformulaVo> formulas, String formulasCode){
+	for (int i = 0; i < formulas.size(); i++) {
+		...
+		// 未进入递归时
+		if (...) {
+			// 拼接(#a == #a1)
+			formulasCode += "(#" + leftCode + " " + opCode + " #" + rightCode + ")";
+		} else {
+			// 有递归时，前后加一个括号
+			formulasCode += "(";
+			// 将递归拼接的字符串返回出来
+			formulasCode = generate(formulas, formulasCode);
+			formulasCode += ")";
+		}
+	}
+	return formulasCode;
+}
+-----------------
+do,vo类貌似不能强转Map
+但是do,vo,Map能转JSONObject
+List能转JSONArray
+-----------------
+java写try catch捕获异常时
+都控到最里面就行了，做最精细的异常捕获
+
+如果外层还写了，内层抛出的异常会被外层捕获，外层会触发try catch
 -----------------
