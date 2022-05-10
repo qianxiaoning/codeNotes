@@ -6063,3 +6063,130 @@ java写try catch捕获异常时
 手动调用mybatisPlus的雪花算法
 long id = IdWorker.getId();
 -----------------
+mybatisPlus保存后，do就能获取到id了
+aService.save(do);
+do.getId();//有值
+-----------------
+设计模式：
+
+工厂模式
+场景：
+1.函数接口
+2.定义函数
+3.函数工厂，选择返回函数
+4.引用函数，通过函数工厂选择函数，调用函数方法
+
+1.函数接口
+/**
+ * <简述> 函数接口
+ * <详细描述> Function
+ */
+public interface Function {
+
+    /**
+     * <简述> 返回函数编码
+     * <详细描述> getCode
+     * @return String
+     */
+    String getCode();
+
+    /**
+     * <简述> 执行函数计算
+     * <详细描述> calculate
+     * @param params 函数参数
+     * @return BigDecimal
+     */
+    BigDecimal calculate(Map<String, Object> params);
+
+}
+
+2.定义函数
+/**
+ * <简述> 加函数
+ * <详细描述> AddFunction
+ */
+public class AddFunction implements Function {
+
+    /**
+     * @Field functionCode : 函数编码
+     */
+    private String functionCode = "add";
+
+    /**
+     * @Field functionCode : 函数名称
+     */
+    private String functionName = "加法";
+
+    /**
+     * @Field param1 : 被加数
+     */
+    private String param1 = "augend";
+
+    /**
+     * @Field param2 : 加数
+     */
+    private String param2 = "addend";
+
+    @Override
+    public String getCode() {
+        return this.functionCode;
+    }
+
+    @Override
+    public BigDecimal calculate(Map<String, Object> params) {
+        Object o = params.get(param1);
+        Object o1 = params.get(param2);
+        // 计算逻辑
+        return null;
+    }
+}
+
+3.函数工厂，选择返回函数
+/**
+ * <简述> 函数工厂
+ * <详细描述> FunctionFactory
+ */
+@Component
+public class FunctionFactory {
+
+    /**
+     * @Field funcMap : 函数map
+     */
+    private Map<String, Function> funcMap;
+
+    /**
+     * @Field funcList : 所有继承Function接口的类
+     */
+    @Autowired
+    private List<Function> funcList;
+
+    /**
+     * <简述> 项目启动时执行该方法
+     * <详细描述> init
+     * @return void
+     */
+    @PostConstruct
+    public void init() {
+        // Collectors.toMap，3个参数，(键,值,新老键重复时的取键方式)
+        this.funcMap = funcList.stream().collect(Collectors.toMap(e -> e.getCode(), e -> e, (e1, e2) -> e1));
+    }
+
+    public Function getFunctionByCode(String code){
+        Function func = this.funcMap.get(code);
+        if (func == null) {
+            // TODO throw 找不到函数异常
+        }
+        return func;
+    }
+}
+
+4.引用函数，通过函数工厂选择函数，调用函数方法
+/**
+ * functionFactory : 函数工厂
+ */
+@Autowired
+private FunctionFactory functionFactory;
+
+Function func = functionFactory.getFunctionByCode("add");
+BigDecimal value = func.calculate(Map);
+-----------------
