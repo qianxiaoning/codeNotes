@@ -5675,6 +5675,12 @@ Integer total = namedParameterJdbcTemplate.queryForObject(totalSql, Map<String, 
 Object obj = new Object();
 JSONObject jo = (JSONObject) JSON.toJSON(obj);
 Map<String, Object> map = JSON.<Map<String, Object>>parseObject(jo.toJSONString(), Map.class);
+
+对象转json字符串（会忽略值为null的属性）
+JSONObject.toJSONString(obj))
+
+不忽略值为null的属性
+JSONObject.toJSONString(obj, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
 ---------------------
 4 过滤器
 法1 @WebFilter法
@@ -6189,4 +6195,21 @@ private FunctionFactory functionFactory;
 
 Function func = functionFactory.getFunctionByCode("add");
 BigDecimal value = func.calculate(Map);
+-----------------
+mybatisPlus对条件构造器的清除
+QueryWrapper.clear();
+-----------------
+mybatis resultMap传多个参数
+<select id="a" resultMap="aRM">
+	select a, b_b, c_c, d_d from xxx
+	where b_b = #{bb} and c_c = #{cc}
+</select>
+
+<resultMap id="aRM" type="xxx.dto">
+	<collection property="dtoProperty"
+				select="xxx.xxx"
+				column="{bb=b_b,cc=c_c,dd=d_d}">
+				<!-- column="{自定义入参名=查出来的表字段名}" -->
+	</collection>
+</resultMap>
 -----------------
