@@ -893,3 +893,37 @@ select
 from A的临时表
 left join B的临时表 on A的临时表.spu_id=B的临时表.id;
 ---------------------
+java连接presto
+1.pom.xml
+<!-- presto依赖 -->
+<dependency>
+	<groupId>io.prestosql</groupId>
+	<artifactId>presto-jdbc</artifactId>
+	<version>312</version>
+</dependency>
+
+2.
+public static void main(String[] args) {
+	try {
+		Connection conn = DriverManager.getConnection(
+				"jdbc:presto://192.168.xx.xxx:xx/hive/xxx", "shonqian", null
+		);
+		Statement stmt = conn.createStatement();
+		try {
+			ResultSet rs = stmt.executeQuery("SELECT * from xxx");
+			while(rs.next()) {
+				String age = rs.getString(1);
+				String name = rs.getString(2);
+				System.out.println(String.format("age=%s, name=%s", age, name));
+			}
+		}
+		finally {
+			stmt.close();
+			conn.close();
+		}
+	}
+	catch (Exception e) {
+		e.printStackTrace();
+	}
+}
+---------------------

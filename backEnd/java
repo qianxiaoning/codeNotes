@@ -5956,6 +5956,7 @@ rm -v client.csr server.csr //删除临时文件
 chmod -v 0400 ca-key.pem key.pem server-key.pem //配置权限
 chmod -v 0444 ca.pem server-cert.pem cert.pem //配置权限
 此时在certs文件夹下，会有八个文件
+
 2.2将ca.pem、ca-key.pem、cert.pem、key.pem拷至运行java程序的机器某个文件夹上，赋予访问权限
 vi /lib/systemd/system/docker.service
 去掉-H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock
@@ -5979,6 +5980,37 @@ System.out.println(imageInfo);
 List<Container> containerInfo = dockerClient.listContainersCmd().exec();
 System.out.println(containerInfo);
 // dockerClient.等等
+
+定时查询docker容器状态
+@Test
+public static void main(String[] args) {
+	DockerClient dockerClient = DockerClientBuilder.getInstance("tcp://192.168.10.27:2375").build();
+	TimerTask task = new TimerTask() {
+		@Override
+		public void run() {
+			// 查询指定容器状态
+			InspectContainerResponse containerInfo = dockerClient.inspectContainerCmd("qxnmysql").exec();
+			String runningStatus = containerInfo.getState().getStatus();
+			String healthStatus = containerInfo.getState().getHealth().getStatus();
+			System.out.println(runningStatus);
+			System.out.println(healthStatus);
+			System.out.println("---------------");
+			// 查询所有容器状态
+			List<Container> ContainerListInfo = dockerClient.listContainersCmd().exec();
+			for (Container container : ContainerListInfo) {
+				String id = container.getId();
+				String state = container.getState();
+				String status = container.getStatus();
+				System.out.println(id + "/" + state + "/" + status);
+			}
+			System.out.println("---------------");
+		}
+	};
+	Timer timer = new Timer();
+	long delay = 1000;
+	long intevalPeriod = 10 * 1000;
+	timer.scheduleAtFixedRate(task, delay, intevalPeriod);
+}
 -----------------
 字符串不为空
 StringUtils.isNotEmpty()//空格不为空
@@ -6111,6 +6143,7 @@ public interface Function {
  * <简述> 加函数
  * <详细描述> AddFunction
  */
+@Component
 public class AddFunction implements Function {
 
     /**

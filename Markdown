@@ -24,12 +24,12 @@
 
 列表
     无序列表
-    -xxx
-    -xxx
+    - xxx
+    - xxx
 
     数字列表
-    1.xxx
-    2.xxx
+    1. xxx
+    2. xxx
 
 链接
     行内式
