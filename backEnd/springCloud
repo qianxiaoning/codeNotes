@@ -98,8 +98,8 @@ public ExecuteResult getPrice(String orderId) {
 2.PriceFeignClient
 @FeignClient(value = "my-project-order", fallbackFactory = PriceFeignClientFallbackFactory.class)
 public interface PriceFeignClient {
-
     @RequestMapping("/price/price/getPrice.do")
+    @ResponseBody
     ExecuteResult getPrice(@RequestParam("orderId") String orderId);
 }
 
@@ -112,7 +112,6 @@ public class PriceFeignClientFallbackFactory implements FallbackFactory<PriceFei
      * @Fields LOGGER : 日志
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(PriceFeignClientFallbackFactory.class);
-
     @Override
     public PriceFeignClient create(Throwable throwable) {
         LOGGER.error("服务异常，异常原因：" + throwable);
@@ -130,7 +129,6 @@ public class PriceFeignClientFallbackFactory implements FallbackFactory<PriceFei
 @Controller
 @RequestMapping("/price")
 public class PriceController {
-
     @RequestMapping("/getPrice")
     @ResponseBody
     public ExecuteResult getPrice(@RequestParam("orderId") orderId){

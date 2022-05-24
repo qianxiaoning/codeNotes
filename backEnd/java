@@ -6246,3 +6246,56 @@ mybatis resultMap传多个参数
 	</collection>
 </resultMap>
 -----------------
+LambdaQueryWrapper
+LambdaQueryWrapper<Do> lambdaQw = new LambdaQueryWrapper<>();
+lambdaQw.eq(Do::getDeleted, Constant.UNDELETED).or()
+.eq(Do::getRuleCode, param.getRuleCode());
+// mp的模糊搜索
+lambdaQw.like(StringUtils.isNotBlank(ruleName),
+		Do::getRuleName, ruleName);
+lambdaQw.orderByDesc(Do::getCreateTime);
+lambdaQw.last("and xxx is null");
+
+LambdaUpdateWrapper
+LambdaUpdateWrapper<Do> uw = new LambdaUpdateWrapper<>();
+uw.eq(Do::getCalculationCode, calculationCode);
+uw.set(Do::getUpdateTime, LocalDateTime.now());
+baseMapper.update(null, uw);
+-----------------
+集合包含全部、包含任意
+if ("包含全部".equals(opCode)) {
+            b = leftVList.containsAll(rightVList);
+}
+if ("包含任意".equals(opCode)) {
+	Boolean bo = false;
+	for (int i = 0; i < rightVList.size(); i++) {
+		Object o = rightVList.get(i);
+		bo = leftVList.contains(o);
+		if (bo) {
+			break;
+		}
+	}
+	b = bo;
+}
+-----------------
+各类型变量入参格式
+/**
+* 入参变量map
+*"variable": {
+*    "param（入参变量编码）": {
+*        "type": "Object", //Object,Map,List
+*        "value": Object(值/Map/List),  // 入参值
+*    },
+*    "param2（入参变量编码）": {
+*        ...
+*    },
+*}
+*/
+/**
+* 入参变量map（使用）
+*"variable": {
+*    "param（入参变量编码）": Object(值/Map/List),  // 入参值,
+*    "param2（入参变量编码）": Object(值/Map/List),  // 入参值,
+*}
+*/
+-----------------

@@ -2189,3 +2189,30 @@ jquery
 prop处理固有属性
 attr处理自定义属性
 -----------------------
+对象以函数作为属性，传入参数，返回结果
+// 不用页面的配置
+const differentPagesObj = {
+    "studioAchievements": {
+        pageTitle: 'xxx',
+        pageSize: 3,
+        url: urlPrefix + 'xxx.do',        
+        ajaxDataFunction(pageNo){
+            return {
+                "search.studioId": studioId,
+                "search.type" :'xxx',
+                "page.size": 3,
+                "page.pn": pageNo
+            }
+        },
+        successFunction(res){
+            let pageListHtml =
+                '';
+            res.content.forEach((item, index) => {
+                pageListHtml += 
+                `<div>${item.a}</div>` +
+                `<div>${item.b}</div>`;
+            });
+            return pageListHtml;
+        }        
+    }
+}

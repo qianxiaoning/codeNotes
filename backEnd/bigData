@@ -2723,20 +2723,20 @@ hdfs是半只读，只能插入追加数据,不能修改数据
 时间戳bigint
 
 数据仓库分层：
-ods(operation data store) 原始数据层（业务数据、日志数据）
+1.ods(operation data store) 原始数据层（业务数据、日志数据）
 
 ods => 清洗（去除空值，脏数据，超过极限范围的数据），脱敏（用户手机号、身份证号） => dwd
-dwd(data warehouse detail) 明细数据层（保存业务明细，每一个业务操作，一次下单，一次支付，一次添加购物车，通过埋点日志形式记录）
+2.dwd(data warehouse detail) 明细数据层（保存业务明细，每一个业务操作，一次下单，一次支付，一次添加购物车，通过埋点日志形式记录）
 
-dim数据维度层，对业务事实的描述信息，何人、何时、何地
+3.dim数据维度层，对业务事实的描述信息，何人、何时、何地
 
 dwd => 按天进行轻度汇总每一个业务操作，一行信息代表一个主题对象一天的汇总行为，如：一个用户一天下单次数 => dws
-dws(data warehouse summary) 数据汇总层
+4.dws(data warehouse summary) 数据汇总层
 
 dws => 对数据进行累计汇总，一行信息代表一个主题对象的累计行为，如：一个用户从最近7天、最近30天、注册到如今一共下了多少订单 => dwt
-dwt(data warehouse topic) 数据主题层
+5.dwt(data warehouse topic) 数据主题层
 
-ads(application data store) 数据应用层，为数仓后续后续应用提供结果，如：各种统计报表
+6.ads(application data store) 数据应用层，为数仓后续后续应用提供结果，如：各种统计报表
 
 举例：
 金融大数据需求举例：
