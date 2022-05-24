@@ -131,7 +131,7 @@ public class PriceFeignClientFallbackFactory implements FallbackFactory<PriceFei
 public class PriceController {
     @RequestMapping("/getPrice")
     @ResponseBody
-    public ExecuteResult getPrice(@RequestParam("orderId") orderId){
+    public ExecuteResult getPrice(@RequestParam("orderId") String orderId){
 		PriceVo vo = super.findOne(orderId);
         return ExecuteResult.create(vo);
     }

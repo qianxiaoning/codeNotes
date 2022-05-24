@@ -5670,6 +5670,15 @@ NamedParameterJdbcTemplate 常用方法，基本同JdbcTemplate，区别在于�
 
 NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
 Integer total = namedParameterJdbcTemplate.queryForObject(totalSql, Map<String, Object>, Integer.class);
+
+NamedParameterJdbcTemplate 模糊搜索 用法
+Map<String, Object> params = new HashMap<>();
+if (StringUtils.isNotBlank(name)) {
+	params.put("name", "%" + StringUtils.trim(name) + "%");
+	sql += " and name like :name";
+}
+NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+return namedParameterJdbcTemplate.query(sql, params, new BeanPropertyRowMapper<>(Dto.class));
 ---------------------
 对象（或任意bean）转Map
 Object obj = new Object();
