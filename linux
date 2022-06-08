@@ -590,7 +590,9 @@ vim批量操作
 esc - ctrl+v - shift+i - 输入操作 - esc
 ---------------
 按时间顺序列出日志文件
-ll -t | less
+ll -t 从新到旧
+ll -t | tac 从旧到新
+ll -t | less 分页
 ---------------
 centos yum源不正确时
 去https://developer.aliyun.com/mirror/ 更换阿里镜像

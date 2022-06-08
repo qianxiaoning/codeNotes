@@ -190,7 +190,7 @@ admin ui(查询atlas元数据库)
 6.admin UI，ranger权限管理模块，业务分类模块
 
 atlas2更新
-支持hadoop3，hive3，hbase2，solr7.5,kafka2，janusGraph0.3.1
+支持hadoop3, hive3, hbase2, solr7.5, kafka2, janusGraph0.3.1
 身份验证可信代理
 指标模块收集通知
 atlas增量导出元数据模式
@@ -1244,6 +1244,7 @@ sudo -i -u solr /opt/module/solr/bin/solr start
 
 jps查看，会多一个jar的进程
 ===============
+默认会有两个[WARN]警告
 //如想按照推荐值修改
 //修改打开文件数限制
 vim /etc/security/limits.conf
