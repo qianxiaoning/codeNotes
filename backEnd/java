@@ -5680,16 +5680,33 @@ if (StringUtils.isNotBlank(name)) {
 NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
 return namedParameterJdbcTemplate.query(sql, params, new BeanPropertyRowMapper<>(Dto.class));
 ---------------------
+JSON相关：
+
 对象（或任意bean）转Map
 Object obj = new Object();
 JSONObject jo = (JSONObject) JSON.toJSON(obj);
 Map<String, Object> map = JSON.<Map<String, Object>>parseObject(jo.toJSONString(), Map.class);
 
 对象转json字符串（会忽略值为null的属性）
-JSONObject.toJSONString(obj))
+String jsonString = JSONObject.toJSONString(obj);
 
 不忽略值为null的属性
-JSONObject.toJSONString(obj, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
+String jsonString = JSONObject.toJSONString(obj, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
+
+Object转JSONObject
+JSONObject jsonObject = (JSONObject) JSON.toJSON(object);
+
+JSONObject jsonObject = JSONObject.parseObject(jsonString);
+
+String s = jsonObject.getString("s");
+
+List<A> list = JSONObject.parseArray(jsonString, A.class);
+
+A a = JSONObject.parseObject(jsonString, A.class);
+
+do,vo类貌似不能强转Map
+但是do,vo,Map能转JSONObject
+List能转JSONArray
 ---------------------
 4 过滤器
 法1 @WebFilter法
@@ -6092,10 +6109,6 @@ private static String generate(List<OneformulaVo> formulas, String formulasCode)
 	return formulasCode;
 }
 -----------------
-do,vo类貌似不能强转Map
-但是do,vo,Map能转JSONObject
-List能转JSONArray
------------------
 java写try catch捕获异常时
 都控到最里面就行了，做最精细的异常捕获
 
@@ -6307,4 +6320,39 @@ if ("包含任意".equals(opCode)) {
 *    "param2（入参变量编码）": Object(值/Map/List),  // 入参值,
 *}
 */
+-----------------
+java强制转换
+一、基本类型
+容量大 => 容量小，需要强转
+二、引用类型
+1.两个没关系的类，不能强转
+2.父类不能强转子类
+3.子类可以强转父类
+4.用父类接的子类，可以再强转回去
+三、基本类型和引用类型，无法强转
+-----------------
+Transaction rolled back because it has been marked as rollback-only
+在spring中存在事务嵌套时，内层抛出异常，在外层被try catch捕获，外层事务继续运行，在最后提交事务的时候，发现内层被标记了rollbck，就会报上面的错。
+
+解决办法：
+法1.将内层事务去掉
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
+法2.修改内层事务的传播方式，为创建新的事务，这样只回滚内层事务，不影响外层事务
+内层方法加上：
+@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+
+一般事务从serviceImpl开始，向内传播，用的是一个事务
+
+spring中用注解方式，局部开启事务
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
+a () {
+	...
+	b();
+	...
+}
+
+@Transactional(propagation = Propagation.REQUIRED)
+b () {
+
+}
 -----------------
