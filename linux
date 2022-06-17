@@ -264,6 +264,7 @@ grep -r 192.168.30.81 /opt/module/DataSphereStudio/linkis | less
 
 查看文件
 less 文件
+F 实时刷新文档
 f 下一页
 b 上一页
 g 文件头部
@@ -602,3 +603,12 @@ centos yum源不正确时
 3.yum install nginx
 4.service nginx start
 ---------------
+让内核参数立即生效
+sudo sysctl -p
+---------------
+
+
+
+
+
+

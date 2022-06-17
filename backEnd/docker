@@ -202,3 +202,19 @@ docker ps后STATUS会有括号
 STATUS
 Up 16 minutes (starting/healthy/unhealthy)
 ------------------
+查看容器日志
+docker logs -f aaa1213w
+------------------
+容器重命名
+docker rename zk_old zk_new
+------------------
+安装docker-compose
+1.https://github.com/docker/compose/releases/
+选择对应版本，Assets下，比如：linux输入版本命令看最后X86_64
+2.传入linux用户路径下，比如/usr/local/bin/下
+3.授权，chmod u+x docker-compose
+4.看版本号：docker-compose -version
+------------------
+操作所有容器
+docker rm $(docker ps -a | awk '{ print $1}' | tail -n +2)
+------------------

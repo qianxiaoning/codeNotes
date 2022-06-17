@@ -1906,20 +1906,22 @@ create external table
 hiveserver2提供了一个新的命令行工具beeline，增加了权限控制
 要使用beeline需要先启动hiverserver2，再使用beeline连接
 
-启动hiveserver2服务
-hiveserver2 &
-或
-$HIVE_HOME/bin/hiveserver2 &
-或
-nohup hive --service metastore & ?
+hive服务端
+1.metastore
+连接MySQL获取元数据
+bin/hive（cli命令行的方式访问元数据）--> metaStore server --> MySQL
+nohup hive --service metastore  &
+
+2.hiveserver2
+bin/beeline（jdbc的方式访问元数据）--> hiveServer2 --> metaStore server --> MySQL
 nohup hive --service hiveserver2 &
 
-启动beeline，连接hiveserver2
-jdbc方式连接hive
-beeline
-!connect jdbc:hive2://hadoop101:10000
-或
+hive客户端
+hive
 beeline -u jdbc:hive2://bigData101:10000 -n shonqian
+
+hive.metastore.uris = thrift://192.168.xx.xx:9083 连接方式的话，
+需要启动nohup hive --service metastore &
 
 hive UI
 http://192.168.30.99:10002/
