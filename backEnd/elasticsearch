@@ -1,0 +1,20 @@
+查看所有索引
+curl 'localhost:39200/_cat/indices?v&pretty'
+
+查看索引结构信息
+curl 'localhost:39200/xxx'
+
+查看某个索引下的所有文档数据
+curl -XGET 'localhost:39200/xx/_search?pretty' -H 'Content-Type:application/json' -d
+'{
+	"size": 10,
+	"query": {
+		"match_all": {
+		}
+	},
+	"sort": {
+		"tmst": {
+			"order": "desc"
+		}
+	}
+}'

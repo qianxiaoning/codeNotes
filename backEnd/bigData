@@ -1910,7 +1910,7 @@ hive服务端
 1.metastore
 连接MySQL获取元数据
 bin/hive（cli命令行的方式访问元数据）--> metaStore server --> MySQL
-nohup hive --service metastore  &
+nohup hive --service metastore &
 
 2.hiveserver2
 bin/beeline（jdbc的方式访问元数据）--> hiveServer2 --> metaStore server --> MySQL
@@ -4008,3 +4008,28 @@ ln -s /opt/bigdata/hive2.3.3/conf/hive-site.xml hive-site.xml
 //将mysql驱动包拷贝到spark的jars目录下
 cp $HIVE_HOME/lib/mysql-connector-java-5.1.35-bin.jar $SPARK_HOME/jars
 -------------
+hive分区
+1.建分区表
+create table a (
+  `id` bigint COMMENT 'id',
+  `name` string COMMENT '姓名'
+) COMMENT '表a'
+partitioned by (dt string comment '日期',hour string comment '小时')
+row format delimited fields terminated by '\t';
+
+2.插入数据到分区表
+在指定分区后追加
+insert into table a values(1, 'tom', '20220620', '11');
+删除指定分区数据，在指定分区后追加
+insert overwrite table a values(1, 'tom', '20220620', '11');
+
+3.查询所有分区
+show partitions a;
+查询指定分区
+show partitions a partition(hour = '12');
+
+4.查询指定分区数据
+select * from a where hour="11";
+
+5.修改分区名称
+alter table a partition(dt='20220620',hour="11") rename to partition(dt='20220620',hour="12");
