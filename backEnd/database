@@ -927,3 +927,5 @@ public static void main(String[] args) {
 	}
 }
 ---------------------
+mysql视图
+视图可以看作一个sql的别名，也可以说sql的封装
