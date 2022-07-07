@@ -218,3 +218,7 @@ docker rename zk_old zk_new
 操作所有容器
 docker rm $(docker ps -a | awk '{ print $1}' | tail -n +2)
 ------------------
+容器访问不了宿主机ip
+法一：
+创建容器的时候，指定网络模式， --net host，主机模式，容器和宿主机在同一网络下，就能ping通了
+------------------
