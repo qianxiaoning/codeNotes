@@ -200,3 +200,44 @@ server{
 浏览器用ip访问，用localhost请求ip接口地址仍可能是跨域。
 前端项目里请求后台接口时，直接用前端的域请求，如：http://ip:8888/bPro-api/...，会被proxy_pass代理到http://ip:9002/bPro-api/...，实现成功请求通。
 ------------------
+前端，后端，sso登录，代理配置
+前端访问nginx服务器地址：
+if (process.env.VUE_APP_MODE === "test") {
+  serverUrl = "http://nginx_ip:nginx_port/";
+  apiurl = serverUrl + "regulatory-capital";
+  gateway = serverUrl + "gateway"
+  //基础路由前缀
+  baseHeaderUrl = "http://nginx_ip:nginx_port/"
+
+  ssoConfig = {
+    clientId: 'xx',
+    clientSecret: 'xx',
+    tokenUrl: 'http://nginx_ip:nginx_port/xx-sso/',
+  };
+  upload = "http://nginx_ip:nginx_port/xx-upload";
+  tpfOrgn =  "http://nginx_ip:nginx_port/xx-orgn/orgn";
+}
+
+nginx服务器配置：
+server{
+    listen  nginx_port;
+    server_name  localhost;
+
+    location / {
+        alias /xx/;
+        index index.html;
+    }
+        location /api {
+        proxy_pass   http://backend_ip:backend_port; 
+    }
+        location /xx-upload {
+        proxy_pass   http://backend_ip:backend_port; 
+    }
+        location /xx-orgn {
+        proxy_pass   http://backend_ip:backend_port;
+    }
+        location /xx-sso {
+        proxy_pass   http://backend_ip:backend_port;
+    }
+}
+------------------

@@ -222,3 +222,11 @@ docker rm $(docker ps -a | awk '{ print $1}' | tail -n +2)
 法一：
 创建容器的时候，指定网络模式， --net host，主机模式，容器和宿主机在同一网络下，就能ping通了
 ------------------
+容器和宿主机文件互相复制
+docker cp /a/client.conf tracker:/b
+docker cp tracker:/b/client.conf /a/
+------------------
+容器启动报权限错误
+ls: cannot access '/docker-entrypoint-initdb.d/': Operation not permitted
+在docker-compose.yml容器上加上，privileged: true，赋root权限解决
+------------------
