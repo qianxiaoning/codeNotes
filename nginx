@@ -241,3 +241,8 @@ server{
     }
 }
 ------------------
+vue history模式，nginx部署，页面刷新404
+location / {
+    try_files $uri $uri/ /index.html;
+}
+------------------

@@ -6356,3 +6356,18 @@ b () {
 
 }
 -----------------
+修改jar包中内容
+1.mkdir tmp
+
+2.mv xxx.jar tmp/
+
+unzip解压jar包
+3.unzip xxx.jar
+
+4.vim修改内容
+
+5.rm -rf xxx.jar
+
+将文件夹打成jar包
+6.jar -cfM0 xxx.jar *
+-----------------
