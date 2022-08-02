@@ -216,7 +216,7 @@ docker rename zk_old zk_new
 4.看版本号：docker-compose -version
 ------------------
 操作所有容器
-docker rm $(docker ps -a | awk '{ print $1}' | tail -n +2)
+docker stop $(docker ps -a | awk '{ print $1}' | tail -n +2)
 ------------------
 容器访问不了宿主机ip
 法一：

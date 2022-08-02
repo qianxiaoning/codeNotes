@@ -255,8 +255,8 @@ N（上一项）
 
 查找文件
 find /查找目录/ -name 文件名
-查找目录
-find /查找目录/ -name 路径名 -type d（路径名不能加/？）
+查找目录xxx
+find / -name xxx -type d
 查找内容
 find . | xargs grep -ril '文件内容' 只显示文件名称
 指定目录查找内容
@@ -615,5 +615,12 @@ top
 查看进程和端口
 netstat -ltnp
 ---------------
+查看pip安装模块路径
+pip uninstall xxx 即可看到
+---------------
+压缩
+zip -r a.zip xxx/
 
-
+解压
+unzip a.zip
+---------------

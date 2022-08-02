@@ -514,3 +514,18 @@ demo:
 overflow: hidden;
 white-space: nowrap;
 text-overflow: ellipsis;
+-----------
+css自定义属性，级联变量（变量只能用作属性值）
+--a: red;
+color: var(--a);
+
+定义全局变量
+:root{
+    --a: red;
+}
+
+局部变量
+p{
+    --a1: red;
+}
+-----------
