@@ -620,6 +620,10 @@ pip uninstall xxx 即可看到
 ---------------
 压缩
 zip -r a.zip xxx/
+压缩排除某些目录
+zip -r a.zip xxx/ -x 'node_modules/*' -x 'node_modules/*'
+只压缩某些目录
+zip -r a.zip xxx/ -i 'node_modules/*' -i 'node_modules/*'
 
 解压
 unzip a.zip

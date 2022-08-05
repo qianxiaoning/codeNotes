@@ -84,8 +84,11 @@ docker container prune
 
 启动挂载数据卷的容器
 --name 给容器起名
--v指定挂载的目录
+-v指定挂载的目录（冒号前是宿主机路径，后是容器路径）
 docker run -dit --name centos7 -v /usr/app:/opt/app centos:7
+
+修改容器内jar包方法之一:
+容器内的jar包可以通过挂载到宿主机，然后停止容器，再修改宿主机jar包实现修改
 
 创建文件，EOF结束符，向f1输出
 cat <<EOF > f1
