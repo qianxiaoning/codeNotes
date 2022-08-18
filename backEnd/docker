@@ -233,3 +233,7 @@ docker cp tracker:/b/client.conf /a/
 ls: cannot access '/docker-entrypoint-initdb.d/': Operation not permitted
 在docker-compose.yml容器上加上，privileged: true，赋root权限解决
 ------------------
+查看镜像/容器详细信息
+docker inspect apachegriffin/griffin_spark2:0.3.0 （带上版本号）
+docker inspect griffin
+------------------
