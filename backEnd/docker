@@ -44,16 +44,28 @@ docker rmi xxx
 exit
 
 删除镜像
-docker image rm 镜像名/id前三位
+docker image rm 镜像名:tag/id
 有容器删不了则
-docker image rm -f 镜像名/id前三位
+docker image rm -f 镜像名:tag/id
 
+镜像导出导入
+容器构建新镜像（可选）
+docker commit containerName imageName:tag（不会保留挂载卷内容）
 导出
-docker save xxx yyy | gzip > app.tar.gz  
-
+docker save -o xxx.tar imageName
 导入xxx到docker
-docker load -i xxx
+docker load -i xxx.tar
 docker load < xxx
+
+容器导出导入
+导出
+docker ps --no-trunc，记住command命令
+docker export -o name.tar containerName
+或
+docker export 容器的ID > 压缩包名字.tar
+导入
+docker import name.tar containerName:TAG
+docker run ... containerName:TAG command命令（没试成功？）
 
 进入容器
 docker exec -it 77a bash
