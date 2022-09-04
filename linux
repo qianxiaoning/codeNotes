@@ -261,6 +261,8 @@ find / -name xxx -type d
 find . | xargs grep -ril '文件内容' 只显示文件名称
 指定目录查找内容
 grep -r 192.168.30.81 /opt/module/DataSphereStudio/linkis | less
+按文件内容查找文件
+find / -type f -name "*.*" | xargs grep "hello"
 
 查看文件
 less 文件
@@ -627,4 +629,11 @@ zip -r a.zip xxx/ -i 'node_modules/*' -i 'node_modules/*'
 
 解压
 unzip a.zip
+---------------
+rpm安装另一版本报错时
+如：
+erlang-20.3.8.8-1.el7.centos.x86_64 conflicts with file from package erlang-erts-R16B-03.18.el7.x86_64
+强制卸载这个包（可在任何目录执行）
+rpm -e --nodeps erlang-erts-R16B-03.18.el7.x86_64
+再安装即可
 ---------------

@@ -121,6 +121,12 @@ docker volume rm my-vol
 清理无主数据卷
 docker volume prune
 
+-v挂载卷（宿主机根目录:容器根目录，不写根目录找不到）
+挂载目录
+-v /aaa/aaa/:/bbb/bbb/
+挂载文件
+-v /aaa/aaa/a.conf:/bbb/bbb/b.conf
+
 端口映射
 宿主机80->容器端口8080
 docker run -dit --name tomcat -p 80:8080 tomcat
