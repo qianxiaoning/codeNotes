@@ -243,3 +243,18 @@ rabbitmq
 交换机:一方面它接收来自生产者的消息，另一方面它将消息推送到队列中。交换机必须确切知道如何处理它接收到的消息
 队列
 消费者
+
+rabbitmq安装：
+rpm -ivh erlang-21.3-1.el7.x86_64.rpm
+yum install socat -y
+rpm -ivh rabbitmq-server-3.8.8-1.el7.noarch.rpm
+开机启动
+chkconfig rabbitmq-server on
+开/关/状态
+systemctl start/stop/status rabbitmq-server
+
+开启web端管理插件
+rabbitmq-plugins enable rabbitmq_management
+访问ip:15672
+
+看到"用默认账号密码(guest)访问地址 http://47.115.185.244:15672/出现权限问题"
