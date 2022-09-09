@@ -258,3 +258,4 @@ rabbitmq-plugins enable rabbitmq_management
 访问ip:15672
 
 看到"用默认账号密码(guest)访问地址 http://47.115.185.244:15672/出现权限问题"
+https://www.bilibili.com/video/BV1cb4y1o7zz?spm_id_from=333.337.search-card.all.click&vd_source=3d3abeae3b926364c339460eed1a8b90

@@ -31,3 +31,6 @@ taskkill -t -f /pid
 
 cmd结束进程
 taskkill /f /t /im java.exe
+
+删除有内容目录
+rd /s/q "xxx"
