@@ -4033,3 +4033,17 @@ select * from a where hour="11";
 
 5.修改分区名称
 alter table a partition(dt='20220620',hour="11") rename to partition(dt='20220620',hour="12");
+-------------
+flink
+flink-1.12.1-bin-scala_2.11.tgz解压
+启动
+bin/start-cluster.sh
+
+默认web ui端口
+http://192.168.xx.xx:8081/
+-------------
+streamx
+配置Hadoop相关环境变量
+修改配置文件conf/application.yml
+启动cd bin/ bash startup.sh
+访问http://192.168.xx.xx:10000/

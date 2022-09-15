@@ -567,6 +567,8 @@ linux遇到PATH缓存问题，当前xshell重新连接即可
 ---------------
 查找指定指令
 history | grep 'ln -snf'
+查找最近n条命令
+history n
 ---------------
 查看服务器所有python软链
 ls -al /usr/bin | grep python
@@ -637,4 +639,21 @@ erlang-20.3.8.8-1.el7.centos.x86_64 conflicts with file from package erlang-erts
 强制卸载这个包（可在任何目录执行）
 rpm -e --nodeps erlang-erts-R16B-03.18.el7.x86_64
 再安装即可
+---------------
+linux网卡配置
+网卡配置文件位置：
+/etc/sysconfig/network-scripts/ifcfg-enoxxx
+一般设置静态ip所需：
+BOOTPROTO="static"
+ONBOOT="yes"
+GATEWAY=192.168.30.1
+IPADDR="192.168.30.117"
+NETMASK="255.255.255.0"
+DNS1="223.5.5.5"
+DNS2="223.6.6.6"
+
+修改配置后重启网卡：
+1.命令重启
+2.机器重启
+3.上面两种方法都失败时，可以在系统ui界面右上角的网络配置里，设置静态ip和dns，再开关网卡按钮，使配置生效
 ---------------
