@@ -228,9 +228,7 @@ RocketMQ
 核心中去实现 JMS 等接口,有些系统要迁移需要修改大量代码
 
 RabbitMQ
-优点:吞吐量到万级，MQ 功能比较完备,健壮、稳定、易
-用、跨平台、支持多种语言 如：Python、Ruby、.NET、Java、JMS、C、PHP、ActionScript、XMPP、STOMP
-等，支持 AJAX 文档齐全；开源提供的管理界面非常棒，用起来很好用,社区活跃度高；更新频率相当高
+优点:吞吐量到万级，MQ 功能比较完备,健壮、稳定、易用、跨平台、支持多种语言 如：Python、Ruby、.NET、Java、JMS、C、PHP、ActionScript、XMPP、STOMP等，支持 AJAX 文档齐全；开源提供的管理界面非常棒，用起来很好用,社区活跃度高；更新频率相当高
 缺点：商业版需要收费,学习成本较高
 ---------------
 mq的选择
@@ -257,5 +255,24 @@ systemctl start/stop/status rabbitmq-server
 rabbitmq-plugins enable rabbitmq_management
 访问ip:15672
 
-看到"用默认账号密码(guest)访问地址 http://47.115.185.244:15672/出现权限问题"
-https://www.bilibili.com/video/BV1cb4y1o7zz?spm_id_from=333.337.search-card.all.click&vd_source=3d3abeae3b926364c339460eed1a8b90
+guest账号无法登录
+
+创建用户和权限
+账号、密码
+rabbitmqctl add_user admin 123
+设置角色
+rabbitmqctl set_user_tags admin administrator
+设置权限
+格式：set_permissions [-p <vhostpath>] <user> <conf> <write> <read>
+用户 user_admin 具有/vhost1 这个 virtual host 中所有资源的配置、写、读权限
+rabbitmqctl set_permissions -p "/" admin ".*" ".*" ".*"
+
+列出当前用户
+rabbitmqctl list_users
+
+关闭应用的命令为
+rabbitmqctl stop_app
+清除的命令为
+rabbitmqctl reset
+重新启动命令为
+rabbitmqctl start_app

@@ -160,6 +160,9 @@ File-new projects-settings-run configuration templates for new projects-template
 System.out.println();快捷键
 sout补全
 
+格式化
+ctrl+alt+l
+
 启动项目
 alt+shift+x
 
