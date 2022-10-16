@@ -48,6 +48,8 @@ ctrl+l 删除当前行
 --------------------------
 Eclipse
 快捷键：
+转小写: ctrl + shift + y 
+转大写: ctrl + shift + x
 alt+/ 自动补全
 window-perspective-reset perspective eclip重置视图
 ctrl+d 删除整行

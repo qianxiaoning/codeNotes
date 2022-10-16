@@ -276,3 +276,10 @@ rabbitmqctl stop_app
 rabbitmqctl reset
 重新启动命令为
 rabbitmqctl start_app
+
+安装mq延迟队列插件，解决队列先进先出特性，对列无法通用问题
+延迟队列插件 rabbitmq_delayed_message_exchange-3.8.0.ez
+放入/usr/lib/rabbitmq/lib/rabbitmq_server-3.8.8/plugins/下
+安装插件
+rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+装完稍等一会，刷新web控制台，在add exchange-type中多一个x-delayed-message就表示好了

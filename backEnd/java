@@ -5494,6 +5494,21 @@ maven.exclusion
 -------------------------------
 idea断点
 断点打在要测试的开头，然后f6步进，往下执行
+-----------------
+Map获取key名称数组
+Map<String, String> map = new HashMap<String, String>();
+map.put("a", "aa");
+map.put("b", "bb");
+map.put("c", "cc");
+map.put("d", "dd");
+
+Set<String> keys = map.keySet();
+System.out.println(keys);//[a, b, c, d]
+for (String key : keys) {
+	System.out.println(key);
+	System.out.println(map.get(key));
+	System.out.println("==========");
+}
 -------------------------------
 遍历map
 Map<String,String> params = new HashMap<String,String>();
@@ -5914,21 +5929,6 @@ X文件：
 private static A a;
 static {
 	a = PropertiesUtil.prop("xx.a");
-}
------------------
-Map获取key名称数组
-Map<String, String> map = new HashMap<String, String>();
-map.put("a", "aa");
-map.put("b", "bb");
-map.put("c", "cc");
-map.put("d", "dd");
-
-Set<String> keys = map.keySet();
-System.out.println(keys);//[a, b, c, d]
-for (String key : keys) {
-	System.out.println(key);
-	System.out.println(map.get(key));
-	System.out.println("==========");
 }
 -----------------
 jmx远程监控jvm信息
