@@ -4047,3 +4047,57 @@ streamx
 修改配置文件conf/application.yml
 启动cd bin/ bash startup.sh
 访问http://192.168.xx.xx:10000/
+-------------
+hive权限待整理
+hive-site.xml
+<property>
+        <name>hive.security.authorization.enabled</name>
+        <value>true</value>
+        <description>enable or disable the hive client authorization</description>
+</property>
+<property>
+        <name>hive.security.authorization.createtable.owner.grants</name>
+        <value>ALL</value>
+        <description>the privileges automatically granted to the owner whenever a table gets created. Anexample like "select,drop" will grant select and drop privilege to the owner of the table</description>
+</property>
+hive用户和用户组是系统的
+角色管理：
+--创建和删除角色
+create role role_name;
+drop role role_name;
+--展示所有roles
+show roles
+--赋予角色权限
+grant select on database db_name to role role_name;
+grant select on [table] t_name to role role_name;
+--查看角色权限
+show grant role role_name on database db_name;
+show grant role role_name on [table] t_name;
+--角色赋予用户
+grant role role_name to user user_name
+--回收角色权限
+revoke select on database db_name from role role_name;
+revoke select on [table] t_name from role role_name;
+--查看某个用户所有角色
+show role grant user user_name;
+
+问题：
+Current user : root is not allowed to list r
+hive-site.xml
+<property>
+        <name>hive.users.in.admin.role</name>
+        <value>root</value>
+</property>
+hive端：
+set hive.users.in.admin.role;
+set role admin;
+配权限
+https://blog.csdn.net/qq_15083919/article/details/120767266
+
+
+beeline配账户，密码
+https://blog.csdn.net/changlina_1989/article/details/119037484
+https://blog.csdn.net/weixin_43381828/article/details/97309953
+
+视频教程
+https://www.zhihu.com/zvideo/1537741541061255168

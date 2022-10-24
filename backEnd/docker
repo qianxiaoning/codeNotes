@@ -243,6 +243,8 @@ docker stop $(docker ps -a | awk '{ print $1}' | tail -n +2)
 法一：
 创建容器的时候，指定网络模式， --net host，主机模式，容器和宿主机在同一网络下，就能ping通了
 ------------------
+当docker默认网络模式bridge，访问不了容器内服务时，进到容器内确定服务没问题，可以把容器网络模式设为host，使容器内网络和宿主机在同一网络下，这样往往可以连接到容器内服务
+------------------
 容器和宿主机文件互相复制
 docker cp /a/client.conf tracker:/b
 docker cp tracker:/b/client.conf /a/

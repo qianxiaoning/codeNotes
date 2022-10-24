@@ -973,3 +973,26 @@ ctrl + z
 树结构，用parentId关联
 列表结构，可以用序号关联，也可以用parentId关联
 ---------------------
+mysql新增用户
+create user 'username'@'host' identified by 'password'
+如：
+create user 'a'@'ip1' identified by 'c'
+%表示所有ip
+create user 'username'@'%' identified by 'password'
+默认只有test库权限
+
+赋予b用户pra库下面所有表的权限
+grant all privileges on pra.* to 'b'@'%' with grant option;
+
+只赋予pra库的查、改权限
+grant select,update on pra.* to 'b'@'%' with grant option;
+
+给指定前缀表授权
+SELECT CONCAT("GRANT all privileges ON database_name.", TABLE_NAME, " to 'b'@'%'")
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA = 'database_name'
+AND TABLE_NAME LIKE 'prefix_%'
+将输出语句循环执行
+
+查看用户授权
+show grants for 'b'
