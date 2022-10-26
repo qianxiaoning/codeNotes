@@ -1,0 +1,37 @@
+-------------------
+1.DataSet/Stream API
+
+ 1.1Environment执行环境
+  getExecutionEnvironment创建一个执行环境，表示当前执行程序的上下文
+  并行度，默认是1
+
+ 1.2Source源
+  基于本地集合的source
+  基于本地文件的source
+  基于HDFS的source
+  基于 kafka 消息队列的source
+  自定义 Source作为数据源，继承SourceFunction即可
+
+ 1.3Sink Flink运行完，最终数据输出地
+  基于本地内存集合的sink
+  基于本地文件的sink
+  基于HDFS文件系统的sink
+  基于Kafka消息队列的sink
+  基于JDBC自定义sink，将计算结果存储到关系数据库中，如mysql等
+  基于Redis非关系型数据库的sink
+
+ 1.4Transform转换算子，source -> transform -> sink
+ 常见transform如：
+ map将DataSet中的每一个元素转换为另外一个元素,
+ filter过滤出来一些符合条件的元素,
+ reduce聚合计算，最终聚合成一个元素,
+ distinct去重,
+
+2.Window操作，一种切割无限数据（流数据）为有限块进行处理的手段
+ 2.1Window类型
+  CountWindow，按照指定的数据条数生成一个 Window
+  TimeWindow，按照时间生成 Window
+ 2.2Window Function对窗口中收集的数据做的计算操作
+  增量聚合函数
+  全窗口函数
+-------------------
