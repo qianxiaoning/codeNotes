@@ -996,3 +996,17 @@ AND TABLE_NAME LIKE 'prefix_%'
 
 查看用户授权
 show grants for 'b'
+---------------------
+mysql窗口函数
+和分组函数group by区别
+group by会每组得到一条记录
+窗口函数是将分组的结果置于每一条数据记录中
+详见 https://blog.csdn.net/nmsLLCSDN/article/details/123287490
+比如：
+表中记录
+a,b,c
+普通max函数得到一条记录：3
+窗口函数得到：
+a 3,
+b 3,
+c 3
