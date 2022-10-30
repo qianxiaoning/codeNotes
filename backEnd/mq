@@ -263,8 +263,10 @@ rabbitmqctl add_user admin 123
 设置角色
 rabbitmqctl set_user_tags admin administrator
 设置权限
+
 格式：set_permissions [-p <vhostpath>] <user> <conf> <write> <read>
 用户 user_admin 具有/vhost1 这个 virtual host 中所有资源的配置、写、读权限
+
 rabbitmqctl set_permissions -p "/" admin ".*" ".*" ".*"
 
 列出当前用户
@@ -283,3 +285,6 @@ rabbitmqctl start_app
 安装插件
 rabbitmq-plugins enable rabbitmq_delayed_message_exchange
 装完稍等一会，刷新web控制台，在add exchange-type中多一个x-delayed-message就表示好了
+
+卸载rabbitmq
+yum -y remove rabbitmq-server.noarch
