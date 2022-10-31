@@ -871,6 +871,11 @@ show databases; (一个default库)
 
 show tables;(没有表)
 
+hive性能最好的表类型orc,SNAPPY压缩方式
+CREATE TABLE `h` (`id` bigint NOT NULL) COMMENT 'a0' row format delimited fields terminated by ' \t ' stored as orc tblproperties ("orc.compress"="SNAPPY");
+hive ORC表的数据不能通过hive客户端load数据文件加载，也不能使用hdfs dfs -put上传到对应目录，只能通过insert into orc_table select * from tmp方式插入数据；
+
+
 在hive创建用户表
 create TABLE test_user (
 	`id` STRING COMMENT '编号',
@@ -878,7 +883,8 @@ create TABLE test_user (
 	`province_id` STRING COMMENT '省份ID',
 	`province_name` STRING COMMENT '省份名称'
 ) COMMENT '用户表'
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t';
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'; 
+// hive默认列分隔符/001，默认行分隔符/n。列分隔符可改别的单分隔符，行分隔符不可改。
 
 既create TABLE test_user (`id` STRING COMMENT '编号',`name` STRING COMMENT '姓名',`province_id` STRING COMMENT '省份ID',`province_name` STRING COMMENT '省份名称') COMMENT '用户表' ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t';
 
@@ -1789,7 +1795,7 @@ export tabke x to '/ssds/sss';
 恢复表结构和数据(表从无到有)
 import from '/ssds/sss';
 
-详细信息
+显示表定义的详细信息（比如列分隔符），并且用比较规范的格式显示
 desc formatted a;
 
 hive分区表（在目录的表现是多文件夹）
@@ -2259,7 +2265,6 @@ sqoop list-databases --connect jdbc:mysql://192.168.30.95:3306/ --username root 
 #list-tables查出所有表
 
 2.导入import（一般指关系型数据库 => 大数据仓库hdfs,hive,hbase）
-
 2.1单表到hdfs
 sqoop import \
 --connect jdbc:mysql://192.168.40.113:3306/pra \
@@ -4047,6 +4052,17 @@ streamx
 修改配置文件conf/application.yml
 启动cd bin/ bash startup.sh
 访问http://192.168.xx.xx:10000/
+-------------
+hive建表字段不需要指定位数
+-------------
+yarn结束任务
+whereis yarn找到yarn路径
+打印任务信息：
+/opt/module/hadoop-3.1.3/bin/yarn application -list
+查看任务状态：
+/opt/module/hadoop-3.1.3/bin/yarn application -status application_1666864452759_0001
+结束任务：
+/opt/module/hadoop-3.1.3/bin/yarn applicaton -kill application_1666864452759_0001 
 -------------
 hive权限待整理
 hive-site.xml
