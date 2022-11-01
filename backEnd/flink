@@ -71,3 +71,19 @@ Edit Configurations-Configuration-Environment-Use classpath of modules下面-勾
 
 看到教程：
 https://nightlies.apache.org/flink/flink-docs-release-1.15/zh/docs/try-flink/datastream/#%E6%9C%9F%E6%9C%9B%E7%9A%84%E7%BB%93%E6%9E%9C
+-------------------
+提供了不同层级的 API
+Streaming API
+Batch API
+Flink SQL
+-------------------
+DataStream<String> lines = env.addSource(new FlinkKafkaConsumer<>(...)); // Source
+
+DataStream<Event> events = lines.map((line) -> parse(line))); // Transformations
+
+DataStream<Statistics> stats = events.keyBy(event -> event.id).timeWindow(Time.seconds(10)).apply(new MyWindowAggregationFunction()); // Transformations
+
+stats.addSink(new Mysink(...)); // Sink
+-------------------
+Transformations: 常用算子
+-------------------

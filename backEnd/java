@@ -5290,6 +5290,9 @@ MemberSignature继承了Signature
 MethodSignature ms = (MethodSignature)jp.getSignature();
 有ms.getParameterTypes()，就是我们需要的parameterTypes()方法
 -------------------------------
+内部类获取不到外部的变量，相当于2个类了，可以通过给外部变量加final保证这个变量一直存在，内部类就能获取到了，
+但是内部类改了，外部获取值不会变，不过内部类改了外部类的成员变量，外部获取成员变量值会变。
+-------------------------------
 反射获取注解值
 反射的起点字节码对象Class<?>
 通过字节码对象
