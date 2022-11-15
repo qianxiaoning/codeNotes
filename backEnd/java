@@ -5659,7 +5659,7 @@ BeanUtils.copyProperties(Object source, Object target)
 Map.entrySet()后，可直接在jsp循环
 ${item.key}${item.value}取值
 ---------------------
-JdbcTemplate 常用方法，参数放数组中，sql中按顺序?表示
+JdbcTemplate 常用方法，参数放数组中（第二个位置），sql中按顺序?表示
 
 单条数据或记录 jdbcTemplate.queryForObject
 避免jdbcTemplate.queryForObject为空或者返回多条报错
@@ -5672,7 +5672,7 @@ try {
 	return null;
 }
 
-查找Map
+查找Map，为空或者返回多条报错
 Map<String, Object> map = jdbcTemplate.queryForMap("SELECT userid,username from user");
 
 多条数据，基本类型或Map
@@ -5707,6 +5707,8 @@ Map<String, Object> map = JSON.<Map<String, Object>>parseObject(jo.toJSONString(
 
 对象转json字符串（会忽略值为null的属性）
 String jsonString = JSONObject.toJSONString(obj);
+或
+String jsonString = JSON.toJSONString(vo);
 
 不忽略值为null的属性
 String jsonString = JSONObject.toJSONString(obj, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
@@ -5718,6 +5720,7 @@ JSONObject jsonObject = JSONObject.parseObject(jsonString);
 
 String s = jsonObject.getString("s");
 
+jsonString转实体类
 List<A> list = JSONObject.parseArray(jsonString, A.class);
 
 A a = JSONObject.parseObject(jsonString, A.class);
@@ -5725,6 +5728,27 @@ A a = JSONObject.parseObject(jsonString, A.class);
 do,vo类貌似不能强转Map
 但是do,vo,Map能转JSONObject
 List能转JSONArray
+
+实体类A和A2字段完全一样，实体类中有集合或者对象属性，用json序列化再反序列化转换时，里面集合或者对象属性也能成功转换
+public class User implements Serializable {
+    private Long id;
+    private String nickName;
+    private List<User> users;
+}
+public class User2 implements Serializable {
+    private Long id;
+    private String nickName;
+    private List<User> users;
+}
+String jsonString = JSON.toJSONString(user);
+User2 user2 = JSONObject.parseObject(jsonString, User2.class);
+
+如果User2的users为String，会自动存入List<User> users属性的jsonString
+public class User2 implements Serializable {
+    private Long id;
+    private String nickName;
+    private String users;
+}
 ---------------------
 4 过滤器
 法1 @WebFilter法

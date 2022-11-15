@@ -8,3 +8,8 @@ public class User {
 ---------------------
 jpa生成表注释
 @org.hibernate.annotations.Table(appliesTo = "user",comment = "用户表")
+---------------------
+Manager中
+List<Person> findPersonBySchoolIdAndPersonId(Long schoolId, Long personId);
+jpa会自动生成sql，find实体类By字段And字段
+---------------------
