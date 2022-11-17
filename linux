@@ -660,3 +660,12 @@ DNS2="223.6.6.6"
 2.机器重启
 3.上面两种方法都失败时，可以在系统ui界面右上角的网络配置里，设置静态ip和dns，再开关网卡按钮，使配置生效
 ---------------
+将/dev/shm目录误删，恢复方法
+umount /dev/shm 误删
+vi /etc/fstab
+添加
+tmpfs	/dev/shm	tmpfs   defaults	0 0
+mount /dev/shm
+df -h
+已恢复/dev/shm目录
+---------------

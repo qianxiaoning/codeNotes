@@ -1,0 +1,10 @@
+-------------
+minIO
+docker部署
+docker run -d --net host -p 9000:9000 -p 9090:9090 --name=minio --restart=always -e "MINIO_ROOT_USER=admin" -e "MINIO_ROOT_PASSWORD=admin123456" -v /home/data:/data -v /home/config:/root/.minio  minio/minio server /data --console-address ":9000" --address ":9090"
+
+Object: 存储到MinIO的基本对象，如文件、字节流
+Bucket: 用来存储Object的逻辑空间。每个Bucket之间的数据是相互隔离的
+Drive: 部署MinIO时设置的磁盘，MinIO中所有的对象数据都会存储到Drive。
+Set: 一组Drive的集合，MinIO会自动根据Drive数量，将若干个Drive划分为多个Set（For example: {1...64} is divided into 4 sets each of size 16）。
+-------------
