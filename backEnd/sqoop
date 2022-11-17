@@ -1,0 +1,426 @@
+sqoop数据传递工具
+(mysql,oracle) <=> (hdfs,hive,hbase)互导工具
+
+sqoop版本
+sqoop1（1.9之前）
+sqoop2（1.9之后）
+1与2不兼容
+
+sqoop的导入/导出就是对mapreduce的inputformat和outputformat进行定制
+
+安装：
+0.安装前提，已有java和hadoop环境
+1.下载安装包，一般使用sqoop1.4.6
+2.解压
+3.配置环境变量
+4.修改配置文件
+sqoop/conf/下
+mv sqoop-env-template.sh sqoop-env.sh
+配置入hadoop和hive等需要的地址
+export HADOOP_COMMON_HOME=/opt/module/hadoop-3.1.3
+export HADOOP_MAPRED_HOME=/opt/module/hadoop-3.1.3
+export HIVE_HOME=/opt/module/hive
+5.拷贝jdbc驱动到sqoop/lib/下
+6.查看sqoop是否配置正确
+sqoop help
+
+用法：
+1.查出所有库
+sqoop list-databases --connect jdbc:mysql://192.168.30.95:3306/ --username root --password root
+#list-tables查出所有表
+
+2.导入import（一般指关系型数据库 => 大数据仓库hdfs,hive,hbase）
+2.1单表到hdfs
+sqoop import \
+--connect jdbc:mysql://192.168.40.113:3306/pra \
+--username root \
+--password root \
+--table emp \
+--target-dir /test/6/ \ #--target-dir指定目录，已有会报错
+--fields-terminated-by "\t" #每字段结束符是tab键
+
+2.2全库到hdfs
+sqoop import-all-tables --connect "jdbc:mysql://192.168.40.113:3306/pra" --username root --password root --warehouse-dir "/test/4" -m 1 --fields-terminated-by "\t"
+#--warehouse-dir指定父目录
+#-m 指定mapreduce进程数
+
+2.3单表到hive（包括数据），（sqoop把mysql=>hive，不能把mysql注释带过去）
+sqoop-import --connect 'jdbc:mysql://192.168.40.113:3306/pra' --username root --password root --table emp --delete-target-dir --hive-import --hive-overwrite  --hive-table default.qqq --null-string '\\N' --null-non-string '\\N' -m 1
+#--table指定关系型数据库的表名
+#--hive-table指定hive的表名
+#--hive-import 数据导入hdfs后，再载入hive目录
+
+单表到hive（仅表结构）
+sqoop create-hive-table --connect 'jdbc:mysql://192.168.40.113:3306/pra' --username root --password root --table emp --hive-table default.qqq2
+
+java api调sqoop，单表到hive（仅表结构），表已有的话不会同步，也不报错
+"create-hive-table",
+"--connect", "jdbc:mysql://192.168.40.113:3306/pra?serverTimezone=Asia/Shanghai",
+"-username", "root",
+"-password", "root",
+"--table", "emp",
+"--hive-table","xxx",
+"--fields-terminated-by","\t"
+
+2.4全库到hive
+sqoop import-all-tables \
+-Dorg.apache.sqoop.splitter.allow_text_splitter=true \
+--connect jdbc:mysql://192.168.40.113:3306/pra \
+--username root \
+--password root \
+--hive-import \
+-m 1
+
+3.其它用法
+
+3.1查询
+--query 'select name,sex from staff where id <=1 and $CONDITIONS;'
+# $CONDITIONS为固定用法
+
+3.2导入指定列
+--columns id,sex
+
+3.3常用参数、命令 => 百度
+
+增量导入
+1.按数值类型增长（比如id）
+append追加模式
+append --check-column id --last-value 1201
+更新数据追加到新文件，会造成重复数据
+
+2.按时间（比如xxxTime）
+2.1Lastmodified上次更新模式
+时间+1秒，会取>=的记录
+更新数据追加到新文件，会造成重复数据
+
+2.2merge-key形式
+把增量数据合并到原文件中
+导入增量数据和更新变化的数据，且数据不会重复，
+底层相当于做了一次完整的mapreduce
+
+sqoop当中job作业
+用其它调度软件工作调度这个job
+
+同步策略
+1.全量同步（每日全量表=>hive表中的一个分区），数据量小/码表
+2.增量同步，数据量大+不变化
+3.新增及变化同步，数据量大+变化
+4.特殊情况（只需要存储一次，比如地区表、省份表）
+
+业务表同步
+第一次全量同步
+sqoop import \
+--connect jdbc:mysql://192.168.30.95:3306/gmall \
+--username root \
+--password root \
+--query 'select * from order_info where $CONDITIONS' \
+--target-dir /order_info/2020-06-14 \ #--target-dir指定目录，已有会报错
+--delete-target-dir \ #已存在会删除
+--fields-terminated-by "\t" #每字段结束符是tab键
+--num-mappers 2 \ #指定mapreduce数
+--split-by id #分割基准字段
+后续新增及变化同步
+sqoop import \
+--connect jdbc:mysql://192.168.30.95:3306/gmall \
+--username root \
+--password root \
+--query 'select * from order_info where (date_format(create_time,'%Y-%m-%d')='2020-06-15' or date_format(update_time,'%Y-%m-%d')='2020-06-15') and $CONDITIONS' \
+--target-dir /order_info/2020-06-15 \ #--target-dir指定目录，已有会报错
+--delete-target-dir \ #已存在会删除
+--fields-terminated-by "\t" #每字段结束符是tab键
+--num-mappers 2 \ #指定mapreduce数
+--split-by id #分割基准字段
+
+编写首日同步shell脚本，日期用变量传入
+mysql_to_hdfs_init.sh
+#!/bin/bash
+
+APP=gmall#数据库库名
+sqoop=/opt/module/sqoop/bin/sqoop#sqoop绝对路径
+
+if [ -n "$2" ] ;then#-n非空判断，返回布尔
+   do_date=$2
+else 
+   echo "请传入日期参数"
+   exit
+fi 
+
+import_data(){#公用函数
+$sqoop import \
+--connect jdbc:mysql://hadoop102:3306/$APP \
+--username root \
+--password 000000 \
+--target-dir /origin_data/$APP/db/$1/$do_date \#$1值此函数的第一个参数
+--delete-target-dir \
+--query "$2 where \$CONDITIONS" \#$2值此函数的第二个参数
+--num-mappers 1 \
+--fields-terminated-by '\t' \
+--compress \#输出文件进行压缩
+--compression-codec lzop \#压缩格式lzop
+--null-string '\\N' \#将mysql中null值转换，hive中null值为\N
+--null-non-string '\\N'
+
+hadoop jar /opt/module/hadoop-3.1.3/share/hadoop/common/hadoop-lzo-0.4.20.jar com.hadoop.compression.lzo.DistributedLzoIndexer /origin_data/$APP/db/$1/$do_date
+}#为上传的lzop文件创建索引
+import_order_info(){
+  import_data order_info #调用import_data函数，order_info为$1既传入参数
+  "select#为import_data函数的$2参数
+        id, 
+        total_amount, 
+        order_status, 
+        user_id, 
+        payment_way,
+        delivery_address,
+        out_trade_no, 
+        create_time, 
+        operate_time,
+        expire_time,
+        tracking_no,
+        province_id,
+        activity_reduce_amount,
+        coupon_reduce_amount,                            
+        original_total_amount,
+        feight_fee,
+        feight_fee_reduce      
+    from order_info"
+}
+
+import_coupon_use(){
+  import_data coupon_use 
+  "select
+        id,
+        coupon_id,
+        user_id,
+        order_id,
+        coupon_status,
+        get_time,
+        using_time,
+        used_time,
+        expire_time
+    from coupon_use"
+}
+
+case $1 in #脚本的第一个参数
+  "order_info")
+     import_order_info #调import_order_info方法，同步order_info数据
+;;
+  "coupon_use")
+      import_coupon_use
+;;
+  "all") #传all就同步所有表数据
+   import_order_info
+   import_coupon_use
+;;
+esac
+
+编写每日同步shell脚本
+mysql_to_hdfs.sh
+#!/bin/bash
+
+APP=gmall#数据库库名
+sqoop=/opt/module/sqoop/bin/sqoop#sqoop绝对路径
+
+if [ -n "$2" ] ;then#-n非空判断，返回布尔
+   do_date=$2
+else 
+   do_date=`date -d '-1 day'+%F` #为空就取前一天
+fi 
+
+import_data(){#公用函数
+$sqoop import \
+--connect jdbc:mysql://hadoop102:3306/$APP \
+--username root \
+--password 000000 \
+--target-dir /origin_data/$APP/db/$1/$do_date \#$1值此函数的第一个参数
+--delete-target-dir \
+--query "$2 where \$CONDITIONS" \#$2值此函数的第二个参数
+--num-mappers 1 \
+--fields-terminated-by '\t' \
+--compress \#输出文件进行压缩
+--compression-codec lzop \#压缩格式lzop
+--null-string '\\N' \#将mysql中null值转换，hive中null值为\N
+--null-non-string '\\N'
+
+hadoop jar /opt/module/hadoop-3.1.3/share/hadoop/common/hadoop-lzo-0.4.20.jar com.hadoop.compression.lzo.DistributedLzoIndexer /origin_data/$APP/db/$1/$do_date
+}#为上传的lzop文件创建索引
+import_order_info(){
+  import_data order_info #调用import_data函数，order_info为$1既传入参数
+  "select#为import_data函数的$2参数
+        id, 
+        total_amount, 
+        order_status, 
+        user_id, 
+        payment_way,
+        delivery_address,
+        out_trade_no, 
+        create_time, 
+        operate_time,
+        expire_time,
+        tracking_no,
+        province_id,
+        activity_reduce_amount,
+        coupon_reduce_amount,                            
+        original_total_amount,
+        feight_fee,
+        feight_fee_reduce      
+    from order_info
+    #新增及变化同步
+    where (date_format(create_time,'%Y-%m-%d')='$do_date' 
+    or date_format(update_time,'%Y-%m-%d')='$do_date')"
+}
+
+import_comment_info(){
+  import_data comment_info 
+  "select
+        id,
+        user_id,
+        sku_id,
+        spu_id,
+        order_id,
+        appraise,
+        create_time
+    from comment_info
+    #新增同步
+    where (date_format(create_time,'%Y-%m-%d')='$do_date')"
+}
+#商品表
+import_sku_info(){
+  import_data sku_info 
+  "select
+        id,
+        spu_id,
+        price,
+        sku_name,
+        sku_desc,
+        weight,
+        tm_id,
+        category3_id,
+        is_sale,
+        create_time
+    from sku_info
+    #全量同步
+    where (1=1)"
+}
+
+case $1 in #脚本的第一个参数
+  "order_info")
+     import_order_info #调import_order_info方法，同步order_info数据
+;;
+  "comment_info")
+      import_comment_info
+;;
+  "sku_info")
+      import_sku_info
+;;
+  "all") #同步每一张表数据
+   import_order_info
+   import_comment_info
+   import_sku_info
+;;
+esac
+
+第一个参数传表名或者all，第二个参数传日期
+
+java操作sqoop1，将mysql数据导入hdfs
+1.pom
+<!-- sqoop1同步hdfs所需依赖 -->
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+</dependency>
+<!-- https://repo.maven.apache.org/maven2/org/apache/sqoop/sqoop/1.4.6/ -->
+<dependency>
+    <groupId>org.apache.sqoop</groupId>
+    <artifactId>sqoop</artifactId>
+    <version>1.4.6</version>
+    <classifier>hadoop200</classifier>
+</dependency>
+<!-- hadoop -->
+<dependency>
+    <groupId>org.apache.hadoop</groupId>
+    <artifactId>hadoop-common</artifactId>
+    <version>2.8.4</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.hadoop</groupId>
+    <artifactId>hadoop-hdfs</artifactId>
+    <version>2.8.4</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.hadoop</groupId>
+    <artifactId>hadoop-mapreduce-client-core</artifactId>
+    <version>2.8.4</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.hadoop</groupId>
+    <artifactId>hadoop-mapreduce-client-common</artifactId>
+    <version>2.8.4</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.hadoop</groupId>
+    <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
+    <version>2.8.4</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.apache.avro</groupId>
+    <artifactId>avro</artifactId>
+    <version>1.8.1</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.avro</groupId>
+    <artifactId>avro-mapred</artifactId>
+    <version>1.8.1</version>
+</dependency>
+
+2.service
+public void mysql2hdfs() {
+    try {
+        String[] args = new String[]{
+                "import",
+                "--connect", "jdbc:mysql://192.168.40.113:3306/pra?serverTimezone=Asia/Shanghai",
+                "--driver", "com.mysql.cj.jdbc.Driver",
+                "-username", "root",
+                "-password", "root",
+                "--table", "emp",
+                "--null-string", "na",
+                "--null-non-string", "na",
+                "-m", String.valueOf(1),
+                "--outdir", "/temp/xx/",
+                "--delete-target-dir",
+                "--target-dir", /test/5,
+                "--fields-terminated-by","\t",
+                "--hadoop-mapred-home", "/opt/module/hadoop-3.1.3"
+        };
+        String[] expandArguments = OptionsFileUtil.expandArguments(args);
+        Configuration conf = new Configuration();
+        conf.set("fs.defaultFS", "hdfs://bigData101:8020");
+        Sqoop.runTool(expandArguments, conf);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+3.问题
+3.1windows下需要hadoop运行所需文件和环境变量：
+安装winutils，看看对应版本有没有hadoop.dll和winutils.exe这两个文件
+将winutils下对应hadoop版本添加到系统变量
+HADOOP_HOME C:\qxn\myPro\winutils\hadoop-3.0.0
+添加Path变量，%HADOOP_HOME%\bin
+将hadoop.dll复制到C:\Window\System32下
+重启idea
+还不行的话，试试重启电脑
+
+在Windows下给hadoop指定用户，解决权限问题
+System.setProperty("HADOOP_USER_NAME","shonqian");
+
+3.2打成jar包后运行：
+在sqoop运行过程中，会在/tmp/下生成一个mysql表名.java文件，文件头部有
+import org.apache.hadoop.io.BytesWritable;
+import com.cloudera.sqoop.lib.JdbcWritableBridge;等
+
+org.apache.hadoop和com.cloudera.sqoop两个包会找不到，报错，
+sqoop参数设定了"--hadoop-mapred-home", "/opt/module/hadoop-3.1.3"后，就能找到hadoop包了
+将sqoop-1.4.6 jar包复制改名为hadoop-common-sqoop-1.4.6.jar，
+并放入linux中hadoop目录/share/hadoop/common/下，就能找到sqoop包了
+至此jar包能够正常运行

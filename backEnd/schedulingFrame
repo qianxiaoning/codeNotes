@@ -1,0 +1,153 @@
+
+---------------
+Azkaban
+Azkaban（轻）与oozie（重）对比
+市面上最流行的两种工作流调度系统
+
+简单调度：
+Linux的Crontab
+
+一个完整的数据分析系统通常都是由大量任务单元组成：
+Shell脚本程序，Java程序，MapReduce程序、Hive脚本等
+
+大数据工作流调度流程：
+某业务系统每天产生20G原始数据，我们每天对其进行处理
+1.先将原始数据同步到HDFS上
+HDFS
+2.对原始数据进行计算
+MapReduce
+3.生成的数据以分区表形式存储到多张Hive表中
+[Hive表，Hive表，Hive表]
+4.对Hive中多个表的数据进行JOIN处理，得到一张明细数据Hive大表
+明细数据Hive大表
+5.将明细数据进行复杂的统计分析，得到结果报表信息
+结果报表
+6.将统计分析得到的结果数据同步到业务系统中
+业务系统
+
+Azkaban集群部署
+web-server,exec-server,mysql
+将
+azkaban-db-3.84.4.tar.gz
+azkaban-exec-server-3.84.4.tar.gz
+azkaban-web-server-3.84.4.tar.gz
+上传至/opt/software/azkaban/
+解压至/opt/module/azkaban/下
+
+mv azkaban-exec-server-3.84.4 azkaban-exec
+mv azkaban-web-server-3.84.4 azkaban-web
+
+mysql -uroot -proot
+create database azkaban;
+use azkaban;
+
+source /opt/module/azkaban/azkaban-db-3.84.4/create-all-sql-3.84.4.sql;
+
+show tables;
+
+quit;
+
+修改mysql允许包大小，防止azkaban连接mysql阻塞
+sudo vim /etc/my.cnf
+在[mysqld]下面加上
+max_allowed_packet=1024M
+
+重启mysql
+sudo systemctl restart mysqld
+完成数据库初始化
+
+配置ExecutorServer
+cd /opt/module/azkaban/azkaban-exec/conf
+vim azkaban.properties
+default.timezone.id=Asia/Shanghai
+azkaban.webserver.url=http://bigData101:8081
+mysql.host=bigData101
+mysql.user=root
+mysql.password=root
+最后添加executor.port=12321//不指定的话，每次都会是随机值，不方便管理
+
+启动executor
+cd /opt/module/azkaban/azkaban-exec
+bin/start-exec.sh
+// 停止命令bin/shutdown-exec.sh
+// 把azkaban.properties里的相对路径改为绝对路径后，就能不用进目录再执行了，如conf/...
+
+ll 查看当前目录下是否有executor.port文件，有说明启动成功，没有就查看日志
+
+激活executor
+向服务发送一个get请求即可
+curl -G "bigData101:12321/executor?action=activate" && echo
+
+配置Web Server
+cd /opt/module/azkaban/azkaban-web/
+vim conf/azkaban.properties
+default.timezone.id=Asia/Shanghai
+mysql.host=bigData101
+mysql.user=root
+mysql.password=root
+azkaban.executorselector.filters=StaticRemainingFlowSize,CpuStatus // 多executor时设置，az选择器挑选机制：StaticRemainingFlowSize目前排队任务数最少，MinimumFreeMemory最小内存限制6G(会导致任务无法执行)，CpuStatus cpu使用率最低
+vim conf/azkaban-users.xml用户、权限管理文件
+添加
+<user password="root" roles="admin" username="shonqian"/>
+启动
+bin/start-web.sh
+// 停止 bin/shutdown-web.sh
+
+访问
+http://bigdata101:8081/
+登录
+shonqian
+root
+
+在windows上
+新建first.project
+azkaban-flow-version: 2.0
+
+新建first.flow
+nodes:
+  - name: jobA
+    type: command
+    config:
+      command: echo "Hello World"
+
+两个打包在一起，zip格式
+
+右上角，Create Project
+
+upload上传那个zip压缩包
+
+点Execute Flow
+
+左边Schedule定时调度
+右边Execute立即执行
+
+job每一个工作单元
+flow所有工作单元组成的工作流
+
+日志排查在Job List里的Log里
+
+first.project文件内容固定，确定flow版本
+first.flow文件（可properties和yaml两种格式）
+
+yaml：
+1.大小写敏感
+2.缩进表示层级
+3.不能用tab，用空格
+4.缩进空格数不重要，相同层级元素要左侧对齐
+5.#表示注释
+
+yaml语法：
+对象：{name:zhangsan,age:18}
+name: zhangsan
+age: 18
+数组：[a,b,c]
+- a
+- b
+- c
+对象数组：[{name:zhangsan,age:18},{name:zhangsan,age:18},{name:zhangsan,age:18}]
+- name: zhangsan
+  age: 18
+- name: zhangsan
+  age: 18
+- name: zhangsan
+  age: 18

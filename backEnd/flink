@@ -42,10 +42,14 @@ flink可执行批处理，流处理两种
 对于实时数据（无界）的作用在于，当服务宕机时，可以从状态中读取，续上之前进行到一半的数据
 -------------------
 安装：
-$ tar -xzf flink-1.15.2-bin-scala_2.12.tgz
-$ cd flink-1.15.2-bin-scala_2.12
-$ ./bin/start-cluster.sh
-$ ./bin/stop-cluster.sh
+tar -xzf flink-1.15.2-bin-scala_2.12.tgz
+cd flink-1.15.2-bin-scala_2.12
+启动：
+./bin/start-cluster.sh
+./bin/stop-cluster.sh
+
+默认web ui端口
+http://192.168.xx.xx:8081/
 -------------------
 DataStream API 来实现稳定可靠的、有状态的流处理应用程序
 -------------------
