@@ -7,4 +7,48 @@ Object: 存储到MinIO的基本对象，如文件、字节流
 Bucket: 用来存储Object的逻辑空间。每个Bucket之间的数据是相互隔离的
 Drive: 部署MinIO时设置的磁盘，MinIO中所有的对象数据都会存储到Drive。
 Set: 一组Drive的集合，MinIO会自动根据Drive数量，将若干个Drive划分为多个Set（For example: {1...64} is divided into 4 sets each of size 16）。
+
+纠删码EC（Erasure Code）
+纠删码，简单来说就是可以通过数学计算，把丢失的数据进行还原，它可以将n份原始数据，增加m份数据，并能通过n+m份中的任意n份数据，还原为原始数据。
+
+springboot整合minIO
+
+minio java API:
+操作存储桶Bucket
+makeBucket
+listBuckets
+bucketExists
+removeBucket
+listObjects
+listIncompleteUploads
+
+操作文件对象Object
+getObject
+putObject
+copyObject
+statObject
+removeObject
+removeIncompleteUpload
+
+Presigned操作
+presignedGetObject
+presignedPutObject
+presignedPostPolicy
+
+操作存储桶策略policy
+getBucketPolicy
+setBucketPolicy
+
+服务器时间要和客户端一致，否则会报错
+yum -y install ntp ntpdate
+ntpdate ntp1.aliyun.com // 设为中国时间（阿里服务器时间）
+hwclock --systohc
+
+accessKey 和 secretKey
+在web端，Identity-Service Accounts里生成
+
+api端口为9090
+
+文件链接默认有效期7天
+在web端桶管理界面，可以设为public，永远有效。在Summary-Access Policy中
 -------------
