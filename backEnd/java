@@ -3025,6 +3025,13 @@ public static void main(String args[]) {
 	System.out.println("\n字符型数组元素为:");
 	printArray(charArray); // 传递一个字符型数组
 }
+泛型方法：
+入参声明Class，出参泛型
+public <T> T getObjectDto(String objectName, Class<T> targetClass) {
+	T vo = null;
+	...
+	return vo;
+}
 
 泛型类
 public class Box<T> {
@@ -5248,11 +5255,9 @@ useGeneratedKeys="true"使用自动生成的主键值
 keyProperty="id" 将获取的主键值赋值给po类中的xx属性，通过setXx方法
 -------------------------------
 阿里分层领域模型规约：
-do(data object) 与表对应，通过dao层向上传递的数据对象
-dto(data transfer object) 数据传输对象，service向外传输的对象（service传给前端的）
-bo(business object) 业务对象，由service输出的封装业务逻辑的对象
-ao(application object) 应用对象
-vo(view object) 显示层对象，web向模板渲染引擎层传输的对象（前端传到controller的）
+vo 视图层传递，controller和前端的入参出参，使用
+dto 服务层传递，微服务间service互相调用入参出参，使用
+do 数据层对象，和实体类字段一样
 -------------------------------
 shiro安全框架，完成认证授权
 1.用shiro给密码加密，
@@ -5666,7 +5671,7 @@ JdbcTemplate 常用方法，参数放数组中（第二个位置），sql中按�
 try {
 	Object paperPath = jdbcTemplate.queryForObject(sql, new Object[]{code, id}, String.class);
 	// 或查类对象
-	ManageOrderDetailDto dto = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ManageOrderDetailDto.class), id);
+	ManageOrderDetailVo vo = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ManageOrderDetailDto.class), id);
 } catch (DataAccessException e) {
 	LOGGER.error(e.getMessage(), e);
 	return null;
@@ -5696,7 +5701,7 @@ if (StringUtils.isNotBlank(name)) {
 	sql += " and name like :name";
 }
 NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-return namedParameterJdbcTemplate.query(sql, params, new BeanPropertyRowMapper<>(Dto.class));
+return namedParameterJdbcTemplate.query(sql, params, new BeanPropertyRowMapper<>(Vo.class));
 ---------------------
 JSON相关：
 
@@ -5709,6 +5714,10 @@ Map<String, Object> map = JSON.<Map<String, Object>>parseObject(jo.toJSONString(
 String jsonString = JSONObject.toJSONString(obj);
 或
 String jsonString = JSON.toJSONString(vo);
+或者
+Map<String, Object> paramMap = new HashMap<>();
+JSONObject object = new JSONObject(map);
+String jsonString = object.toString();
 
 不忽略值为null的属性
 String jsonString = JSONObject.toJSONString(obj, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
@@ -6287,7 +6296,7 @@ mybatis resultMap传多个参数
 	where b_b = #{bb} and c_c = #{cc}
 </select>
 
-<resultMap id="aRM" type="xxx.dto">
+<resultMap id="aRM" type="xxx.vo">
 	<collection property="dtoProperty"
 				select="xxx.xxx"
 				column="{bb=b_b,cc=c_c,dd=d_d}">
@@ -6406,4 +6415,33 @@ jd-gui.exe
 -----------------
 jar包方法参数名由字母变为语义化：
 点入源码，download sources后，方法参数名就有了
+-----------------
+File
+
+删除指定路径文件
+File fileDelete = new File("C:\\Users\\Administrator\\Desktop\\a.json");
+fileDelete.delete();
+
+字符串到本地文件
+/**
+	* <简述> 字符串到本地文件
+	* <详细描述> string2file
+	* @param string 字符串内容
+	* @param url 文件路径
+	* @param isAppend 写入方式：true追加，false覆盖
+	* @return void
+	*/
+public static void string2file(String string, String url, Boolean isAppend) {
+	String str = string;
+	FileWriter writer;
+	try {
+		writer = new FileWriter(url, isAppend);
+		writer.write(""); //清空原文件内容
+		writer.write(str);
+		writer.flush();
+		writer.close();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+}
 -----------------
