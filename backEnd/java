@@ -5541,6 +5541,9 @@ controller可用po对象或@PathVariable注解直接接收
 tomcat=>消息中间件（解决海量数据同步处理问题）=>数据库
 -------------------------------
 (@RequestParam String name)，post请求传递单个参数
+
+@RequestBody参数在请求体，只有post可用
+@RequestBody参数在请求头，post、get都可用
 ---------------------
 在静态方法中获取yml配置文件的值
 public static Object getYmlValue(Object key){
@@ -6444,4 +6447,13 @@ public static void string2file(String string, String url, Boolean isAppend) {
 		e.printStackTrace();
 	}
 }
+-----------------
+@RequestBody传递的参数类型的application/json
+上传文件MultipartFile对应的类型是multipart/form-data
+两种参数不能放在一起，a(MultipartFile file, @RequestBody Vo vo)不能这么写
+
+可以把MultipartFile和其它参数放在一个vo里，controller不加@RequestBody注解
+a(Vo vo)，前端用formdata上传
+
+一个方法只能有一个@RequestBody参数
 -----------------

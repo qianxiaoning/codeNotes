@@ -1646,3 +1646,34 @@ https://blog.csdn.net/weixin_43381828/article/details/97309953
 视频教程
 https://www.zhihu.com/zvideo/1537741541061255168
 -------------
+hive时间类型
+date string TIMESTAMP
+date只能存到年月日
+string TIMESTAMP可以存到秒
+TIMESTAMP也能存进yyyy-MM-dd hh:mm:ss格式
+
+hive分区在hdfs上的路径
+create table a11(id string, name string) partitioned by(year int, month int, day int, hour int);
+/user/hive/warehouse/a11/year=2022/month=11/day=11/hour=22/
+
+将符合分区格式的数据load入hive表中，hive能自动创建表中分区
+s:
+222020121222
+21212021121222
+24242021121223
+load data local inpath '/opt/module/s' into table a11;
+
+hive load指令
+LOAD DATA [LOCAL] INPATH 'filepath' [OVERWRITE] INTO TABLE tablename [PARTITION (partcol1=val1, partcol2=val2 ...)]
+
+有local指从linux系统读文件
+没有local指从hdfs(也就是http://bigdata101:9870/explorer.htm)读文件
+
+filepath可以用：
+相对路径，例如：warehouse/data1
+绝对路径，例如：/user/hive/warehouse/data1
+包含模式的完整 URI，列如：
+hdfs://namenode:9000/user/hive/warehouse/data1
+
+有OVERWRITE，先删再load
+无OVERWRITE，追加数据
