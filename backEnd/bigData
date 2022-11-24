@@ -509,16 +509,17 @@ vim yarn-site.xml
     <property>
         <name>yarn.nodemanager.env-whitelist</name> <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME</value>
     </property>
-	<!-- yarn容器允许分配的最大最小内存 -->
+	<!-- yarn每个Applications允许分配的最小内存 -->
     <property>
         <name>yarn.scheduler.minimum-allocation-mb</name>
         <value>512</value>
     </property>
+    <!-- yarn每个Applications允许分配的最大内存 -->
 	<property>
         <name>yarn.scheduler.maximum-allocation-mb</name>
         <value>4096</value>
     </property>
-	<!-- yarn容器允许管理的物理内存大小 -->
+	<!-- yarn可使用的总物理内存大小 -->
     <property>
         <name>yarn.nodemanager.resource.memory-mb</name>
         <value>4096</value>

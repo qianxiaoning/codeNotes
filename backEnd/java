@@ -6457,3 +6457,12 @@ a(Vo vo)，前端用formdata上传
 
 一个方法只能有一个@RequestBody参数
 -----------------
+数据库连接的
+Connection连接
+Statement说明
+ResultSet结果集
+一般来说要放在方法内，一个请求建立一个连接，用完销毁
+
+在没有事务的时候，Connection可以多线程公用
+Statement只能一个线程用一个
+-----------------
