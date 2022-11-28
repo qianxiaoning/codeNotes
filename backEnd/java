@@ -5379,6 +5379,19 @@ XxxMapper.xml中
 			#{menuId}
 		</foreach>
 </select>
+
+mybatis xml <foreach>传入Map<Integer, String>和List<User>
+Map<Integer, String>：
+<foreach collection="map" item="value" index="key" separator=",">
+	(#{key},#{value})
+</foreach>
+
+List<User>：
+不管传入参数叫什么，collection="list"，collection后面都写list
+<foreach collection="list" item="item" index="index" separator=",">
+	#{item.id},
+	#{item.value}
+</foreach>
 -------------------------------
 cookie会存在请求的域名下
 
@@ -6465,4 +6478,10 @@ ResultSet结果集
 
 在没有事务的时候，Connection可以多线程公用
 Statement只能一个线程用一个
+-----------------
+mybatisPlus的LambdaQueryWrapper
+查询指定字段
+lqw.select(ThDosSjfxHiveLog::getMainProgram);
+查询排除字段以外字段
+lqw.select(ThDosSjfxHiveLog.class, info -> !info.getColumn().equals("main_program"));
 -----------------

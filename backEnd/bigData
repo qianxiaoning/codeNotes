@@ -48,9 +48,10 @@ yarn配置
 vim /opt/module/hadoop-3.1.3/etc/hadoop/capacity-scheduler.xml
 改为80%
 <property>
+    <!--ApplicationMaster最多可使用服务器总资源百分比-->
     <name>yarn.scheduler.capacity.maximum-am-resource-percent</name>
     <value>0.8</value>
-
+</property>
 可在http://bigdata101:8088/cluster/scheduler 中的
 Configured Max Application Master Limit查看
 
@@ -519,7 +520,7 @@ vim yarn-site.xml
         <name>yarn.scheduler.maximum-allocation-mb</name>
         <value>4096</value>
     </property>
-	<!-- yarn可使用的总物理内存大小 -->
+	<!-- 单节点NodeManager可分配给容器们的物理内存量 -->
     <property>
         <name>yarn.nodemanager.resource.memory-mb</name>
         <value>4096</value>

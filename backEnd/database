@@ -805,15 +805,15 @@ insert into 表名 (列1，列2，列3...) values(值1，值2，值3...),(值1�
 批量update
 一条语句执行多个update操作
 如：
-update table set creator_name = '1', a = '1' where id = 1;update table set creator_name = '2', a = '2' where id = 2;
+update tableName set creator_name = '1', a = '1' where id = 1;update tableName set creator_name = '2', a = '2' where id = 2;
 
 写法1：
-update table set 
+update tableName set 
 creator_name = (case id when 1 then '1' when 2 then '2' else creator_name end),
 creator = (case id when 1 then 1 when 2 then 2 else creator end)
 
 写法2（推荐）：
-UPDATE table SET 
+update tableName SET 
 creator_name = CASE id 
 WHEN 1 THEN '2value'
 WHEN 2 THEN '3value'
