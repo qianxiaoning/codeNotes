@@ -115,3 +115,6 @@ maven仓库搜groupId下面某jar包找不到时
 ---------------
 maven install/gradle install打包后，还会在本地maven仓库生成jar包，给别的项目引用使用
 ---------------
+Nexus maven私服：
+搜索项目路径，点pom文件，点Usage查看依赖坐标
+---------------
