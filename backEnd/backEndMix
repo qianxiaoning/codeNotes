@@ -125,39 +125,6 @@ PowerDesigner
 
 sql转模型
 file-reverse engineer-database-选择sql文件-选择需要的表-自动生成模型图
----------------
-Maven Helper可以搜索查看发生冲突的依赖
----------------
-<optional>true</optional>作用：
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-configuration-processor</artifactId>
-    <optional>true</optional>
-</dependency>
-
-父模块依赖声明了<optional>true</optional>，该依赖不会被子模块所引入
----------------
-maven引入指定jar包
-https://repo.maven.apache.org/maven2/org/apache/sqoop/sqoop/1.4.6/sqoop-1.4.6-hadoop200.jar
-写法：
-<dependency>
-    <groupId>org.apache.sqoop</groupId>
-    <artifactId>sqoop</artifactId>
-    <version>1.4.6</version>
-    <classifier>hadoop200</classifier>
-</dependency>
----------------
-本地jar包安装到maven仓库
-1.在maven官网下载jar包后
-2.cmd执行指令（参照maven官网groupId和artifactId坐标）
-mvn install:install-file -Dfile=C:\Users\Administrator\Desktop\opendj-core-3.0.0.jar -DgroupId=org.forgerock.opendj -DartifactId=opendj-core -Dversion=3.0.0 -Dpackaging=jar
------------------
-maven仓库官网搜索的时候
-可以带上groupId
-比如搜org.forgerock.opendj
------------------
-maven仓库搜groupId下面某jar包找不到时
-搜artifactId，然后看列表里的groupId，有没有非常相近的，有时候groupId会有小改动
 -----------------
 windows cmd执行mstsc，微软远程桌面控制
 ---------------
@@ -195,8 +162,6 @@ allprojects {
 3.idea-settings-gradle
 Gradle user home里配置gradle仓库地址
 下面指定gradle本机安装路径
----------------
-maven install/gradle install打包后，还会在本地maven仓库生成jar包，给别的项目引用使用
 ---------------
 官方推荐使用 Hadoop-2.7.2、Hive-1.2.1、Spark-2.4.3 和 Scala-2.11.12 对 Linkis 进行编译
 说明Linkis需要在linux编译，windows没有这些环境

@@ -274,6 +274,151 @@ DubboOrderServiceImpl.queryOrderByIdMybatisPlus
 DubboOrderServiceImpl.queryOrderByIdSql
 OrderMapper.xml中resultMap用法
 ----------------
+dubbo在nacos springboot上的配置
+核心流程：
+1.服务调用方和服务提供方nacos上加入dubbo配置
+总结：
+服务提供方和服务调用方需要注册到同一个命名空间下，写相同的dubbo.registry，不同命名空间的registry写多个，放在父级registries下
+dubbo.cloud.subscribed-services写需要订阅的服务名，一般为springboot中的spring.application.name
+
+详细例子：
+提供方nacos配置：
+dubbo:
+    application: 
+        name: ${spring.application.name} # 可以获取springboot配置文件信息
+        qosPort: 21091
+    group: dubbo
+    version: 1.0.0.dev
+    scan:
+        base-packages: com.xxx
+    protocol:
+        name: dubbo
+        port: 20091
+    registries:
+        registry1: # 服务提供方注册到一个命名空间
+            address: nacos://${provideNacos}?username=${provideNacosUsername}&password=${provideNacosPassword}&namespace=${provideNacosNamespace}&group=${provideNacosGroup}
+        registry2: # 调用共用服务sso，获取共用服务sso的命名空间
+            address: nacos://${ssoNacos}?username=${ssoNacosUsername}&password=${ssoNacosPassword}&namespace=${ssoNacosNamespace}&group=${ssoNacosGroup}
+    cloud:
+        subscribed-services: xxx-sso # 订阅服务：共用服务sso
+        configs: 
+            xxx-sso: # 和subscribed-services订阅的服务名对应
+                group: dubbo # 名称自定义，调用提供两方对应即可
+                version: 1.0.0.dev # 名称自定义，调用提供两方对应即可
+provideNacos: 192.168.xx.xx:8848
+provideNacosUsername: user
+provideNacosPassword: password
+provideNacosNamespace: aaa-222-dddd-....
+provideNacosGroup: DEV_GROUP
+
+ssoNacos: 192.168.xx.xx:8848
+ssoNacosUsername: user
+ssoNacosPassword: password
+ssoNacosNamespace: aaa-222-dddd-....
+ssoNacosGroup: DEV_GROUP
+
+调用方nacos配置：
+dubbo:
+    application: 
+        name: ${spring.application.name}
+        qosPort: 21090 # 不同的dubbo端口
+    group: dubbo
+    version: 1.0.0.dev
+    scan:
+        base-packages: com.xxx
+    protocol:
+        name: dubbo
+        port: 20090 # 不同的dubbo端口
+    registries:
+        registry1: # 调用服务提供方的服务，获取服务提供方的命名空间
+            address: nacos://${provideNacos}?username=${provideNacosUsername}&password=${provideNacosPassword}&namespace=${provideNacosNamespace}&group=${provideNacosGroup}
+        registry2: # 调用共用服务sso，获取共用服务sso的命名空间
+            address: nacos://${ssoNacos}?username=${ssoNacosUsername}&password=${ssoNacosPassword}&namespace=${ssoNacosNamespace}&group=${ssoNacosGroup}
+    cloud:
+        subscribed-services: xxx-sso,xxx-provide # 订阅服务：服务提供方和共用服务sso
+        configs: 
+            xxx-sso: # 和subscribed-services订阅的服务xxx-sso对应
+                group: dubbo
+                version: 1.0.0.dev
+            xxx-provide: # 和subscribed-services订阅的服务xxx-provide对应
+                group: dubbo
+                version: 1.0.0.dev    
+provideNacos: 192.168.xx.xx:8848
+provideNacosUsername: user
+provideNacosPassword: password
+provideNacosNamespace: aaa-222-dddd-....
+provideNacosGroup: DEV_GROUP
+
+ssoNacos: 192.168.xx.xx:8848
+ssoNacosUsername: user
+ssoNacosPassword: password
+ssoNacosNamespace: aaa-222-dddd-....
+ssoNacosGroup: DEV_GROUP
+
+2.服务调用方和服务提供方yml配置文件上引入对应nacos文件
+spring:
+  application:
+    name: service-name
+  cloud:
+    nacos:
+      config:
+        username: username
+        password: password%a5DlRy1
+        group: DEV_GROUP
+        namespace: xxx-999-xxx...
+        prefix: fileName-xxx
+        server-addr: 192.168.xxx.xxx:8848
+        file-extension: yaml # 对应naocs的fileName-xxx.yaml文件
+        extension-configs:
+          - data-id: common.yaml
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true
+          - data-id: log.yaml
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true
+          - data-id: cache.yaml
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true
+          - data-id: xxx-dubbo.yaml
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true
+
+3.服务提供方在api模块中写接口，接口实现类上加@DubboService(group="${dubbo.group}", version="${dubbo.version}")
+方法例子
+public ApiResultDto<xxDto> a(xxDto inputVo)
+public ApiResultDto<Integer> b(String ruleCode, String businessCode)
+
+4.本地开发下将api模块mvn install一下，将代码更新到本地仓库
+线上部署的时候将api模块mvn deploy一下，将代码更新到公司远程私服仓库
+
+5.服务调用方引入依赖
+上线时：
+在父层pom文件中引入带版本号私服依赖地址
+<dependency>
+    <groupId>com.telehot.tpf.app</groupId>
+    <artifactId>dataops-collection-api</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+在子模块pom文件中引入不带版本号私服依赖地址
+<dependency>
+    <groupId>com.telehot.tpf.app</groupId>
+    <artifactId>dataops-collection-api</artifactId>
+</dependency>
+本地开发时：
+引入本地仓库maven依赖路径
+
+6.服务调用方注入服务提供方的接口类
+@Configuration
+public class XxxDubboConfig {
+    @DubboReference(group="${dubbo.cloud.configs.xxx-provide.group}", version="${dubbo.cloud.configs.xxx-provide.version}", check = false)
+    private XxxApiService xxxApiService;
+}
+
+7.服务调用方serviceImpl中直接@Autowired注入XxxApiService使用
+@Autowired
+private XxxApiService xxxApiService;
+ApiResultDto<Dto> a = xxxApiService.a();
+
 
 
 

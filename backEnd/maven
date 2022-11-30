@@ -1,0 +1,117 @@
+-------------------------------
+Maven
+介绍
+公共包管理工具，类似npm install -g：
+一个项目管理工具，jar包管理，简化配置，统一项目结构
+
+Maven坐标主要组成(GAV) -确定一个jar在互联网位置：
+groupId：定义当前Maven组织名称
+artifactId：定义实际项目名称
+version：定义当前项目的当前版本
+
+下载maven
+配置maven
+maven\apache-maven-3.5.3\conf\settings.xml
+本地仓库位置：
+<localRepository>F:/software/maven/repository</localRepository>
+nexus私服
+central中央服务器
+下载镜像服务器位置（阿里云不能使用手机热点）：
+<mirrors>
+	<mirror>
+		<id>aliyun</id>
+		<name>aliyun Maven</name>
+		<mirrorOf>*</mirrorOf>
+		<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+	</mirror>
+</mirrors>
+指定jdk版本：
+<profile>
+	<id>jdk-1.8</id>
+	<activation>
+	<activeByDefault>true</activeByDefault>
+	<jdk>1.8</jdk>
+	</activation>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+	</properties>
+</profile>
+
+Maven在Eclipse的配置：
+window右键--> Preferences->maven->勾选Download Artifact Sources下源码->
+installations=>add=>将自己安装的maven目录选中=>勾选上
+user settings=>全局设置和用户设置选maven中的settings.xml=>
+本地仓库位置选F:\software\maven\repository
+
+Maven项目构建：
+new Maven->Create a simple project->packaging:jar(java项目)/war(web项目)->
+group id组织名称（com.xxx）->Artifact id项目名称->补充web.xml文件
+
+导入已有maven项目：
+1.复制src文件夹覆盖
+2.在pom.xml文件中复制
+properties版本号
+dependencies依赖坐标
+保存自动下载，不行就项目右击Update Project
+
+在pom.xml中导入依赖：
+1.右键maven->add dependency->搜索已有依赖
+如搜索不到，打开maven视图，右键local repository,rebuild index。索引会被重建
+
+2.在http://mvnrepository.com 或者公司镜像仓库搜索依赖坐标
+-------------------------------
+maven.exclusion
+子项目不需要，父项目的某个依赖时添加
+-------------------------------
+maven中的SNAPSHOT和RELEASE
+SNAPSHOT，开发版本（快照版本）：
+<version>1.0-SNAPSHOT</version>
+版本号不用变，每次会自动加上时间戳，引用的jar包会自动更新
+
+RELEASE，正式版本
+<version>1.0</version>
+会锁定jar，不使用更新
+
+<version>1.0-SNAPSHOT</version>，
+<version>0.0.1-SNAPSHOT</version>区别：
+<version>1.0</version>
+<version>0.0.1</version>
+起始版本约定不一样
+---------------
+Maven Helper可以搜索查看发生冲突的依赖
+---------------
+<optional>true</optional>作用：
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-configuration-processor</artifactId>
+    <optional>true</optional>
+</dependency>
+
+父模块依赖声明了<optional>true</optional>，该依赖不会被子模块所引入
+---------------
+maven引入指定jar包
+https://repo.maven.apache.org/maven2/org/apache/sqoop/sqoop/1.4.6/sqoop-1.4.6-hadoop200.jar
+写法：
+<dependency>
+    <groupId>org.apache.sqoop</groupId>
+    <artifactId>sqoop</artifactId>
+    <version>1.4.6</version>
+    <classifier>hadoop200</classifier>
+</dependency>
+---------------
+本地jar包安装到maven仓库
+1.在maven官网下载jar包后
+2.cmd执行指令（参照maven官网groupId和artifactId坐标）
+mvn install:install-file -Dfile=C:\Users\Administrator\Desktop\opendj-core-3.0.0.jar -DgroupId=org.forgerock.opendj -DartifactId=opendj-core -Dversion=3.0.0 -Dpackaging=jar
+-----------------
+maven仓库官网搜索的时候
+可以带上groupId
+比如搜org.forgerock.opendj
+-----------------
+maven仓库搜groupId下面某jar包找不到时
+搜artifactId，然后看列表里的groupId，有没有非常相近的，有时候groupId会有小改动
+---------------
+maven install/gradle install打包后，还会在本地maven仓库生成jar包，给别的项目引用使用
+---------------
