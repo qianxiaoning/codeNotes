@@ -432,13 +432,6 @@ hive-jdbc和hadoop jar包有冲突
 数据仓库为企业服务
 数据集市为部门服务
 
-表字段类型：
-数量类型bigint
-金额类型decimal(16,2) 16位有效数字，小数部分2位
-字符串string
-主键外键string
-时间戳bigint
-
 数据仓库分层：
 1.ods(operation data store) 原始数据层（业务数据、日志数据）
 
@@ -1646,11 +1639,32 @@ https://blog.csdn.net/weixin_43381828/article/details/97309953
 视频教程
 https://www.zhihu.com/zvideo/1537741541061255168
 -------------
+hive常用数据类型：
+int
+bigint
+STRING
+TIMESTAMP
+decimal(16,2)
+
 hive时间类型
 date string TIMESTAMP
 date只能存到年月日
 string TIMESTAMP可以存到秒
 TIMESTAMP也能存进yyyy-MM-dd hh:mm:ss格式
+
+不常用：
+FLOAT
+DOUBLE
+char
+varchar
+boolean
+
+表字段类型：
+数量类型bigint
+金额类型decimal(16,2) 16位有效数字，小数部分2位
+字符串string
+主键外键string
+时间戳bigint
 
 hive分区在hdfs上的路径
 create table a11(id string, name string) partitioned by(year int, month int, day int, hour int);

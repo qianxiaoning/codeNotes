@@ -148,6 +148,43 @@ List<MyDto> list = JSONObject.parseArray(JSONObject.toJSONString(res.getData()),
 nacos配置白名单
 telehot.sso.ignoreds[5]=/front/studio/**
 "/front/studio"为去服务名后，controller顶部的RequestMapping
+
+新建nacos流程
+1.新建命名空间（项目名）
+2.命名空间下创建配置文件（各微服务配置文件，公共配置文件）
+3.各微服务配置文件：
+server: 
+  port: 8083
+  servlet: 
+    context-path: /datacollect
+spring:
+  profiles:
+    active: dev
+4.springboot项目配置文件：
+##dev
+spring:
+  application:
+    name: dataops-datacollection #服务名
+  cloud:
+    nacos:
+      config:
+        username: xxx
+        password: xxxxx
+        group: DEV_GROUP
+        namespace: xxxx
+        prefix: dataops-datacollection #服务名
+        server-addr: 192.168.xx.xx:8848
+        file-extension: yaml
+        extension-configs: #公共配置文件
+          - data-id: common.yaml
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true
+          - data-id: log.yaml
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true
+          - data-id: cache.yaml
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true
 ---------------------
 开发环境、测试环境、生产环境，是不同的nacos地址，ip不同，同一服务不同环境的项目配置是不同的，在不同的nacos里，服务名（应用名）（spring.application.name）是一样的，
 server.servlet.context-path是url请求的上下文
