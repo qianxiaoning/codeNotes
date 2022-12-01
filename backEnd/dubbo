@@ -392,7 +392,6 @@ public ApiResultDto<Integer> b(String ruleCode, String businessCode)
 线上部署的时候将api模块mvn deploy一下，将代码更新到公司远程私服仓库
 
 5.服务调用方引入依赖
-上线时：
 在父层pom文件中引入带版本号私服依赖地址
 <dependency>
     <groupId>com.telehot.tpf.app</groupId>
@@ -404,8 +403,9 @@ public ApiResultDto<Integer> b(String ruleCode, String businessCode)
     <groupId>com.telehot.tpf.app</groupId>
     <artifactId>dataops-collection-api</artifactId>
 </dependency>
-本地开发时：
-引入本地仓库maven依赖路径
+本地仓库因为install了，仓库代码会自动更新，如果是同事的电脑，得把jar包发到他们的本地仓库中，他们才会有pom依赖
+测完改完bug后，依赖部署到私服
+私服依赖更新，其他同事得用新依赖版本号，或者删掉本地包，重新下载
 
 6.服务调用方注入服务提供方的接口类
 @Configuration
@@ -419,8 +419,7 @@ public class XxxDubboConfig {
 private XxxApiService xxxApiService;
 ApiResultDto<Dto> a = xxxApiService.a();
 
-
-
+在nacos的服务管理-服务列表里，可以看对应命名空间中dubbo的consumers和providers有没有注册上，判断dubbo有没有配置成功
 
 
 
