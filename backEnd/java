@@ -6426,3 +6426,38 @@ springboot多模块项目pom文件管理方式
 父级：<artifactId>父名称修改
 子模块：<parent>.<artifactId>父名称修改，<artifactId>子模块名称修改，<dependency>.<artifactId>依赖子模块名称修改
 -----------------
+java程序报错日志，从上往下执行
+点第一行报错，打断点，能找到报错第一方错误原因
+
+Instant高精度的时间戳(精确到纳秒数)
+-----------------
+方法中有一个匿名内部类，这个匿名内部类引用了方法中的局部变量，在外部方法调用完后，这个局部变量可能就被销毁了，为了保证内部类能顺利使用，给这个局部变量加上final，这会将这个局部变量复制一份作为该内部类对象的成员变量，同时为了保证外部方法不能被其它线程随意修改，引发数据不一致，引发线程安全问题，java规定了，匿名内部类引局部变量时，该局部变量必须得加上final，保证该变量不能修改，内部类只能读不能改。
+匿名内部类引用时，会把加了final的局部变量复制一份到内部类中，并且外部final的变量和内部类中的变量都不能修改，要修改的话，必须局部变量得是包装类，放在堆上，变相修改里面的值。
+举例：
+public void wayA() {
+	int a = 1;
+	final Integer b = 1;
+	Integer[] c = {1};
+	final Integer[] d = {1};
+	// 局部内部类
+	new Thread(new Runnable() {
+		@Override
+		public void run() {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			for (int i = 0; i < 1000; i++){
+				System.out.println(a); // java8前会报错，不能引用非final局部变量，保证不影响外部变量值。java8后不会报错，java8默认会给加上final
+				System.out.println(b); // 不会报错
+				System.out.println(a++);System.out.println(b++); // 会报错，能读到final变量，但是不能改，类似复制了一份final Integer b变量到内部类里，final是不允许修改的
+				System.out.println(c[0]++);System.out.println(d[0]++); // 不会报错，包装类是存在堆上的，可以修改里面的值，包装类本身就是final修饰
+			}	
+		}
+	}).start();
+}
+匿名内部类引用外部局部变量后，修改内部类变量值，外部局部变量值不会变，不会受内部类影响
+外部局部变量被内部类引用后，外部局部变量的生命周期被延长了
+
+匿名内部类是另外一个类，编译后会生成一个独立class文件

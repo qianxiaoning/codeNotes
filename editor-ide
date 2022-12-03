@@ -306,6 +306,7 @@ ctrl+alt+shift+c
 
 生成序列化id
 勾选settings-editor-inspections-serializable class without serialVersionUID
+光标选中类名，alt+enter生成
 
 idea项目排除windows defender
 设置-windows安全中心-病毒和威胁防护-“病毒和威胁防护”设置（管理设置）-排除项（添加或删除排除项）-添加路径
