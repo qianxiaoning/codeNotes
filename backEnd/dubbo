@@ -420,11 +420,19 @@ private XxxApiService xxxApiService;
 ApiResultDto<Dto> a = xxxApiService.a();
 
 在nacos的服务管理-服务列表里，可以看对应命名空间中dubbo的consumers和providers有没有注册上，判断dubbo有没有配置成功
+比如：
+providers:com.xxx.dev.xxx.service.XxxApiService:version:group
+consumers:com.xxx.dev.xxx.service.XxxApiService:1.0.0.dev:dubbo
 
 dubbo
 接口在提供方写，接口入参dto类也在提供方写定义，调用方声明提供方的dto类，塞值传入
 
-
+dubbo默认超时时间很短，默认超时后重复请求3次
+可配置
+dubbo: 
+    consumer: 
+        timeout: 60000 超时时间3秒
+        retries: 0 超时不重试
 
 
 

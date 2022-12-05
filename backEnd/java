@@ -542,6 +542,16 @@ parse(日期字符串)  // 得到Date实例
 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 Date d = sdf.parse("1991-04-12");
 
+String转Date
+String dateString = "2022-01-02 12:34:56";
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+Date date = sdf.parse(dateString);
+
+Date转String
+SimpleDateFormat sdf2 = new SimpleDateFormat("MM-/dd :mm ss");
+String format = sdf2.format(sdf.parse(date));
+format // 01-/02 :34 56
+
 Arrays.copyOf() 返回新数组
 int[] arr1 = {1, 2, 3, 4, 5}; 
 int[] arr2 = Arrays.copyOf(arr1, 5);
