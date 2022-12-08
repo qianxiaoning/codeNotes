@@ -388,8 +388,8 @@ spring:
 public ApiResultDto<xxDto> a(xxDto inputVo)
 public ApiResultDto<Integer> b(String ruleCode, String businessCode)
 
-4.本地开发下将api模块mvn install一下，将代码更新到本地仓库
-线上部署的时候将api模块mvn deploy一下，将代码更新到公司远程私服仓库
+4.本地开发下将整个项目mvn install一下，将代码更新到本地仓库
+线上部署的时候将整个项目mvn deploy一下，将代码更新到公司远程私服仓库
 
 5.服务调用方引入依赖
 在父层pom文件中引入带版本号私服依赖地址

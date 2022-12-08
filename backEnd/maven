@@ -125,3 +125,45 @@ Nexus maven私服：
 如果远端仓库（比如私服）代码更新了，本地仓库是不会自动更新的，两种方式：
 1.部署到远端仓库的时候，改变版本号，pom文件改成新版本号，会拉新代码
 2.部署到远端仓库的时候，不改变版本号，就得去把本地仓库里的包先删掉，再下载
+---------------
+聚合项目中的父子模块
+
+子模块root-api打包，包生成路径：
+子模块a的pom.xml
+<parent>
+    <groupId>com.xxx.app</groupId>
+    <artifactId>root</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</parent>
+<modelVersion>4.0.0</modelVersion>
+<artifactId>root-api</artifactId> // 打包root-api，会在上面指定的parent的groupId下，也就是com.xxx.app包下生成root-api，和root在同一个包下
+<dependencies>
+    <dependency>
+        <groupId>com.xxx.xxx</groupId>
+        <artifactId>xxx</artifactId>
+    </dependency>
+</dependencies>
+
+父项目root调子项目root-api本身：
+父模块root的pom.xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.xxx.app</groupId>
+            <artifactId>root-api</artifactId> // 父模块中可以直接找到子模块代码，不需要本地maven仓库中有
+            <version>${api.version}</version>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+跨项目调用，root2调root的子模块root-api：
+另一个父模块root2的pom.xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.xxx.app</groupId> // 包路径要写对，是root-api的parent的groupId，com.xxx.app
+            <artifactId>root-api</artifactId> // 需要项目root-api在本地仓库有，且root-api的parent的artifactId，也就是root包，也得在本地仓库中有，因为读到root-api中的parent标签，会去找它的parent，root，读它的pom文件
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
