@@ -131,7 +131,7 @@ Nexus maven私服：
 子模块root-api打包，包生成路径：
 子模块a的pom.xml
 <parent>
-    <groupId>com.xxx.app</groupId>
+    <groupId>com.xxx.app</groupId> // 因为别的服务调root-api时，还会去读它的parent，所以针对只对外提供api的模块，它的parent可以不设为自己的父项目，可以把parent设为公共parent下，这样只需要将api模块部署到私服就行了，父项目的其它模块就可以不需要部署到私服了，因为别的项目不会用到。
     <artifactId>root</artifactId>
     <version>1.0-SNAPSHOT</version>
 </parent>
@@ -167,3 +167,5 @@ Nexus maven私服：
         </dependency>
     </dependencies>
 </dependencyManagement>
+---------------
+有时候pom文件依赖加载报错会阻塞后面依赖加载
