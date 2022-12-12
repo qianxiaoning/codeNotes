@@ -394,14 +394,14 @@ public ApiResultDto<Integer> b(String ruleCode, String businessCode)
 5.服务调用方引入依赖
 在父层pom文件中引入带版本号私服依赖地址
 <dependency>
-    <groupId>com.telehot.tpf.app</groupId>
-    <artifactId>dataops-collection-api</artifactId>
+    <groupId>com.xxx.app</groupId>
+    <artifactId>root-api</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
 在子模块pom文件中引入不带版本号私服依赖地址
 <dependency>
-    <groupId>com.telehot.tpf.app</groupId>
-    <artifactId>dataops-collection-api</artifactId>
+    <groupId>com.xxx.app</groupId>
+    <artifactId>root-api</artifactId>
 </dependency>
 本地仓库因为install了，仓库代码会自动更新，如果是同事的电脑，得把jar包发到他们的本地仓库中，他们才会有pom依赖
 测完改完bug后，依赖部署到私服
@@ -418,7 +418,7 @@ public class XxxDubboConfig {
 @Autowired
 private XxxApiService xxxApiService;
 ApiResultDto<Dto> a = xxxApiService.a();
-
+----------------
 在nacos的服务管理-服务列表里，可以看对应命名空间中dubbo的consumers和providers有没有注册上，判断dubbo有没有配置成功
 比如：
 providers:com.xxx.dev.xxx.service.XxxApiService:version:group
