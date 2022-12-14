@@ -6475,3 +6475,34 @@ public void wayA() {
 springboot开发时，给serive设置了事务，当一个方法里有多个数据库操作时，可以将多个数据库操作写在不同service中，在controller调用，避免都在一个事务里，导致前面需要提交的数据库操作不提交。
 比如：先往表中插入一条记录，提供外部查询，进行一些耗时操作，再对这条记录进行修改，如果都在一个service方法，那别人得等到方法完全结束，事务提交后，才能看到记录，分成2个service方法，在controller调，别人就能在耗时操作运行过程中就看到那条记录，就能分成2个事务，彼此不影响。
 ----------------
+格式化sql语句，并校验sql语法是否正确
+<dependency>
+	<groupId>com.alibaba</groupId>
+	<artifactId>druid</artifactId>
+	<version>1.1.22</version>
+</dependency>
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.parser.ParserException;
+import com.alibaba.druid.sql.parser.SQLParserUtils;
+import com.alibaba.druid.sql.parser.SQLStatementParser;
+import java.util.List;
+import static com.alibaba.druid.sql.SQLUtils.toSQLString;
+@Test
+public void a3() {
+	String sql = "select  * from a where d=2";
+	String formattedSql = sqlFormat(sql); // 格式化后的sql
+	System.out.println(formattedSql);
+}
+public static String sqlFormat(String sql) {
+	List<SQLStatement> statementList = null;
+	SQLStatementParser parser = null;
+	try {
+		parser = SQLParserUtils.createSQLStatementParser(sql, "mysql");
+		statementList = parser.parseStatementList();
+	} catch (ParserException e) {
+		System.out.println("SQL转换中发生了错误：" + e.getMessage()); // sql语法错误
+		throw e;
+	}
+	return toSQLString(statementList, "mysql");
+}
+----------------
