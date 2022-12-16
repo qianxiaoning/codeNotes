@@ -6506,3 +6506,17 @@ public static String sqlFormat(String sql) {
 	return toSQLString(statementList, "mysql");
 }
 ----------------
+利用泛型继承，统一给不同实体类赋公共字段，比如创建时间、创建人
+@Data
+public abstract class SimpleEntity {
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
+}
+public static <T extends SimpleEntity> void appendEntityInfo(T entity) {
+	if (entity != null) {
+		entity.setCreateTime(LocalDateTime.now());// 传入泛型继承自SimpleEntity，所以有createTime属性，可以直接用
+	}
+}
+----------------
