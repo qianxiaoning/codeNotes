@@ -764,3 +764,7 @@ cat /root/.ssh/id_ecdsa.pub
 git clone指定分支
 git clone -b v2.8.1 https://git.xxx.git
 --------------
+版本回退到上一个版本
+git reset --soft HEAD~1 本地修改不丢失
+git reset --hard HEAD~1 本地修改丢失
+--------------
