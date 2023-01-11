@@ -257,3 +257,21 @@ ls: cannot access '/docker-entrypoint-initdb.d/': Operation not permitted
 docker inspect apachegriffin/griffin_spark2:0.3.0 （带上版本号）
 docker inspect griffin
 ------------------
+docker-compose命令
+拉取镜像
+docker-compose pull
+指定配置文件，默认docker-compose文件名docker-compose.yml
+docker-compose -f docker-compose-non-dev.yml pull
+启动
+docker-compose -up -d
+查看docker-compose管理的容器
+docker-compose ps
+开启、重启、停止
+docker-compose start
+docker-compose restart
+docker-compose stop
+关闭并删除容器
+docker-compose down
+查看版本
+docker-compose version
+------------------
