@@ -5672,6 +5672,8 @@ String jsonString = JSONObject.toJSONString(obj, SerializerFeature.PrettyFormat,
 
 Object转JSONObject
 JSONObject jsonObject = (JSONObject) JSON.toJSON(object);
+或
+JSONObject jsonObject = (JSONObject) JSONObject.toJSON(object);
 
 JSONObject jsonObject = JSONObject.parseObject(jsonString);
 
