@@ -5651,13 +5651,16 @@ return namedParameterJdbcTemplate.query(sql, params, new BeanPropertyRowMapper<>
 JSON相关：
 
 对象（或任意bean）转Map
+String s = JSONObject.toJSONString(vo);
+Map<String, Object> map = JSON.<Map<String, Object>>parseObject(s, Map.class);
+或者
 Object obj = new Object();
 JSONObject jo = (JSONObject) JSON.toJSON(obj);
 Map<String, Object> map = JSON.<Map<String, Object>>parseObject(jo.toJSONString(), Map.class);
 
 对象转json字符串（会忽略值为null的属性）
 String jsonString = JSONObject.toJSONString(obj);
-或
+或者
 String jsonString = JSON.toJSONString(vo);
 或者
 Map<String, Object> paramMap = new HashMap<>();
@@ -5678,6 +5681,13 @@ jsonString转实体类
 List<A> list = JSONObject.parseArray(jsonString, A.class);
 
 A a = JSONObject.parseObject(jsonString, A.class);
+
+String转JSONArray
+JSONArray jsonArray = JSONArray.parseArray(jsonArrayStr);
+
+实体类转JSONObject
+String jsonString = JSONObject.toJSONString(vo);
+JSONObject jsonObject = JSONObject.parseObject(jsonString);
 
 do,vo类貌似不能强转Map
 但是do,vo,Map能转JSONObject
