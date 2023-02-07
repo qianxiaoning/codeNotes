@@ -190,3 +190,10 @@ spring:
 server.servlet.context-path是url请求的上下文
 openFeign只能在同一nacos调，同一环境的服务可以互相调，feign不能跨环境调
 ---------------------
+nacos配置本地覆盖，如果本地线上都有配置，优先用本地
+spring:
+  cloud:
+    config:
+      allow-override: true     // 允许nacos被本地文件覆盖
+      override-none: true     // nacos不覆盖任何本地文件
+---------------------

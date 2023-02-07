@@ -275,3 +275,10 @@ docker-compose down
 查看版本
 docker-compose version
 ------------------
+修改容器端口
+停止容器
+停止docker
+vim /var/lib/docker/containers/容器ID/hostconfig.json
+修改
+3306/tcp:是容器端口, HostPort":"3306:是宿主机端口
+------------------
