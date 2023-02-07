@@ -298,9 +298,9 @@ where里面不能使用列的别名
 -- 28.查询emp表中姓名以"刘"开头并且姓名为2个字的员工，显示员工姓名。
 	select name from emp where name like '刘_';	
 	
--- -----------------------------------
+-- --------------------------
 -- 三、分组查询、聚合函数、排序查询
--- -----------------------------------
+-- --------------------------
 -- 29.对emp表按照部门对员工进行分组，查看分组后效果
 	/* 分组的语法: 
 	select 查询的列 from 表名 group by 列名
@@ -350,9 +350,9 @@ select curtime();
 select sysdate();
 select now();
 
--- -----------------------------------
+-- --------------------------
 -- **************** 排序查询 ***************
--- -----------------------------------
+-- --------------------------
 	/* order by 排序的列 asc 升序(从低到高)
 	order by 排序的列 desc 降序(从高到低)
 	默认就是升序，所以asc可以省略不写 */
@@ -360,9 +360,9 @@ select now();
 	select name,sal from emp order by sal asc;
 -- 38.对emp表中所有员工奖金进行降序(从高到低)排序，显示员工姓名、奖金。
 	select name,ifnull(bonus,0) from emp order by ifnull(bonus,0) desc;
--- -----------------------------------
+-- --------------------------
 -- **************** 分页查询 ***************
--- -----------------------------------
+-- --------------------------
 	/* 在mysql中，通过limit进行分页查询：
 	limit (页码-1)*每页显示记录数, 每页显示记录数 */
 	/*limit start,size */
@@ -572,9 +572,9 @@ source F:/files/tedu/杂项/db40.sql;
 	order by... -- 根据指定的列进行排序
     limit...
 	...
-----------------------------
+-------------------
 在数据库中有两种基本的锁类型：排它锁（Exclusive Locks，即X锁）和共享锁（Share Locks，即S锁）。当数据对象被加上排它锁时，其他的事务不能对它读取和修改。加了共享锁的数据对象可以被其他事务读取，但不能修改。数据库利用这两种基本的锁类型来对数据库的事务进行并发控制。
-----------------------------
+-------------------
 题目：
 student_score:
 
@@ -631,10 +631,10 @@ select sn from s where s# in(
 	select s# from c,sc where c.c#=sc.c# and cn in ('java编程','项目管理') group by s#  
 	having count(sc.c#)=2
 );
-----------------------------
+-------------------
 格式：
 select xx from xx where xx group by xx having xx;
-----------------------------
+-------------------
 事务
 数据库事务：将一堆sql语句绑定在一起执行，执行的结果是要么全执行成功，要么全部执行失败
 
@@ -750,7 +750,7 @@ try{
 }catch(Exception e){
 	conn.rollback();// 回滚
 }
-----------------------------
+-------------------
 sql中相等为一个=号
 where name='张三'
 
@@ -759,18 +759,18 @@ where name='张三'
 
 mysql名称连接用_，不用驼峰
 转到java转驼峰
-----------------------------
+-------------------
 在mysql中查数据库的函数
 ? functions;
-----------------------------
+-------------------
 mysql没有布尔类型
-----------------------------
+-------------------
 mysql添加索引
 普通单列索引：
 ALTER TABLE sys_user ADD INDEX index_usercode (usercode)
 组合索引（最左前缀原则）：
 ALTER TABLE sys_user ADD INDEX index_usercode_deptcode (usercode,deptcode)
-----------------------------
+-------------------
 分组排名
 分组取最新
 //INNER JOIN表连接
@@ -792,13 +792,13 @@ SELECT driver_code,STATUS,create_at
 FROM (SELECT driver_code,STATUS,create_at,dense_rank() over (PARTITION BY driver_code ORDER BY create_at DESC) AS ranking 
 FROM th_xdhy_order)
 NEW WHERE ranking=1
-----------------------------
+-------------------
 建表优化
 条件列表查询中的字段可以冗余，因为列表查询人数多，单人根据条件查询的次数也多，又是返回List，所以可以字段冗余
 详情一般可以通过关联表查询，不用冗余，因为详情查询次数少，也没有条件重新查询。
 
 发布文章，文章表的正文这一字段可以独立出一张表，因为正文文本量大，会导致主表慢。
-----------------------------
+-------------------
 批量insert
 insert into 表名 (列1，列2，列3...) values(值1，值2，值3...),(值1，值2，值3...);
 
@@ -823,7 +823,7 @@ WHEN 1 THEN 3
 WHEN 2 THEN 4
 end
 WHERE id IN (1, 2)
----------------------
+------------
 数据量大时，一条sql多次left join，比分成多条sql计算量大很多
 订单表1万
 货源表1万
@@ -836,14 +836,14 @@ WHERE id IN (1, 2)
 订单left join货源 = 1万*1万
 用订单id单独查订单节点表 = 7万
 1万*1万+7万 = 10007万
----------------------
+------------
 nosql:
 
 nosql对于sql的补充，读取时不必读取整行，降低开销，对读远多于写的数据放入nosql，增大服务支持的并发量
 比如mysql中常读数据放入redis
 
 kv型nosql redis
----------------------
+------------
 搜索型NoSql ElasticSearch
 倒排索引
 
@@ -852,7 +852,7 @@ kv型nosql redis
 支持全文搜索，条件查询
 
 在内存运行
----------------------
+------------
 列式NoSql HBase（大数据）
 单列加上id主键
 
@@ -860,22 +860,22 @@ kv型nosql redis
 
 存储量大、读写性能好
 条件查询弱
----------------------
+------------
 文档型NoSql MongoDB
 常以JSON或者XML格式存储数据
 
 扩展字段容易，对于非索引字段的查询，快于关系型数据库
----------------------
+------------
 union 去重
 union all 不去重
----------------------
+------------
 查看mysql日志错误和警告部分
 tail -n500 /var/log/mysqld.log|grep -E 'Warning|ERROR'
----------------------
+------------
 查询结果按照in里的顺序输出
 select id,en_name from table_a where id in(152224,152225,152220) 
 order by field(id,152224,152225,152220);
----------------------
+------------
 with as创建临时表
 with
 A的临时表 as
@@ -892,7 +892,7 @@ select
     B的临时表.price
 from A的临时表
 left join B的临时表 on A的临时表.spu_id=B的临时表.id;
----------------------
+------------
 java连接presto
 1.pom.xml
 <!-- presto依赖 -->
@@ -926,10 +926,10 @@ public static void main(String[] args) {
 		e.printStackTrace();
 	}
 }
----------------------
+------------
 mysql视图
 视图可以看作一个sql的别名，也可以说sql的封装
----------------------
+------------
 linux操作postgresql
 su postgres
 
@@ -955,13 +955,13 @@ select tablename from pg_tables;
 ctrl + z
 
 增删改查命令同mysql
----------------------
+------------
 看页面建表
 1.一主表
 2.一对一：一主表，一分表。当字段多时，拆分为2表
 3.一对多：一主表，一子表。一页面中有小列表时（特别是还能删改这种），小列表为子表
 4.多对多：一主表，一主表，一中间表
----------------------
+------------
 快速建表流程：
 先按页面建主表，页面所需字段为主表字段，
 主页面上还有小列表的（小列表能改删这种），就是主表的从表，建从表
@@ -969,10 +969,10 @@ ctrl + z
 不同页面，字段相同的主表可以归为一张主表
 
 一个页面不同内容的，可分为多张主表
----------------------
+------------
 树结构，用parentId关联
 列表结构，可以用序号关联，也可以用parentId关联
----------------------
+------------
 mysql新增用户
 create user 'username'@'host' identified by 'password'
 如：
@@ -996,7 +996,7 @@ AND TABLE_NAME LIKE 'prefix_%'
 
 查看用户授权
 show grants for 'b'
----------------------
+------------
 mysql窗口函数
 和分组函数group by区别
 group by会每组得到一条记录
@@ -1010,7 +1010,7 @@ a,b,c
 a 3,
 b 3,
 c 3
----------------------
+------------
 多条不同insert sql，统一提交，批量提交（如果同一条sql可以用一条insert语句插入多个value，速度更快）
 PreparedStatement的批处理
 
@@ -1023,7 +1023,7 @@ if(i % 1000 == 0) { // 1000条sql提交一次数据库，比一条条提交快�
 	ps.clearBatch();
 }
 conn.commit();// 手动提交
----------------------
+------------
 left join，左边放小数据量表，右边放大数据量表，效率高
 a表10条记录，b表20条记录，a是驱动表，数据量小效率高
 
@@ -1035,3 +1035,33 @@ left join子连接
 select aa.* from aa 
 left join (select id,name from bb where id > 1) c 
 on aa.id=c.id
+------------
+ON DUPLICATE KEY update
+mysql insert记录时有则插入，没有则更新，Updated Rows=2，是insert语句不能加where
+ON DUPLICATE KEY，如果insert值中有主键，则看主键是否重复，没有主键看唯一索引是否重复。
+主键和唯一索引都重复，则报错
+INSERT INTO user(id,username) VALUES(1,'a')
+记录：
+1,a
+INSERT INTO user(id,username) VALUES(1,'aa') ON DUPLICATE KEY update id=2
+记录：
+2,a
+INSERT INTO user(id,username) VALUES(2,'bb') ON DUPLICATE KEY update id=3,username='bb'
+记录：
+3,bb
+
+insert into 多条记录时，动态取值
+INSERT INTO user(id,username) VALUES(3,'cc') ON DUPLICATE KEY update id=VALUES(id),username=VALUES(username)
+记录：
+3,cc
+------------
+replace into，似乎性能比ON DUPLICATE KEY好
+如果主键或者唯一索引重复，则先删除后插入。不重复则直接插入。语句比ON DUPLICATE KEY简洁，Updated Rows=2
+replace INTO user(id,username) VALUES(3,'dd')
+记录：
+3,dd
+也支持批量
+replace into user(id,username) values(值1，值2),(值1，值2);
+------------
+insert/replace into select
+insert/replace INTO user(id,username) select 4,username from user where id=1

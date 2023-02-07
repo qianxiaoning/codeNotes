@@ -6532,3 +6532,36 @@ public static <T extends SimpleEntity> void appendEntityInfo(T entity) {
 	}
 }
 ----------------
+两者比较，将比较规则封装，左右正反各调一次解决
+// hive和mysql的比较
+if ("HIVE".equalsIgnoreCase(leftColumnDatabaseType) && "MYSQL".equalsIgnoreCase(rightColumnDatabaseType)) {
+	// 左边为hive，右边为mysql
+	return hiveAndMysqlMatchRule(leftColumnDatabaseType, rightColumnDatabaseType);
+} else if ("MYSQL".equalsIgnoreCase(leftColumnDatabaseType) && "HIVE".equalsIgnoreCase(rightColumnDatabaseType)) {
+	// 左边为mysql，右边为hive
+	return hiveAndMysqlMatchRule(rightColumnDatabaseType, leftColumnDatabaseType);
+}
+// 把hive和mysql的比较规则封装
+private boolean hiveAndMysqlFieldMatch(String hiveType, String mysqlType) {
+	if ("STRING".equals(hiveType)) {
+		// 如果hive为字符串类型
+		// mysql为CHAR、VARCHAR、LONGTEXT、TEXT为匹配
+		if ("CHAR".equals(mysqlType) || "VARCHAR".equals(mysqlType) || "LONGTEXT".equals(mysqlType) || "TEXT".equals(mysqlType)) {
+			return true;
+		} else {
+			return false;
+		}
+	} else if ("TIMESTAMP".equals(hiveType)) {
+		// 如果hive为时间类型
+		// mysql为DATETIME、TIMESTAMP、DATE为匹配
+		if ("DATETIME".equals(mysqlType) || "TIMESTAMP".equals(mysqlType) || "DATE".equals(mysqlType)) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		// hive为其它类型，直接比较
+		return hiveType.equalsIgnoreCase(mysqlType);
+	}
+}
+----------------
