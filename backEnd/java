@@ -6565,16 +6565,40 @@ private boolean hiveAndMysqlFieldMatch(String hiveColumnType, String mysqlColumn
 	}
 }
 ----------------
-多条不同insert sql，统一提交，批量提交（如果同一条sql可以用一条insert语句插入多个value，速度更快）
+mysql 批量提交（比单纯一条条提交快，但是不如一条insert语句插入多个value快）
 PreparedStatement的批处理
 
 Class.forName("com.mysql.cj.jdbc.Driver");
 Connection conn = DriverManager.getConnection(url, username, password);
-conn.setAutoCommit(false);// 关闭自动提交
-PreparedStatement ps = conn.prepareStatement("INSERT INTO xxl_job_log VALUES (?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?)");
-if(i % 1000 == 0) { // 1000条sql提交一次数据库，比一条条提交快，但是比一条sql多个value慢
-	ps.executeBatch();
-	ps.clearBatch();
+conn.setAutoCommit(false); // 关闭自动提交（建立连接后只需设置一次）
+PreparedStatement ps = conn.prepareStatement("INSERT INTO xx VALUES (?,?)");
+for(int i = 0; i < 10; i ++) {
+	ps.setInt(2, 18);
+	ps.setString(1, "张三");
+	ps.addBatch(); // 添加到同一个批处理中
 }
-conn.commit();// 手动提交
+ps.executeBatch(); // 执行批处理
+//ps.clearBatch(); // 清空批处理，可省略，貌似executeBatch后会自动清空
+conn.commit();// 手动提交事务
+----------------
+mysql单条sql插入多个values(大数据量下，比mysql批量提交快7%左右)
+Class.forName("com.mysql.cj.jdbc.Driver");
+Connection conn = DriverManager.getConnection(url, username, password);
+PreparedStatement ps = conn.prepareStatement("INSERT INTO xx VALUES (?,?)");
+String sql = "INSERT INTO xx VALUES ";
+for(int i = 0; i < 10; i ++) {
+	StringBuilder sb = new StringBuilder();
+	for(int i = 0; i < 10; i ++) {
+		sb.append("(");
+		sb.append(i);
+		sb.append(",'" + "张三" + "'");
+		sb.append(")");
+		if (i < end - 1) {
+			sb.append(",");
+		}
+	}
+	ps = conn.prepareStatement(sql + sb.toString());
+	ps.executeUpdate(); // 执行语句
+}
+10条insert语句，一条10个values
 ----------------
