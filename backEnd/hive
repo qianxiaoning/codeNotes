@@ -1691,3 +1691,8 @@ hdfs://namenode:9000/user/hive/warehouse/data1
 
 有OVERWRITE，先删再load
 无OVERWRITE，追加数据
+-------------
+load文件到hive，select count()不能查到数量
+得手动更新表统计信息
+ANALYZE TABLE tablename COMPUTE STATISTICS;
+-------------

@@ -6535,33 +6535,46 @@ public static <T extends SimpleEntity> void appendEntityInfo(T entity) {
 两者比较，将比较规则封装，左右正反各调一次解决
 // hive和mysql的比较
 if ("HIVE".equalsIgnoreCase(leftColumnDatabaseType) && "MYSQL".equalsIgnoreCase(rightColumnDatabaseType)) {
-	// 左边为hive，右边为mysql
-	return hiveAndMysqlMatchRule(leftColumnDatabaseType, rightColumnDatabaseType);
+	// 左边为hive，右边为mysql，传入字段类型
+	return hiveAndMysqlMatchRule(leftColumnType, rightColumnType);
 } else if ("MYSQL".equalsIgnoreCase(leftColumnDatabaseType) && "HIVE".equalsIgnoreCase(rightColumnDatabaseType)) {
-	// 左边为mysql，右边为hive
-	return hiveAndMysqlMatchRule(rightColumnDatabaseType, leftColumnDatabaseType);
+	// 左边为mysql，右边为hive，传入字段类型
+	return hiveAndMysqlMatchRule(rightColumnType, leftColumnType);
 }
 // 把hive和mysql的比较规则封装
-private boolean hiveAndMysqlFieldMatch(String hiveType, String mysqlType) {
-	if ("STRING".equals(hiveType)) {
-		// 如果hive为字符串类型
+private boolean hiveAndMysqlFieldMatch(String hiveColumnType, String mysqlColumnType) {
+	if ("STRING".equals(hiveColumnType)) {
+		// 如果hive列为字符串类型
 		// mysql为CHAR、VARCHAR、LONGTEXT、TEXT为匹配
-		if ("CHAR".equals(mysqlType) || "VARCHAR".equals(mysqlType) || "LONGTEXT".equals(mysqlType) || "TEXT".equals(mysqlType)) {
+		if ("CHAR".equals(mysqlColumnType) || "VARCHAR".equals(mysqlColumnType) || "LONGTEXT".equals(mysqlColumnType) || "TEXT".equals(mysqlColumnType)) {
 			return true;
 		} else {
 			return false;
 		}
-	} else if ("TIMESTAMP".equals(hiveType)) {
-		// 如果hive为时间类型
+	} else if ("TIMESTAMP".equals(hiveColumnType)) {
+		// 如果hive列为时间类型
 		// mysql为DATETIME、TIMESTAMP、DATE为匹配
-		if ("DATETIME".equals(mysqlType) || "TIMESTAMP".equals(mysqlType) || "DATE".equals(mysqlType)) {
+		if ("DATETIME".equals(mysqlColumnType) || "TIMESTAMP".equals(mysqlColumnType) || "DATE".equals(mysqlColumnType)) {
 			return true;
 		} else {
 			return false;
 		}
 	} else {
-		// hive为其它类型，直接比较
-		return hiveType.equalsIgnoreCase(mysqlType);
+		// hive列为其它类型，直接比较
+		return hiveColumnType.equalsIgnoreCase(mysqlColumnType);
 	}
 }
+----------------
+多条不同insert sql，统一提交，批量提交（如果同一条sql可以用一条insert语句插入多个value，速度更快）
+PreparedStatement的批处理
+
+Class.forName("com.mysql.cj.jdbc.Driver");
+Connection conn = DriverManager.getConnection(url, username, password);
+conn.setAutoCommit(false);// 关闭自动提交
+PreparedStatement ps = conn.prepareStatement("INSERT INTO xxl_job_log VALUES (?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?)");
+if(i % 1000 == 0) { // 1000条sql提交一次数据库，比一条条提交快，但是比一条sql多个value慢
+	ps.executeBatch();
+	ps.clearBatch();
+}
+conn.commit();// 手动提交
 ----------------

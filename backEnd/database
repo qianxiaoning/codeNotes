@@ -1011,19 +1011,6 @@ a 3,
 b 3,
 c 3
 ------------
-多条不同insert sql，统一提交，批量提交（如果同一条sql可以用一条insert语句插入多个value，速度更快）
-PreparedStatement的批处理
-
-Class.forName("com.mysql.cj.jdbc.Driver");
-Connection conn = DriverManager.getConnection(url, username, password);
-conn.setAutoCommit(false);// 关闭自动提交
-PreparedStatement ps = conn.prepareStatement("INSERT INTO xxl_job_log VALUES (?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?)");
-if(i % 1000 == 0) { // 1000条sql提交一次数据库，比一条条提交快，但是比一条sql多个value慢
-	ps.executeBatch();
-	ps.clearBatch();
-}
-conn.commit();// 手动提交
-------------
 left join，左边放小数据量表，右边放大数据量表，效率高
 a表10条记录，b表20条记录，a是驱动表，数据量小效率高
 
