@@ -68,7 +68,7 @@ http{
         }
 
         location /apis { #添加访问目录为/apis的代理配置
-			rewrite  ^/apis/(.*)$ /$1 break;# 监听所有/apis前缀，实则转发后台api接口地址
+			rewrite  ^/apis/(.*)$ /$1 break;# 重写：将apis前缀后面的地址作为重写地址，达到去除前缀apis的目的
 			proxy_pass   http://a.cloud.cn/api/; #后台接口地址
         }        
     }
@@ -87,7 +87,7 @@ module.exports = {
                 changeOrigin: true,
                 secure: false,
                 pathRewrite: {
-                    '^/api': ''//将接口地址重写为api
+                    '^/api': ''// 将带api地址的接口重写为没有api的
                 }
             }
         },
@@ -111,7 +111,7 @@ module.exports = {
                 target: 'http://a.cloud.cn/api/',//接口地址    
                 changeOrigin: true,
                 pathRewrite: {
-                    '^/apis': ''//将接口地址重写为api
+                    '^/apis': ''//将带apis地址的接口重写为没有apis的
                 }
             }
         }

@@ -669,3 +669,9 @@ mount /dev/shm
 df -h
 已恢复/dev/shm目录
 ---------------
+杀死所有java进程
+ps -ef | grep java | grep -v grep | awk '{print $2}' | xargs kill -9
+grep -v grep -v反选，排除grep查询进程本身
+awk '{print $2}'： 以空格作为分隔符，打印第2个字段（也就是进程号）
+xargs kill -9 将前面获取到的进程号通过空格分割，传递给kill -9，杀死所有进程
+---------------
