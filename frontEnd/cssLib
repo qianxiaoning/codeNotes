@@ -515,6 +515,12 @@ overflow: hidden;
 white-space: nowrap;
 text-overflow: ellipsis;
 -----------
+html识别文字时，保留换行符（比如文字中的\n）
+white-space: pre-line;
+
+html识别文字时，保留换行符和多个空格（不然只会显示一个空格）
+white-space: pre
+-----------
 css自定义属性，级联变量（变量只能用作属性值）
 --a: red;
 color: var(--a);
