@@ -2216,3 +2216,16 @@ const differentPagesObj = {
         }        
     }
 }
+-----------------------
+创建a链接请求接口，并指定请求文件类型默认为text/plain纯文本型，文件无后缀时会自动加上.txt
+const url = window.URL.createObjectURL(
+          new Blob([data], {
+            type: "text/plain;charset=utf-8"
+          }));
+const link = document.createElement("a");
+link.style.display = "none";
+link.href = url;
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
+-----------------------

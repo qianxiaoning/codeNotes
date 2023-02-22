@@ -1052,3 +1052,14 @@ replace into user(id,username) values(值1，值2),(值1，值2);
 ------------
 insert/replace into select
 insert/replace INTO user(id,username) select 4,username from user where id=1
+------------
+mysql
+改字段名称用CHANGE，还可同时改类型和备注
+ALTER TABLE table1 CHANGE a a1 DATE COMMENT 'aa';
+
+不改字段名称MODIFY，可同时改类型和备注
+ALTER TABLE table1 MODIFY COLUMN a DATE COMMENT 'aa';
+
+增加字段
+alter table table1 add b int comment "bb";
+------------
