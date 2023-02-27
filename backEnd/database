@@ -1062,4 +1062,7 @@ ALTER TABLE table1 MODIFY COLUMN a DATE COMMENT 'aa';
 
 增加字段
 alter table table1 add b int comment "bb";
+
+删除字段
+ALTER TABLE table1 DROP COLUMN name;
 ------------

@@ -5482,10 +5482,21 @@ controller可用po对象或@PathVariable注解直接接收
 -------------------------------
 tomcat=>消息中间件（解决海量数据同步处理问题）=>数据库
 -------------------------------
-(@RequestParam String name)，post请求传递单个参数
+(@RequestParam String name)，后端接收前端放在post请求头的单个字符串参数
 
-@RequestBody参数在请求体，只有post可用
-@RequestBody参数在请求头，post、get都可用
+前端传参
+request({
+	url: apiurl + "/xxx",
+	method: "post",
+	params: {name: "aaa"} // 参数在请求头
+})
+request({
+	url: apiurl + "/xxx",
+	method: "post",
+	data: {name: "aaa"} // 参数在请求体
+})
+参数在请求体的post请求，后端用@RequestBody接收
+参数在请求头的get或post请求，后端用@RequestParam接收，好像什么注解都不加也行？
 ---------------------
 在静态方法中获取yml配置文件的值
 public static Object getYmlValue(Object key){

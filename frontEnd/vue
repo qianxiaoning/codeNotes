@@ -71,8 +71,8 @@ vm.$root获取根实例
 <p>{{index}}</p>
 </li>
 循环对象时
-<li v-for='(value,key) in obj'>
-<p>{{key+value}}</p>
+<li v-for='(value, key, index) in obj'>
+    <input :placeholder="key" v-model="obj[key]" />
 </li>
 事件绑定：v-on 可以缩写为@
 <button v-on:click='doSth'></button>
@@ -1462,7 +1462,7 @@ filters过滤器可以接受过滤的值和传参，且不影响原数据
 
 数组索引更新
 this.$set(this.Arr, indexOfArr, newValue)
-改变数组长度 //改变数组长度 不如直接重新赋值了？
+改变数组长度 // 改变数组长度 不如直接重新赋值了？
 vm.items.splice(newLength)
 
 添加一个对象属性
@@ -2163,4 +2163,16 @@ vue传常量布尔值也要加冒号
 
 if(!res.data)return;
 this.xxxData = res.data;
+---------------------
+vue el-input输入框无法编辑
+1.据说原因是标签嵌套太深，会导致无法获取到 DOM，需要 $forceUpdate() 强制刷新，才可获取
+<el-input v-model="form.xxx" @input="$forceUpdate()"></el-input>
+
+2.使用了 template 作为 el-input 的父标签
+在 template 中添加 slot-scope 属性
+<template slot-scope="scope">
+---------------------
+element ui组件方法，传参改造
+:on-success = "a(obj)"
+:on-success = "(obj) => {return a(obj, '参数2')}"
 ---------------------

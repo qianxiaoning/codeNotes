@@ -1696,3 +1696,11 @@ load文件到hive，select count()不能查到数量
 得手动更新表统计信息
 ANALYZE TABLE tablename COMPUTE STATISTICS;
 -------------
+创建表
+sql类似mysql
+
+新增字段，与mysql语法不同
+alter table a add columns(name string comment '姓名');
+
+修改字段，不允许改类型，可同时改名称和备注
+alter table a change name nickname string comment '昵称';

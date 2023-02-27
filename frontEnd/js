@@ -2229,3 +2229,6 @@ document.body.appendChild(link);
 link.click();
 document.body.removeChild(link);
 -----------------------
+可以同时打出3个对象的日志，控制台会输出3个下拉箭头
+console.log(obj1, obj2, obj3)
+-----------------------
