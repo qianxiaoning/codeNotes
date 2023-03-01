@@ -133,16 +133,16 @@ js还是顺序执行的，立即执行函数也是顺序执行到该函数，再
 在同一级作用域（子作用域不行），js解析最快的还是var变量声明，第一时间把全文所有的var变量赋为undefined，使前面碰到这些变量不会报错
 
 obj.hasOwnProperty(prop)
-用来判断某个对象是否含有指定的属性，返回Boolean值
-用来检测一个对象是否含有特定的自身属性；和 in 运算符不同，该方法会忽略掉那些从原型链上继承到的属性。
+用来判断某个对象自身属性，返回Boolean值，忽略原型链上继承到的属性，in方法不忽略
 如：
-function A(){this.q=1;};
-A.prototype.w=2;
-var b=new A();
-b.e=3;
-b.hasOwnProperty('q');//true 检测到 继承构造函数的函数内方法
-b.hasOwnProperty('w');//false 忽略原型链继承
-b.hasOwnProperty('e');//true 检测到 自身属性
+function A(){this.q = 1;};
+A.prototype.w = 2;
+var b = new A();
+b.e = 3;
+b.hasOwnProperty('q'); // true 检测到 自身属性
+b.hasOwnProperty('e'); // true 检测到 自身属性
+b.hasOwnProperty('w'); // false 忽略原型链继承属性
+"w" in b; // true 包含原型链继承属性
 
 get和post的参数传递
 GET把参数包含在URL中
@@ -239,6 +239,7 @@ slice可以截取字符串也可以截取数组
 var player = {score: 1, name: 'Jeff'};
 
 1.Object.assign()
+Object.assign(target, ...sources);将多个对象合并到第一个对象，返回合并结果
 var newPlayer = Object.assign({}, player, {score: 2});
 2.扩展符...
 var newPlayer = {...player, score: 2};
@@ -2231,4 +2232,59 @@ document.body.removeChild(link);
 -----------------------
 可以同时打出3个对象的日志，控制台会输出3个下拉箭头
 console.log(obj1, obj2, obj3)
+-----------------------
+获取两个对象的交集
+需求：
+const obj1 = {
+    a: 'a',
+    b: 'b',
+    c: 'c',
+    d: 'd'
+}
+const obj2 = {
+    a: '',
+    c: ''
+}
+期望结果：
+obj2={
+    a:'a',
+    c':c'
+}
+方法：
+Object.keys(obj2).map((key) => {
+  obj1[key] && (obj2[key] = obj1[key]);
+})
+-----------------------
+将一个对象的属性值分配到多个对象
+需求：
+const obj1 = {
+    a: 'a',
+    b: 'b',
+    c: 'c',
+    d: 'd'
+}
+const obj2 = {
+    a: '',
+    c: ''
+}
+const obj3 = {
+    b: '',
+    d: ''
+}
+期望结果：
+obj2={
+    a:'a',
+    c':c'
+}
+obj2={
+    b:'b',
+    d':d'
+}
+方法：
+Object.keys(obj1).map((key) => {
+    if(obj1[key]){
+        obj2.hasOwnProperty(key) && (obj2[key] = obj1[key]);
+        obj3.hasOwnProperty(key) && (obj3[key] = obj1[key]);
+    }
+})
 -----------------------

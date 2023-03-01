@@ -6680,3 +6680,86 @@ URLEncoder.encode会把空格" "转为+，所以还需全局替换一下，将�
 URLEncoder.encode(name, "UTF-8").replaceAll("\\+", "%20")
 这时浏览器获取到的文件名为小 说.txt
 ----------------
+SpringBoot profile（多环境配置）
+配置文件resources目录下，默认名 application-{profile}.properties/yml
+{profile}为各个环境的名称或简称，例如 dev、test 和 prod 等等
+一般：
+application.properties：主配置文件（公共部分）
+application-dev.properties：开发环境配置文件
+application-test.properties：测试环境配置文件
+application-pro.properties：生产环境配置文件
+
+application.properties/yml中指定默认激活环境
+spring:
+  profiles:
+    active: dev
+
+pom文件指定配置文件地址
+<project>
+	<build>
+        <resources>
+            <resource>
+                <directory>src/main/resources/profiles/${profiles.active}</directory>
+            </resource>
+        </resources>
+    </build>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <profiles.active>dev</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <profiles.active>test</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profiles.active>prod</profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+</project>
+
+切换环境后，要build project或者clean项目再启动
+----------------
+a项目依赖b项目的一个类
+
+b项目类位置：src\main\java\com.company.projectB\user\service\UserService;
+b项目打包，pom文件
+<project>
+    <parent>
+        <groupId>com.company.parentRoot</groupId>
+        <artifactId>parentRoot</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>project-b</artifactId>
+
+    <dependencies>
+        <dependency>
+        </dependency>
+    </dependencies>
+</project>
+
+a项目引用的时候
+1.pom文件引入b依赖
+<dependency>
+	<groupId>com.company.parentRoot</groupId> // 寻找打包时存放的路径（groupId/artifactId）拿jar包
+	<artifactId>project-b</artifactId>
+</dependency>
+
+项目a java文件中引入项目b的UserService类
+import com.company.projectB.user.service.UserService; // pom文件拿到jar包后，java代码里import的类路径，就是原项目的类路径。import后跟的是，类在项目中的包路径，和打包路径没关系。
+使用：
+...
+new UserService();
+----------------

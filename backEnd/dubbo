@@ -415,6 +415,7 @@ public class XxxDubboConfig {
 }
 
 7.服务调用方serviceImpl中直接@Autowired注入XxxApiService使用
+@Lazy // 要加@Lazy，不然找不到这个bean？
 @Autowired
 private XxxApiService xxxApiService;
 ApiResultDto<Dto> a = xxxApiService.a();

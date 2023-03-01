@@ -2176,3 +2176,8 @@ element ui组件方法，传参改造
 :on-success = "a(obj)"
 :on-success = "(obj) => {return a(obj, '参数2')}"
 ---------------------
+el-switch用0 1代替布尔返回
+<el-form-item label="是否开启">
+    <el-switch v-model="isOpen" :active-value="1" :inactive-value="0"></el-switch>
+</el-form-item>
+---------------------
