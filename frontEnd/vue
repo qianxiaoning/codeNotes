@@ -2181,3 +2181,5 @@ el-switch用0 1代替布尔返回
     <el-switch v-model="isOpen" :active-value="1" :inactive-value="0"></el-switch>
 </el-form-item>
 ---------------------
+vue里debugger时，this变量看不到值，就在控制台输入类似_this，看this的变量名是什么，比如_this3
+---------------------

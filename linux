@@ -671,7 +671,26 @@ df -h
 ---------------
 杀死所有java进程
 ps -ef | grep java | grep -v grep | awk '{print $2}' | xargs kill -9
+或
+ps -ef | grep xxx | grep -v grep | awk '{print $2}' | xargs kill -9
 grep -v grep -v反选，排除grep查询进程本身
 awk '{print $2}'： 以空格作为分隔符，打印第2个字段（也就是进程号）
 xargs kill -9 将前面获取到的进程号通过空格分割，传递给kill -9，杀死所有进程
+---------------
+shell判断文件/文件夹是否存在
+判断文件夹是否存在，不存在就创建文件夹
+if [ ! -d "./log/" ];then
+    mkdir log
+else
+    echo "文件夹已经存在"
+fi
+# 继续下面的写入日志语句
+...
+
+判断文件是否存在
+if [ -f "./data/xxx.sql" ];then
+    echo "文件存在"
+else
+    echo "文件不存在"
+fi
 ---------------
