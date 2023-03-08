@@ -6769,3 +6769,33 @@ new UserService();
 ----------------
 a服务调b服务，入参dto是由b服务定的，入参dto建在b服务中，a服务引用b服务dto，出参入参可用一个dto
 ----------------
+将内容写入输出流，给浏览器下载
+@GetMapping("/stringDownload")
+public void stringDownload(HttpServletResponse response){
+	String str = "内容 dsd\n内容 dsd\n内容 dsd";
+	// String转byte[]
+	byte[] strByte = str.getBytes();
+	if(strByte != null && strByte.length > 0){
+		try {
+			// 设置ContentType二进制流数据（常见的文件下载）
+			response.setContentType("application/octet-stream");
+			// 文件名为中文时，设置编码utf-8
+			response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("结果", "utf-8") + ".txt");
+			response.setHeader("Content-Length", String.valueOf(strByte.length));
+			response.getOutputStream().write(strByte);
+			response.flushBuffer();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+----------------
+java8 stream，List转Map
+map:
+{
+	"张三": 18,
+	"李四", 19
+}
+Map<String, Object> map = studentList.stream().collect(
+                        Collectors.toMap(studentVo::getName, studentVo::getNumber));
+----------------
