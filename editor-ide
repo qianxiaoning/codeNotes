@@ -378,3 +378,15 @@ idea有时候会不进内部类的断点（可能是由于项目错误install了
 要注意Debug中右上角的hide frames from libraries是否被选中
 或者用java method breakpoints，打在内部类方法上，那个菱形的断点
 或者断点重新点一下？
+--------------------------
+idea热更新设置
+Edit Configurations-Running Application Update Policies
+On Update action(点击Dubug左侧Update按钮触发，或者ctrl+f10触发)
+1.Update resources 只更新资源文件*.jsp，*.xml等
+2.Update classes and resources 更新java文件和资源文件
+3.Update trigger file 使用触发器文件更新
+4.Hot swap classes and update trigger file if failed 热更新java文件，更新失败就用触发文件
+
+On frame deactivation(窗口失活触发)：
+1.推荐Do nothing
+--------------------------

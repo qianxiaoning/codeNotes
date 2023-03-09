@@ -6796,6 +6796,7 @@ map:
 	"张三": 18,
 	"李四", 19
 }
+List<StudentVo> studentList = ...;
 Map<String, Object> map = studentList.stream().collect(
-                        Collectors.toMap(studentVo::getName, studentVo::getNumber));
+                        Collectors.toMap(StudentVo::getName, StudentVo::getNumber));
 ----------------
