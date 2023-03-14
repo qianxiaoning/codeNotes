@@ -169,3 +169,9 @@ Nexus maven私服：
 </dependencyManagement>
 ---------------
 有时候pom文件依赖加载报错会阻塞后面依赖加载
+---------------
+根据import路径找pom依赖
+比如：
+import org.apache.commons.lang.StringUtils;
+在pom里面，Search for class搜org.apache.commons.lang.StringUtils，找到依赖org.apache.commons.commons-lang3
+---------------

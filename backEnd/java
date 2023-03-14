@@ -6800,3 +6800,16 @@ List<StudentVo> studentList = ...;
 Map<String, Object> map = studentList.stream().collect(
                         Collectors.toMap(StudentVo::getName, StudentVo::getNumber));
 ----------------
+什么时候使用websocket
+当后端需要不断往前端推信息时
+
+平常的http请求，得由前端发起，websocket使后端能主动往前端发起
+----------------
+服务器主动向浏览器推消息的方式：
+Websocket（封装版：socket.io） 全双工通信
+list-watch 机制
+Server-Sent Events 服务器向浏览器单向推
+----------------
+Object类常见方法
+new Object().clone() 是浅复制
+new Object().finalize() 实例被垃圾回收器回收的时候触发的操作

@@ -385,7 +385,7 @@ On Update action(点击Dubug左侧Update按钮触发，或者ctrl+f10触发)
 1.Update resources 只更新资源文件*.jsp，*.xml等
 2.Update classes and resources 更新java文件和资源文件
 3.Update trigger file 使用触发器文件更新
-4.Hot swap classes and update trigger file if failed 热更新java文件，更新失败就用触发文件
+4.Hot swap classes and update trigger file if failed 热更新java文件，更新失败就用触发文件（热替换貌似最快）
 
 On frame deactivation(窗口失活触发)：
 1.推荐Do nothing

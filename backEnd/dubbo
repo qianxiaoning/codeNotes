@@ -393,16 +393,22 @@ public ApiResultDto<Integer> b(String ruleCode, String businessCode)
 
 5.服务调用方引入依赖
 在父层pom文件中引入带版本号私服依赖地址
-<dependency>
-    <groupId>com.xxx.app</groupId>
-    <artifactId>root-api</artifactId>
-    <version>1.0-SNAPSHOT</version>
-</dependency>
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.xxx.app</groupId>
+            <artifactId>root-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    <dependencies>
+<dependencyManagement>
 在子模块pom文件中引入不带版本号私服依赖地址
-<dependency>
-    <groupId>com.xxx.app</groupId>
-    <artifactId>root-api</artifactId>
-</dependency>
+<dependencies>
+    <dependency>
+        <groupId>com.xxx.app</groupId>
+        <artifactId>root-api</artifactId>
+    </dependency>
+<dependencies>
 本地仓库因为install了，仓库代码会自动更新，如果是同事的电脑，得把jar包发到他们的本地仓库中，他们才会有pom依赖
 测完改完bug后，依赖部署到私服
 私服依赖更新，其他同事得用新依赖版本号，或者删掉本地包，重新下载
