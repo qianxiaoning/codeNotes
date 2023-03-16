@@ -6813,3 +6813,37 @@ Server-Sent Events 服务器向浏览器单向推
 Object类常见方法
 new Object().clone() 是浅复制
 new Object().finalize() 实例被垃圾回收器回收的时候触发的操作
+----------------
+利用enum枚举，定义常量类
+public enum GenderTypeEnum {
+    FEMALE_SEX("female","女性"),
+    // 作用类似申明一个实例
+    // public static final GenderTypeEnum FEMALE_SEX = new GenderTypeEnum("female", "女性");
+    MALE_SEX("male","男性");
+
+    private String code;
+    private String name;
+
+    GenderTypeEnum(String code, String name) {
+        this.code = code;
+        this.name = name;
+    }
+    public String getCode(){
+        return code;
+    }
+    public String getName(){
+        return name;
+    }
+}
+常用调用方法：
+String code = GenderTypeEnum.FEMALE_SEX.getCode();
+String name = GenderTypeEnum.FEMALE_SEX.getName();
+GenderTypeEnum[] genderTypeEnums = GenderTypeEnum.values();
+----------------
+spring-boot-starter
+starter方式
+springboot启动的时候会找resources/META-INF/spring.factories文件，根据spring.factories文件中的配置，找到需要自动配置的类
+比如：
+com.qxn.xxx.config.XxxAutoConfigure
+在XxxAutoConfigure中完成Bean对象的自动配置
+----------------

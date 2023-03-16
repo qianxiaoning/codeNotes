@@ -151,7 +151,10 @@ age: 18
 - name: zhangsan
   age: 18
 ---------------
-xxl-job使用教程
+xxl-job 2.3.0
+分布式任务调度平台
+
+使用教程：
 1.下载源码
 2.执行项目里的建表sql语句 /xxl-job/doc/db/tables_xxl_job.sql
 3.配置调度中心项目 xxl-job-admin
@@ -167,18 +170,18 @@ xxl-job使用教程
 6.把自己的项目变为执行器
 6.1.pom中添加xxl-job-core依赖
 6.2.配置文件添加配置
-### 调度中心部署根地址 [选填]：如调度中心集群部署存在多个地址则用逗号分隔。执行器将会使用该地址进行"执行器心跳注册"和"任务结果回调"；为空则关闭自动注册；
+### 调度中心部署根地址 [选填，自动注册需要]：如调度中心集群部署存在多个地址则用逗号分隔。执行器将会使用该地址进行"执行器心跳注册"和"任务结果回调"；为空则关闭自动注册；
 xxl.job.admin.addresses=http://127.0.0.1:8080/xxl-job-admin
-### 执行器通讯TOKEN [选填]：非空时启用；
-xxl.job.accessToken=
-### 执行器AppName [选填]：执行器心跳注册分组依据；为空则关闭自动注册
+### 执行器通讯TOKEN [选填]：执行器accessToken和调度中心accessToken一致
+xxl.job.accessToken=xxx
+### 执行器AppName [选填，自动注册需要]：执行器心跳注册分组依据；为空则关闭自动注册
 xxl.job.executor.appname=xxl-job-executor-sample
 ### 执行器注册 [选填]：优先使用该配置作为注册地址，为空时使用内嵌服务 ”IP:PORT“ 作为注册地址。从而更灵活的支持容器类型执行器动态IP和动态映射端口问题。
 xxl.job.executor.address=
 ### 执行器IP [选填]：默认为空表示自动获取IP，多网卡时可手动设置指定IP，该IP不会绑定Host仅作为通讯实用；地址信息用于 "执行器注册" 和 "调度中心请求并触发任务"；
 xxl.job.executor.ip=
-### 执行器端口号 [选填]：小于等于0则自动获取；默认端口为9999，单机部署多个执行器时，注意要配置不同执行器端口；
-xxl.job.executor.port=9999
+### 执行器端口号：与项目端口不同，小于等于0则自动获取；默认端口为9999，单机部署多个执行器时，注意要配置不同执行器端口；
+xxl.job.executor.port=0
 ### 执行器运行日志文件存储磁盘路径 [选填] ：需要对该路径拥有读写权限；为空则使用默认路径；
 xxl.job.executor.logpath=/data/applogs/xxl-job/jobhandler
 ### 执行器日志文件保存天数 [选填] ： 过期日志自动清理, 限制值大于等于3时生效; 否则, 如-1, 关闭自动清理功能；
@@ -230,6 +233,67 @@ public class XxlJobConfig {
 6.4.执行器集群配置
 执行器回调地址（xxl.job.admin.addresses）需要保持一致
 AppName（xxl.job.executor.appname）需要保持一致
+7.任务调度中心web端
+7.1.执行器管理
+新增执行器，AppName对应执行器中xxl.job.executor.appname，前面配好了此处用自动注册方式
+7.2.任务管理
+7.2.1.新增任务
+选择执行器-运行模式（BEAN或者GLUE模式）
+BEAN方法模式：
+代码中新建类
+@Component
+public class SampleXxlJob {
+    private static Logger logger = LoggerFactory.getLogger(SampleXxlJob.class);
+    /**
+     * 1、简单任务示例（Bean模式）
+     */
+    @XxlJob("demoJobHandler", init = "init", destroy = "destroy")
+    public void demoJobHandler() throws Exception {
+        // 输出日志
+        XxlJobHelper.log("XXL-JOB, Hello World.");
+        // 获取分片参数
+        int shardIndex = XxlJobHelper.getShardIndex();
+        int shardTotal = XxlJobHelper.getShardTotal();
+        // 获取入参
+        String param = XxlJobHelper.getJobParam(); 
+        // 设置任务结果 XxlJobHelper.handleFail/handleSuccess
+        XxlJobHelper.handleSuccess();
 
-写到：
-看到2.5 开发第一个任务“Hello World”
+        for (int i = 0; i < 5; i++) {
+            XxlJobHelper.log("beat at:" + i);
+            TimeUnit.SECONDS.sleep(2);
+        }
+        // default success
+    }
+    public void init(){
+        logger.info("init");
+    }
+    public void destroy(){
+        logger.info("destroy");
+    }
+}
+输入JobHandler，对应@XxlJob注解中名字
+
+GLUE模式：
+不需要输入JobHandler
+添加完后打开GLUE IDE，在线编辑代码，可使用@Resource/@Autowire注入执行器里中的其他服务
+package com.xxl.job.service.handler;
+
+import com.xxl.job.core.context.XxlJobHelper;
+import com.xxl.job.core.handler.IJobHandler;
+
+public class DemoGlueJobHandler extends IJobHandler {
+	@Override
+	public void execute() throws Exception {
+		XxlJobHelper.log("XXL-JOB, Hello World.");
+	}
+}
+7.2.2.执行一次
+7.2.3.启动任务
+7.2.4.查询日志-跳调度日志
+7.3.调度日志
+执行日志-查看具体日志内容
+8.分片广播 & 动态分片 使用场景
+分片任务场景：10个执行器的集群来处理10w条数据，每台机器只需要处理1w条数据，耗时降低10倍；
+广播任务场景：广播执行器机器运行shell脚本、广播集群节点进行缓存更新等
+---------------
