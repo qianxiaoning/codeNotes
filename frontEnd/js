@@ -2288,3 +2288,14 @@ Object.keys(obj1).map((key) => {
     }
 })
 -----------------------
+function a(a,b,c){
+    console.log(a);
+    console.log(b);
+    console.log(c);
+}
+调用的时候a(1);
+输出：
+1
+undefined
+undefined
+-----------------------

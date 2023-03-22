@@ -2183,3 +2183,15 @@ el-switch用0 1代替布尔返回
 ---------------------
 vue里debugger时，this变量看不到值，就在控制台输入类似_this，看this的变量名是什么，比如_this3
 ---------------------
+设置全局Element组件默认属性
+config/elememt_default_props.js
+如：
+Element.Dialog.props.closeOnClickModal.default = false;
+设置默认属性方式：
+const render = Element.Input.render;
+Element.Input.render = function () {
+    // 设置组件默认原生属性（attr）
+    this.$attrs.maxlength || (this.$attrs.maxlength = 50);
+    return render.apply(this, arguments)
+}
+---------------------

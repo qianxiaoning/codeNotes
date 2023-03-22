@@ -350,6 +350,9 @@ ctrl+f4
 直接在启动类右键运行，启动类会自己配置好
 
 maven窗口不见，在pom.xml文件右键add as maven project，识别为maven项目
+
+idea阿里巴巴代码规范检查插件，检查代码规范
+Alibaba Java Coding Guidelines
 --------------------------
 idea快速格式化（两个连用）
 去掉空白： Ctrl + Shift + J

@@ -175,3 +175,6 @@ Nexus maven私服：
 import org.apache.commons.lang.StringUtils;
 在pom里面，Search for class搜org.apache.commons.lang.StringUtils，找到依赖org.apache.commons.commons-lang3
 ---------------
+mvn打包跳过单元测试
+mvn clean package -Dmaven.test.skip=true
+---------------

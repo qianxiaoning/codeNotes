@@ -1878,6 +1878,13 @@ public class TestAnnotation03 {
 		}
 	}
 }
+
+自定义注解两种作用：
+1.在拦截器解析
+2.在aop切面中解析
+
+找自定义注解的逻辑实现
+右键find usages，选择Usage in .class
 -------------------------------
 线程（重点）:
 进程：在操作系统里并行执行的任务
@@ -6732,7 +6739,7 @@ pom文件指定配置文件地址
     </profiles>
 </project>
 
-切换环境后，要build project或者clean项目再启动
+SpringBoot本地开发切换环境后，要build project或者clean项目再启动
 ----------------
 a项目依赖b项目的一个类
 
@@ -6846,4 +6853,23 @@ springboot启动的时候会找resources/META-INF/spring.factories文件，根�
 比如：
 com.qxn.xxx.config.XxxAutoConfigure
 在XxxAutoConfigure中完成Bean对象的自动配置
+----------------
+springboot配置文件，单词命名方式
+properties是驼峰方式 maxFileSize
+yaml、yml是连词符方式 max-file-size
+----------------
+springboot设置文件上传大小
+spring:
+  servlet:
+    multipart:
+      # 设置 上传文件的大小
+      max-file-size: 200MB
+      # 设置 整个请求的大小
+      max-request-size: 200MB
+----------------
+前端CryptoJS加密，后端Cipher解密
+注意解密后需要trim()去除一下看不见的空格，否则和原文不等
+String originalString = new String(original, "utf-8").trim();
+----------------
+有些字符串看起来相等，其实不等，用字符串的equals方法判断一下，可以判断出来
 ----------------
