@@ -2299,3 +2299,12 @@ function a(a,b,c){
 undefined
 undefined
 -----------------------
+js多条件排序（排序优先级：年龄、生日）
+let people = people.sort(function (a, b) { 
+    if (a.age === b.age) {
+        return a.createTime < b.createTime ? 1 : -1;
+    } else {
+        return a.age > b.age;
+    }
+});
+-----------------------

@@ -6873,3 +6873,11 @@ String originalString = new String(original, "utf-8").trim();
 ----------------
 有些字符串看起来相等，其实不等，用字符串的equals方法判断一下，可以判断出来
 ----------------
+mybatis xml模糊搜索
+<if test="name != null and name != ''">
+	and xx.name like "%"#{name}"%"
+</if>
+----------------
+
+
+

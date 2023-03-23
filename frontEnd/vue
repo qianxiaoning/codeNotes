@@ -1768,7 +1768,7 @@ new Vue({
   }
 })
 
-mpvue 在必要的需要数据重置的page调用
+mpvue 在必要的需要数据重置的page调用，数据初始化，重置
 （因为mpvue不做数据重置工作）
 onUnload() {  
     Object.assign(this.$data, this.$options.data());
