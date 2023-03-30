@@ -5896,6 +5896,11 @@ Collections.sort(list, new Comparator<Map<String, Object>>() {
 		return value1.compareTo(value2);
 	}
 });
+
+排序，先字母升序，再长度升序
+stringList.sort((k1, k2) ->
+		k1.charAt(0) == k2.charAt(0) ? k1.length() - k2.length() : k1.charAt(0) - k2.charAt(0)
+);
 -----------------
 atlas编译
 mvn clean -DskipTests install
@@ -6738,8 +6743,6 @@ pom文件指定配置文件地址
         </profile>
     </profiles>
 </project>
-
-SpringBoot本地开发切换环境后，要build project或者clean项目再启动
 ----------------
 a项目依赖b项目的一个类
 
@@ -6878,6 +6881,12 @@ mybatis xml模糊搜索
 	and xx.name like "%"#{name}"%"
 </if>
 ----------------
-
-
-
+字符串数组是否包含某一字符串
+String[] arr = {"a", "b", "c"};
+Boolean isContain = Arrays.asList(arr).contains("b");
+System.out.println(isContain);
+----------------
+jdbc设置连接时间
+DriverManager.setLoginTimeout(5); // 5秒
+Connection conn = DriverManager.getConnection(url, username, password);
+----------------

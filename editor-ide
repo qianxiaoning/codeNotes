@@ -393,3 +393,10 @@ On Update action(点击Dubug左侧Update按钮触发，或者ctrl+f10触发)
 On frame deactivation(窗口失活触发)：
 1.推荐Do nothing
 --------------------------
+idea SpringBoot本地开发环境切换不过来时
+可以尝试以下
+clean
+build project
+mvn导入
+mvn package
+--------------------------

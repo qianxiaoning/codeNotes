@@ -21,11 +21,18 @@ methods:{
     }
 },
 //监听值的变化
-watch:{
-    'a':function(val,oldVal){
-        console.log(val,oldVal);
+watch: {
+    'a': function(val, oldVal){
+        console.log(val, oldVal);
     }
 },
+// 监听对象某个属性
+watch: {
+    'a.xx': function(val, oldVal){
+        console.log(val, oldVal);
+    }
+},
+
 //注册组件
 components:{
     Header,Footer,componentsA
@@ -1733,7 +1740,7 @@ watch:{
     }
 }
 所以正确的办法是用computed
-computed:{
+computed: {
     percentNew(){
         this.percent = v*100;
         return this.percent
@@ -2194,4 +2201,39 @@ Element.Input.render = function () {
     this.$attrs.maxlength || (this.$attrs.maxlength = 50);
     return render.apply(this, arguments)
 }
+---------------------
+computed简单用法
+computed: {
+    projectType () {
+        if (this.detail.type === "personal") {
+            return "个人项目"
+        } else if (this.detail.type === "template") {
+            return "模板项目"
+        } else if (this.detail.type === "institution") {
+            return "机构项目"
+        }
+    }
+}
+<div>{{projectType}}</div>
+---------------------
+手动触发form的rules校验
+this.$refs['form'].validate('rules');
+---------------------
+el-tree手动触发节点数据加载
+// 获取所要加载的子节点key，this.$refs.tree.getCurrentKey()或者别的方式，一般为当前层级目录名
+const key = ...;
+// 根据key拿到字节点
+const node = this.$refs.tree.getNode(key);
+// 设置子节点为未进行懒加载状态
+node.loaded = false;
+// 重新展开节点就会触发子节点加载
+node.expand();
+---------------------
+this.$nextTick  dom更新完毕后立即触发
+vue中this.xxx变动，数据渲染dom需要时间
+比如
+this.currentIndex = this.currentIndex - 1;// class active会变动到前一个节点
+this.$nextTick(() => {// 需要时间，才能获取到最新有active的dom
+    document.querySelector('.item.active').click();
+})
 ---------------------
