@@ -6399,30 +6399,39 @@ java强制转换
 4.用父类接的子类，可以再强转回去
 三、基本类型和引用类型，无法强转
 -----------------
-Transaction rolled back because it has been marked as rollback-only
+spring事务
+1.编程式事务：硬编码的方式
+通过PlatformTransactionManager控制事务（最原始的方式）
+通过TransactionTemplate控制事务（针对上面的封装）
+
+2.声明式事务，注解 @Transactional(rollbackFor = Exception.class, propagation = Propagation.NOT_SUPPORTED)
+事务传播级别propagation
+REQUIRED(0), // 默认，如果当前存在事务，就加入该事务，如果当前没有事务，就创建一个事务
+SUPPORTS(1), // 如果当前不存在事务，就以非事务的方式执行，如果当前存在事务，就加入该事务
+MANDATORY(2), // 如果当前不存在事务，就抛出异常，如果当前存在事务，就加入当前事务
+REQUIRES_NEW(3), // 当前的方法必须启动新事务，并在它自己的事务内运行，不管是否存着事务，都开启新事务。
+NOT_SUPPORTED(4), // 当前的方法不应该运行在事务中，如果有运行的事务，将它挂起，如果出现异常，当前方法不回滚，REQUIRED级别方法会回滚
+NEVER(5), // 当前的方法不应该运行在事务中，如果当前存在事务，就抛出异常
+NESTED(6); // 如果有事务在运行，当前的方法就应该在这个事务的嵌套事务内运行，否则，就启动一个新的事务，并在它自己的事务内运行。
+-----------------
+事务嵌套异常，外层事务没异常应该提交，内层事务异常需要回滚时，内外矛盾会报异常 Transaction rolled back because it has been marked as rollback-only
 在spring中存在事务嵌套时，内层抛出异常，在外层被try catch捕获，外层事务继续运行，在最后提交事务的时候，发现内层被标记了rollbck，就会报上面的错。
 
-解决办法：
-法1.将内层事务去掉
+解决办法：（只针对本地service互相调有用？对调dubbo rpc服务加@Transactional没用？待确认）
+法1.将外层事务挂起，内层不运行事务
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 法2.修改内层事务的传播方式，为创建新的事务，这样只回滚内层事务，不影响外层事务
 内层方法加上：
 @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
 
 一般事务从serviceImpl开始，向内传播，用的是一个事务
-
-spring中用注解方式，局部开启事务
-@Transactional(propagation = Propagation.NOT_SUPPORTED)
-a () {
-	...
-	b();
-	...
-}
-
-@Transactional(propagation = Propagation.REQUIRED)
-b () {
-
-}
+-----------------
+当需求为：内层事务异常，外层事务正常提交时
+解决办法：
+法1.
+将外层事务的后续代码放到另一个service方法中，在controller中多调一个service方法，使不在同一个事务中，使后续不受影响
+法2.
+本地service互相调时，可以尝试设置@Transactional传播方式
 -----------------
 修改jar包中内容
 1.mkdir tmp
@@ -6800,7 +6809,8 @@ public void stringDownload(HttpServletResponse response){
 	}
 }
 ----------------
-java8 stream，List转Map
+java8 stream
+List转Map
 map:
 {
 	"张三": 18,
@@ -6809,6 +6819,10 @@ map:
 List<StudentVo> studentList = ...;
 Map<String, Object> map = studentList.stream().collect(
                         Collectors.toMap(StudentVo::getName, StudentVo::getNumber));
+
+List排序，reversed()倒叙，不加为正序
+list = list.stream().sorted(Comparator.comparing(Person::getTime).reversed())
+                .collect(Collectors.toList());						
 ----------------
 什么时候使用websocket
 当后端需要不断往前端推信息时
@@ -6889,4 +6903,44 @@ System.out.println(isContain);
 jdbc设置连接时间
 DriverManager.setLoginTimeout(5); // 5秒
 Connection conn = DriverManager.getConnection(url, username, password);
+----------------
+读取文件内容
+InputStream.read
+
+StringBuilder str = new StringBuilder();
+String strTemp;
+InputStream inputStream = null;
+try {
+	// 获取"myobject"的输入流
+	inputStream = ...;
+	byte[] buf = new byte[16384];
+	int bytesRead;
+	while ((bytesRead = inputStream.read(buf, 0, buf.length)) >= 0) {
+		strTemp = new String(buf, 0, bytesRead);
+		str.append(strTemp);
+	}
+}  catch (IllegalArgumentException e) {
+	LOGGER.error(JsonUtils.toJson(e));
+} finally {
+	inputStream.close();
+}
+
+BufferedReader.readLine
+
+InputStream inputStream = null;
+try {
+	// 获取"myobject"的输入流
+	inputStream = ...;
+	BufferedReader reader = new BufferedReader((new InputStreamReader(inputStream)));
+	StringBuilder str = new StringBuilder();
+	String strTemp;
+	while ((strTemp = reader.readLine()) != null) {
+		//文件内容
+		str.append(strTemp).append("\n");
+	}
+}  catch (IllegalArgumentException e) {
+	LOGGER.error(JsonUtils.toJson(e));
+} finally {
+	inputStream.close();
+}
 ----------------

@@ -2229,11 +2229,27 @@ node.loaded = false;
 // 重新展开节点就会触发子节点加载
 node.expand();
 ---------------------
+<el-tree
+ref="tree"
+:data="treeData"
+:load="loadTreeNodeData"
+:lazy="true"
+@node-click="clickTreeNode"
+:current-node-key="currentNodeKey"
+></el-tree>
+el-tree load事件：点击树节点触发事件，在里面写节点渲染，return resolve([{...},{...}]);
+node-click节点点击事件，是用来做别的事的，不做节点渲染工作
+---------------------
 this.$nextTick  dom更新完毕后立即触发
 vue中this.xxx变动，数据渲染dom需要时间
 比如
 this.currentIndex = this.currentIndex - 1;// class active会变动到前一个节点
 this.$nextTick(() => {// 需要时间，才能获取到最新有active的dom
     document.querySelector('.item.active').click();
+})
+
+vue中操作dom的方法建议都在外面加上this.$nextTick，vue数据同步还是比较慢
+this.$nextTick(() => {
+    this.$refs['form'].validate('rules');// 手动校验form rules规则情况
 })
 ---------------------
