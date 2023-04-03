@@ -6400,6 +6400,9 @@ java强制转换
 三、基本类型和引用类型，无法强转
 -----------------
 spring事务
+需要一起回滚的逻辑放在一个事务中
+不需要一起回滚，一个失败，另一个仍然需要提交的事务，在controller中分成两个service写，创建2个事务。a事务失败，不影响b事务提交
+
 1.编程式事务：硬编码的方式
 通过PlatformTransactionManager控制事务（最原始的方式）
 通过TransactionTemplate控制事务（针对上面的封装）
@@ -6415,7 +6418,7 @@ NEVER(5), // 当前的方法不应该运行在事务中，如果当前存在事�
 NESTED(6); // 如果有事务在运行，当前的方法就应该在这个事务的嵌套事务内运行，否则，就启动一个新的事务，并在它自己的事务内运行。
 -----------------
 事务嵌套异常，外层事务没异常应该提交，内层事务异常需要回滚时，内外矛盾会报异常 Transaction rolled back because it has been marked as rollback-only
-在spring中存在事务嵌套时，内层抛出异常，在外层被try catch捕获，外层事务继续运行，在最后提交事务的时候，发现内层被标记了rollbck，就会报上面的错。
+在spring中存在事务嵌套时，内层抛出异常，在外层被try catch捕获，外层事务继续运行，在最后提交事务的时候，发现内层被标记了rollbck，就会报上面的错。如果外层service没有try catch，异常在controller层try catch，也不会报这个异常
 
 解决办法：（只针对本地service互相调有用？对调dubbo rpc服务加@Transactional没用？待确认）
 法1.将外层事务挂起，内层不运行事务
