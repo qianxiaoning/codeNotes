@@ -6947,3 +6947,32 @@ try {
 	inputStream.close();
 }
 ----------------
+java serviceImpl中私有方法的封装，入参出参优化
+当一个java方法需要多个入参时，或者需要返回多个出参，或者不确定入参出参数后续是否还要变动的，可以将入参和出参封装到一个dto中。
+优点：
+1.这样后续如果入参或者出参改变，入参出参不需要重写，在dto中增加删减字段即可。
+2.可便捷的返回多个对象出来，使改变后的变量可继续在外部方法块中使用。
+
+例子：
+申明一个CreateHiveTableDto dto类，里面写上所有入参字段和所有出参字段。
+@Override
+public Xxx<Xxx> a(...多个参数) {
+	...
+	dto.setXxx(...);
+	dto.setXxx(...);
+	dto.setXxx(...);
+	CreateHiveTableDto dto = createHiveTable(dto);
+	dto.getXxx();
+	dto.getXxx();
+	...
+}
+private CreateHiveTableDto createHiveTable(CreateHiveTableDto dto) {
+	dto.getXxx();
+	dto.getXxx();
+	dto.getXxx();
+	...
+	dto.setXxx(...);
+	dto.setXxx(...);
+	return dto;
+}
+----------------
