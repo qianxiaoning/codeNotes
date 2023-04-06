@@ -1,11 +1,11 @@
--------------------------------------------------------------------------------------------
+---------------------
 vue 2.x笔记
 node install->cnpm install->webpack install->vue-cli install
 ->vue init webpack pra02->cd pra02->cnpm install->cnpm run dev
 如果cnpm run dev失败 检查下来是vue-cli的问题，就先npm卸载vue-cli，然后参照http://www.jb51.net/article/126221.htm进行设置，
 可能再需要清理npm cache clean --force或者手动删除根目录的npm cache文件夹，最后目的就是要用npm安装vue-cli成功。
 然后vue-cli就不会有问题了，可以正常cnpm run dev启动项目了。
--------------------------------------------------------------------------------------------
+---------------------
 全局
 主模板主组件 pra02/src/App.vue
 new Vue({
@@ -56,12 +56,12 @@ props:['msg'],
 // }
 //})
 });
--------------------------------------------------------------------------------------------
+---------------------
 实例属性
 vm.$parent获取父实例
 vm.$children获取子实例
 vm.$root获取根实例
--------------------------------------------------------------------------------------------
+---------------------
 指令
 数据渲染 {{}},v-text,v-html
 <p>{{a}}</p > <p v-text='a'>{{a}}</p > <p v-html='a'>{{a}}</p >
@@ -92,7 +92,7 @@ v-bind:class可以缩写为:
 <div v-bind:class='[classA,{classB:isB,classC:isC}]'></div>上两种的混合用法
 index.html页面主入口
 <input v-model='newItem'>绑定js变量newItem 双向绑定
--------------------------------------------------------------------------------------------
+---------------------
 组件通讯$emit和vuex
 //子传父通讯
 //父组件
@@ -130,13 +130,13 @@ events:{
 }
 $dispatch和$broadcast已被弃用
 使用vuex实现组件间通讯 http://blog.csdn.net/TONELESS/article/details/71638369
---------------------------------------------
+---------------------
 简单方法（直接操作会有问题？）
 vuex/store.js里
 const store = new Vuex.Store({
 //定义状态
     state:{
-        author:'Wise Wrong'
+        author:'tom'
     }
 }) 
 组件里取值
@@ -145,13 +145,13 @@ main.js取值
 store.state.author 获得
 组件里赋值
 也是直接 this.$store.state.author = 'xxx' 就行了
---------------------------------------------
+---------------------
 显式提交 跟踪状态变化法
 vuex/store.js里
 const store = new Vuex.Store({
 //定义状态
     state:{
-        author:'Wise Wrong'
+        author:'tom'
     },
     mutations:{
         newAuthor(state,msg){
@@ -164,7 +164,51 @@ const store = new Vuex.Store({
 组件里赋值
 this.$store.commit('newAuthor','xxx');
 这里使用$store.commit显式提交
--------------------------------------------------------------------------------------------
+---------------------
+1.定义vuex的state，set方法，以及请求方式
+const state = { // 存储的状态
+  companyInfo: {}
+};
+const getters = { // getValue方法
+    companyInfo: state => state.companyInfo
+}
+const mutations = { // setValue方法
+  SET_COMPANY_INFO: (state, companyInfo) => {
+    state.companyInfo = companyInfo;
+  }
+}
+const actions = { // 请求接口，并触发setValue方法
+  // 获取公司信息
+  getCompanyInfo({commit}) {
+    return new Promise((resolve, reject) => {
+      api.xxx.getInfo()
+        .then(response => {
+          commit("SET_COMPANY_INFO", response.result);
+          resolve();
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  },
+}
+export default {
+  namespaced: true,
+  state,
+  getters,
+  mutations,
+  actions
+};
+2.存入值
+import store from "./store";
+await store.dispatch("xx/getCompanyInfo"); // 对应actions中的getCompanyInfo方法
+3.取值
+import {mapGetters} from 'vuex'
+computed:{
+    ...mapGetters(['companyInfo']) // 对应getters里面的方法
+},
+companyInfo.id // 123
+---------------------
 //vue的路由vue-router
 引入https://router.vuejs.org/zh-cn/installation.html
 简单路由https://router.vuejs.org/zh-cn/essentials/getting-started.html
@@ -174,7 +218,7 @@ this.$store.commit('newAuthor','xxx');
 this.$router.push(`/repayMethod?NowShouldRepaymentAmount=${this.NowShouldRepaymentAmount}`);
 添加动态参数 { path: '/home/:id', component: Home} 其中id是个变量 加?可不传
 this.$route.params获取
--------------------------------------------------------------------------------------------
+---------------------
 //vue的ajax vue-resource和axios
 //不简写
 this.$http({ 
@@ -201,11 +245,11 @@ vue-resource中的promise用法 https://www.v2ex.com/t/338620简写语法
 vue2.0 推荐使用axios
 vue-resource和axios 参考 https://www.cnblogs.com/Juphy/p/7073027.html
 axios参考  https://www.cnblogs.com/zhouyangla/p/6753673.html
--------------------------------------------------------------------------------------------
+---------------------
 cnpm run build 将项目打包   在dist文件夹下 static和index.html放在服务器上即可
--------------------------------------------------------------------------------------------
+---------------------
 框架中 数据双向绑定 即为 响应式
--------------------------------------------------------------------------------------------
+---------------------
 vue-router的两种路由模式 
 hash模式 即为#
 history模式 即为/ 需要服务端配合 打开方式：
@@ -221,13 +265,13 @@ export default new Router({
 })
 两种都为不刷新跳转
 官网参考 https://router.vuejs.org/zh-cn/essentials/history-mode.html
--------------------------------------------------------------------------------------------
+---------------------
 vue中可以通过给标签加ref属性，就可以在js中利用ref去引用它，从而操作该dom元素
 <div id="box" ref="mybox">demo</div>
 js中   
 let that = this;  
 that.$refs.mybox.style.color = 'red';  
--------------------------------------------------------------------------------------------
+---------------------
 vue官网探索
 vue-devtools谷歌插件安装
 Vue CLI使用文档
@@ -371,7 +415,7 @@ $parent访问父组件
     <p v-if="show">hello</p>
 </transition>
 至 渲染函数 & JSX
--------------------------------------------------------------------------------------------
+---------------------
 vue2.x
 vue ui框架iview,element,MIntUi
 状态管理:vuex
@@ -380,7 +424,7 @@ vue ui框架iview,element,MIntUi
 vue-loader是一个webpack的loader；可以将vue文件转换为JS模块:vue-loader
 vueify： Browserify transform for Vue.js components, with scoped CSS and component hot-reloading.
 lodash：一个javascript库，侧重于基础类型的操作。jq侧重dom    
--------------------------------------------------------------------------------------------
+---------------------
 项目笔记：
     生命周期钩子，在created阶段改变数据，mounted时渲染dom，在mounted后才能对dom操作。
     import xxx from 'xxx';引入 第三方js库，不用加文件后缀。类似以前的require();
