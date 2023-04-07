@@ -2279,6 +2279,7 @@ ref="tree"
 :load="loadTreeNodeData"
 :lazy="true"
 @node-click="clickTreeNode"
+node-key="treeNodeKey"
 :current-node-key="currentNodeKey"
 ></el-tree>
 el-tree load事件：点击树节点触发事件，在里面写节点渲染，return resolve([{...},{...}]);

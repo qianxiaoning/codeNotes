@@ -2308,3 +2308,9 @@ let people = people.sort(function (a, b) {
     }
 });
 -----------------------
+字符串分割，substr和substring区别在于第二个参数
+substr(startIndex)
+substring(startIndex)
+substr(startIndex, length)
+substring(startIndex, endIndex)
+-----------------------

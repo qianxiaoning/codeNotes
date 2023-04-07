@@ -6961,18 +6961,18 @@ public Xxx<Xxx> a(...多个参数) {
 	dto.setXxx(...);
 	dto.setXxx(...);
 	dto.setXxx(...);
-	CreateHiveTableDto dto = createHiveTable(dto);
+	createHiveTable(dto);
+	// 后面直接使用dto对象中的值就行
 	dto.getXxx();
 	dto.getXxx();
 	...
 }
-private CreateHiveTableDto createHiveTable(CreateHiveTableDto dto) {
+private void createHiveTable(CreateHiveTableDto dto) {
 	dto.getXxx();
 	dto.getXxx();
 	dto.getXxx();
 	...
 	dto.setXxx(...);
 	dto.setXxx(...);
-	return dto;
 }
 ----------------
