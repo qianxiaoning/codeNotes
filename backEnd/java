@@ -7078,3 +7078,18 @@ private void createHiveTable(CreateHiveTableDto dto) {
 	dto.setXxx(...);
 }
 ----------------
+java 原生jdbc查询表中数据条数
+
+Integer count = 0;
+try {
+	Class.forName("com.mysql.jdbc.Driver") ;
+	Connection conn = DriverManager.getConnection(url, username, password) ;
+	Statement stmt = conn.createStatement() ;
+	ResultSet results = stmt.executeQuery("select count(*) from xxx");// 查count只会有一条结果
+	while(results.next()){
+		count = results.getInt(1); // 序号从1开始
+	}
+} catch (Exception e) {
+	count = 0;
+}
+----------------

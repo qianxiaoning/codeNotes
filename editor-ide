@@ -377,10 +377,12 @@ f 方法
 s 实体类熟悉
 ss 普通属性
 --------------------------
-idea有时候会不进内部类的断点（可能是由于项目错误install了，将本地代码推到了仓库，idea直接从仓库读代码，将自己写的代码当成第三方框架代码了，不进断点了）
+idea有时候会不进匿名内部类的断点（可能是由于项目错误install了，将本地代码推到了仓库，idea直接从仓库读代码，将自己写的代码当成第三方框架代码了，不进断点了）
+重启项目？
 要注意Debug中右上角的hide frames from libraries是否被选中
 或者用java method breakpoints，打在内部类方法上，那个菱形的断点
 或者断点重新点一下？
+或者点step into再打匿名内部类的断点，再点一下内部类具体哪一行代码
 --------------------------
 idea热更新设置
 Edit Configurations-Running Application Update Policies
