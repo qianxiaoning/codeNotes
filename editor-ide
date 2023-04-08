@@ -395,6 +395,8 @@ On frame deactivation(窗口失活触发)：
 --------------------------
 idea SpringBoot本地开发环境切换不过来时
 可以尝试以下
+idea-Build-Rebuild Project
+或
 clean
 build project
 mvn导入

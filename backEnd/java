@@ -6571,6 +6571,108 @@ public void wayA() {
 
 匿名内部类是另外一个类，编译后会生成一个独立class文件
 ----------------
+外层方法获取匿名内部类中的变量
+外层不能改变内部类变量的存储地址，所以简单类型不能直接赋值，外层得用List、dto、vo等包装类去接内层变量的值
+----------------
+java8把代码块作为参数传入方法中
+Java 8 中提供了四种原生函数式接口，分别是Consumer(消费型)、Supplier(供给型)、Predicate(断言型)、Function(功能型)
+
+1.利用Consumer接口
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ConmmonWayADto {
+    private String name = "成绩";
+    private LocalDateTime currentTime;
+    private Integer result;
+}
+
+// 公共方法A，传入原生函数式接口Consumer，实现代码块的传递
+public void conmmonWayA(Consumer consumer) throws Exception {
+	ConmmonWayADto dto = new ConmmonWayADto();
+	dto.setResult(100);
+	System.out.println("前置逻辑结束");
+	consumer.accept(dto);
+	System.out.println("代码块结束");
+	System.out.println(dto);
+}
+
+// 加法
+@Test
+public void additionA() throws Exception {
+	// 代码块传入方法conmmonWayA
+	conmmonWayA(new Consumer<ConmmonWayADto>(){
+		@Override
+		public void accept(ConmmonWayADto param) {
+			param.setCurrentTime(LocalDateTime.now());
+			param.setResult(120);
+		}
+	});
+}
+
+// 减法，lambda写法
+@Test
+public void subtractionA() throws Exception {
+	// 代码块传入方法conmmonWayA
+	conmmonWayA((Consumer<ConmmonWayADto>) param -> {
+		param.setCurrentTime(LocalDateTime.now());
+		param.setResult(90);
+	});
+}
+
+2.定义函数式接口
+
+@FunctionalInterface // 校验是否满足函数式接口定义，能有一个抽象方法、一个默认方法、多个静态方法
+public interface Compute {
+
+    //唯一的抽象方法
+    void excute(ConmmonWayADto param);
+
+    //默认方法
+    default void defaultMethod(){
+        System.out.println("默认方法");
+    }
+
+    //静态方法
+    static void staticMethod(){
+        System.out.println("静态方法");
+    }
+}
+
+// 公共方法B，传入自定义函数式接口Compute，实现代码块的传递
+public void conmmonWayB(Compute consumer) throws Exception {
+	ConmmonWayADto dto = new ConmmonWayADto();
+	dto.setResult(100);
+	System.out.println("前置逻辑结束");
+	consumer.excute(dto);
+	System.out.println("代码块结束");
+	System.out.println(dto);
+}
+// 加法
+@Test
+public void additionB() throws Exception {
+	Compute compute = new Compute() {
+		@Override
+		public void excute(ConmmonWayADto dto) {
+			dto.setCurrentTime(LocalDateTime.now());
+			dto.setResult(120);
+		}
+	};
+	// 代码块传入方法conmmonWayB
+	conmmonWayB(compute);
+}
+// 减法，lambda写法
+@Test
+public void subtractionB() throws Exception {
+	Compute compute = dto -> {
+		dto.setCurrentTime(LocalDateTime.now());
+		dto.setResult(90);
+	};
+	// 代码块传入方法conmmonWayB
+	conmmonWayB(compute);
+}
+----------------
 springboot开发时，给serive设置了事务，当一个方法里有多个数据库操作时，可以将多个数据库操作写在不同service中，在controller调用，避免都在一个事务里，导致前面需要提交的数据库操作不提交。
 比如：先往表中插入一条记录，提供外部查询，进行一些耗时操作，再对这条记录进行修改，如果都在一个service方法，那别人得等到方法完全结束，事务提交后，才能看到记录，分成2个service方法，在controller调，别人就能在耗时操作运行过程中就看到那条记录，就能分成2个事务，彼此不影响。
 ----------------
