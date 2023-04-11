@@ -7050,32 +7050,28 @@ try {
 }
 ----------------
 java serviceImpl中私有方法的封装，入参出参优化
-当一个java方法需要多个入参时，或者需要返回多个出参，或者不确定入参出参数后续是否还要变动的，可以将入参和出参封装到一个dto中。
+当一个java方法需要多个入参时，或者需要返回多个出参，或者不确定入参出参数后续是否还要变动的，可以将入参和出参封装到一个dto或vo中。
 优点：
 1.这样后续如果入参或者出参改变，入参出参不需要重写，在dto中增加删减字段即可。
 2.可便捷的返回多个对象出来，使改变后的变量可继续在外部方法块中使用。
 
 例子：
-申明一个CreateHiveTableDto dto类，里面写上所有入参字段和所有出参字段。
+申明一个CreateHiveTableVo dto类，里面写上所有入参字段和所有出参字段。
 @Override
-public Xxx<Xxx> a(...多个参数) {
+public Xxx<Xxx> a(CreateHiveTableVo vo) {
 	...
-	dto.setXxx(...);
-	dto.setXxx(...);
-	dto.setXxx(...);
-	createHiveTable(dto);
-	// 后面直接使用dto对象中的值就行
-	dto.getXxx();
-	dto.getXxx();
+	createHiveTable(vo);
+	// 后面直接使用vo对象中的值就行
+	vo.getC();
+	vo.getD();
 	...
 }
-private void createHiveTable(CreateHiveTableDto dto) {
-	dto.getXxx();
-	dto.getXxx();
-	dto.getXxx();
+private void createHiveTable(CreateHiveTableVo vo) {
+	vo.getA();
+	vo.getB();
 	...
-	dto.setXxx(...);
-	dto.setXxx(...);
+	vo.setC(...);
+	vo.setD(...);
 }
 ----------------
 java 原生jdbc查询表中数据条数
@@ -7092,4 +7088,20 @@ try {
 } catch (Exception e) {
 	count = 0;
 }
+----------------
+项目主服务、子服务设计
+比如：
+1.主服务（用户展示界面）
+2.数据采集子服务
+3.数据分析子服务
+
+主服务只做查询子服务结果，子服务相关的增改子服务运行记录等操作也放在子服务中，主服务只查，降低主服务压力。
+
+数据采集运行：
+1.主服务转发请求到数据采集子服务，然后返回运行状态为运行中
+2.数据采集子服务对参数校验
+3.数据采集子服务新增运行记录
+4.数据采集子服务运行程序
+5.数据采集子服务将结果（成功或失败）更新到运行记录
+6.主服务再次查询运行记录列表、详情得到最新运行结果
 ----------------
