@@ -6710,14 +6710,31 @@ public static String sqlFormat(String sql) {
 利用泛型继承，统一给不同实体类赋公共字段，比如创建时间、创建人
 @Data
 public abstract class SimpleEntity {
-    /**
-     * 创建时间
-     */
+    private String creator;
+	private String creatorName;
     private LocalDateTime createTime;
+	private String updater;
+	private String updaterName;
+    private LocalDateTime updateTime;
 }
-public static <T extends SimpleEntity> void appendEntityInfo(T entity) {
+public static <T extends SimpleEntity> void appendInfo(T entity) {
+	String curUserName = null;
+	String curUserId = null;
+	LoginInfo loginInfo = LoginInfoUtils.getLoginInfo();
+	if (loginInfo != null) {
+		curUserName = loginInfo.getUserName();
+		curUserId = loginInfo.getLoginName();
+	}
 	if (entity != null) {
-		entity.setCreateTime(LocalDateTime.now());// 传入泛型继承自SimpleEntity，所以有createTime属性，可以直接用
+		if (entity.getId() == null) {
+			entity.setCreateTime(LocalDateTime.now());// 传入泛型继承自SimpleEntity，所以有createTime属性，可以直接用
+			entity.setCreator(curUserId);
+			entity.setCreatorName(curUserName);
+			entity.setDeleted(SysConstant.INT_FALSE);
+		}
+		entity.setUpdateTime(LocalDateTime.now());
+		entity.setUpdater(curUserId);
+		entity.setUpdaterName(curUserName);
 	}
 }
 ----------------
