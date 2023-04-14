@@ -904,7 +904,7 @@ desc test_user;
 中文显示??，atlas也会乱码
 用dbe打开metastore-COLUMNS_V2表
 打开metastore属性，字符集默认是latin1
-只能修改对应字段的字符集，把需要存中文的列改为utf8
+只能修改对应字段的字符集，通过下面sql语句把需要存中文的列改为utf8
 
 =====二次安装直接在这开始======
 在metastore库下运行sql
@@ -1894,4 +1894,11 @@ FileSystem = FileSystem.get(new URI("hdfs://192.168.xx.xx:8020"), new Configurat
 // URI不能有空格、中文，文件路径可以有
 Path file = new Path("/test/截图 2021-10-26 162822.png");
 FileStatus status = hdfs.getFileStatus(file);
+-------------
+spark或者flink开发流程：
+比如做数据清洗
+1.用java代码把数据采集程序预先开发好，编写好方法，写好方法入参，从入参得到比如读取表和写入表等信息，再写上清洗逻辑，写好后编译为jar包
+2.在服务器部署上spark环境，设定好spark执行文件目录
+3.在开发好的用户界面上选择本地jar包（比如上面预先写好的数据清洗jar包），上传到服务器上的spark执行文件目录，界面上输入参数，将参数通过spark传入jar包
+4.然后spark会跑jar包，jar里的程序会将a表数据清洗后写入到b表，完成逻辑。
 -------------

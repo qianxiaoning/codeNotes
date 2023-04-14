@@ -5740,18 +5740,23 @@ String jsonString = object.toString();
 不忽略值为null的属性
 String jsonString = JSONObject.toJSONString(obj, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
 
+JSONObject转Java对象
+Student student = JSONObject.toJavaObject(jsonObject, Student.class);
+
 Object转JSONObject
 JSONObject jsonObject = (JSONObject) JSON.toJSON(object);
 或
 JSONObject jsonObject = (JSONObject) JSONObject.toJSON(object);
 
+jsonString转JSONObject
 JSONObject jsonObject = JSONObject.parseObject(jsonString);
 
 String s = jsonObject.getString("s");
 
-jsonString转实体类
+jsonString转java集合
 List<A> list = JSONObject.parseArray(jsonString, A.class);
 
+jsonString转java对象
 A a = JSONObject.parseObject(jsonString, A.class);
 
 String转JSONArray
@@ -6428,6 +6433,26 @@ NESTED(6); // 如果有事务在运行，当前的方法就应该在这个事务
 @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
 
 一般事务从serviceImpl开始，向内传播，用的是一个事务
+-----------------
+一个service中，当上面有逻辑需要先提交事务，比如在表里插入记录，下面需要用到这条记录时，可以让这个方法加上@Transactional(propagation = Propagation.REQUIRES_NEW)开启新事物
+@Service
+public class WarperServiceImpl implements WarperService {
+    @Override
+    public void a(...) {
+        // 新增运行记录
+        innerServiceImpl.addRecord(...);
+        // 剩余逻辑
+        ...需要查询上面记录
+    }
+}
+@Service
+public class InnerServiceImpl implements InnerService {
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW) // 开启新事物
+    public Xxx addRecord(...) {
+        ...
+    }
+}
 -----------------
 当需求为：内层事务异常，外层事务正常提交时
 解决办法：
@@ -7106,19 +7131,24 @@ try {
 	count = 0;
 }
 ----------------
-项目主服务、子服务设计
+主服务（主界面）调子服务（数据分析子服务）的日志设计
+日志放哪新增，看这个日志是谁的日志
 比如：
-1.主服务（用户展示界面）
-2.数据采集子服务
-3.数据分析子服务
+主服务调子服务的调用日志，放在主服务新增（或者主服务调日志服务新增）
+子服务被调用后的内部逻辑执行日志，放在子服务新增（或者子服务调日志服务新增）
 
-主服务只做查询子服务结果，子服务相关的增改子服务运行记录等操作也放在子服务中，主服务只查，降低主服务压力。
+请求需要耗时返回的接口时，可以把请求放入队列，达到异步请求，发送了请求线程无需在那等待http返回
+当主服务调用子服务，主服务新增了调用日志后，异步调用子服务的执行（只发出指令，不用等待返回的，比如放入队列），子服务的逻辑执行日志在子服务填入到库或者websocket或者es，子服务运行完成后再异步通知（结果放入队列）通知主服务调用结果失败还是成功，主服务再更新调用记录结果
 
-数据采集运行：
-1.主服务转发请求到数据采集子服务，然后返回运行状态为运行中
-2.数据采集子服务对参数校验
-3.数据采集子服务新增运行记录
-4.数据采集子服务运行程序
-5.数据采集子服务将结果（成功或失败）更新到运行记录
-6.主服务再次查询运行记录列表、详情得到最新运行结果
+主服务异步调用子服务执行（比如队列），这样主服务不用等待请求的返回，因为数据分析比较慢，如果需要等待返回的话，这个请求的线程就会被挂起，并发一高，后续对该组件的调用请求都会丢弃
+
+例子：
+主服务调用数据分析运行：
+1.主服务按下数据分析按钮，主服务新增1条数据分析调用记录
+2.主服务往队列放入1条消息，通知数据分析服务执行数据分析
+3.数据分析服务消费者收到消息，输出数据分析执行记录到websocket或者es或者日志服务
+4.数据分析结束，将执行结果（成功或者失败）放入队列
+5.主服务队列收到消息，更新一下调用记录状态
+6.主服务查看调用记录
+7.主服务调用日志服务查看执行记录
 ----------------
