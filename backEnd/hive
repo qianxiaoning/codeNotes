@@ -1704,3 +1704,13 @@ alter table a add columns(name string comment '姓名');
 
 修改字段，不允许改类型，可同时改名称和备注
 alter table a change name nickname string comment '昵称';
+-------------
+看hive表大小（字节），利用hadoop查看
+hadoop fs -count -q /user/hive/warehouse/table_a
+hadoop fs -du /user/hive/warehouse/table_a |awk ' { SUM += $1 } END { print SUM }'
+hadoop fs -du /user/hive/warehouse/table_a |awk ' { SUM += $1 } END { print SUM/(1024) }' // 单位k
+-------------
+外部导入hive数据，hive直接select count(*)查条数是查不出的
+解决办法：
+select count(*) from org1.ww limit 1;
+-------------

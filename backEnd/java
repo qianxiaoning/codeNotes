@@ -7138,17 +7138,41 @@ try {
 子服务被调用后的内部逻辑执行日志，放在子服务新增（或者子服务调日志服务新增）
 
 请求需要耗时返回的接口时，可以把请求放入队列，达到异步请求，发送了请求线程无需在那等待http返回
-当主服务调用子服务，主服务新增了调用日志后，异步调用子服务的执行（只发出指令，不用等待返回的，比如放入队列），子服务的逻辑执行日志在子服务填入到库或者websocket或者es，子服务运行完成后再异步通知（结果放入队列）通知主服务调用结果失败还是成功，主服务再更新调用记录结果
+当主服务调用子服务，主服务新增了调用日志后，异步调用子服务的执行（只发出指令，不用等待返回的，比如放入队列，或者调没有返回的http请求，在http请求上加异步注解，解放当前线程），子服务的逻辑执行日志在子服务填入到库或者websocket或者es，子服务运行完成后再异步通知（结果放入队列）通知主服务调用结果失败还是成功，主服务再更新调用记录结果
 
 主服务异步调用子服务执行（比如队列），这样主服务不用等待请求的返回，因为数据分析比较慢，如果需要等待返回的话，这个请求的线程就会被挂起，并发一高，执行需要的时间又长的话，线程池很容易满，后续对该组件的调用请求都会丢弃
 
 例子：
 主服务调用数据分析运行：
 1.主服务按下数据分析按钮，主服务新增1条数据分析调用记录
-2.主服务往队列放入1条消息，通知数据分析服务执行数据分析
+2.主服务往队列放入1条消息（或者异步发起没有返回值的http请求，解放当前线程），通知数据分析服务执行数据分析
 3.数据分析服务消费者收到消息，输出数据分析执行记录到websocket或者es或者日志服务
 4.数据分析结束，将执行结果（成功或者失败）放入队列
 5.主服务队列收到消息，更新一下调用记录状态
 6.主服务查看调用记录
-7.主服务调用日志服务查看执行记录
+7.主服务调用日志服务查看组件执行详情记录
+----------------
+规范创建线程得用线程池
+ThreadPoolExecutor
+
+多线程事务控制
+CountDownLatch
+二次提交
+----------------
+cst时间转LocalDateTime时间
+cst "Tue Sep 08 23:58:09 CST 2020"
+SimpleDateFormat sim1 = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+Date date = sim1.parse(createTime);
+Instant instant = date.toInstant();
+ZoneId zoneId = ZoneId.systemDefault();
+LocalDateTime localDateTime = instant.atZone(zoneId).toLocalDateTime();
+----------------
+日志输出到控制台，两种格式
+LOGGER.error(e.getMessage(), e); // 代替e.printStackTrace();
+LOGGER.error("SQL转换中发生了错误", e.getMessage(), e);
+
+异常详细信息写入字符串
+StringWriter sw = new StringWriter();
+e.printStackTrace(new PrintWriter(sw, true)); // 控制台不会输出
+System.out.println(sw.toString()); // 异常详细信息写入字符串
 ----------------
