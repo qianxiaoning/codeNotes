@@ -263,7 +263,7 @@ docker-compose pull
 指定配置文件，默认docker-compose文件名docker-compose.yml
 docker-compose -f docker-compose-non-dev.yml pull
 启动
-docker-compose -up -d
+docker-compose up -d
 查看docker-compose管理的容器
 docker-compose ps
 开启、重启、停止
