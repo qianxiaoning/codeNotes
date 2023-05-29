@@ -2085,6 +2085,9 @@ native调h5，在mounted里监听定义在window下的方法
 避免重复绑定
 this.$event.$off('xxx').$on('xxx',res=>{})
 
+vue事件中获取事件得到的值
+<el-select v-model="form.a" @change="form.b=$event"> // 既form.b = form.a
+
 用vux的group组件，一定要设置label-width="4.5em" label-margin-right="2em" label-align="right" 这三个属性
 但是尽管如此，还是觉得挺不灵活的
 样式不能方便设置，selector没有title插槽，不方便修改
@@ -2297,4 +2300,18 @@ vue中操作dom的方法建议都在外面加上this.$nextTick，vue数据同步
 this.$nextTick(() => {
     this.$refs['form'].validate('rules');// 手动校验form rules规则情况
 })
+---------------------
+el-select获取选中option的所有信息，value返回item，select加上value-key属性
+<el-select v-model="onePerson" @change="getOption" value-key="id">
+    <el-option v-for="item in personList" :key="item.id" :label="item.name" :value="item"></el-option>
+</el-select>
+
+data:
+imageItem: {}
+
+methods:
+getOption(value){
+    this.name = value.name;
+    this.age = value.age;
+}
 ---------------------

@@ -635,6 +635,11 @@ export default:
     b文件import xname from './a.js'
     使用 xname.a();或xname[0];
 
+给import的方法起别名
+import { aaa as bbb } from "@/api/modules/xxx/index";
+import { aaa as ccc } from "@/api/modules/xxx2/index";
+使用：bbb();
+
 Object.defineProperties()
 在一个对象上定义新的属性或修改现有属性，并返回该对象
 
