@@ -2235,6 +2235,59 @@ document.body.appendChild(link);
 link.click();
 document.body.removeChild(link);
 -----------------------
+axios携带token，下载zip文件
+export function downloadFile(query) {
+  return request({
+    url: apiurl + "/downloadFile",
+    method: "get",
+    responseType: "blob", // 或arraybuffer
+    params: query
+  });
+}
+
+method:
+async download(imageFilePath, imageFileName) {
+    const data = await downloadFile({...});
+    if (data) {
+        let blob = new Blob([data], { type: "application/zip" }); // 设置下载的内容以及格式
+        const url = window.URL.createObjectURL(blob); // 设置路径
+        const link = window.document.createElement("a"); // 创建a标签
+        link.href = url;
+        link.download = imageFileName; //设置文件名
+        link.style.display = "none";
+        link.click();
+        URL.revokeObjectURL(url); // 释放内存
+    }
+}
+-----------------------
+Blob 与 ArrayBuffer 区别
+两者都是二进制容器
+
+arraybuffer
+js内置，可以按照字节去操作，更底层
+
+blob
+web api，只能作为一个完整对象去处理
+
+两者互转
+ArrayBuffer 转 Blob
+const buffer = new ArrayBuffer(16);
+const blob = new Blob([buffer]);
+
+Blob 转 ArrayBuffer
+需要借助 FileReader 对象：
+const blob = new Blob([1,2,3,4,5]);
+const reader = new FileReader();
+reader.onload = function() {
+    console.log(this.result);
+}
+reader.readAsArrayBuffer(blob);
+
+使用场景：
+1.需要使用写入/编辑操作时使用 ArrayBuffer，否则使用 Blob 即可
+2.Blob 对象不可变，而 ArrayBuffer 可以通过 TypedArrays 或 DataView 操作
+3.Blob 可以位于磁盘、和其他不同用位置，而 ArrayBuffer 存在内存中，可以直接操作
+-----------------------
 可以同时打出3个对象的日志，控制台会输出3个下拉箭头
 console.log(obj1, obj2, obj3)
 -----------------------

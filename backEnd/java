@@ -5384,6 +5384,11 @@ spring:
 项目debug模式，调试断点，可能出现missing line number attributes错误
 改为proxy-target-class: false，用jdk代理aop即可
 -------------------------------
+@Async简单用法
+a http调b，b如果需要耗时，http就会挂起，导致连接池满，后续http请求挂起
+用异步
+a http调b，b的serviceImpl方法上加上@Async，http请求就会立即返回，b运行完后再将结果放入队列，a消费。
+-------------------------------
 CompletableFuture处理异步
 
 LogsServiceImpl.java
@@ -7175,4 +7180,20 @@ LOGGER.error("SQL转换中发生了错误", e.getMessage(), e);
 StringWriter sw = new StringWriter();
 e.printStackTrace(new PrintWriter(sw, true)); // 控制台不会输出
 System.out.println(sw.toString()); // 异常详细信息写入字符串
+----------------
+APM（Application performance management）
+全链路监控工具，看调用链路各步骤所花时间
+zipkin，skywalking，pinpoint
+----------------
+-javaagent 字节码增强技术，动态探针技术
+代理 (agent) 是在你的main方法前的一个拦截器 (interceptor)，也就是在main方法执行之前，执行agent的代码。
+
+怎样写一个java agent? 只需要实现premain这个方法
+public static void premain(String agentArgs, Instrumentation inst)
+Agent 类必须打成jar包，然后里面的 META-INF/MAINIFEST.MF 必须包含Premain-Class这个属性。
+
+如：
+Manifest-Version: 1.0
+Premain-Class:MyAgent1
+Created-By:1.6.0_06
 ----------------

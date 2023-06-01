@@ -1902,3 +1902,9 @@ spark或者flink开发流程：
 3.在开发好的用户界面上选择本地jar包（比如上面预先写好的数据清洗jar包），上传到服务器上的spark执行文件目录，界面上输入参数，将参数通过spark传入jar包
 4.然后spark会跑jar包，jar里的程序会将a表数据清洗后写入到b表，完成逻辑。
 -------------
+hadoop3关闭hdfs文件上传用户权限校验
+<property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+</property>
+-------------
