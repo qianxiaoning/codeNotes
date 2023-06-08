@@ -2372,3 +2372,7 @@ substring(startIndex)
 substr(startIndex, length)
 substring(startIndex, endIndex)
 -----------------------
+js replace替换多个字符
+"sss-sss.ffff".replace(/[.-]/g, "_")
+"sss_sss_ffff"
+-----------------------

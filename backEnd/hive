@@ -1714,3 +1714,134 @@ hadoop fs -du /user/hive/warehouse/table_a |awk ' { SUM += $1 } END { print SUM/
 解决办法：
 select count(*) from org1.ww limit 1;
 -------------
+简单大数据仓库分层表实例（教育场景）：
+ods原始层：
+CREATE TABLE `student`(
+  `id` bigint, 
+  `name` string, 
+  `age` int, 
+  `create_time` timestamp) COMMENT '学生表';
+
+CREATE TABLE `student_health`(
+  `id` bigint, 
+  `student_id` bigint, 
+  `height` int, 
+  `weight` int, 
+  `create_time` timestamp) COMMENT '学生健康表';
+
+CREATE TABLE `test`(
+  `id` bigint, 
+  `name` string, 
+  `score` int COMMENT '测试满分', 
+  `subject_id` bigint, 
+  `create_time` timestamp) COMMENT '测试表';
+  
+CREATE TABLE `test_subject`(
+  `id` bigint, 
+  `name` string, 
+  `create_time` timestamp) COMMENT '测试学科表';
+  
+CREATE TABLE `student_re_test`(
+  `id` bigint, 
+  `student_id` bigint, 
+  `test_id` bigint, 
+  `test_score` int COMMENT '学生测试分数', 
+  `create_time` timestamp) COMMENT '学生测试关联表';
+
+dim维度层：
+CREATE TABLE `dim_student`(
+  `id` bigint, 
+  `name` string, 
+  `age` int, 
+  `height` int, 
+  `weight` int, 
+  `create_time` timestamp) COMMENT '学生大宽表';
+  
+insert into table dim_student
+select 
+	s.id,
+	s.name,
+	s.age,
+	sh.height,
+	sh.weight,
+	s.create_time
+from student s left join student_health sh on s.id=sh.student_id;
+
+dwd明细层：
+CREATE TABLE `dwd_test`(
+  `id` bigint, 
+  `name` string, 
+  `score` int, 
+  `subject_name` string, 
+  `create_time` timestamp) COMMENT '单词测试大宽表';
+  
+insert into table dwd_test
+select 
+	t.id,
+	t.name,
+	t.score,
+	ts.name,
+	t.create_time
+from test t left join test_subject ts on t.subject_id=ts.id;
+
+dws汇总层：
+CREATE TABLE `dws_student_test`(
+  `id` bigint, 
+  `student_id` bigint, // 需要维度id，作为后面主题层group by的字段
+  `student_name` string, 
+  `student_age` int, 
+  `student_height` int, 
+  `student_weight` int, 
+  `test_name` string, 
+  `test_score` int, 
+  `test_subject_name` string, 
+  `create_time` timestamp) COMMENT '学生单次测试大宽表';
+  
+insert into table dws_student_test
+    select
+    srt.id,
+    ds.id,
+    ds.name,
+    ds.age,
+    ds.height,
+    ds.weight,
+    dt.name,
+    srt.test_score,
+    dt.subject_name,
+    srt.create_time
+from
+	student_re_test srt
+left join dwd_test dt on
+	srt.test_id = dt.id
+left join dim_student ds on
+	srt.student_id = ds.id;
+	
+dwt主题层：
+CREATE TABLE `dwt_student_test`(
+  `id` bigint, 
+  `student_id` bigint, 
+  `student_name` string, 
+  `student_age` int, 
+  `student_height` int, 
+  `student_weight` int, 
+  `avg_score` int, 
+  `max_score` int, 
+  `min_score` int, 
+  `create_time` timestamp) COMMENT '学生测试统计表';
+  
+insert into table dwt_student_test
+select
+    collect_set(id)[0], // hive查group by以外的字段需要放在统计函数中，如果不需要统计就放在collect_set函数中收集起来，通过下标访问数组
+    student_id,
+    collect_set(student_name)[0],
+    collect_set(student_age)[0],
+    collect_set(student_height)[0],
+    collect_set(student_weight)[0],
+    avg(test_score),
+    max(test_score),
+    min(test_score),
+    date_format(current_timestamp, 'yyyy-MM-dd HH:mm:ss') // hive获取当前时间
+from
+	dws_student_test
+group by student_id;
+-------------
