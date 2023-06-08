@@ -962,6 +962,17 @@ ctrl + z
 3.一对多：一主表，一子表。一页面中有小列表时（特别是还能删改这种），小列表为子表
 4.多对多：一主表，一主表，一中间表
 ------------
+建表命名规范
+主表子表（子表带上主表名）：
+student
+student_parent
+
+test
+test_subject
+
+关联表（两个主表中间加上re，表示关联）：
+student_re_test
+------------
 快速建表流程：
 先按页面建主表，页面所需字段为主表字段，
 主页面上还有小列表的（小列表能改删这种），就是主表的从表，建从表
@@ -1065,4 +1076,8 @@ alter table table1 add b int comment "bb";
 
 删除字段
 ALTER TABLE table1 DROP COLUMN name;
+------------
+mysql看连接池当前连接线程
+show processlist
+sleep状态是线程池中待用线程
 ------------

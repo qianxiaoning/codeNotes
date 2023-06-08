@@ -7197,3 +7197,13 @@ Manifest-Version: 1.0
 Premain-Class:MyAgent1
 Created-By:1.6.0_06
 ----------------
+jconsole看当前线程状态（死了还是卡住了）
+jconsole在java bin目录下
+
+1.给当前线程命名：
+Thread.currentThread().setName("xxx" + System.currentTimeMillis());
+2.jconsole-线程-搜线程名，看堆栈跟踪
+----------------
+java堆栈跟踪，报错日志
+看的顺序，堆栈是从下往上运行
+----------------
