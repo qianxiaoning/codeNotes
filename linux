@@ -496,6 +496,17 @@ rm -rf b，不是rm -rf  b/
 ---------------
 查看文件或目录大小
 du -sh file
+查看当前目录总大小
+du -sh ./
+查看当前目录下所有子文件与子目录的大小，并列出
+du -sh *
+查看当前目录下所有子文件与子目录的大小，并排序列出
+du -sh * | sort -nr
+
+服务器报No space left on device，没有空间错误
+1.先df -h查看挂载盘使用情况
+2.如果都满了，在根目录开始du -sh *，查看最大的那个文件
+3.删除合适的最大的那个文件，再lsof | grep "xxx.log"，结束那个进程
 ---------------
 将服务添加到 service（老模式，不推荐使用） 和 systemctl
 以nginx举例：
@@ -569,6 +580,9 @@ linux遇到PATH缓存问题，当前xshell重新连接即可
 history | grep 'ln -snf'
 查找最近n条命令
 history n
+查看某一条命令前后的命令
+history | less +命令序号
+history | less -命令序号
 ---------------
 查看服务器所有python软链
 ls -al /usr/bin | grep python

@@ -289,7 +289,7 @@ rabbitmq-plugins enable rabbitmq_delayed_message_exchange
 卸载rabbitmq
 yum -y remove rabbitmq-server.noarch
 ---------------
-公司用rocketmq流程（待简化）
+公司用rocketmq流程
 1.pom文件添加依赖
 <!-- rocketmq -->
 <dependency>
@@ -304,28 +304,14 @@ com:
     rocketmq:
       producer:
         namesrvAddr: 192.168.10.207:30001
-        producerGroup: dataops-dev1
-        central:
-          cloud:
-            topic: dataops-dev1
         manualOp:
-          group: dataops-manual-dev1
-          topic: dataops-manual-dev1
-        subassemblyRunlog:
-          group: dataops-subassembly-runlog-dev
-          topic: dataops-subassembly-runlog-dev
+          group: manual_send_group_dev
+          topic: manual_send_topic_dev
       consumer:
         namesrvAddr: 192.168.10.207:30001
-        consumerGroup: dataops-dev1
-        central:
-          cloud:
-            topic: dataops-dev1
         manualOp:
-          group: dataops-manual-dev1
-          topic: dataops-manual-dev1
-        subassemblyRunlog:
-          group: dataops-subassembly-runlog-dev
-          topic: dataops-subassembly-runlog-dev
+          group: manual_send_group_dev
+          topic: manual_send_topic_dev
 
 3.添加生产者
 package com.telehot.mq.producers;
@@ -345,23 +331,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class ThCentralCloudProducer {
+public class DataopsProducer {
     /**
      * 日志
      */
     private final Logger logger = LoggerFactory.getLogger(super.getClass());
 
     /**
-     * NameServer 地址
+     * 生产者NameServer地址
      */
     @Value("${com.telehot.rocketmq.producer.namesrvAddr}")
     private String nameSrvAddr;
-
-    /**
-     * 生产者的组名
-     */
-    @Value("${com.telehot.rocketmq.producer.producerGroup}")
-    private String producerGroup;
 
     /**
      * manualOpTopic：手动运行Topic
@@ -376,42 +356,17 @@ public class ThCentralCloudProducer {
     private String manualOpGroup;
 
     /**
-     * 生产者
-     */
-    private DefaultMQProducer producer;
-
-    /**
      * 手动运行生产者
      */
     private DefaultMQProducer manualOpMQProducer;
 
-    /**
-     * @return DefaultMQProducer
-     */
-    private DefaultMQProducer getProducer() {
-        return this.producer;
-    }
-
     public DefaultMQProducer getManualOpMQProducer() {
-        return manualOpMQProducer;
+        return this.manualOpMQProducer;
     }
 
     /**
      * spring初始化注解，只会调用一次  创建生产者
      */
-    @PostConstruct
-    public void defaultMqPushProducer() {
-        try {
-            producer = new DefaultMQProducer(producerGroup);
-            //指定NameServer地址，多个地址以 ; 隔开
-            producer.setNamesrvAddr(nameSrvAddr);
-            producer.start();
-            logger.info("alterationTaskInfoProducer start success...");
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
-
     @PostConstruct
     public void defaultManualOpMQProducer() {
         try {
@@ -429,33 +384,10 @@ public class ThCentralCloudProducer {
      * 关闭生产者
      */
     @PreDestroy
-    public void defaultMqProducerShutdown() {
-        //关闭生产者
-        getProducer().shutdown();
-        logger.info("alterationTaskInfoProducer shutdown success...");
-    }
-
-    @PreDestroy
     public void defaultManualOpMQProducerShutdown() {
         //关闭生产者
         getManualOpMQProducer().shutdown();
         logger.info("manualOpMQProducer shutdown success...");
-    }
-
-    /**
-     * MQ 发送消息
-     *
-     * @param topic topic
-     * @param sms   内容
-     */
-    public void send(String topic, String sms) {
-        try {
-            Message msg = new Message(topic, sms.getBytes(RemotingHelper.DEFAULT_CHARSET));
-            SendResult result = getProducer().send(msg);
-            logger.info(msg.toString(), result.toString());
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
     }
 
     /**
@@ -480,7 +412,7 @@ public class ThCentralCloudProducer {
 Map<String, Object> msg = new HashMap<>();
 msg.put("type", MQConstants.PROGRAMTYPE_HIVE);
 msg.put("content", vo);
-thCentralCloudProducer.sendManualOp(JSONObject.toJSONString(msg, SerializerFeature.WriteMapNullValue));
+dataopsProducer.sendManualOp(JSONObject.toJSONString(msg, SerializerFeature.WriteMapNullValue));
 
 5.添加消费者，消费消息
 package com.telehot.mq.consumers;
@@ -509,7 +441,7 @@ import javax.annotation.PostConstruct;
 import java.util.Map;
 
 @Component
-public class ThCentralCloudConsumer {
+public class DataopsConsumer {
 
     /**
      * 日志
@@ -523,115 +455,119 @@ public class ThCentralCloudConsumer {
     private String namesrvAddr;
 
     /**
-     * 消费者的组名
+     * 消费者topic
      */
-    @Value("${com.telehot.rocketmq.consumer.consumerGroup}")
-    private String consumerGroup;
+    @Value("${com.telehot.rocketmq.consumer.manualOp.topic}")
+    private String manualOpTopic;
 
     /**
-     * Topic
+     * 消费者group
      */
-    @Value("${com.telehot.rocketmq.consumer.central.cloud.topic}")
-    private String topic;
-
-    /**
-     * subassemblyRunlogTopic：子系统日志Topic
-     */
-    @Value("${com.telehot.rocketmq.consumer.subassemblyRunlog.topic}")
-    private String subassemblyRunlogTopic;
-
-    /**
-     * subassemblyRunlogGroup：子系统日志Group
-     */
-    @Value("${com.telehot.rocketmq.consumer.subassemblyRunlog.group}")
-    private String subassemblyRunlogGroup;
-
+    @Value("${com.telehot.rocketmq.consumer.manualOp.group}")
+    private String manualOpGroup;
 
     /**
      * spring初始化注解，只会调用一次  创建消费着
      */
     @PostConstruct
-    public void defaultMqPushConsumer() {
-        //消费者的组名
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(consumerGroup);
-        //指定NameServer地址，多个地址以 ; 隔开
-        consumer.setNamesrvAddr(namesrvAddr);
+    public void receiveManualOp() {
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(group);
         try {
-            //设置consumer所订阅的Topic和Tag，*代表全部的Tag
-            //consumer.subscribe("testOrderTopic", "*");
+            consumer.setNamesrvAddr(namesrvAddr);
+            consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+            consumer.setMessageModel(MessageModel.CLUSTERING);
             consumer.subscribe(topic, "*");
-            //consumer.subscribe("testCommentTopic", "comment");
-            //CONSUME_FROM_LAST_OFFSET 默认策略，从该队列最尾开始消费，跳过历史消息
-            //CONSUME_FROM_FIRST_OFFSET 从队列最开始开始消费，即历史消息（还储存在broker的）全部消费一遍
-            consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
-            //MessageListenerOrderly 这个是有序的
-            //MessageListenerConcurrently 这个是无序的,并行的方式处理，效率高很多
-            consumer.registerMessageListener((MessageListenerConcurrently) (list, context) -> {
-                try {
-                    for (MessageExt messageExt : list) {
-                        logger.info("messageExt: " + messageExt);//输出消息内容
-                        String messageBody = new String(messageExt.getBody(), RemotingHelper.DEFAULT_CHARSET);
-                        Map map = JSONObject.parseObject(messageBody, Map.class);
-                        // todo 类型判断，执行不同逻辑
-                        String type = String.valueOf(map.get("type"));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    logger.error("消费消息出现异常" + e.getMessage(),e);
-                    return ConsumeConcurrentlyStatus.RECONSUME_LATER; //稍后再试
-                }
-                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS; //消费成功
-            });
-            consumer.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("消费着启动出现异常" + e.getMessage(),e);
+        } catch (MQClientException e) {
+            logger.error("consume operation log MQ error", e);
         }
-    }
-
-    /**
-     * <简述> 消费手动运行消息
-     * <详细描述>
-     * @author sunqiming
-     */
-    @PostConstruct
-    public void receiveSubassemblyRunlog() {
+        consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
+            logger.info("{} Receive New Messages bpm: {}", Thread.currentThread().getName(), msgs);
+            byte[] bytes = msgs.get(0).getBody();
+            BpmMsgVo messageVo = new BpmMsgVo();
+            String msg = new String(bytes, StandardCharsets.UTF_8);
+            try {
+                messageVo = JSONObject.parseObject(msg, BpmMsgVo.class);
+            } catch (Exception e) {
+                logger.error("流程事件处理失败", e);
+            }
+            //任务结束
+            if (FlowStatusConstant.FINISH .equals(messageVo.getStatus())) {
+                logger.error(String.format("任务结束fiId:%s;loginname:%s;wiId:%s", messageVo.getFlowInsId(), AuditConstant.FLOW_AUDIT_SOURCE_TYPE_CS.equals(messageVo.getSourceType()) ? messageVo.getExecutor() : messageVo.getActualExecutor(), messageVo.getId()));
+                //非抄送 或者抄送必须是已阅的数据
+                if(!AuditConstant.FLOW_AUDIT_SOURCE_TYPE_CS.equals(messageVo.getSourceType()) || (AuditConstant.FLOW_AUDIT_SOURCE_TYPE_CS.equals(messageVo.getSourceType())
+                        && NumberConstant.ONE.equals(messageVo.getIsHaveRead()))){
+                    ApiResultDto<UserDto> apiResultDto =  userApiService.getUserInfo(AuditConstant.FLOW_AUDIT_SOURCE_TYPE_CS.equals(messageVo.getSourceType()) ? messageVo.getExecutor() : messageVo.getActualExecutor());
+                    auditService.dealAuditTodoDone(String.valueOf(messageVo.getFlowInsId()), apiResultDto.getSuccess() && apiResultDto.getData() != null ? String.valueOf(apiResultDto.getData().getId()) : "" );
+                }
+                //任务分配
+            }else if (FlowStatusConstant.RUNNING.equals(messageVo.getStatus())) {
+                logger.error(String.format("任务分配wiId:%s;loginname:%s", messageVo.getId(), messageVo.getExecutor()));
+                ApiResultDto<UserDto> apiResultDto =  userApiService.getUserInfo(messageVo.getExecutor());
+                //抄送类型单独处理
+                if(AuditConstant.FLOW_AUDIT_SOURCE_TYPE_CS.equals(messageVo.getSourceType())){
+                    auditService.dealBpmsAuditCsTodo(String.valueOf(messageVo.getId()), apiResultDto.getSuccess() && apiResultDto.getData() != null ? String.valueOf(apiResultDto.getData().getId()) : "");
+                }else{
+                    auditService.dealAuditTodo(String.valueOf(messageVo.getId()), apiResultDto.getSuccess() && apiResultDto.getData() != null ? String.valueOf(apiResultDto.getData().getId()) : "");
+                }
+                //任务取消
+            }else if (FlowStatusConstant.CANCEL.equals(messageVo.getStatus())) {
+                logger.error(String.format("任务取消wiId:%s;loginname:%s", messageVo.getId(), messageVo.getExecutor()));
+                auditService.dealAbandonAuditTodoDone(messageVo.getFlowInsId().toString());
+                //任务挂起
+            }else if ( FlowStatusConstant.HANG_UP .equals(messageVo.getStatus())) {
+                logger.error(String.format("任务结束fiId:%s;loginname:%s;wiId:%s", messageVo.getFlowInsId(), messageVo.getExecutorName(), messageVo.getId()));
+                ApiResultDto<UserDto> apiResultDto = userApiService.getUserInfo(messageVo.getExecutor());
+                auditService.dealAuditTodoDone(String.valueOf(messageVo.getFlowInsId()), apiResultDto.getSuccess() && apiResultDto.getData() != null ? String.valueOf(apiResultDto.getData().getId()) : "");
+            }
+            logger.info("新bpm消息体：" + JSON.toJSONString(messageVo));
+            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+        });
+        try {
+            consumer.start();
+            logger.info("MQ consumer started.");
+        } catch (
+                MQClientException e) {
+            logger.error("MQ start error", e);
+        }
+        ---
         // 创建一个消费者
         // consumerGroup：做同样事情的Consumer归为同一个Group，应用必须设置，并保证命名唯一
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(subassemblyRunlogGroup);
-        // 指定NameServer地址，多个地址以 ; 隔开
-        consumer.setNamesrvAddr(namesrvAddr);
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(manualOpGroup);
         try {
-            //设置consumer所订阅的Topic和Tag，*代表全部的Tag
-            //consumer.subscribe("testOrderTopic", "*");
-            consumer.subscribe(subassemblyRunlogTopic, "*");
-            //consumer.subscribe("testCommentTopic", "comment");
-            //CONSUME_FROM_LAST_OFFSET 默认策略，从该队列最尾开始消费，跳过历史消息
-            //CONSUME_FROM_FIRST_OFFSET 从队列最开始开始消费，即历史消息（还储存在broker的）全部消费一遍
+            // 指定NameServer地址，多个地址以 ; 隔开
+            consumer.setNamesrvAddr(namesrvAddr);
+            // CONSUME_FROM_FIRST_OFFSET 从队列最开始开始消费，即历史消息（还储存在broker的）全部消费一遍
+            // CONSUME_FROM_LAST_OFFSET 默认策略，从该队列最尾开始消费，跳过历史消息
             consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
-            //MessageListenerOrderly 这个是有序的
-            //MessageListenerConcurrently 这个是无序的,并行的方式处理，效率高很多
-            consumer.registerMessageListener((MessageListenerConcurrently) (list, context) -> {
-                try {
-                    for (MessageExt messageExt : list) {
-                        String messageBody = new String(messageExt.getBody(), RemotingHelper.DEFAULT_CHARSET);
-                        logger.info("消息内容: " + messageBody);//输出消息内容
-                        JSONObject jsonObject = JSONObject.parseObject(messageBody);
-                        // todo 类型判断，执行不同逻辑
-                        String type = jsonObject.getString("type");
-                        if (MQConstants.HIVE_LOG.equals(type)) {
-                            System.out.println(jsonObject);
-                        }
-                    }
-                } catch (Exception e) {
-                    logger.error("子系统日志消费消息出现异常" + e.getMessage(), e);
-                    //return ConsumeConcurrentlyStatus.RECONSUME_LATER; //稍后再试
+//            consumer.setMessageModel(MessageModel.CLUSTERING);
+            // 设置consumer所订阅的Topic和Tag，*代表全部的Tag
+            consumer.subscribe(manualOpTopic, "*");
+        } catch (MQClientException e) {
+            logger.error("consume operation log MQ error", e);
+        }
+        // MessageListenerOrderly 这个是有序的
+        // MessageListenerConcurrently 这个是无序的,并行的方式处理，效率高很多
+        consumer.registerMessageListener((MessageListenerConcurrently) (list, context) -> {
+            try {
+                for (MessageExt messageExt : list) {
+                    String messageBody = new String(messageExt.getBody(), RemotingHelper.DEFAULT_CHARSET);
+                    logger.info("消息内容: " + messageBody); // 输出消息内容
+                    JSONObject jsonObject = JSONObject.parseObject(messageBody);
+                    // todo 类型判断，执行不同逻辑
+                    String type = jsonObject.getString("type");
                 }
-                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS; //消费成功
-            });
+            } catch (Exception e) {
+                logger.error("手动运行消费消息出现异常" + e.getMessage(), e);
+                // return ConsumeConcurrentlyStatus.RECONSUME_LATER; //稍后再试
+            }
+            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS; //消费成功
+        });
+        try {
             consumer.start();
-        } catch (Exception e) {
-            logger.error("子系统日志消费着启动出现异常" + e.getMessage(), e);
+            logger.info("MQ consumer started.");
+        } catch (
+                MQClientException e) {
+            logger.error("手动运行消费着启动出现异常" + e.getMessage(), e);
         }
     }
 }
