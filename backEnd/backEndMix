@@ -174,3 +174,13 @@ cd也说明是在linux环境操作的
 得去-源代码-ctrl o搜索文件，打断点
 ---------------
 postman请求下载文件接口，选send下面那个send and download
+---------------
+检测后端jar包是否有漏洞
+国家信息安全漏洞库-漏洞信息-右侧漏洞名称中搜索jar包关键字，选择危害等级
+左侧选择漏洞，最下面官方补丁
+比如：https://github.com/pgjdbc/pgjdbc/security/advisories/GHSA-r38f-c4h4-hqq2
+Security中
+Affected versions受漏洞影响版本
+Patched versions补丁版本
+---------------
+
