@@ -282,3 +282,6 @@ vim /var/lib/docker/containers/容器ID/hostconfig.json
 修改
 3306/tcp:是容器端口, HostPort":"3306:是宿主机端口
 ------------------
+关闭容器自动启动
+docker update --restart=no 容器ID
+------------------

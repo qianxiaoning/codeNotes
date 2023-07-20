@@ -7207,3 +7207,37 @@ Thread.currentThread().setName("xxx" + System.currentTimeMillis());
 java堆栈跟踪，报错日志
 看的顺序，堆栈是从下往上运行
 ----------------
+List
+List删除某一项
+迭代器删除
+List<XxxVo> list = vo.getList();
+Iterator<XxxVo> iterator = list.iterator();
+while (iterator.hasNext()) {
+    XxxVo next = iterator.next();
+    if (StringUtils.isBlank(next.getId())) {
+        iterator.remove(); // id为空，删除当前项
+    }
+}
+得到list
+----------------
+继承父类和实现接口
+普通类只能extends一个父类，但是可以多重继承（通过爷爷-爸爸-孙子）
+父类里是公共方法的具体实现
+接口里是公共方法的定义，具体未实现
+接口能多继承extends a,b,c
+interface A extends X,Y,Z{
+
+}
+类能实现多个接口
+class A extends B implements X,Y,Z{
+	
+}
+
+java是单继承机制，接口是对继承的扩展，因为只能继承一个父类，公共方法通过父类继承，个性方法通过接口实现，或者同名的方法但是内部逻辑不同的，也可以通过接口实现
+人继承人类的吃饭睡觉（继承），而他后来要弹吉他或者打篮球，他就必须要去实现（接口）来实现
+----------------
+抽象类对事物的抽象，即对类抽象，而接口是对行为的抽象。
+抽象类里可以有具体实现的方法，不用在各子类中重复写，接口里只能有未实现方法
+
+java8后，接口可以有default方法实现
+----------------

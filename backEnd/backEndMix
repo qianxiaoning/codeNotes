@@ -183,4 +183,39 @@ Security中
 Affected versions受漏洞影响版本
 Patched versions补丁版本
 ---------------
+写代码逻辑先定义好大结构方法
+在写后端某个方法的具体逻辑实现层的时候，先大概确定有哪几步，
+比如数据转换逻辑：
+1.读取数据 2.数据处理 3.写入数据。
+然后写好这三个方法名，再在每个方法里写具体逻辑。
 
+既在写逻辑的时候，先定义大结构，再在结构里再去扩充，别直接从第一行往下写，这样代码就没有清晰的大结构了。
+---------------
+多个if else判断的时候，比如输入有10种数据源，输出有10种数据源，每种配对要有1.读取数据 2.数据处理 3.写入数据这三步处理，
+判断最少的写法是，将数量最小的写在外面，既处理步骤在外面
+1.读取数据 10种数据源
+2.数据处理 10种数据源，如果不需要这步不处理就行
+3.写入数据 10种数据源
+10+10+10=30种
+
+如果if else在外面，就得写100种
+10*10=100，里面写1.读取数据 2.数据处理 3.写入数据
+---------------
+接口定义规范
+类的继承
+子类，HiveReader
+public class HiveReader extends BaseReaderPlugin implements ShonReaderInterface
+父类，基础Reader插件
+public abstract class BaseReaderPlugin extends BaseShonPlugin
+爷爷类，基础项目名Reader插件
+public abstract class BaseShonPlugin implements ShonPluginInterface
+public interface ShonPluginInterface
+
+行为的扩展，接口的实现
+继承项目名Reader接口
+public class HiveReader extends BaseReaderPlugin implements ShonReaderInterface
+子接口继承项目名插件接口
+public interface ShonReaderInterface extends ShonPluginInterface
+父接口项目名插件接口
+public interface ShonPluginInterface
+---------------
