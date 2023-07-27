@@ -1908,3 +1908,32 @@ hadoop3关闭hdfs文件上传用户权限校验
         <value>false</value>
 </property>
 -------------
+hadoop 向hdfs文件中追加字符串
+1.在config中加入
+config.set("dfs.client.block.write.replace-datanode-on-failure.policy", "NEVER");
+
+public static FileSystem getFileSystem(String hdfsUrl) throws IOException {
+    Configuration config = new Configuration();
+    config.set("fs.default.name", hdfsUrl);
+    config.set("dfs.client.block.write.replace-datanode-on-failure.policy", "NEVER");
+    FileSystem fs;
+    fs = FileSystem.get(config);
+    return fs;
+}
+
+2.fs.append(path);
+out.writeBytes(str + "\n");
+
+public static void string2Hdfs(FileSystem fs, String str, String hdfsPath) throws IOException {
+    FSDataOutputStream out;
+    Path path = new Path(hdfsPath);
+    Boolean isPathExist = fs.exists(path);
+    if (isPathExist) {
+        out = fs.append(path);// 已有文件就追加
+    } else {
+        out = fs.create(new Path(hdfsPath));// 没有文件就创建文件
+    }
+    out.writeBytes(str + "\n");
+    out.close();
+}
+-------------

@@ -918,8 +918,8 @@ java提倡面向接口编程，不面向实现，利用多态实现对象的解�
 1.interface代替class关键字
 2.implements代替extends关键字
 3.接口中只能定义：
-	公开的常量
-	公开的抽象方法
+	公开的常量 // 变量默认public final
+	公开的抽象方法 // 方法默认public abstract
 	公开的内部类，内部接口
 4.接口没有构造方法
 5.类可以同时实现多个接口
@@ -7238,6 +7238,23 @@ java是单继承机制，接口是对继承的扩展，因为只能继承一个�
 ----------------
 抽象类对事物的抽象，即对类抽象，而接口是对行为的抽象。
 抽象类里可以有具体实现的方法，不用在各子类中重复写，接口里只能有未实现方法
+当需要定义属性或者有具体实现的方法时，可以考虑用抽象类，如果不需要就用接口
 
 java8后，接口可以有default方法实现
+----------------
+@JsonIgnore
+vo类或者实体类某一个字段不想返给前端时
+@JsonIgnore
+private String xxx;
+----------------
+优雅的入参校验方法
+1.Assert断言
+Assert.notNull(null, "xxx");
+2.spring-boot-starter-validation
+controller
+@PostMapping(value = "/xxx")
+public Result<String> xxx(@RequestBody @Validated Vo vo)
+字段
+@NotBlank(message = "不能为空")
+private String xx;
 ----------------
