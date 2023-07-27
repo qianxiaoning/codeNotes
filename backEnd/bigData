@@ -1910,6 +1910,7 @@ hadoop3关闭hdfs文件上传用户权限校验
 -------------
 hadoop 向hdfs文件中追加字符串
 1.在config中加入
+Configuration config = new Configuration();
 config.set("dfs.client.block.write.replace-datanode-on-failure.policy", "NEVER");
 
 public static FileSystem getFileSystem(String hdfsUrl) throws IOException {
@@ -1921,17 +1922,27 @@ public static FileSystem getFileSystem(String hdfsUrl) throws IOException {
     return fs;
 }
 
-2.fs.append(path);
+2.
+FSDataOutputStream out = fs.append(path);
 out.writeBytes(str + "\n");
 
-public static void string2Hdfs(FileSystem fs, String str, String hdfsPath) throws IOException {
+/**
+    * <简述> 字符串上传到hdfs
+    * <详细描述> string2Hdfs
+    * @author qianxiaoning
+    * @param fs FileSystem
+    * @param str 写入的字符串
+    * @param hdfsPath hdfs文件路径
+    * @param isAppend 是否在原文件追加内容
+    */
+public static void string2Hdfs(FileSystem fs, String str, String hdfsPath, Boolean isAppend) throws IOException {
     FSDataOutputStream out;
     Path path = new Path(hdfsPath);
     Boolean isPathExist = fs.exists(path);
-    if (isPathExist) {
-        out = fs.append(path);// 已有文件就追加
+    if (isPathExist && isAppend) {// 文件存在且需要追加内容
+        out = fs.append(path);// 追加内容
     } else {
-        out = fs.create(new Path(hdfsPath));// 没有文件就创建文件
+        out = fs.create(path);// 创建或覆盖内容
     }
     out.writeBytes(str + "\n");
     out.close();
