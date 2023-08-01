@@ -1081,3 +1081,8 @@ mysql看连接池当前连接线程
 show processlist
 sleep状态是线程池中待用线程
 ------------
+mysql判断表是否存在
+SHOW TABLES LIKE 'xxx'; // 无结果集，说明没有该表
+ResultSet resultSet = MysqlUtil.executeQuery(mysqlConnAndStmt, "SHOW TABLES LIKE '" + tableName + "'");
+boolean = resultSet.next(); // false说明无结果集
+------------
