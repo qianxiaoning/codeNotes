@@ -7258,3 +7258,287 @@ public Result<String> xxx(@RequestBody @Validated Vo vo)
 @NotBlank(message = "不能为空")
 private String xx;
 ----------------
+ThreadLocal线程内变量，每个线程独立
+ThreadLocal<StringBuilder> a = new ThreadLocal<>();
+ThreadLocal<StringBuilder> b = new ThreadLocal<>();
+a,b互不影响
+// 存值入threadLocal
+threadLocal.set(sb);
+// 从threadLocal获取值
+threadLocal.get();
+// 清空threadLocal
+threadLocal.remove();
+----------------
+jdk1.7 try()异常自动结束流
+如：
+try (
+    // 要结束的资源
+    Connection connection = localMap.get().writeConnection();
+    Statement stmt = connection.createStatement();
+    ResultSet rs = stmt.executeQuery(sql);
+) {
+    // 运行的逻辑
+    return rs.next();
+} catch (SQLException e) {
+    // 异常后执行
+    log.error(e.getMessage(), e);
+    throw new BusinessException(BusinessExceptionEnum.SYSTEM_ERROR, e);
+}
+----------------
+静态方法不能调实例方法和实例变量，但是静态方法可以调构造方法，构造方法里可以调非静态方法
+所以写静态方法的顺序可以是：
+静态方法中调 构造方法，构造方法中调 非静态方法
+----------------
+java工具类的异常处理策略
+如果需要一报错就终止运行，就把错误抛到最外层的try里统一处理
+如果需要报错了，再继续往下执行的，在方法最内层就try catch处理掉比较好，需要记录异常信息就写到catch中的ThreadLoacl里去
+----------------
+封装公共功能的方法：
+1.封装公共方法
+2.创建一个类
+公共方法和类的区别：类可以通过增加类的非静态属性，通过init方法将部分参数赋到类的实例属性上，后续调类的实例方法，可以直接获取到这部分属性，可以少传参数
+公共方法的话，每次都得传那么多参数才行
+大纲：
+@Data
+public class Log2Hdfs2 {
+
+    // 1.将不变的参数存到实例属性上
+    /**
+     * @Field fileSystem : fileSystem
+     */
+    private FileSystem fileSystem;
+
+    /**
+     * @Field operaterName : 操作人名
+     */
+    private String operaterName;
+
+    /**
+     * @Field threadLocal : threadLocal
+     */
+    private static ThreadLocal<Log2Hdfs2> threadLocal = new ThreadLocal<>();
+
+    /**
+     * @Field hdfsRootUrl : hdfs根路径
+     */
+    private String hdfsRootUrl;
+
+    /**
+     * @Field runStepLogHdfsUrl : 组件运行日志hdfs文件路径
+     */
+    private String runStepLogHdfsUrl;
+
+    /**
+     * @Field runStepLog : 组件运行日志
+     */
+    private StringBuilder runStepLog = new StringBuilder();
+
+    // 2.通过init静态方法，把不变的参数一次性全传入，保存到一个实例的属性上
+    public static void init(String operaterName, String hdfsRootUrl) {
+        threadLocal.set(new Log2Hdfs2(operaterName, hdfsRootUrl));
+    }
+
+    // 3.通过构造，在创建实例的时候，把不变的参数都赋值好
+    public Log2Hdfs2(String operaterName, String hdfsRootUrl) {
+        this.operaterName = operaterName;
+        this.hdfsRootUrl = hdfsRootUrl;
+        // hdfs文件路径
+        // 文件路径
+        // /运行日志/人/info.txt
+        this.runStepLogHdfsUrl = String.format("/stepRunLog/%s/info.txt", operaterName);
+        // fileSystem
+        this.fileSystem = HdfsUtil.getFileSystem(hdfsRootUrl);
+    }
+
+    // 4.添加日志时，只需要传日志参数就行，如果是公共方法，就得传全部参数，因为没有地方保存属性
+    public static void appendInfo(String text, Object... args) {
+        Log2Hdfs2 log2Hdfs = threadLocal.get();
+        StringBuilder runStepLog = log2Hdfs.getRunStepLog();
+        runStepLog.append(String.format(text, args));
+        if(runStepLog.length() > NumberConstant.T3000T) {
+            HdfsUtil.string2Hdfs(...); // 将日志写入hdfs
+            runStepLog.setLength(0); // 清空日志
+        }
+    }
+
+    // 5.全部日志传完，清空资源
+    public static void getAndRemove() {
+        Log2Hdfs2 log2Hdfs = threadLocal.get();
+        StringBuilder runStepLog = log2Hdfs.getRunStepLog();
+        FileSystem fileSystem = log2Hdfs.getFileSystem();
+        if (runStepLog.length() > NumberConstant.ZERO) { // 如果还有日志，再传最后一次
+            HdfsUtil.string2Hdfs(...);
+            runStepLog.setLength(0);
+        }
+        HdfsUtil.destory(fileSystem); // 释放hdfs
+        threadLocal.remove(); // 释放ThreadLocal
+    }
+}
+使用：
+Log2Hdfs.init("admin", "hdfs://192.168.30.117:8020");// 先init将不变的参数都存储到Log2Hdfs实例里
+Log2Hdfs.appendInfo("INFO  : 日志：%s\n", "我是运行日志");// 后续调写日志方法时，只需要传日志信息就行了
+Log2Hdfs.appendInfo("INFO  : 日志：%s\n", "我是运行日志");
+Log2Hdfs.getAndRemove();// 最后结束资源
+
+完整例子：
+@Data
+public class Log2Hdfs {
+
+    /**
+     * @Field fileSystem : fileSystem
+     */
+    private FileSystem fileSystem;
+
+    /**
+     * @Field orgnRootPath : 组织文件根目录
+     */
+    private String orgnRootPath;
+
+    /**
+     * @Field operaterName : 操作人名
+     */
+    private String operaterName;
+
+    /**
+     * @Field projectId : 项目id
+     */
+    private Long projectId;
+
+    /**
+     * @Field threadLocal : threadLocal
+     */
+    private static ThreadLocal<Log2Hdfs> threadLocal = new ThreadLocal<>();
+
+    /**
+     * @Field hdfsRootUrl : hdfs根路径
+     */
+    private String hdfsRootUrl;
+
+    /**
+     * @Field runStepLogHdfsUrl : 组件运行日志hdfs文件路径
+     */
+    private String runStepLogHdfsUrl;
+
+    /**
+     * @Field errorDataLogHdfsUrl : 错误数据日志hdfs文件路径
+     */
+    private String errorDataLogHdfsUrl;
+
+    /**
+     * @Field runStepLog : 组件运行日志
+     */
+    private StringBuilder runStepLog = new StringBuilder();
+
+    /**
+     * @Field errorDataLog : 错误数据日志
+     */
+    private StringBuilder errorDataLog = new StringBuilder();
+
+    /**
+     * <简述> 构造
+     * <详细描述> Log2Hdfs
+     * @author qianxiaoning
+     */
+    public Log2Hdfs(String orgnRootPath, String operaterName, Long projectId, String hdfsRootUrl) {
+        this.orgnRootPath = orgnRootPath;
+        this.operaterName = operaterName;
+        this.projectId = projectId;
+        this.hdfsRootUrl = hdfsRootUrl;
+        // hdfs文件路径
+        DateTimeFormatter yyyyMMddDF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter HHmmssDF = DateTimeFormatter.ofPattern("HH-mm-ss-SSS");
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String yyyyMMdd = localDateTime.format(yyyyMMddDF);
+        String HHmmss = localDateTime.format(HHmmssDF);
+        // 文件路径
+        // /组织机构标识/运行日志/人/项目id/yyyy-MM-dd/hh-mm-ss-sssss-info.txt
+        // /组织机构标识/运行日志/人/项目id/yyyy-MM-dd/hh-mm-ss-sssss-error.csv
+        this.runStepLogHdfsUrl = String.format("/%s/stepRunLog/%s/%s/%s/%s-info.txt", orgnRootPath, operaterName, projectId, yyyyMMdd, HHmmss);
+        this.errorDataLogHdfsUrl = String.format("/%s/stepRunLog/%s/%s/%s/%s-error.csv", orgnRootPath, operaterName, projectId, yyyyMMdd, HHmmss);
+        // fileSystem
+        this.fileSystem = HdfsUtil.getFileSystem(hdfsRootUrl);
+    }
+
+    /**
+     * <简述> 初始化
+     * <详细描述> init
+     * @author qianxiaoning
+     */
+    public static void init(String orgnRootPath, String operaterName, Long projectId, String hdfsRootUrl) {
+        threadLocal.set(new Log2Hdfs(orgnRootPath, operaterName, projectId, hdfsRootUrl));
+    }
+
+    /**
+     * <简述> 上传自定义文件
+     * <详细描述> appendCustomFile
+     * @author qianxiaoning
+     */
+    public static void appendCustomFile(String CustomFileHdfsUrl, String text, Object... args) {
+        Log2Hdfs log2Hdfs = threadLocal.get();
+        if (StringUtils.isBlank(CustomFileHdfsUrl)) {
+            throw new BusinessException(BusinessExceptionEnum.PARAM_MISSING, "自定义文件路径不能为空");
+        }
+        HdfsUtil.string2Hdfs(log2Hdfs.getFileSystem(), String.format(text, args), CustomFileHdfsUrl, false);
+    }
+
+    /**
+     * <简述> 上传组件运行日志
+     * <详细描述> appendCustomFile
+     * @author qianxiaoning
+     */
+    public static void appendInfo(String text, Object... args) {
+        Log2Hdfs log2Hdfs = threadLocal.get();
+        StringBuilder runStepLog = log2Hdfs.getRunStepLog();
+        runStepLog.append(String.format(text, args));
+        if(runStepLog.length() > NumberConstant.T3000T) {
+            HdfsUtil.string2Hdfs(log2Hdfs.getFileSystem(), runStepLog.toString(), log2Hdfs.getRunStepLogHdfsUrl(), true);
+            runStepLog.setLength(0);
+        }
+    }
+
+    /**
+     * <简述> 上传错误数据日志
+     * <详细描述> appendCustomFile
+     * @author qianxiaoning
+     */
+    public static void appendError(String text, Object... args) {
+        Log2Hdfs log2Hdfs = threadLocal.get();
+        StringBuilder errorDataLog = log2Hdfs.getErrorDataLog();
+        errorDataLog.append(String.format(text, args));
+        if(errorDataLog.length() > NumberConstant.T3000T) {
+            HdfsUtil.string2Hdfs(log2Hdfs.getFileSystem(), errorDataLog.toString(), log2Hdfs.getErrorDataLogHdfsUrl(), true);
+            errorDataLog.setLength(0);
+        }
+    }
+
+    /**
+     * <简述> 上传自定义文件
+     * <详细描述> appendCustomFile
+     * @author qianxiaoning
+     */
+    public static void getAndRemove() {
+        Log2Hdfs log2Hdfs = threadLocal.get();
+        StringBuilder runStepLog = log2Hdfs.getRunStepLog();
+        StringBuilder errorDataLog = log2Hdfs.getErrorDataLog();
+        FileSystem fileSystem = log2Hdfs.getFileSystem();
+        if (runStepLog.length() > NumberConstant.ZERO) {
+            HdfsUtil.string2Hdfs(fileSystem, runStepLog.toString(), log2Hdfs.getRunStepLogHdfsUrl(), true);
+            runStepLog.setLength(0);
+        }
+        if (errorDataLog.length() > NumberConstant.ZERO) {
+            HdfsUtil.string2Hdfs(fileSystem, errorDataLog.toString(), log2Hdfs.getErrorDataLogHdfsUrl(), true);
+            errorDataLog.setLength(0);
+        }
+        HdfsUtil.destory(fileSystem);
+        threadLocal.remove();
+    }
+    
+}
+使用：
+Log2Hdfs.init("ACompany", "admin", 123L, "hdfs://192.168.30.117:8020");// 先init将不变的参数都存储到Log2Hdfs实例里
+Log2Hdfs.appendInfo("INFO  : 日志：%s\n", "我是运行日志");// 后续调写日志方法时，只需要传日志信息就行了
+Log2Hdfs.appendError("ERROR  : 日志：%s\n", "我是错误日志");
+Log2Hdfs.appendInfo("INFO  : 日志：%s\n", "我是运行日志");
+Log2Hdfs.appendError("ERROR  : 日志：%s\n", "我是错误日志");
+Log2Hdfs.getAndRemove();// 最后结束资源
+----------------
