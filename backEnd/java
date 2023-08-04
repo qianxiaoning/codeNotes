@@ -7512,8 +7512,30 @@ public class Log2Hdfs {
     }
 
     /**
-     * <简述> 上传自定义文件
-     * <详细描述> appendCustomFile
+     * <简述> 得到组件运行日志路径
+     * <详细描述> getRunStepLogHdfsPath
+     * @author qianxiaoning
+     * @return String
+     */
+    public static String getRunStepLogHdfsPath() {
+        Log2Hdfs log2Hdfs = threadLocal.get();
+        return log2Hdfs.getRunStepLogHdfsUrl();
+    }
+
+    /**
+     * <简述> 得到错误数据日志路径
+     * <详细描述> getErrorDataLogHdfsPath
+     * @author qianxiaoning
+     * @return String
+     */
+    public static String getErrorDataLogHdfsPath() {
+        Log2Hdfs log2Hdfs = threadLocal.get();
+        return log2Hdfs.getErrorDataLogHdfsUrl();
+    }
+
+    /**
+     * <简述> 最后提交，释放资源
+     * <详细描述> getAndRemove
      * @author qianxiaoning
      */
     public static void getAndRemove() {
