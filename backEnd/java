@@ -5511,8 +5511,8 @@ request({
 	method: "post",
 	data: {name: "aaa"} // 参数在请求体
 })
-参数在请求体的post请求，后端用@RequestBody接收
 参数在请求头的get或post请求，后端用@RequestParam接收，好像什么注解都不加也行？
+参数在请求体的post请求，后端用@RequestBody接收
 ---------------------
 在静态方法中获取yml配置文件的值
 public static Object getYmlValue(Object key){
@@ -7563,4 +7563,17 @@ Log2Hdfs.appendError("ERROR  : 日志：%s\n", "我是错误日志");
 Log2Hdfs.appendInfo("INFO  : 日志：%s\n", "我是运行日志");
 Log2Hdfs.appendError("ERROR  : 日志：%s\n", "我是错误日志");
 Log2Hdfs.getAndRemove();// 最后结束资源
+----------------
+指定位置开始读文件，或者从最后往前读文件
+RandomAccessFile类
+LineNumberReader类
+
+LineNumberReader类获取行数lineNumberReader.getLineNumber();
+----------------
+当编辑画布时，有草稿数据和正式数据，可将草稿数据和正式数据分开，分别创建草稿表、正式表，草稿表只放草稿画布信息，正式表只放已发布的画布，分表不容易出错。
+----------------
+返回给前端的参数安全性
+文件路径不能暴露，可以只返回部分目录
+文件名可以知道
+文件名、id不能有规律可以遍历
 ----------------
