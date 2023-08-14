@@ -7577,3 +7577,43 @@ LineNumberReader类获取行数lineNumberReader.getLineNumber();
 文件名可以知道
 文件名、id不能有规律可以遍历
 ----------------
+多线程
+自定义线程池ThreadPoolExecutor
+/**
+    * namedThreadFactory
+*/
+private static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("demo-pool-%d").build();
+ExecutorService fixedThreadPool = new ThreadPoolExecutor(
+    10, // 线程池中的线程数量
+    10, // 线程池中的最大线程数量
+    0L, // 当线程池中空闲线程数超过corePoolSize时，多余的线程会在多长时间内被销毁
+    TimeUnit.MILLISECONDS, // keepAliveTime的单位
+    new LinkedBlockingQueue<>(20), // 任务队列，被添加到线程池中，但尚未被执行的任务；它一般分为直接提交队列、有界任务队列、无界任务队列、优先任务队列几种
+    namedThreadFactory, // 线程工厂，用于创建线程，一般用默认即可
+    new ThreadPoolExecutor.AbortPolicy() // 拒绝策略；当任务太多来不及处理时，如何拒绝任务
+    );
+// 循环集合中多线程执行
+for (WorkflowCanvasElementVo son : sons) {
+    LOGGER.error("=======================活动线程数" + ((ThreadPoolExecutor)fixedThreadPool).getActiveCount());
+    // 线程数过多，休眠
+    while (((ThreadPoolExecutor)fixedThreadPool).getActiveCount() >= 10) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+    // 执行逻辑代码
+    fixedThreadPool.execute((() -> {
+        
+    }));
+}
+// 关闭线程池，运行中线程继续
+fixedThreadPool.shutdown();
+while (true) {
+    if (fixedThreadPool.isTerminated()) {
+        // 当线程池中线程都结束
+        break;
+    }
+}
+----------------
