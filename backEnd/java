@@ -2986,6 +2986,36 @@ public <T> T getObjectDto(String objectName, Class<T> targetClass) {
 	...
 	return vo;
 }
+泛型方法：
+第一个<T>指给返回数据传入泛型。如果不加这个<T>，入参意思就是传T而不是泛型了，加了<T>入参的T会变蓝，表示这个T是泛型
+第二个RsResult<T>指返回的数据是RsResult<T>
+入参里的Class<T> clz指传入类名
+c.newInstance() 相当于new c()，this.result = new Data();
+
+public <T> RsResult<T> jsonPost3(String url, JSONObject json, Class<T> clz) {
+    RsResult<T> result = new RsResult(clz);
+    return result;
+}
+
+调用：
+RsResult<Date> xx = httpClientUtil.jsonPost3("xx", null, Date.class);
+
+@Data
+public class RsResult<T> {
+    // 内容
+    private transient T result;
+    // 是否成功
+    private boolean isSuccess = true;
+    // 有参构造
+    public RsResult(Class<T> c) {
+        try {
+            this.result = c.newInstance(); // 相当于new c()
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        this.isSuccess = true;
+    }
+}
 
 泛型类
 public class Box<T> {
