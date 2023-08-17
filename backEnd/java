@@ -1940,7 +1940,7 @@ getName(),setName()
 start()
 interrupt() 打断一个线程的暂停状态，把另一个线程敲醒
 由b执行a.interrupt()，被打断的线程a会出现InterruptedException异常
-setDaemon(true) 后台线程，守护线程，只能在启动之前设置
+setDaemon(true) 后台线程，守护线程，只能在启动之前设置，会随着主线段的结束而自动结束
 jvm中多个线程，等所有前台线程结束，jvm会关闭
 jvm不会等后台线程死活
 例子：
@@ -1950,10 +1950,8 @@ Thread t2 = new Thread() {
 t2.setDaemon(true);// 在start前设置为后台进程
 t2.start();
 setPriority() 线程优先级，1~10级，默认是5
-join() 当前线程暂停，等待被调用的线程结束
-a线程
-b线程 等待a的计算结果 再继续运行
-在b中执行a.join()
+
+a.join() 主线程暂停，等待子线程a结束，再往下运行
 
 多线程数据访问冲突（线程安全问题）
 多个线程共享数据，一个线程修改，一个线程同时访问，可能会访问到修改了一半的数据
@@ -7614,7 +7612,7 @@ LineNumberReader类获取行数lineNumberReader.getLineNumber();
 */
 private static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("demo-pool-%d").build();
 ExecutorService fixedThreadPool = new ThreadPoolExecutor(
-    10, // 线程池中的线程数量
+    10, // 线程池中保有的最小线程数
     10, // 线程池中的最大线程数量
     0L, // 当线程池中空闲线程数超过corePoolSize时，多余的线程会在多长时间内被销毁
     TimeUnit.MILLISECONDS, // keepAliveTime的单位
@@ -7646,4 +7644,119 @@ while (true) {
         break;
     }
 }
+----------------
+线程池相关知识
+
+创建线程池
+
+线程池工具类Executors
+有弊端
+FixedThreadPool和SingleThreadPool允许请求队列长度无限
+CachedThreadPool和ScheduledThreadPool允许创建线程数无限
+
+Executors.newFixedThreadPool：创建一个固定大小的线程池，可控制并发的线程数，超出的线程会在队列中等待。
+Executors.newCachedThreadPool：创建一个可缓存的线程池，若线程数超过处理所需，缓存一段时间后会回收，若线程数不够，则新建线程。
+Executors.newSingleThreadExecutor：创建单个线程数的线程池，它可以保证先进先出的执行顺序。
+Executors.newScheduledThreadPool：创建一个可以执行延迟任务的线程池。
+Executors.newSingleThreadScheduledExecutor：创建一个单线程的可以执行延迟任务的线程池。
+Executors.newWorkStealingPool：创建一个抢占式执行的线程池(任务执行顺序不确定)【JDK 1.8 添加】。
+
+或者new ThreadPoolExecutor(...)创建自定义线程池（推荐），必须手动关闭
+
+执行方法：
+submit，有返回值，用Future 封装
+execute，无返回值，类似于Runnable类中的run方法
+submit 方法抛异常可以在主线程中catch到
+execute 方法执行任务是捕捉不到异常的
+
+线程池4种状态
+RUNNING：当创建线程池后，初始时，线程池处于RUNNING状态；
+SHUTDOWN：如果调用了shutdown()方法，则线程池处于SHUTDOWN状态，此时线程池不能够接受新的任务，它会等待所有任务执行完毕；
+STOP：如果调用了shutdownNow()方法，则线程池处于STOP状态，此时线程池不能接受新的任务，并且会去尝试终止正在执行的任务，并且清空任务缓存队列，返回尚未执行的任务；
+TERMINATED：当线程池处于SHUTDOWN或STOP状态，并且所有工作线程已经销毁，任务缓存队列已经清空或执行结束后，线程池被设置为TERMINATED状态。
+
+CountDownLatch 计数器，计数为0，主线程阻塞解除，CountDownLatch不可复用
+
+CountDownLatch.countDown()
+CountDownLatch.await()
+
+private static void test() throws Exception {
+     // 计数器，判断线程是否执行结束
+     CountDownLatch taskLatch = new CountDownLatch(10);
+     for (int i = 0; i < 10; i++) {
+         int index = i;
+         threadPool.execute(() -> {
+             Thread.sleep(10);
+             taskLatch.countDown(); // 减一（出异常也要保证能执行到，不然程序会永远阻塞）
+             System.out.println("当前计数器数量：" + taskLatch.getCount());
+         });
+     }
+     // 主线程阻塞，等待计数器置为0
+     try {
+        taskLatch.await(); // 等待计数器归0
+    } catch (InterruptedException e) {
+        // 处理异常
+    }
+     System.out.println("全部执行完毕");
+}
+
+自定义CountDownLatch
+private static int taskNum = 0;
+private static void staticCountTest() throws Exception {
+     Lock lock = new ReentrantLock();
+     for (int i = 0; i < 30; i++) {
+         int index = i;
+         threadPool.execute(() -> {
+             Thread.sleep(index);
+             lock.lock();
+             taskNum++;
+             lock.unlock();
+         });
+     }
+     while(taskNum < 30) {
+         Thread.sleep(1000);
+         System.out.println("还有线程没执行完毕。当前完成任务数:" + taskNum);
+     }
+     System.out.println("全部执行完毕");
+}
+
+CyclicBarrier计数器，加1
+
+CyclicBarrier.await()
+
+main(){
+    CyclicBarrier cyclicBarrier = new CyclicBarrier(10, ()->{
+        System.out.println("一阶段完成");
+    }));
+    for (int i =0 ;i<3 ;i++){
+        new Thread().run(()->{
+            System.out.println(Thread.currentThread().getName()+"完成第一项工作");
+            try {
+                //等待完成第一阶段工作
+                cyclicBarrier.await();
+                System.out.println(Thread.currentThread().getName()+"完成第二项工作");
+                //完成第二阶段工作
+                cyclicBarrier.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+}
+Thread-0完成第一项工作
+Thread-2完成第一项工作
+Thread-1完成第一项工作
+通知:第一阶段完成
+Thread-0完成第二项工作
+Thread-2完成第二项工作
+Thread-1完成第二项工作
+通知:第二阶段完成
+----------------
+LocalDateTime序列化后会变数组"createTime": [2023, 12, 31, 23, 59, 59]
+解决办法
+在字段上加上
+@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+private LocalDateTime createTime;
 ----------------

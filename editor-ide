@@ -404,3 +404,9 @@ build project
 mvn导入
 mvn package
 --------------------------
+idea多线程调试
+打开断点窗口，把右边Suspend:All Thread，选中Thread
+--------------------------
+idea引入本地maven jar包
+File -> Project Structure -> Libraries -> "+" -> Java，选择.jar文件
+--------------------------

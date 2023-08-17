@@ -157,6 +157,7 @@ row_number() // 1234
 udf一进一出
 udaf多进一出
 udtf一进多出
+
 udf
 1.pom依赖
 hadoop-client
