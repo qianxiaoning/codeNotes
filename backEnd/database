@@ -852,6 +852,11 @@ kv型nosql redis
 支持全文搜索，条件查询
 
 在内存运行
+
+索引（Index）=> 数据库（Database）。
+类型（Type）=> 表（Table）。
+文档（Document）=> 表中的一行记录（Row）。
+属性（Field）=> 字段列（Column）。
 ------------
 列式NoSql HBase（大数据）
 单列加上id主键
