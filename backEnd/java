@@ -7393,13 +7393,6 @@ try {
 6.主服务查看调用记录
 7.主服务调用日志服务查看组件执行详情记录
 ----------------
-规范创建线程得用线程池
-ThreadPoolExecutor
-
-多线程事务控制
-CountDownLatch
-二次提交
-----------------
 cst时间转LocalDateTime时间
 cst "Tue Sep 08 23:58:09 CST 2020"
 SimpleDateFormat sim1 = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
@@ -7819,20 +7812,35 @@ LineNumberReader类获取行数lineNumberReader.getLineNumber();
     * namedThreadFactory
 */
 private static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("demo-pool-%d").build();
-ExecutorService fixedThreadPool = new ThreadPoolExecutor(
-    10, // 线程池中保有的最小线程数
-    10, // 线程池中的最大线程数量
-    0L, // 当线程池中空闲线程数超过corePoolSize时，多余的线程会在多长时间内被销毁
+ExecutorService threadPool = new ThreadPoolExecutor(
+    5, // 线程池中保有的最小线程数
+    10, // 线程池中的最大线程数量，是否生效看用哪种队列
+    100L, // 当线程池中空闲线程数超过corePoolSize时，空闲的线程会在多长时间内被销毁
     TimeUnit.MILLISECONDS, // keepAliveTime的单位
-    new LinkedBlockingQueue<>(20), // 任务队列，被添加到线程池中，但尚未被执行的任务；它一般分为直接提交队列、有界任务队列、无界任务队列、优先任务队列几种
+
+    线程创建逻辑（核心线程、最大线程、队列容量关系）：
+    1.当线程小于核心线程，线程池直接创建新线程
+    2.当线程数等于核心线程，任务添加到队列中
+    3.队列如果有容量限制，队列满后，创建新线程，直到线程等于最大线程数，后续任务走异常策略；如果队列容量没有限制，任务会源源不断加入队列，最大线程数参数没有作用，此时有内存溢出可能
+
+    new LinkedBlockingQueue<>(10), // 无界任务队列，队列底层是链表。
+    new SynchronousQueue<>() // 直接提交队列，当核心线程数用完，会从最大线程数创建线程，最大线程数满后剩余任务走异常策略
+    new ArrayBlockingQueue<>(20) // 有界任务队列，必须设置队列容量，队列底层是数组。
+    new PriorityBlockingQueue<>(20) // 优先队列，可不设置队列容量，必须实现Comparable接口，这样才能通过实现compareTo()方法进行排序，优先级最高的元素将始终排在队列的头部
+
     namedThreadFactory, // 线程工厂，用于创建线程，一般用默认即可
-    new ThreadPoolExecutor.AbortPolicy() // 拒绝策略；当任务太多来不及处理时，如何拒绝任务
+
+    ThreadPoolExecutor.AbortPolicy() // 拒绝策略，抛出java.util.concurrent.RejectedExecutionException异常
+    ThreadPoolExecutor.CallerRunsPolicy() // 重试添加当前的任务，他会自动重复调用execute()方法
+    ThreadPoolExecutor.DiscardOldestPolicy() // 抛弃旧的任务
+    ThreadPoolExecutor.DiscardPolicy() // 抛弃当前的任务
     );
 // 循环集合中多线程执行
 for (WorkflowCanvasElementVo son : sons) {
-    LOGGER.error("=======================活动线程数" + ((ThreadPoolExecutor)fixedThreadPool).getActiveCount());
-    // 线程数过多，休眠
-    while (((ThreadPoolExecutor)fixedThreadPool).getActiveCount() >= 10) {
+    int activeCount = ((ThreadPoolExecutor) fixedThreadPool).getActiveCount();
+    LOGGER.info("活动线程数:" + activeCount);
+    // 当线程池达到最大线程数时，让主线程阻塞，防止任务进到异常策略
+    while (activeCount >= 10) {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -7840,14 +7848,14 @@ for (WorkflowCanvasElementVo son : sons) {
         }
     }
     // 执行逻辑代码
-    fixedThreadPool.execute((() -> {
+    threadPool.execute((() -> {
         
     }));
 }
 // 关闭线程池，运行中线程继续
-fixedThreadPool.shutdown();
+threadPool.shutdown();
 while (true) {
-    if (fixedThreadPool.isTerminated()) {
+    if (threadPool.isTerminated()) {
         // 当线程池中线程都结束
         break;
     }
@@ -7874,6 +7882,9 @@ Executors.newSingleThreadScheduledExecutor：创建一个单线程的可以执�
 Executors.newWorkStealingPool：创建一个抢占式执行的线程池(任务执行顺序不确定)【JDK 1.8 添加】。
 
 或者new ThreadPoolExecutor(...)创建自定义线程池（推荐），必须手动关闭
+
+规范创建线程得用线程池
+ThreadPoolExecutor
 
 执行方法：
 submit，有返回值，用Future 封装
@@ -7974,6 +7985,12 @@ cyclicBarrier Finished All Tasks...
 5.ExecutorService.invokeAll(Collection<? extends Callable<T>> tasks)
 这个方法会等待所有任务都执行完毕后才会返回结果。如果有任何一个任务抛出异常，那么这个方法会立即停止执行，并抛出一个ExecutionException异常，其中包含导致异常的任务的信息。
 ----------------
+CyclicBarrier常用方法：
+cyclicBarrier.await(); 当前线程等待其它线程完成
+cyclicBarrier.getNumberWaiting(); 返回正在等待的线程数量
+cyclicBarrier.reset(); 将破损状态设为false，使等待线程继续执行，正在等待线程报BrokenBarrierException异常
+cyclicBarrier.isBroken(); 查看屏障破损状态，正在等待的线程被中断或者超时，表示屏障破损，为true
+
 CountDownLatch和CyclicBarrier
 
 CountDownLatch适合一个线程等多个线程
@@ -7996,7 +8013,7 @@ public void runDAfterABC() {
             e.printStackTrace();
         }
     }).start();
-    for (char threadName='A'; threadName <= 'C'; threadName++) {
+    for (char threadName = 'A'; threadName <= 'C'; threadName++) {
         final String tN = String.valueOf(threadName);
         new Thread(() -> {
             System.out.println(tN + " 完成");
