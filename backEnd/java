@@ -498,6 +498,10 @@ int b = a;
 matches(正则) 是否匹配
 split(正则) 用子串来拆分
 replaceAll(正则) 替换所有
+replaceAll("(?:a|b)", "") 替换多个字符，将a和b替换
+将字符串中的引号前加上转义符
+str.replaceAll("'","\\\\'");  ' -> /'
+str.replaceAll("\"","\\\\\"");  " -> /"
 
 s.matches(regex)
 

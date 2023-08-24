@@ -219,3 +219,11 @@ public interface ShonReaderInterface extends ShonPluginInterface
 父接口项目名插件接口
 public interface ShonPluginInterface
 ---------------
+MIME类型
+普通文本 .txt text/plain;charset=utf-8
+任意的二进制数据 application/octet-stream
+PDF文档 .pdf application/pdf
+Microsoft Word文件 .word application/msword
+PNG图像 .png image/png
+excel application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8
+---------------
