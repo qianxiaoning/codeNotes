@@ -2376,3 +2376,29 @@ js replace替换多个字符
 "sss-sss.ffff".replace(/[.-]/g, "_")
 "sss_sss_ffff"
 -----------------------
+js base64转码和解码
+window.btoa 字符串 => base64
+window.atob base64 => 字符串
+btoa只支持ASCII 编码，不支持中文，需要用encodeURIComponent 和 decodeURIComponent提前将中文转为ASCII
+window.btoa(encodeURIComponent('你好')) // JUU0JUJEJUEwJUU1JUE1JUJE
+decodeURIComponent(window.atob('JUU0JUJEJUEwJUU1JUE1JUJE')) // 你好
+-----------------------
+js将字符串转为utf-8编码
+new TextEncoder('utf8').encode("你好，12ab")
+返回Uint8Array，[228,189,160,229,165,189,239,188,140,49,50,97,98]
+
+后端可以尝试将byte数组转为原本string
+-----------------------
+js字符串转十六进制
+function stringToHex(str){
+    let val="";
+    for(let i = 0; i < str.length; i++){
+        if (val != "") {
+            val += ","
+        }
+        val += str.charCodeAt(i).toString(16);
+    }
+    return val;
+}
+stringToHex("你好") // 4f60,597d
+-----------------------

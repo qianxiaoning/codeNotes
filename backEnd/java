@@ -227,6 +227,7 @@ for(表达式1;表达式2;表达式3){
 1=>2=>4=>3 =>2=>4=>3 =>2=>3
 -----------------
 定义数组
+java数组不会自动扩容，声明的时候大小就定死了
 1.动态：
 int[] a = new int[4];
 2.静态
@@ -256,7 +257,7 @@ java数组必须存相同类型的数据
 1.对象和数组 存放于 堆中（都有地址值）
 2.变量 存放于 栈中
 
-栈：                                                                                             堆：
+栈：                               堆：
 变量Person p                       对象new Person()
 Person p = new Person();
 p.name = "哈哈";
@@ -8094,4 +8095,21 @@ jdbc三种查询数据库方式，通过对Statement和ResultSet配置
 二、流式查询，大数据量可以避免内存溢出（大数据量推荐）
 三、游标查询，也能避免内存溢出，但对服务端资源消耗更大，响应时间更长
 ----------------
-
+java中的valueOf()与parseXXX()区别
+以Byte类为例
+Byte.valueOf() 是转换为Byte封装类型
+Byte.parseByte() 是转换为byte基本数据类型
+----------------
+java十六进制转字符串
+@Test
+public void test16() {
+    String hexStr = "4f60,597d";
+    String result = "";
+    String[] hexs = hexStr.split(",");
+    for(int i = 0; i < hexs.length; i++) {
+        char str = (char)Integer.parseInt(hexs[i], 16); // 十六进制转字符
+        result += str;
+    }
+    System.out.println(result); // 你好
+}
+----------------
