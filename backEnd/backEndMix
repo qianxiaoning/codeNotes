@@ -220,8 +220,8 @@ public interface ShonReaderInterface extends ShonPluginInterface
 public interface ShonPluginInterface
 ---------------
 MIME类型
-普通文本 .txt text/plain;charset=utf-8
 任意的二进制数据 application/octet-stream
+普通文本 .txt text/plain;charset=utf-8
 PDF文档 .pdf application/pdf
 Microsoft Word文件 .word application/msword
 PNG图像 .png image/png

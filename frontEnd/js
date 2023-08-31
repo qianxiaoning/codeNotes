@@ -2288,6 +2288,35 @@ reader.readAsArrayBuffer(blob);
 2.Blob 对象不可变，而 ArrayBuffer 可以通过 TypedArrays 或 DataView 操作
 3.Blob 可以位于磁盘、和其他不同用位置，而 ArrayBuffer 存在内存中，可以直接操作
 -----------------------
+前端将参数放入二进制流提交，后端用文件对象接收
+let formData = new FormData();
+const params = {
+    "databaseId": this.item.id,
+    "sql": this.sql
+}
+const blob = new Blob([JSON.stringify(params)], {
+    type: "application/octet-stream" // 类型二进制文件
+})
+formData.append('file', blob)
+const res = await createMysqlTable(formData);
+
+public RsResult<String> createMysqlTable(MultipartFile file) throws IOException {
+    InputStream inputStream = file.getInputStream(); // 从文件获取流对象
+    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+    String res = "";
+    String line;
+    while ((line = reader.readLine()) != null) {
+        res += line;
+        System.out.println(line);
+    }
+    reader.close();
+    inputStream.close();
+    // 将流中的字符串拼起来，解析成vo
+    CreateMysqlTableVo2 vo = JSONObject.parseObject(res, CreateMysqlTableVo2.class);
+    System.out.println(vo);
+    return null;
+}
+-----------------------
 可以同时打出3个对象的日志，控制台会输出3个下拉箭头
 console.log(obj1, obj2, obj3)
 -----------------------

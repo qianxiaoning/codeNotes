@@ -6184,7 +6184,7 @@ public class HiveTest {
         System.out.println("wayA");
     }
 
-	public void jobA(String wayName,Class clzName) {
+	public void jobA(String wayName, Class clzName) {
 		// 每个方法开始前都要执行的
         first();
         try {
@@ -8111,5 +8111,28 @@ public void test16() {
         result += str;
     }
     System.out.println(result); // 你好
+}
+----------------
+通过实例属性名，获取实例属性值
+1.反射
+public <T> T getFieldValueByFieldName(Object obj, String fieldName, Class<T> valueClass) {
+    T fieldValue = null;
+    try {
+        String firstLetter = fieldName.substring(0, 1).toUpperCase();
+        String getter = "get" + firstLetter + fieldName.substring(1);
+        Method method = obj.getClass().getMethod(getter); // 通过字节码对象和属性名，获取属性的get方法
+        fieldValue = (T) method.invoke(obj); // 通过该对象调用自身get方法，获取属性值，再转为对应类型
+    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        e.printStackTrace();
+    }
+    return fieldValue;
+}
+
+@Test
+public void test16() {
+    User user = new User();
+    user.setName("aa");
+    String name = getFieldValueByFieldName(user, "name", String.class);
+    System.out.println(nickName); // aa
 }
 ----------------
