@@ -8114,7 +8114,9 @@ public void test16() {
 }
 ----------------
 通过实例属性名，获取实例属性值
-1.反射
+1.将Object转为Map或JSONObject，再通过get方法获取值
+
+2.反射
 public <T> T getFieldValueByFieldName(Object obj, String fieldName, Class<T> valueClass) {
     T fieldValue = null;
     try {
@@ -8135,4 +8137,22 @@ public void test16() {
     String name = getFieldValueByFieldName(user, "name", String.class);
     System.out.println(nickName); // aa
 }
+
+3.反反射（更快）
+public <T> T getFieldValueByFieldName2(Object obj, String fieldName, Class<T> valueClass) {
+    T fieldValue = null;
+    try {
+        String firstLetter = fieldName.substring(0, 1).toUpperCase();
+        String getter = "get" + firstLetter + fieldName.substring(1);
+        Method method = obj.getClass().getMethod(getter);
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        MethodHandle unreflect = lookup.unreflect(method);
+        fieldValue = (T) unreflect.invoke(obj);
+    } catch (Throwable e) {
+        e.printStackTrace();
+    }
+    return fieldValue;
+}
+
+4.高性能反射库，reflectasm
 ----------------
