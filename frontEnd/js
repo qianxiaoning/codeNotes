@@ -2420,7 +2420,10 @@ new TextEncoder('utf8').encode("你好，12ab")
 -----------------------
 js字符串转十六进制
 function stringToHex(str){
-    let val="";
+    if (!str) {
+        return "";
+    }
+    let val = "";
     for(let i = 0; i < str.length; i++){
         if (val != "") {
             val += ","
@@ -2430,4 +2433,19 @@ function stringToHex(str){
     return val;
 }
 stringToHex("你好") // 4f60,597d
+
+js十六进制转字符串
+function hexToString(str){
+    if (!str) {
+        return "";
+    }
+    let val = "";
+    const arr = str.split(",");
+　　for(let i = 0; i < arr.length; i++){
+        const decimalValue = parseInt(arr[i], 16);
+　　　　 val += String.fromCharCode(decimalValue);
+　　}
+　　return val;
+}
+hexToString("4f60,597d") // 你好
 -----------------------

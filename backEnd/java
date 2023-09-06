@@ -1056,6 +1056,28 @@ while(true) {
 
 e.printStackTrace();// 错误打印
 
+外层捕获内层异常，继续往外抛出
+@Test
+public void test18() {
+    try {
+        try {
+            a();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage()); // ss
+            throw new RuntimeException(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    } catch (RuntimeException e) {
+        e.printStackTrace();
+        System.out.println(e.getMessage()); // ss
+    }
+}
+private void a() {
+    throw new RuntimeException("ss");
+}
+
 异常处理方式：
 1.catch捕获异常
 2.throws添加管道 往前面方法继续抛出异常
@@ -8100,18 +8122,36 @@ java中的valueOf()与parseXXX()区别
 Byte.valueOf() 是转换为Byte封装类型
 Byte.parseByte() 是转换为byte基本数据类型
 ----------------
+java字符串转十六进制
+public static String str2Hex(String str) {
+    if (StringUtils.isBlank(str)) {
+        return str;
+    }
+    StringBuilder sb = new StringBuilder();
+    // 将字符串转换为字符数组
+    char ch[] = str.toCharArray();
+    for(int i = 0; i < ch.length; i++) {
+        String hexString = Integer.toHexString(ch[i]);
+        sb.append((i == 0 ? "" : ",") + hexString);
+    }
+    return sb.toString();
+}
+str2Hex("你好") // 4f60,597d
+
 java十六进制转字符串
-@Test
-public void test16() {
-    String hexStr = "4f60,597d";
+public static String hex2Str(String hexStr) {
+    if (StringUtils.isBlank(hexStr)) {
+        return hexStr;
+    }
     String result = "";
     String[] hexs = hexStr.split(",");
     for(int i = 0; i < hexs.length; i++) {
-        char str = (char)Integer.parseInt(hexs[i], 16); // 十六进制转字符
+        char str = (char)Integer.parseInt(hexs[i],16); // 十六进制转字符
         result += str;
     }
-    System.out.println(result); // 你好
+    return result;
 }
+hex2Str("4f60,597d") // 你好
 ----------------
 通过实例属性名，获取实例属性值
 1.将Object转为Map或JSONObject，再通过get方法获取值
