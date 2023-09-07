@@ -751,6 +751,16 @@ try{
 	conn.rollback();// 回滚
 }
 -------------------
+事务隔离带来的，事务查不到新增数据的问题
+a事务中新建了一个b事务，在b事务中新增了一条记录，可以看到数据库里已经能看到
+但是在原a事务里是查不到这条数据的
+解决办法：
+a事务里新增事务去查该条记录
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+public Entity select(Long id) {
+    return super.getById(id);
+}
+-------------------
 sql中相等为一个=号
 where name='张三'
 

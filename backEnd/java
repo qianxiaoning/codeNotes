@@ -8196,3 +8196,32 @@ public <T> T getFieldValueByFieldName2(Object obj, String fieldName, Class<T> va
 
 4.高性能反射库，reflectasm
 ----------------
+获取spring中的bean对象
+1.实现ApplicationContextAware接口，通过ApplicationContext对象获取
+@Component
+public class ApplicationContextUtil implements ApplicationContextAware {
+
+    /**
+     * 上下文对象实例
+     */
+    private static ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public static <T> T getBean(Class<T> clazz) {
+        return getApplicationContext().getBean(clazz);
+    }
+
+}
+
+调用：
+Ixxx xxx = ApplicationContextUtil.getBean(XxxImpl.class);
+xxx.getXxx(); // 可以使用bean对象的方法
+----------------
