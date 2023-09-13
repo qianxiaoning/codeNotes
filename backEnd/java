@@ -4206,7 +4206,7 @@ Bean对象的创建
 	@Controller修饰控制层
 	@Respository修饰数据层
 	@Service修饰业务层
-	@Configuration:
+	@Configuration修饰配置类
 
 spring中Bean对象的依赖注入DI
 通过set方法、构造方法为对象属性赋值的过程
@@ -8224,4 +8224,20 @@ public class ApplicationContextUtil implements ApplicationContextAware {
 调用：
 Ixxx xxx = ApplicationContextUtil.getBean(XxxImpl.class);
 xxx.getXxx(); // 可以使用bean对象的方法
+----------------
+@Configuration声明于配置类
+@Bean声明于方法
+项目启动时会执行@Bean方法，注册Bean，返回类型
+----------------
+多个同名Bean，给Bean起名字，注入的时候指定名称
+
+@Bean(name="cc", value="cc") // 不填name和value参数，bean名称默认为方法名。name是名称value是别名，两个作用相同，两个只能设一个
+public Xxx aa () {
+    Xxx xxx = new Xxx();
+    return xxx;
+}
+
+@Qualifier("cc") // 注入的时候，指定名称
+@Autowired
+private Xxx aa;
 ----------------

@@ -1168,3 +1168,6 @@ index	tag	索引 → 标签（索引列）
 row   point	  记录行 → 数据点（时间序列中某个时刻的数据）
 primary key	   timestamp	行主键 → 点时间戳（时间序列内唯一标识）
 ------------
+mysql新版本，mysql使用group by查询时，
+查询非group by后的字段时，那些字段必须要加聚合函数（例如 SUM、AVG、COUNT 等）或分组列
+------------
