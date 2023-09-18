@@ -1846,3 +1846,12 @@ from
 	dws_student_test
 group by student_id;
 -------------
+hive连接socket超时
+org.apache.thrift.transport.TTransportException: java.net.SocketTimeoutException: Read timed out
+hiveConnection在使用socket连接时，设置了超时时间为30秒，超时时间较短，在运行稍微复杂点的SQL时，就会导致超时，默认超时时间为30秒
+通过hive的loginTimeout参数设置hive socket连接时间
+Class.forName(hiveDriverName);
+DriverManager.setLoginTimeout(1200); // 秒
+conn = DriverManager.getConnection(hiveUrl + "/" + hiveDatabase, hiveUser, hivePassword);
+stmt = (HiveStatement) conn.createStatement();
+-------------
