@@ -8246,3 +8246,10 @@ public Xxx aa () {
 @Autowired
 private Xxx aa;
 ----------------
+springboot同名Bean冲突
+1.自己的代码可以给Bean起别名
+2.两个都是第三方的Bean的话，
+springboot如果两个第三方依赖中有同名Bean冲突，可以在启动类上排除其中一个试试（如果一个没用不影响的话）
+根本解决办法还是需要修改其中一个依赖的源码，然后编译，再上传到自己的maven仓库
+@ComponentScan(excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = ApiModelBuilder.class)})
+----------------
