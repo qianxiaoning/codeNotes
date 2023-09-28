@@ -285,3 +285,8 @@ vim /var/lib/docker/containers/容器ID/hostconfig.json
 关闭容器自动启动
 docker update --restart=no 容器ID
 ------------------
+docker开机自启
+systemctl enable docker
+docker关闭开机自启
+systemctl disable docker
+------------------

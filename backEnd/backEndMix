@@ -240,3 +240,12 @@ excel application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=
 分布式：
 在需要同步执行的代码前加锁，redis：通过SETNX方法，判断key是否存在。zookeeper：创建目录，判断目录是否存在。redis和zookeeper方法里是原子性的，并发存入，串行取出执行，所以不会有两个线程同时拿到一个锁的并发问题。
 ---------------
+logstash作用
+kafka -> elasticsearch // 需要自己写kafka生产者、kafka消费者，在kafka消费者里将数据存入es
+kafka -> logstash -> elasticsearch // 只需要写kafka生产者，不需要写kafka消费者，配好logstash配置后，kafka数据通过logstash自动落入es中
+
+logstash基本配置：
+input（必要）
+filter（非必要）
+output（必要）
+---------------
