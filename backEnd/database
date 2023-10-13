@@ -881,8 +881,8 @@ kv型nosql redis
 
 扩展字段容易，对于非索引字段的查询，快于关系型数据库
 ------------
-union 去重
-union all 不去重
+union all 将两个select结果集合并到一个结果集中
+union 将两个select结果集合并到一个结果集中，如果有所有列都相同的记录，将重复记录去重
 ------------
 查看mysql日志错误和警告部分
 tail -n500 /var/log/mysqld.log|grep -E 'Warning|ERROR'
@@ -1198,4 +1198,14 @@ mysql
 insert多个values时，其中一条脏数据，不影响其它数据入库的办法：
 1.将这一批的这条sql回滚，捕获异常，然后分为一个个value插入
 2.尝试insert ignore into（脏数据会变为默认值插入，可能不能接受，尝试根据警告信息追踪插入的脏数据记录？）
+------------
+常用sql版本：sql92，sql99
+sql92较老，sql99较新（推荐）
+区别：
+1.sql92语义化不明显，表连接条件和where条件写法混在一起，sql99表连接语义化更明显
+内连接写法：
+等值连接sql92（表连接和普通where条件筛选写法一样）
+select * from a,b where a.id=b.pid;
+内连接sql99（语义化更明显）
+select * from a inner join b on a.id=b.pid;
 ------------

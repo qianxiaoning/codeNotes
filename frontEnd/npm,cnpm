@@ -102,8 +102,14 @@ npm install -g n --force
 直接去官网下载与你电脑系统（32位还是64位）对应的最新的mis版本,安装在上述路径中覆盖即可。
 node -v,发现更新到最新版本了。
 
+显示npm install安装明细
 npm config set loglevel=http
+npm config set loglevel=info
 会看到所有的http请求
+或者：
+npm -d 即是 npm --loglevel info
+npm -dd 即是 npm --loglevel verbose
+npm -ddd 即是 npm --loglevel silly
 
 发生问题
 npm WARN checkPermissions Missing write access to 

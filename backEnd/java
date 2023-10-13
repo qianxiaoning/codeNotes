@@ -8253,3 +8253,6 @@ springboot如果两个第三方依赖中有同名Bean冲突，可以在启动类
 根本解决办法还是需要修改其中一个依赖的源码，然后编译，再上传到自己的maven仓库
 @ComponentScan(excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = ApiModelBuilder.class)})
 ----------------
+mybatisplus查询值为null的记录
+queryWrapper.isNull(Step::getVersionId);
+----------------
