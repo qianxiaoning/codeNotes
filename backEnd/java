@@ -5615,6 +5615,7 @@ spring:
 改为proxy-target-class: false，用jdk代理aop即可
 -----------------
 @Async简单用法
+启动类上加@EnableAsync
 a http调b，b如果需要耗时，http就会挂起，导致连接池满，后续http请求挂起
 用异步
 a http调b，b的serviceImpl方法上加上@Async，http请求就会立即返回，b运行完后再将结果放入队列，a消费。
