@@ -8281,3 +8281,21 @@ queryWrapper.isNull(Step::getVersionId);
 
 进了service事务就确定了，再加锁就晚了
 ----------------
+自己service调自己service方法，新开事务，得用service去调
+
+// 新开事务
+@Override
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+public void updateTask(WorkflowNodeControlVo workflowNodeControlVo)
+
+// 注入自身service
+@Autowired
+private IThDosDispatchTaskService dispatchTaskService;
+
+调取：
+dispatchTaskService.updateTask(workflowNodeControlVo); // 有用
+
+updateTask(workflowNodeControlVo); // 无用
+
+this.updateTask(workflowNodeControlVo); // 无用
+----------------
