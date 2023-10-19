@@ -8271,3 +8271,13 @@ springboot如果两个第三方依赖中有同名Bean冲突，可以在启动类
 mybatisplus查询值为null的记录
 queryWrapper.isNull(Step::getVersionId);
 ----------------
+多线程事务问题
+进service后有事务
+在父方法里新开事务插入记录，父事务查不到，父事务得新开事务去查，才能查到
+多线程要保证各线程事务都能读到最新数据库数据，得在controller中加锁
+加锁
+调service，a线程保证事务提交后，b线程再去读
+解锁
+
+进了service事务就确定了，再加锁就晚了
+----------------
