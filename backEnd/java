@@ -8299,3 +8299,21 @@ updateTask(workflowNodeControlVo); // 无用
 
 this.updateTask(workflowNodeControlVo); // 无用
 ----------------
+java集合（推荐）：
+1、List列表：有序的，可重复的；
+2、Queue队列：有序，可重复的；
+3、Set集合：不可重复；
+4、Map映射：无序，键唯一，值不唯一。
+
+Java8中高效的线程安全集合类
+ConcurrentHashMap
+ConcurrentLinkedQueue
+ConcurrentSkipListSet
+CopyOnWriteArrayList
+
+Map：
+线程安全的Map：HashMap, ConcurrentHashMap等
+ConcurrentHashMap效率更高
+
+Map.putIfAbsent(1, "d"); // 如果key不存在就插入，存在就不插入
+----------------
