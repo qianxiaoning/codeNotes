@@ -91,3 +91,19 @@ stats.addSink(new Mysink(...)); // Sink
 -------------------
 Transformations: 常用算子
 -------------------
+flink的几种执行模式：
+
+1.flink嵌入式模式（开发调试用）
+作为jvm中一个线程执行，内置在jar包中
+java程序引入flink依赖
+
+2.flink框架执行模式（生产中用）
+启动flink服务，代码以jar包形式提交到flink，运行
+
+3.flink库执行模式
+将flink框架代码和flink应用代码一起打包成一个镜像，k8s部署
+
+flink三种运行模式
+Session Mode
+Per-Job Mode（例如YARN或Kubernetes）
+Application Submission

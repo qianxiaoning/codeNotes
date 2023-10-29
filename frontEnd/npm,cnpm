@@ -178,3 +178,7 @@ shim做垫片的一种方式：仅靠旧环境中已有的手段实现新的API
 
 npm命令
 npm root //查看当前项目依赖的安装路径
+-----------
+npm run start后台运行
+nohup npm run start >/dev/null 2>&1 &
+-----------

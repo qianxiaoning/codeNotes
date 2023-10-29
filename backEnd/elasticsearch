@@ -1,3 +1,6 @@
+------------
+griffin的es操作
+
 创建索引
 curl -k -H "Content-Type: application/json" -X PUT http://127.0.0.1:39200/griffin \
  -d '{
@@ -89,4 +92,212 @@ curl -XPUT 'http://localhost:39200/griffin/accuracy/AYWXTg7ZaxiUe2Ne4scQ?pretty'
 		"matched": 124400
 	}
 }'
+------------
+es搭建：
+1.java环境
+2.下载安装包（华为云的镜像）
+https://mirrors.huaweicloud.com/elasticsearch/7.12.0/
+3.解压
+tar -zxvf elasticsearch-7.12.0-linux-x86_64.tar.gz
+es不能以root账号运行，得新建用户
+# 创建es用户组
+groupadd es
+# 为es用户组添加es用户
+useradd -g es es
+# 为es用户设置密码（root权限可以使密码少于8位）
+sudo passwd es
+# 将elasticsearch-7.12.0目录所有权限切换成es用户的
+chown -R es.es /opt/module/elasticsearch/elasticsearch-7.12.0
+# 切换登录用户为es
+su es
+# 后台运行
+/opt/module/elasticsearch/elasticsearch-7.12.0/bin/elasticsearch -d
+# 查看程序端口9200启动情况
+netstat -tunlp
+# 访问服务
+curl 127.0.0.1:9200
+# 修改elastic配置文件使得对外能够访问
+vim /opt/module/elasticsearch/elasticsearch-7.12.0/config/elasticsearch.yml
+network.host: 0.0.0.0
+cluster.initial_master_nodes: ["node-1"]
+# 切换到root
+exit
+# 修改文件描述符
+vi /etc/security/limits.conf
+# 最后一行新增以下设置
+* soft    nofile  65536
+* hard    nofile  65536
+* soft    nproc   4096
+* hard    nproc   4096
+# 修改虚拟内存
+vi /etc/sysctl.conf
+vm.max_map_count=262144
+# 执行重新加载内存命令
+sysctl -p
+# 切换到es用户
+su es
+# es用户启动并运行程序
+/opt/module/elasticsearch/elasticsearch-7.12.0/bin/elasticsearch -d
+------------
+es可视化调试：
+一、elasticsearch-head（轻量，UI较差）
+elasticsearch-head 是用于监控 Elasticsearch 状态的客户端插件，包括数据可视化、执行增删改查操作等。
+1.安装node
+配置node环境变量
+#nodejs
+export NODE_HOME=/opt/module/nodejs/node-v16.13.1-linux-x64
+export PATH=$PATH:$NODE_HOME/bin
 
+2.下载源码
+git clone git@github.com:mobz/elasticsearch-head.git
+安装cnpm（可选）
+cnpm install
+nohup npm run start >/dev/null 2>&1 & （后台运行）
+查询进程
+ps -ef | grep 'grunt'
+
+允许elasticsearch跨域访问
+修改elasticsearch配置文件，elasticsearch.yml
+最后添加
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+重启elasticsearch
+
+访问地址：
+http://192.168.137.101:9100/
+
+
+二、kibana安装（功能强，UI好）
+下载版本与Elasticsearch对应
+1.下载包
+https://mirrors.huaweicloud.com/kibana/7.12.0/
+wget https://mirrors.huaweicloud.com/kibana/7.12.0/kibana-7.12.0-linux-x86_64.tar.gz
+2.解压
+tar -zxvf kibana-7.12.0-linux-x86_64.tar.gz
+3.修改配置文件
+vim /opt/module/kibana/kibana-7.12.0-linux-x86_64/config/kibana.yml
+
+# 将配置文件内容改为指定elasticsearch的服务ip地址
+elasticsearch.hosts: ["http://localhost:9200"]
+server.host: "0.0.0.0"
+
+# 启动服务
+/opt/module/kibana/kibana-7.12.0-linux-x86_64/bin/kibana --allow-root &
+
+4.访问地址
+http://192.168.137.101:5601/
+调试命令
+http://192.168.137.101:5601/app/dev_tools#/console
+管理索引
+http://192.168.137.101:5601/app/management/data/index_management/indices
+
+------------
+elasticsearch作为搜索引擎快的原因，底层用了Lucene，倒排索引
+数据库数据：
+id 
+todo 倒排索引待补充
+todo es存读底层操作待补充
+todo java es api
+todo es的使用
+todo b站
+https://www.bilibili.com/video/BV17a4y1x7zq/?spm_id_from=333.337.search-card.all.click&vd_source=3d3abeae3b926364c339460eed1a8b90
+https://www.bilibili.com/video/BV1hh411D7sb/?spm_id_from=333.337.search-card.all.click&vd_source=3d3abeae3b926364c339460eed1a8b90
+------------
+常见到的概念：
+es <==> 数据库
+1.index索引 <==> 表
+2.document文档 <==> 表中的行
+3.field字段 <==> 表中的column列（每个索引中有4个默认字段：mei_index, _type, _id, _score评分）
+4.shard分片 <==> 数据库中的分表，它们共同持有该索引的所有数据
+5.replicas副本 <==> 每个分片有几个副本
+
+集群健康值：
+绿色：最健康的状态，代表所有的分片包括备份都可用
+黄色：基本的分片可用，但是备份不可用（也可能是没有备份）
+红色：部分的分片可用，表明分片有一部分损坏。此时执行查询部分数据仍然可以查到，遇到这种情况，还是赶快解决比较好
+灰色：未连接到elasticsearch服务
+
+es支持的数据类型
+1）核心数据类型：
+	string字符串：
+		text：文本类型（分词）；
+		keyword：关键字类型（不分词）；
+	numeric-数值类型：
+		long, integer, short, byte, double, float, half_float, scaled_float  
+	date-日期类型（存储自unix纪元以来的毫秒数）；
+	date_nanos：日期纳秒类型（存储自unix纪元以来的纳秒数）；
+	boolean-布尔类型；
+	binary-二进制类型；
+	range-范围类型:    
+		integer_range, float_range, long_range, double_range, date_range
+2）复杂数据类型
+	object：对象类型；存储单个json对象；
+	nested：嵌套类型；存储json对象数组；    
+3）数组类型（字段数组类型）
+	数组不需要专用的数据类型。一个字段默认可以包含0个或多个值。然而，数组中的所有值必须是同一种类型；
+4）多字段类型：
+	根据不同目的以不同方式索引同一字段是有帮助的；
+	举例，字符串字段可以被映射为 text字段以便全文搜索，也可以映射为keword以便于排序或聚合。
+5）其他数据类型
+	如地理位置信息数据类型，ip数据类型等（没有罗列完全）；
+
+es查询过滤方式：
+must：    必须匹配。贡献算分
+must_not：过滤子句，必须不能匹配，但不贡献算分 
+should：  选择性匹配，至少满足一条。贡献算分
+filter：  过滤子句，必须匹配，但不贡献算分
+------------
+es常用操作：
+1.索引操作（表操作）：
+1.1查看所有索引：
+get http://192.168.137.101:9200/_cat/indices
+1.2查看指定索引：
+get http://192.168.137.101:9200/test2
+1.3新建索引：
+put http://192.168.137.101:9200/test2
+{
+    "aliases": {}, // 别名
+    "mappings": { // 声明字段
+        "properties": {
+            "name": {
+                "type": "text"
+            },
+            "age": {
+                "type": "integer"
+            }
+        }
+    },
+    "settings": { // 设置
+        "number_of_shards": 1, // 分片数
+        "number_of_replicas": 1 // 副本数
+    }
+}
+1.4删除索引：
+DELETE http://192.168.137.101:9200/test1,test3
+
+2.文档操作（记录行操作）：
+2.1获取某索引下所有文档
+get http://192.168.137.101:9200/test2/_search
+2.2获取某索引下指定文档
+get http://192.168.137.101:9200/test2/_doc/1
+2.3新增文档（自动生成唯一id）
+post http://192.168.137.101:9200/test2/_doc
+{
+  "name":"liuyuanshan"
+}
+2.4新增文档（手动指定id，id不存在做新增，id已存在做修改）
+post http://192.168.137.101:9200/test2/_doc/1
+{
+  "name":"liuyuanshan",
+  "age":18
+}
+2.5更新指定文档
+post http://192.168.137.101:9200/test2/_update/1
+{
+    "doc": {
+        "age": 77
+    }
+}
+2.6删除指定文档
+delete http://192.168.137.101:9200/test2/_doc/-qjmeosB7f2KopP3fJUS
+todo 补充剩余的es操作
