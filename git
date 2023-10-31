@@ -13,7 +13,7 @@ $ git config --global user.email "email@example.com"
   一、https
    https每次都要输入账户、密码，不方便。
   二、ssh（对电脑）
-   本地电脑运行 
+   本地电脑运行
    $ ssh-keygen -t ed25519 -C "qianno.1@qq.com"
    C:\Users\Administrator\.ssh上会生成id_rsa私钥和id_rsa.pub公钥文件
    把id_rsa.pub公钥复制入github-settings-ssh and gpg keys里
