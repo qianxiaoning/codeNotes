@@ -1209,3 +1209,26 @@ select * from a,b where a.id=b.pid;
 内连接sql99（语义化更明显）
 select * from a inner join b on a.id=b.pid;
 ------------
+mysql事务
+1.单条sql的提交方式：
+查询当前提交方式
+select @@autocommit;
+自动提交（默认）
+set @@autocommit = 1;
+手动提交
+set @@autocommit = 0;
+
+正确执行提交
+commit;
+错误执行回滚
+rollback;
+
+2.多条sql的事务控制方式：
+start transaction;
+sql1...
+sql2...
+sql3...
+rollback / commit;
+------------
+mysql主键只能有一个，但是一个主键可以包含多个字段，即联合主键
+------------
