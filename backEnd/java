@@ -8329,6 +8329,12 @@ ConcurrentHashMap效率更高
 Map.putIfAbsent(1, "d"); // 如果key不存在就插入，存在就不插入
 ----------------
 springboot添加事务方法：
+
+0.设置全局事务，通过TransactionInterceptor事务拦截器
+全局事务是编程式的，
+貌似会覆盖掉方法上的声明式事务@Transactional注解，
+但是编程式事务能覆盖掉全局事务
+
 1.声明式事务@Transactional注解：
 作用在public方法上，
 static,final,private,protect不生效
@@ -8349,10 +8355,48 @@ static,final,private,protect不生效
 新建事务
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 
-2.编程式事务：
-2.1 PlatformTransactionManager
+2.编程式事务（编程式事务可覆盖@Transactional注解）：
+2.1 TransactionTemplate
+@Autowired
+private TransactionTemplate transactionTemplate;
+
+2.1.1 事务覆盖
+@Transactional // 需要事务
+public void xxx() {
+    transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_NOT_SUPPORTED); // 编程式设定不需要事务
+    // transactionTemplate.setReadOnly(true); // 设置只读事务
+    transactionTemplate.execute(status -> {
+        // 方法逻辑...
+        User user1 = new User();
+        userMapper.insert(user1);
+        Integer i = 1/0; // 异常出现，仍然不回滚，因为编程式事务设定改成不需要事务
+        return null; // 执行成功会提交、否则会回滚。这边的返回值会作为transactionTemplate.execute的返回值返回
+    });
+}
+
+2.1.2 捕获异常后，手动触发事务回滚
+@Transactional // 需要事务
+public void xxx() {
+    transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED); // 编程式设定需要事务
+    transactionTemplate.execute(status -> {
+        // 或者需要事务的时候，把异常捕获了，然后手动触发回滚，因为捕获的异常是不会回滚的
+        try {
+            User user1 = new User();
+            userMapper.insert(user1);
+            Integer i = 1/0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            status.setRollbackOnly(); // 手动触发回滚
+        }
+        return null;
+    });
+}
+
+2.2 PlatformTransactionManager（更底层）
 @Autowired
 private PlatformTransactionManager transactionManager;
+
+2.2.1 事务手动提交与回滚
 DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED); // 设定需要事务
 TransactionStatus status = transactionManager.getTransaction(def);
@@ -8367,18 +8411,41 @@ try {
     throw ex;
 }
 
-springboot对事务的控制：
+2.3 TransactionAspectSupport对事务的控制：
+
+2.3.1 事务手动回滚
 @Transactional
 public void myMethod() {
-    // 业务逻辑代码
-    myRepository.updateSomething();
-    
     // 手动提交事务
-    TransactionAspectSupport.currentTransactionStatus().flush();
+    // TransactionAspectSupport.currentTransactionStatus().flush(); （没成功）
+    try {
+        User user1 = new User();
+        userMapper.insert(user1);
+        Integer i = 1/0;
+    } catch (Exception e) {
+        e.printStackTrace();
+        // 异常被捕获是不会回滚的，可以用以下手动回滚当前事务
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+    }
 }
-回滚当前事务
-TransactionAspectSupport.currentTransactionStatus()
-// 手动提交事务
-TransactionAspectSupport.currentTransactionStatus().flush();
 
-
+2.3.2 设置事务保存点，只回滚保存点后的事务
+@Transactional
+public void myMethod() {
+    User user1 = new User();
+    user1.setAccount("1");
+    userMapper.insert(user1);
+    // 设置事务保存点
+    Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
+    try {
+        User user2 = new User();
+        user2.setAccount("2");
+        userMapper.insert(user2);
+        Integer i = 1/0;
+    } catch (Exception e) {
+        // 设置事务手动回滚，并回滚到指定保存点。
+        TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
+    }
+}
+// 效果：user1成功插入，user2回滚了
+----------------
