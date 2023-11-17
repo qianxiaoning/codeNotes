@@ -2325,6 +2325,13 @@ pageA.vue
         <el-button type="primary">右按钮</el-button>
     </div>
 <header-component>
+import headerComponent from "@/xxx/headerComponent"; // 引入组件
+export default {
+  name: "pageA",
+  components: {
+    headerComponent // 当前页注册组件；还有一种全局页面注册的方式
+  }
+}
 
 headerComponent.vue
 <template>
