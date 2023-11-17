@@ -2315,3 +2315,22 @@ getOption(value){
     this.age = value.age;
 }
 ---------------------
+slot插槽用法
+pageA.vue
+<header-component>
+    <div slot="header-left"> // 对应headerComponent组件中的header-left插槽
+        <el-button type="primary">左按钮</el-button>
+    </div>
+    <div slot="header-right"> // 对应headerComponent组件中的header-right插槽
+        <el-button type="primary">右按钮</el-button>
+    </div>
+<header-component>
+
+headerComponent.vue
+<template>
+    <div class="header">
+        <slot name="header-left"></slot>
+        <slot name="header-right"></slot>
+    </div>
+</template>
+---------------------
