@@ -768,3 +768,17 @@ git clone -b v2.8.1 https://git.xxx.git
 git reset --soft HEAD~1 本地修改不丢失
 git reset --hard HEAD~1 本地修改丢失
 --------------
+拉取所有远端分支到本地
+for b in `git branch -r | grep -v -- '->'`; do git branch --track ${b##origin/} $b; done
+| 表示通道，即前面命令的输出是后面命令的输入。
+for xxx in xxxs; do xxx; done是shell的for循环语句。
+倒引号``表示里面的是命令。
+git branch -r 列出远程分支。
+grep -v – ‘->’ ，grep查找命令，-v 参数表示not grep ，即查找输入中的不含’->’ 的行。
+git branch -r | grep -v – ‘->’ ，合起来就是参看远程分支中除了含有’->’ 的分支。
+$b 表示远程分支名，例如：origin/dev。
+${b##origin/} 表示截取远程分支名中origin/后面的内容，例如：dev，以此当做本地分支。
+git branch --track ${b##origin/} $b，类似于方法1的git branch dev origin/dev，–track参数是默认的，不加亦可。
+
+git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
+--------------

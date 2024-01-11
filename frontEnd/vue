@@ -2341,3 +2341,56 @@ headerComponent.vue
     </div>
 </template>
 ---------------------
+将el-dialog封装成组件使用，每次打开弹窗发送请求：
+父：
+<template>
+    <div>
+        <el-button type="default" class="el-button-import" @click="openDialog">弹窗</el-button>
+        <operator-Dialog :operatorDialogShow.sync="operatorDialogShow"></operator-Dialog> // .sync保证自动更新
+    </div>
+</template>
+<script>
+import operatorDialog from "./components/operatorDialog.vue";
+export default {
+    data() {
+        return {
+            operatorDialogShow: false
+        };
+    },
+    components: {
+        operatorDialog
+    },
+    methods: {
+        openDialog() {
+            this.operatorDialogShow = true;
+        },
+    }
+}
+</script>
+
+子（弹窗组件）：
+<template>
+    <div>
+        <el-dialog title="标题" :visible="operatorDialogShow" @close="closeDialog" @open="openDialog">
+        </el-dialog>
+    </div>
+</template>
+<script>
+export default {
+    props: {
+        operatorDialogShow: { // 父传子
+            default: false
+        },
+    },
+    methods: {
+        closeDialog() {
+            this.$emit('update:operatorDialogShow', false); // 触发父去更新prop的值，保证父子值是统一的
+        },
+        openDialog() {
+            // 请求后端，获取数据库类型
+            this.getDatasourceTypes();
+        },
+    }
+}
+</script>
+---------------------
