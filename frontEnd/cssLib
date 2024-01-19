@@ -33,10 +33,11 @@ flex布局
 .ac-sa{align-content: space-around;}
 .ac-s{align-content: stretch;} 
 /*item属性*/
-/*项目放大比例 默认0*/
-.fg-1{flex-grow:1;}
+/*项目放大比例 默认0。如果宽带未等分，搭配flex-basis: min-content;使用*/
+.fg-1{flex-grow: 1;} 
+.fb-mc{flex-basis: min-content;} 
 /*项目缩小比例 默认1*/
-.fs-0{flex-shrink:0;}
+.fs-0{flex-shrink: 0;}
 /*优先 项目自动缩放*/
 .f-a{flex: auto;}  
 /*优先 项目不缩放*/
@@ -535,4 +536,8 @@ color: var(--a);
 p{
     --a1: red;
 }
+-----------
+flex和grid布局区别
+flex是一维轴线布局
+grid是对容器内的项目，进行行和列二维布局，产生项目所在单元格
 -----------

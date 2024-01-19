@@ -1948,3 +1948,11 @@ public static void string2Hdfs(FileSystem fs, String str, String hdfsPath, Boole
     out.close();
 }
 -------------
+java调用spark、flink处理离线、实时数据流程
+1.用java写数据处理逻辑，打成jar包，上传到spark和flink的jar目录下
+2.将数据源信息和参数整理成sparkSql和flinkSql的格式，写入配置文件
+3.java用shell命令调jar的类名和方法名，再指定配置文件的路径
+4.jar通过配置文件拿到数据源信息和参数
+5.将每一步的结果保存到变量或者虚拟表（不落库）或者实体库中
+6.最后将输出结果写入到实体库
+-------------
