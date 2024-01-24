@@ -2449,3 +2449,44 @@ function hexToString(str){
 }
 hexToString("4f60,597d") // 你好
 -----------------------
+抛出异常，会停止后续所有调用链
+throw 后面可以接任何类型对象（简单类型、复杂类型）
+
+throw "x" // 输出Uncaught x
+
+内置错误对象const myError = new Error()
+
+自定义js错误类型：
+function MyError (message) {
+    this.name = 'MyError';
+    this.message = message || 'Default Message';
+    this.stack = (new Error()).stack;
+}
+MyError.prototype = Object.create(Error.prototype);
+MyError.prototype.constructor = MyError;
+
+使用：
+try {
+    throw new MyError();
+} catch (e) {
+    console.log(e.name);    // 'MyError'
+    console.log(e.message); // 'Default Message'
+    console.log(e.stack); // 调用栈
+}
+
+throw new Error("x")
+会输出调用栈：
+VM720:1 Uncaught Error: x
+    at <anonymous>:1:7
+    at <xxx>:1:7
+    at <xxx>:1:7
+
+内置Error类型：
+EvalError：eval函数的错误
+InternalError(非标准)：出现在JavaScript引擎内部的错误
+RangeError：范围错误，当一个值不在其所允许的范围或者集合中
+ReferenceError：引用错误，当一个不存在的变量被引用时发生的错误
+SyntaxError：语法错误
+TypeError：类型错误
+URIError：URI错误
+-----------------------
