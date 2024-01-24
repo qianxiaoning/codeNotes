@@ -2490,3 +2490,38 @@ SyntaxError：语法错误
 TypeError：类型错误
 URIError：URI错误
 -----------------------
+async和await和Promise.all()的结合
+需求：a,b两接口异步，但是后续要等ab都完成才能执行
+async init() {
+    await Promise.all([
+        // getInfoA和getInfoB会并行请求
+        this.getInfoA(),
+        this.getInfoB()
+    ]);
+    console.log("此时getInfoA和getInfoB都已完成");
+
+    // 如果函数里面有return，下面也能拿到返回结果
+    const [resultC, resultD] = await Promise.all([
+        this.getInfoC(),
+        this.getInfoD()
+    ]);
+},
+async getInfoA() {
+    const { result } = await getInfoA();
+    // 使用result
+},
+async getInfoB() {
+    const { result } = await getInfoB();
+    // 使用result
+},
+async getInfoC() {
+    const { result } = await getInfoC();
+    // 使用result
+    return result;
+},
+async getInfoD() {
+    const { result } = await getInfoD();
+    // 使用result
+    return result;
+},
+-----------------------
