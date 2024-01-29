@@ -2417,3 +2417,35 @@ props: {
     },
 },
 ---------------------
+vue属性中变量+字符串写法
+双引号里套单引号
+<div :label="'结果' + index + '集合'"></div>
+效果：
+<div label="结果1集合"></div>
+---------------------
+elementUI自定义表头，及表头tooltip
+<el-table
+    :ref="'resultPreviewTable' + tableIndex"
+    :data="tableItem.data"
+    tooltip-effect="dark"
+    class="resultPreviewTable"
+>
+    <el-table-column label="序号" type="index"></el-table-column>
+    <el-table-column
+    v-for="(fieldItem) in tableItem.fields"
+    :key="fieldItem.fieldName" :show-overflow-tooltip="true"
+    >
+        <template slot="header">
+            <el-tooltip // tooltip里必须有一层标签才能显示
+                placement="top"
+                :content="fieldItem.fieldType"
+            >
+                <span>[{{fieldItem.fieldType}}]{{fieldItem.fieldName}}</span>
+            </el-tooltip>
+        </template>
+        <template slot-scope="scope"> // 用了表头header插槽，必须再用表数据插槽
+            {{scope.row[fieldItem.fieldName]}}
+        </template>
+    </el-table-column>
+</el-table>
+---------------------
