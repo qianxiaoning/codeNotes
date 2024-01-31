@@ -551,17 +551,17 @@ grid是对容器内的项目，进行行和列二维布局，产生项目所在�
 <style scoped lang="scss">
 // 1.原生css，>>> 深度选择器
 .a >>> b {
-    color: '#000'
+    color: '#000';
 }
 // 2.less或者sass，使用 /deep/ 或者 ::v-deep 深度选择器
-/deep/.a {
-    b {
-        color: '#000'
+.wrapper {
+    /deep/.component {
+        color: '#000';
     }
 }
-.a::v-deep {
-    b {
-        color: '#000'
+.wrapper::v-deep {
+    .component {
+        color: '#000';
     }
 }
 ::v-deep .el-drawer__wrapper .el-drawer {
