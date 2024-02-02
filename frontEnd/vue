@@ -2420,6 +2420,9 @@ props: {
 vue属性中变量+字符串写法
 双引号里套单引号
 <div :label="'结果' + index + '集合'"></div>
+或
+<div :label="`结果${index}集合`"></div>
+
 效果：
 <div label="结果1集合"></div>
 ---------------------
@@ -2448,4 +2451,103 @@ elementUI自定义表头，及表头tooltip
         </template>
     </el-table-column>
 </el-table>
+---------------------
+elementUI
+el-form上的:model是自定义属性
+表单组件如el-input,el-select的双向绑定是v-model
+:model和v-model不是一个东西
+---------------------
+el-form的rules校验的key名要和el-form-item的prop属性值保持一致才能生效
+---------------------
+el-form中包含双层循环，双层数组结构表单，包含校验
+<template>
+    <div style="width: 50%;margin-left: 20%;">
+        <el-form :model="data" :ref="dataFormName">
+            <el-form-item>
+                <el-button type="primary" @click="submitForm(dataFormName)">提交</el-button>
+                <el-button @click="resetForm(dataFormName)">重置</el-button>
+            </el-form-item>
+            <div v-for="(outerForm, outerFormIndex) in data.outerFormList" :key="outerFormIndex" style="border: 1px solid red;padding: 10px;">
+                外层表单{{outerFormIndex}}
+                <el-form-item
+                    :label="`外层表单${outerFormIndex}名称`"
+                    :prop="`outerFormList.${outerFormIndex}.outerFormName`"
+                    :rules="rules.outerFormName"
+                >
+                    <el-input v-model="outerForm.outerFormName"></el-input>
+                </el-form-item>
+                <div v-for="(innerForm, innerFormIndex) in outerForm.innerFormList" :key="innerFormIndex" style="border: 1px solid green;padding: 10px;">
+                    内层表单{{innerFormIndex}}
+                    <el-form-item
+                        :label="`内层表单${outerFormIndex}-${innerFormIndex}名称`"
+                        :prop="`outerFormList.${outerFormIndex}.innerFormList.${innerFormIndex}.innerFormName`"
+                        :rules="rules.innerFormName"
+                    >
+                        <el-input v-model="innerForm.innerFormName"></el-input>
+                    </el-form-item>
+                </div>
+            </div>
+        </el-form>
+    </div>
+</template>
+<script>
+export default {
+    name: "dataForm",
+    data() {
+        return {
+            dataFormName: "dataForm",
+            data: {
+                outerFormList: [
+                    {
+                        outerFormName: "",
+                        innerFormList: [
+                            {
+                                innerFormName: ""
+                            },
+                            {
+                                innerFormName: ""
+                            }
+                        ],
+                    },
+                    {
+                        outerFormName: "",
+                        innerFormList: [
+                            {
+                                innerFormName: ""
+                            },
+                            {
+                                innerFormName: ""
+                            }
+                        ],
+                    }
+                ]
+            },
+            rules: {
+                outerFormName: [
+                    {required: true, message: "请输入外层表单名称", trigger: 'blur'}
+                ],
+                innerFormName: [
+                    {required: true, message: "请输入内层表单名称", trigger: 'blur'}
+                ]
+            }
+        };
+    },
+    methods: {
+        submitForm(formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    const data = this.data;
+                    console.log("data", data);
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+        },
+        resetForm(formName) {
+            this.$refs[formName].resetFields();
+        }
+    }
+};
+</script>
 ---------------------
