@@ -1895,12 +1895,11 @@ FileSystem = FileSystem.get(new URI("hdfs://192.168.xx.xx:8020"), new Configurat
 Path file = new Path("/test/截图 2021-10-26 162822.png");
 FileStatus status = hdfs.getFileStatus(file);
 -------------
-spark或者flink开发流程：
-比如做数据清洗
-1.用java代码把数据采集程序预先开发好，编写好方法，写好方法入参，从入参得到比如读取表和写入表等信息，再写上清洗逻辑，写好后编译为jar包
-2.在服务器部署上spark环境，设定好spark执行文件目录
-3.在开发好的用户界面上选择本地jar包（比如上面预先写好的数据清洗jar包），上传到服务器上的spark执行文件目录，界面上输入参数，将参数通过spark传入jar包
-4.然后spark会跑jar包，jar里的程序会将a表数据清洗后写入到b表，完成逻辑。
+java调用flink, spark处理实时和离线数据的流程：
+1.写数据处理的具体逻辑，将处理数据的逻辑、方法入参写在新springboot项目的启动类的main方法里，再打成jar包，上传到flink和spark的第三方jar包目录中
+2.在主服务中将spark或flink任务运行需要的详细参数保存成配置文件，放到文件服务中（优点：可以跨服务器访问），或者本地某个目录上
+3.在主服务中用java发起shell命令，比如用Process（processBuilder）调shell命令，命令上拼上必须参数，比如指定运行flink和spark的第三方jar包目录中的某个jar的某个方法，此时shell调起spark或者flink，spark或flink就开始运行，处理数据了
+4.spark或flink第三方jar里面的逻辑，根据必须参数，去文件服务中拿运行所需详细参数，去拿到数据源，再根据spark和flink的api对数据进行处理，再写入指定库中，完成spark和flink对数据的处理。
 -------------
 hadoop3关闭hdfs文件上传用户权限校验
 <property>
