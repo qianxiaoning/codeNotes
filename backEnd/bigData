@@ -1897,8 +1897,21 @@ FileStatus status = hdfs.getFileStatus(file);
 -------------
 java调用flink, spark处理实时和离线数据的流程：
 1.写数据处理的具体逻辑，将处理数据的逻辑、方法入参写在新springboot项目的启动类的main方法里，再打成jar包，上传到flink和spark的第三方jar包目录中
-2.在主服务中将spark或flink任务运行需要的详细参数保存成配置文件，放到文件服务中（优点：可以跨服务器访问），或者本地某个目录上
-3.在主服务中用java发起shell命令，比如用Process（processBuilder）调shell命令，命令上拼上必须参数，比如指定运行flink和spark的第三方jar包目录中的某个jar的某个方法，此时shell调起spark或者flink，spark或flink就开始运行，处理数据了
+2.在主服务中将spark或flink任务运行需要的详细参数保存成配置文件，放到文件服务中（如hdfs, minIO，优点：可以跨服务器访问），或者本地某个目录上
+3.在主服务中用java发起shell命令，比如用Process（processBuilder）调shell命令，命令上拼上必须参数，如：命令主体，任务入口类所在目录，任务入口类名和入口方法，配置文件id，描述，执行引擎，部署模式 local  yarn  k8s，并行度，Driver核心/内存数，Executor核心/内存数，调度相关参数，失败策略
+
+例子：
+spark启动命令
+/root/spark-3.5.0-bin-hadoop3/bin/spark-submit --class com.telehot.dataops.spark.Test --master yarn --deploy-mode cluster --driver-cores 1 --driver-memory 1g --executor-cores 1 --executor-memory 1g /root/spark-3.5.0-bin-hadoop3/examples/jars/dataops-spark-1.0-SNAPSHOT.jar --hdfs://192.168.10.138:8020 /dataops/project/12/workflow/1/tasks
+
+"%s --class %s --master yarn --deploy-mode cluster --driver-cores %s --driver-memory %sG --executor-cores %s --executor-memory %sG %s %s";
+
+FLINK启动命令
+/root/flink-1.13.0/bin/flink run -m yarn-cluster -c com.telehot.flink.integration.kafka.Kafka2Hudi -p 2 -yjm 2g -ytm 512m -ys 5  -yD env.java.opts="-DBizId=455" /root/flink-jobs/dataops-flink.jar --local_path /root/flink-jobs/104.properties
+
+"%s %s -p %s -yjm %sG -ytm %sG -ys %s  -yD env.java.opts=\"-DBizId=%s\" %s %s";
+
+此时shell调起spark或者flink，spark或flink就开始运行，处理数据了
 4.spark或flink第三方jar里面的逻辑，根据必须参数，去文件服务中拿运行所需详细参数，去拿到数据源，再根据spark和flink的api对数据进行处理，再写入指定库中，完成spark和flink对数据的处理。
 -------------
 hadoop3关闭hdfs文件上传用户权限校验
