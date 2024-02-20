@@ -8456,4 +8456,20 @@ java中 接口、父类、子类 经典使用方法 举例：
 父类具体实现接口（枪大类）：攻击（上弹药，开火），维修（使用工具）
 
 子类继承父类（冲锋枪子类）：攻击（继承自父类），维修（重写，覆盖父类方法：使用工具，并维修冲锋枪弹夹），检查冲锋枪弹夹（新增自己独有的方法）
+子类继承父类（步枪子类）：攻击（继承自父类），维修（重写，覆盖父类方法：使用工具，并维修步枪弹夹）
+
+// 子类可以统一交给父类接收，不过变量真实的类其实是子类
+public static Gun getSpecificGun(String gunType) {
+    Gun gun = null;
+    if ("步枪".equalsIgnoreCase(gunType)) {
+        gun = new Rifle(); // 将步枪或者冲锋枪交给枪大类接收，并以枪大类返回
+    } else if ("冲锋枪".equalsIgnoreCase(gunType)) {
+        gun = new AssaultRifle(); // 将步枪或者冲锋枪交给枪大类接收，并以枪大类返回
+    }
+    return gun; // 返回枪大类，其实真实的类其实是冲锋枪
+}
+
+// 调用处
+Gun gun = Gun.getSpecificGun("冲锋枪"); // 获取到gun，虽然用枪大类接收，但是gun真实的类是AssaultRifle
+gun.repair(); // 此处调的是冲锋枪的维修方法：使用工具，并维修冲锋枪弹夹
 ----------------
