@@ -2545,13 +2545,13 @@ let b = 2;
 b += 1 // 3，等于b = b + 1
 
 let a = null;
-a ||= 'aa'  // 'aa'，等于a = a || 'a'a'
+a ||= 'aa'  // 'aa'，等于a = a || 'aa'。逻辑否时执行
 
 let c = 'aa';
-c &&= null // null，等于c = c && null
+c &&= null // null，等于c = c && null。逻辑是时执行
 
 let d = null; 
-d ??= false // false，等于d = d ?? false
+d ??= false // false，等于d = d ?? false。只能判断null和undefined
 -----------------------
 幂运算符 **
 2 ** 3; // 8
@@ -2574,3 +2574,13 @@ a.flat(层数); // 铺平数组
 a.flat() = a.flat(<=0) // 原数组
 a.flat(1); // 铺平1层，[1, 2, 3, [4,5]]
 a.flat(2); // 铺平2层，[1, 2, 3, 4, 5]
+-----------------------
+跳出forEach循环
+const a = [1, 2, 3];
+a.forEach((item) => {
+    if (xxx) {
+        // 跳出forEach循环
+        a.length = 0;
+    }
+});
+-----------------------
