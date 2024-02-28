@@ -2524,4 +2524,53 @@ async getInfoD() {
     // 使用result
     return result;
 },
+
+Promise.finally()
+无论是成功.then()，还是失败.catch()，Promise 后面都会执行的部分。
 -----------------------
+可选链运算符 ?.
+const obj = null 或者 undefined;
+直接写obj.c会报错；如果写obj ?. c就不会报错，有c则显示c的值，没c显示undefined
+
+可选链可以一直链下去
+比如：
+obj?.a?.b?.c
+
+空值合并运算符 ??
+obj ?? "aa" // 输出"aa"
+当左边的值为undefined或者null时，返回右边的值
+-----------------------
+逻辑赋值运算符 ||=  &&=  ??=，类似于 += 
+let b = 2;
+b += 1 // 3，等于b = b + 1
+
+let a = null;
+a ||= 'aa'  // 'aa'，等于a = a || 'a'a'
+
+let c = 'aa';
+c &&= null // null，等于c = c && null
+
+let d = null; 
+d ??= false // false，等于d = d ?? false
+-----------------------
+幂运算符 **
+2 ** 3; // 8
+-----------------------
+const a = {a:1, b:2};
+Object.values(a); // [1, 2]，返回对象的值数组
+
+Object.keys(a); // ['a', 'b']，返回对象的key数组
+
+Object.entries(a); // [['a', 1], ['b', 2]]，返回对象的k-v数组
+-----------------------
+const s = "a";
+
+s.padStart(4, "fsefrwe"); // "fsea"，在字符串前添加字符串，直到指定长度
+
+s.padEnd(4, "fsefrwe"); // "afse"，在字符串后添加字符串，直到指定长度
+-----------------------
+const a = [[1,2],[3,[4,5]]];
+a.flat(层数); // 铺平数组
+a.flat() = a.flat(<=0) // 原数组
+a.flat(1); // 铺平1层，[1, 2, 3, [4,5]]
+a.flat(2); // 铺平2层，[1, 2, 3, 4, 5]
