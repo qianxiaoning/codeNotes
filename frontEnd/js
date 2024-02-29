@@ -2584,3 +2584,23 @@ a.forEach((item) => {
     }
 });
 -----------------------
+定义一个Promise
+const getData = () => {
+    return new Promise((resolve, reject) => {
+        // 在这里进行异步操作或其他逻辑处理
+        if (/* 条件成立 */) {
+            resolve('数据获取成功');
+        } else {
+            reject(new Error('数据获取失败'));
+        }
+    });
+};
+ 
+获取Promise对象里的数据：
+// 调用getData()并处理返回的Promise对象
+getData().then((result) => {
+    console.log(result);
+}).catch((error) => {
+    console.error(error);
+});
+-----------------------
