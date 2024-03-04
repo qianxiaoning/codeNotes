@@ -230,8 +230,10 @@ const { foo } = object;
 
 { a: a } === { a }
 
-//返回一个新数组
-[...].slice();
+// 复制数组方法，返回一个新的独立数组
+const a = [1, 2, 3];
+const b = a.slice(); // slice()方法
+const b = [...a]; // 展开运算符（Spread Operator）
 
 slice可以截取字符串也可以截取数组
 
