@@ -2606,3 +2606,21 @@ getData().then((result) => {
     console.error(error);
 });
 -----------------------
+不定参数
+function a (...a) {
+    console.log(a);
+}
+a(1,2,3); // 输出数组 [1, 2, 3]
+-----------------------
+js label 标签用法
+比如给循环代码块命名，跳出外层循环
+outerLoop: for (let i = 0; i < 2; i++) {
+    console.log("外层循环: " + i);
+    innerLoop: for (let j = 0; j < 1; j++) {
+        console.log("内层循环: " + j);
+        if (j === 0) {
+            break outerLoop;
+        }
+    }
+}
+-----------------------

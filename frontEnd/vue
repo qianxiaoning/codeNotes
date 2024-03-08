@@ -1505,8 +1505,11 @@ slot用法
 如果base组件中要生产的html结构差异不大，只是数据差异大，那完全可以把base组件封装性好点，props传入变量、数据即可。
 
 父子通讯用props和$emit
-跨组件通讯方便的用vuex
-跨组件通讯不方便的用空Vue事件总线，this.prototype.$emit,this.prototype.$on
+
+跨组件通讯：
+1.vuex
+2.provide inject
+3.用空Vue事件总线，this.prototype.$emit,this.prototype.$on
 
 computed计算属性不能传参
 filters过滤器可以接受过滤的值和传参，且不影响原数据
@@ -1654,24 +1657,46 @@ methods在小程序模板中没法用
 3、子组件中数据结构自己定，最简化的来，把接口的数据整理重赋。这样能保证组件复用性。
 
 mixins 混入
-在调用组件自身的钩子之前被调用
+在调用组件自身的钩子之前被调用，解决dom标签里引入当前vue未声明公共变量报错的现象
 当组件和混入对象含有同名选项时，数据对象在内部会进行浅合并 (一层属性深度)
 以组件数据优先
-组件：
-mixins: [loading],
-
-loading.js:
-const loading={
-    data(){
-        return{
-
-        }
-    },
-    methods:{
+组件vue：
+<template>
+    <el-table
+        :row-class-name="invalidRowFunction" // invalidRowFunction方法放入公共，得通过mixins引入，直接通过import a.js引入会报找不到本地变量的错
+    >
+    </el-table>
+</template>
+<script>
+import {operatorsMixins} from './operatorsMixins.js'
+export default {
+    name: "xxx",
+    mixins: [operatorsMixins],
+    data() {
 
     }
 }
-export default loading;
+</script>
+
+operatorsMixins.js:
+export const operatorsMixins = {
+    components:{},
+    data () {
+        return {}
+    },
+    mounted() {
+    },
+    methods: {
+        // 给失效字段行添加失效样式
+        invalidRowFunction ({row, columnIndex}) {
+            // console.log("invalidRowFunction", row);
+            if (row.compareInvalid) {
+                return "invalidRowBackColor";
+            }
+        },
+    }
+}
+
 
 vue是单页面，一个page对象。而mpvue是小程序，实际是多页面，多个page对象
 引入vuex和router的流程
@@ -2550,4 +2575,9 @@ export default {
     }
 };
 </script>
+---------------------
+el-table当行没有变更，只是某个属性值变更时，element为了避免性能消耗，不会触发重新渲染
+解决办法：
+1.最终处理好数据，再给this.xxx复制
+2.在表格上用:key属性，没试过
 ---------------------
