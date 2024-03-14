@@ -8473,3 +8473,8 @@ public static Gun getSpecificGun(String gunType) {
 Gun gun = Gun.getSpecificGun("冲锋枪"); // 获取到gun，虽然用枪大类接收，但是gun真实的类是AssaultRifle
 gun.repair(); // 此处调的是冲锋枪的维修方法：使用工具，并维修冲锋枪弹夹
 ----------------
+循环枚举、遍历枚举方式：
+for (OperateEnum operate : OperateEnum.values()) {
+    System.out.println(operate); // operate为枚举对象
+}
+----------------
