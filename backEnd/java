@@ -8478,3 +8478,26 @@ for (OperateEnum operate : OperateEnum.values()) {
     System.out.println(operate); // operate为枚举对象
 }
 ----------------
+接口：
+public interface IDbOperate {}
+
+父类：
+@Component
+public class CommonOperate implements IDbOperate {}
+
+子类1：
+@Component
+public class ClickhouseOperate extends CommonOperate {}
+
+子类2：
+@Component
+public class HiveOperate extends CommonOperate {}
+
+spring获取父类及继承的子类：（自动注入时，包含父类自身）
+@Autowired
+private List<CommonOperate> operates1; // [CommonOperate, ClickhouseOperate, HiveOperate]
+
+spring获取实现接口的类及继承类的子类：（自动注入时，不包含接口自身）
+@Autowired
+private List<IDbOperate> operates2; // [CommonOperate, ClickhouseOperate, HiveOperate]
+----------------
