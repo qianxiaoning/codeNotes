@@ -48,7 +48,11 @@ cd flink-1.15.2-bin-scala_2.12
 ./bin/start-cluster.sh
 ./bin/stop-cluster.sh
 
-默认web ui端口
+设定访问ip
+vim conf/flink-conf.yaml
+rest.bind-address: 0.0.0.0
+
+访问默认web ui端口
 http://192.168.xx.xx:8081/
 -------------------
 DataStream API 来实现稳定可靠的、有状态的流处理应用程序
@@ -107,3 +111,4 @@ flink三种运行模式
 Session Mode
 Per-Job Mode（例如YARN或Kubernetes）
 Application Submission
+-------------------
