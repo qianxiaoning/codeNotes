@@ -2581,7 +2581,7 @@ el-table当行没有变更，只是某个属性值变更时，element为了避�
 1.最终处理好数据，再给this.xxx复制
 2.在表格上用:key属性，没试过
 ---------------------
-el-select change事件获取旧值
+el-select change事件获取旧值 原值
 <el-select
     ref="replaceSelectField"
     @change="selectReplaceField($event)"

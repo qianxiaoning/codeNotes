@@ -2624,3 +2624,11 @@ outerLoop: for (let i = 0; i < 2; i++) {
     }
 }
 -----------------------
+函数做参数传递
+aaa (aunction) {
+    aunction();
+},
+main (index) {
+    this.confiaaarmPop(() => {console.log(1);console.log(2)});
+},
+-----------------------
