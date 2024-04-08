@@ -2595,3 +2595,61 @@ selectReplaceField (newVal) {
     console.log("newVal", newVal);
 },
 ---------------------
+el-cascader 级联选择器
+懒加载 + 回显
+<el-cascader
+    v-model="cascaderValue"
+    :props="cascaderProps"
+>
+</el-cascader>
+
+data:
+cascaderValue: ["a", "b"],
+cascaderProps: {
+    lazy: true,
+    value: "code",
+    label: "name",
+    lazyLoad: this.lazyLoad
+},
+firstNodeList: [..., ..., ...]
+
+methods:
+async getNodeList(parentCode, isLeaf) {
+    let { result, isSuccess, failureMessage } = await getCodeNameList({
+        parentCode: parentCode
+    });
+    if (isSuccess) {
+        if (isLeaf) {
+            result.forEach((item) => {
+                item.leaf = true;
+            });
+        }
+    }
+    return result;
+},
+async lazyLoad (node, resolve) {
+    const { level, value } = node;
+    const cascaderValue = this.cascaderValue;
+    const firstNodeName = cascaderValue[0];
+    const firstNodeList = this.firstNodeList;
+
+    console.log("node", node);
+    console.log("level", level);
+    console.log("value", value);
+    if (level === 0) {
+        const result = await this.getNodeList(firstNodeName, true);
+        firstNodeList.forEach((item) => {
+            if (item.code === firstNodeName) {
+                item.children = result;
+            }
+        });
+        resolve(firstNodeList);
+    } else if (level === 1) {
+        if (firstNodeName === value) {
+            resolve(node);
+        } else {
+            resolve(await this.getNodeList(value, true));
+        }
+    }
+},
+---------------------
