@@ -1239,3 +1239,54 @@ clickhouse
 alter table tableName update a='11',b='2024-02-20' where id in('1');
 Optimize table tableName;
 ------------
+mysql子查询
+子查询是嵌套在另一个 SELECT, INSERT, UPDATE, 或 DELETE查询的 SQL 查询
+子查询可以在 WHERE 子句中、FROM 子句或 SELECT 列表中出现。
+
+1.在 WHERE 子句中使用子查询：
+
+SELECT *
+FROM Employees
+WHERE salary > (SELECT AVG(salary) FROM Employees);
+在这个例子中，我们从 Employees 表中选择工资高于平均工资的所有员工。
+
+2.在 FROM 子句中使用子查询（也称为派生表）：
+
+SELECT e1.name
+FROM (SELECT name, salary FROM Employees ORDER BY salary DESC LIMIT 1) AS e1
+JOIN (SELECT name, salary FROM Employees ORDER BY salary ASC LIMIT 1) AS e2
+ON e1.salary < e2.salary;
+在这个例子中，我们创建了两个派生表 e1 和 e2，它们分别包含 Employees 表中薪水最高的记录和最低的记录，然后我们选择了只有当 e1 的薪水高于 e2 的薪水时的名字。
+
+3.在 SELECT 列表中使用子查询：
+
+SELECT
+    customer_name,
+    (SELECT COUNT(*) FROM orders WHERE orders.customer_id = customers.customer_id) AS orders_count
+FROM customers;
+在这个例子中，我们选择了客户的名字和该客户的订单数量。我们通过子查询来计算每个客户的订单数量。
+
+注意：子查询的性能可能会受到影响，特别是在处理大型数据集时。在某些情况下，可以通过使用 JOIN 或其他方法重写子查询以提高性能。
+------------
+mysql子查询和关联查询哪个效率高
+子查询和关联查询的性能高低取决于多个因素，包括查询的复杂性、数据表的大小、索引的完整性和优化程度等。在某些情况下，子查询可能比关联查询更高效，但这并非总是这样。
+
+关联查询通常使用JOIN语句来合并多个表的行，这样可以避免嵌套循环，并直接从连接的表中检索数据。子查询则是嵌套在主查询中的查询，它会为外层查询的每一行执行一次。
+
+如果关联的表之间有直接的外键关系且查询能利用索引，关联查询通常会比子查询更高效。然而，如果查询涉及到复杂的子查询或者子查询能够减少需要读取的数据量，那么子查询可能会更快。
+
+例如，考虑以下两种查询：
+
+关联查询示例：
+
+SELECT a.*, b.*
+FROM tableA a
+JOIN tableB b ON a.id = b.a_id;
+子查询示例：
+
+SELECT a.*, (SELECT b.data FROM tableB b WHERE b.a_id = a.id)
+FROM tableA a;
+在这个例子中，如果表B的数据量很大，关联查询可能比子查询更高效，因为它不需要为表A的每一行都执行子查询。但如果表A的数据量很大，子查询可以通过减少需要扫描的数据行数来提高效率。
+
+为了准确判断哪种查询更高效，需要基于实际数据库的数据量、索引和查询条件进行测试。通常，应该选择最简单且能够有效利用索引的查询方式。
+------------

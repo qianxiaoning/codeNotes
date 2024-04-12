@@ -190,3 +190,21 @@ ni(.*)hao
 /[\W\d](?!_)/.test("*"); // true
 /[\W\d](?!_)/.test("_"); // false
 ------------------
+提取${}中的字符
+function extractContentWithinBraces(str) {
+    const regex = /\$\{([^}]+)\}/g;
+    let match;
+    const result = [];
+ 
+    while ((match = regex.exec(str))) {
+        result.push(match[1]); // 添加匹配到的内容到结果数组中
+    }
+ 
+    return result;
+}
+ 
+// 示例使用
+const text = "这是一个文本，包含多个占位符，如：${username} 和 ${age}。";
+const extractedContent = extractContentWithinBraces(text);
+console.log(extractedContent); // ["username", "age"]
+------------------

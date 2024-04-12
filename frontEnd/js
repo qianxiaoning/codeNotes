@@ -2632,3 +2632,11 @@ main (index) {
     this.confiaaarmPop(() => {console.log(1);console.log(2)});
 },
 -----------------------
+数组是否存在指定元素，返回布尔值
+const array = ['a', 'b', 'c'];
+const s = 'b';
+ 
+const isInArray = array.includes(s); // 返回 true 或 false
+ 
+console.log(isInArray); // 如果 s 在数组中，打印 true；否则打印 false
+-----------------------
