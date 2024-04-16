@@ -2653,3 +2653,125 @@ async lazyLoad (node, resolve) {
     }
 },
 ---------------------
+el-form里嵌套el-table 用法
+
+data：
+ruleConfigFormRules:  {
+    integrity: [
+        {
+            required: true,
+            message: "请填写权重比例",
+            trigger: "blur"
+        },
+    ],
+    low: [
+        {
+            required: true,
+            message: "请填写权重比例",
+            trigger: "blur"
+        },
+    ],
+},
+ruleConfigForm: {
+    weightFrom: [
+        {
+            integrity: null,
+        }
+    ],
+    levelFrom: [
+        {
+            low: null,
+        }
+    ]
+},
+
+<!-- 循环的，weightFrom.${index}.integrity -->
+<el-form
+    :model="ruleConfigForm"
+    :rules="ruleConfigFormRules"
+>
+    <el-table :data="ruleConfigForm.weightFrom">
+        <el-table-column>
+            <template slot="header">
+                <span class="requireFieldName">完整性</span>
+            </template>
+            <template slot-scope="scope">
+                <el-form-item
+                    v-for="(item, index) in ruleConfigForm.weightFrom"
+                    :key="index"
+                    :prop="`weightFrom.${index}.integrity`"
+                    :rules="ruleConfigFormRules.integrity"
+                >
+                    <el-input    
+                        v-model.number="scope.row.integrity"
+                    >
+                    </el-input>
+                </el-form-item>
+            </template>
+        </el-table-column>
+    </el-table>
+
+    <el-table :data="ruleConfigForm.levelFrom">
+        <el-table-column>
+            <template slot="header">
+                <span class="requireFieldName">低</span>
+            </template>
+            <template slot-scope="scope">
+                <el-form-item
+                    v-for="(item, index) in ruleConfigForm.levelFrom"
+                    :key="index"
+                    :prop="`levelFrom.${index}.low`"
+                    :rules="ruleConfigFormRules.low"
+                >
+                    <el-input 
+                        v-model.number="scope.row.low">
+                    </el-input>
+                </el-form-item>
+            </template>
+        </el-table-column>
+    </el-table>
+</el-form>
+
+<!-- 不用循环的，指定序号0，weightFrom.0.integrity -->
+<el-form
+    :model="ruleConfigForm"
+    :rules="ruleConfigFormRules"
+>
+    <el-table :data="ruleConfigForm.weightFrom">
+        <el-table-column>
+            <template slot="header">
+                <span class="requireFieldName">完整性</span>
+            </template>
+            <template slot-scope="scope">
+                <el-form-item
+                    :prop="`weightFrom.0.integrity`"
+                    :rules="ruleConfigFormRules.integrity"
+                >
+                    <el-input    
+                        v-model.number="scope.row.integrity"
+                    >
+                    </el-input>
+                </el-form-item>
+            </template>
+        </el-table-column>
+    </el-table>
+
+    <el-table :data="ruleConfigForm.levelFrom">
+        <el-table-column>
+            <template slot="header">
+                <span class="requireFieldName">低</span>
+            </template>
+            <template slot-scope="scope">
+                <el-form-item
+                    :prop="`levelFrom.0.low`"
+                    :rules="ruleConfigFormRules.low"
+                >
+                    <el-input 
+                        v-model.number="scope.row.low">
+                    </el-input>
+                </el-form-item>
+            </template>
+        </el-table-column>
+    </el-table>
+</el-form>
+---------------------
