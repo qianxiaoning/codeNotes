@@ -2600,10 +2600,12 @@ el-cascader 级联选择器
 <el-cascader
     v-model="cascaderValue"
     :props="cascaderProps"
+    :key="cascaderKey"
 >
 </el-cascader>
 
 data:
+cascaderKey: null, // 每次更新值，触发渲染如：this.cascaderKey = new Date().getTime();
 cascaderValue: ["a", "b"],
 cascaderProps: {
     lazy: true,
@@ -2774,4 +2776,31 @@ ruleConfigForm: {
         </el-table-column>
     </el-table>
 </el-form>
+---------------------
+el-cascader 禁用+回显，disabled和readonly都要设置
+<el-cascader
+    v-model="selectedValue"
+    :options="options"
+    :disabled="isDisabled"
+    :readonly="isDisabled"
+    :key="cascaderKey" // 每次更新值，触发渲染如：this.cascaderKey = new Date().getTime();
+></el-cascader>
+---------------------
+vue全局异常捕获
+
+// 三个参数：错误对象、发生错误的组件实例、以及一个包含错误来源信息的字符串。
+Vue.config.errorHandler = function (err, vm, info) {
+
+}
+
+
+vue组件异常捕获，生命周期钩子
+
+errorCaptured(err, vm, info) {
+    console.error(`捕获到错误：${err.toString()}\n信息：${info}`);
+    // 这里可以进行错误处理，比如弹窗提示用户、记录日志等
+    // 如果需要继续渲染组件，可以返回 false 以避免 Vue 停止渲染
+    // 如果不希望组件继续运行，可以返回 true 来通知 Vue 销毁该组件实例
+    return false;
+},
 ---------------------
