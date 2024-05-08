@@ -290,3 +290,14 @@ systemctl enable docker
 docker关闭开机自启
 systemctl disable docker
 ------------------
+将java项目打成docker镜像部署
+1.将java项目打成jar包
+2.写Dockerfile，将jar包docker build打成镜像
+docker build --no-cache -t pro_test:v1.0.0 ./
+
+将镜像导到其它docker环境
+1.本地docker镜像导出成tar文件
+docker save -o pro_test.tar pro_test:v1.0.0
+2.其它docker环境导入镜像
+docker load -i pro_test.tar
+------------------
