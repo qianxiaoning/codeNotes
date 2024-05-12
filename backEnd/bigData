@@ -1968,3 +1968,101 @@ java调用spark、flink处理离线、实时数据流程
 5.将每一步的结果保存到变量或者虚拟表（不落库）或者实体库中
 6.最后将输出结果写入到实体库
 -------------
+datax
+编译：
+1.下载github官方编译好的包
+2.自己编译
+  1.下载源码
+  2.安装系统环境要求
+  3.mvn包依赖下载
+    mvn安装包依赖的时候，可能会遇到包依赖找不到的情况，
+    解决办法：
+    1.默认中央仓库和aliyun仓库，来回切换试试
+    2.手动下载包，放入本地mvn仓库
+  4.官方命令打包
+
+运行：
+1.自检脚本自检
+  问题：
+  缺失plugin.json文件，去源码复制一份到编译后的包中
+2.运行
+bin目录下：
+python datax.py ./yourJob.json
+
+样例，mysql -> mysql
+yourJob.json：
+{
+    "job": {
+        "setting": {
+            "speed": {
+                "channel": 1
+            }
+        },
+        "content": [
+            {
+                "reader": {
+                    "name": "mysqlreader",
+                    "parameter": {
+                        "username": "root",
+                        "password": "root",
+                        "column": [
+                            "id",
+                            "role"
+                        ],
+                        "connection": [
+                            {
+                                "table": [
+                                    "a"
+                                ],
+                                "jdbcUrl": [
+     "jdbc:mysql://192.168.xx.xx:xxxx/a"
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "writer": {
+                    "name": "mysqlwriter",
+                    "parameter": {
+                        "writeMode": "insert",
+                        "username": "root",
+                        "password": "root",
+                        "column": [
+                            "id1",
+                            "role1"
+                        ],
+                        "connection": [
+                            {
+                                "jdbcUrl": "jdbc:mysql://192.168.xx.xx:xxxx/a",
+                                "table": [
+                                    "b"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}
+
+datax的etl处理
+1.reader/writer.parameter.rule （试了好几次，没成功），可能需引入DataX-Masking模块（百度AI搜：datax如何引入DataX-Masking依赖）
+如：
+将邮箱后缀替换为*
+"rule": {
+    "column": ["role"],
+    "pattern": [
+        {
+            "regex": "([^@]+)@(.+)",
+            "replacement": "\\1@****"
+        }
+    ]
+}
+
+2.自定义新插件，或继承改造原reader/writer
+
+3.扩展transformer，添加自定义的逻辑（需编译）
+
+4.创建自动groovy函数，自定义转换函数（不用编译）
+-------------

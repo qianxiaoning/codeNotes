@@ -301,3 +301,6 @@ docker save -o pro_test.tar pro_test:v1.0.0
 2.其它docker环境导入镜像
 docker load -i pro_test.tar
 ------------------
+清空指定容器日志
+docker inspect 7b3318de0da6 | grep LogPath | awk -F'"' '{print $4}' | xargs truncate -s 0
+------------------

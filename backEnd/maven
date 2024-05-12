@@ -178,3 +178,25 @@ import org.apache.commons.lang.StringUtils;
 mvn打包跳过单元测试
 mvn clean package -Dmaven.test.skip=true
 ---------------
+Maven常见的打包插件
+maven-jar-plugin	maven 默认打包插件【springboot默认打包方式】，用来创建 project jar
+maven-shade-plugin	用来打可执行包，executable(fat) jar
+maven-assembly-plugin	支持定制化打包方式，例如 apache 项目的打包方式
+
+Maven Assembly插件
+作用：
+1.可以自定义添加项目依赖，（如启动脚本、依赖项、模块、站点文档以及其他文件），一起打包在项目包里；如果是默认打包插件，得打完包，自己手动添加进去
+
+2.Assembly插件还可以自定义打包文件的内容和结构，打包文件的格式（如zip、tar等），决定哪些文件应该被包含或排除，以及指定文件在归档文件中的位置等
+
+使用方式：
+1.创建一个Assembly描述符文件，Assembly.xml 或 package.xml
+2.在项目的pom.xml文件中配置maven-assembly-plugin插件，并引入这个描述符文件
+---------------
+
+
+
+
+
+
+
