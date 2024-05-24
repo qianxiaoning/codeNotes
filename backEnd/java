@@ -7918,6 +7918,24 @@ while (true) {
         break;
     }
 }
+
+例子：
+ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("demo-pool-%d").build();
+ExecutorService threadPool = new ThreadPoolExecutor(10, 20,
+        60L, TimeUnit.SECONDS,
+        new LinkedBlockingQueue<>(20), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+        
+threadPool.execute((() -> {
+    // 循环
+}));
+
+threadPool.shutdown();
+while (true) {
+    if (threadPool.isTerminated()) {
+        // 当线程池中线程都结束
+        break;
+    }
+}
 ----------------
 线程池相关知识
 
