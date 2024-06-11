@@ -7924,7 +7924,7 @@ ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("dem
 ExecutorService threadPool = new ThreadPoolExecutor(10, 20,
         60L, TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(20), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
-        
+
 threadPool.execute((() -> {
     // 循环
 }));
@@ -8519,4 +8519,98 @@ private List<CommonOperate> operates1; // [CommonOperate, ClickhouseOperate, Hiv
 spring获取实现接口的类及继承类的子类：（自动注入时，不包含接口自身）
 @Autowired
 private List<IDbOperate> operates2; // [CommonOperate, ClickhouseOperate, HiveOperate]
+----------------
+定义一个方法a，可以传入不同类型的对象，方法a中可以将入参对象转化为传入的泛型类
+
+可以使用泛型和类型转换（Type Casting）
+
+泛型在运行时会被类型擦除（Type Erasure），因此我们需要使用额外的信息（例如类对象）来实现这种类型转换
+
+public class GenericConverter {
+
+    // 定义泛型方法，传入对象obj和目标类型targetClass，返回转换后的对象
+    public static <T> T convertTo(Object obj, Class<T> targetClass) {
+        if (targetClass.isInstance(obj)) {
+            return targetClass.cast(obj);
+        } else {
+            throw new ClassCastException("Cannot cast object to target class: " + targetClass.getName());
+        }
+    }
+
+    public static void main(String[] args) {
+        // 示例使用
+        String str = "Hello, World!";
+        Integer number = 123;
+
+        // 将字符串转换为String类型
+        String convertedStr = convertTo(str, String.class);
+        System.out.println("Converted String: " + convertedStr);
+
+        try {
+            // 尝试将字符串转换为Integer类型（会抛出ClassCastException）
+            Integer convertedNumber = convertTo(str, Integer.class);
+            System.out.println("Converted Integer: " + convertedNumber);
+        } catch (ClassCastException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // 将整数转换为Integer类型
+        Integer convertedInt = convertTo(number, Integer.class);
+        System.out.println("Converted Integer: " + convertedInt);
+    }
+}
+类型检查和转换：方法内部使用了targetClass.isInstance(obj)来检查obj是否是targetClass的实例，如果是，则使用targetClass.cast(obj)进行类型转换。如果不是，则抛出ClassCastException。
+=========
+利用泛型和类型转换，将入参为List<T>的对象，转为对应类型处理，再返回
+import java.util.ArrayList;
+import java.util.List;
+
+public class GenericProcessor {
+
+    public <T> List<T> processList(List<Object> inputList, Class<T> targetClass) {
+        List<T> outputList = new ArrayList<>();
+        for (Object obj : inputList) {
+            if (targetClass.isInstance(obj)) {
+                T castedObject = targetClass.cast(obj);
+                // 对对象进行一些逻辑处理，例如这里我们只是简单地打印它
+                System.out.println("Processing: " + castedObject);
+                // 添加处理后的对象到输出列表中
+                outputList.add(castedObject);
+            } else {
+                throw new IllegalArgumentException("List contains an element that is not of the expected type: " + targetClass.getName());
+            }
+        }
+        return outputList;
+    }
+
+    public static void main(String[] args) {
+        GenericProcessor processor = new GenericProcessor();
+
+        List<Object> mixedList = new ArrayList<>();
+        mixedList.add("Hello");
+        mixedList.add("World");
+        mixedList.add(123); // This will cause an IllegalArgumentException during processing
+
+        try {
+            // 处理字符串类型的列表
+            List<String> stringList = processor.processList(mixedList, String.class);
+            System.out.println("Processed List: " + stringList);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+
+        List<Object> mixedList2 = new ArrayList<>();
+        mixedList2.add(1);
+        mixedList2.add(2);
+        mixedList2.add(3);
+
+        try {
+            // 处理整数类型的列表
+            List<Integer> intList = processor.processList(mixedList2, Integer.class);
+            System.out.println("Processed List: " + intList);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
 ----------------

@@ -253,3 +253,11 @@ hive, mysql（数据库）这种可以通过一个链接，跨服务器访问数
 
 但是flink, spark, datax（计算引擎）这种，需要执行代码的，所执行的代码和引擎必须在一个服务器上，因为代码不能通过链接访问，所以执行代码需要打成jar包，放到计算引擎目录下，不能跨服务器拿到计算引擎的环境。
 ---------------
+使用ftp需要ftp服务器 21端口
+如linux上的vsftpd
+FTPClient ftpClient = new FTPClient();
+
+sftp只需要服务器上有ssh服务器，如OpenSSH服务器，就可以使用sftp，SFTP是SSH协议的一部分。有ssh时，sftp就能使用
+22端口
+Session session = jsch.getSession(user, host, port);
+---------------
