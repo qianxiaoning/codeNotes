@@ -5953,6 +5953,10 @@ private Environment env;
 String getProperty(String key)
 env.getProperty("xxx")
 ---------------------
+给@Value设置默认值
+@Value("${xxl.db.user:root}")
+private String xxlDbUser; // 如果配置文件中没有配xxl.db.user，则xxlDbUser值为root
+---------------------
 子类实例用接口接收的原因
 List list = new ArrayList();
 Map map = new HashMap();
@@ -8613,4 +8617,11 @@ public class GenericProcessor {
         }
     }
 }
+----------------
+ftp使用被动模式连接FTP服务器
+主动模式连本地没问题
+在防火墙或NAT（网络地址转换）的情况下，比如访问其它服务器，得用被动模式才行
+要在登录之后，才会生效 // 重要
+boolean login = ftpClient.login(user, password);
+ftpClient.enterLocalPassiveMode(); // 必须写在登录后面
 ----------------

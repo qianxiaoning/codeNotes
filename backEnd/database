@@ -1290,3 +1290,20 @@ FROM tableA a;
 
 为了准确判断哪种查询更高效，需要基于实际数据库的数据量、索引和查询条件进行测试。通常，应该选择最简单且能够有效利用索引的查询方式。
 ------------
+springboot项目接入dameng 达梦数据库 问题
+问题1.无效的表或视图名[xxx]
+解决办法：一个用户下面对应多个模式（相当于mysql的库）了，导致连到用户的默认库下面了，找不到表
+
+问题2.Error attempting to get column 'create_time' from result set. Cause: dm.jdbc.driver.DMException: 不支持的接口或功能
+达梦timestamp -> java中的LocalDateTime，转换报错
+解决办法：将pom.xml中达梦驱动版本升级
+<!-- 达梦 -->
+<dependency>
+    <groupId>com.dameng</groupId>
+    <artifactId>DmJdbcDriver18</artifactId>
+</dependency>
+
+问题3.Caused by: java.lang.IllegalStateException: dbType not support
+druid接入达梦，启动报错
+解决办法：配置文件，spring.datasource.druid.filters去掉wall配置
+------------
