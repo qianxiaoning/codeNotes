@@ -8625,3 +8625,28 @@ ftp使用被动模式连接FTP服务器
 boolean login = ftpClient.login(user, password);
 ftpClient.enterLocalPassiveMode(); // 必须写在登录后面
 ----------------
+mybatis多数据源xml区分公共和重写方法，以mysql和达梦举例：
+配置文件：
+mybatis-plus:
+  configuration:
+    database-id-provider:
+      type: DB_VENDOR
+      properties:
+        MySQL: mysql
+        DM: dm
+  mapper-locations: classpath*:mappers/**/*Mapper.xml
+
+xml:
+公共方法a：
+<select id="a" resultType="...">
+    ...
+</select>
+dm数据源时，走的a方法：
+<select id="a" databaseId="dm" resultType="...">
+    ...
+</select>
+mysql数据源时，走的a方法：
+<select id="a" databaseId="mysql" resultType="...">
+    ...
+</select>
+----------------
