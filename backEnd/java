@@ -8650,3 +8650,34 @@ mysql数据源时，走的a方法：
     ...
 </select>
 ----------------
+java实现，类似js里用变量代替对象的字段名，比如
+js:
+const obj = {a:1, b:2};
+const variable = "a";
+obj[variable]能取到值为1
+
+方法1：
+用Map
+
+方法2：
+反射
+@Data
+public class MyVo {
+    private Integer a;
+    private Integer b;
+}
+
+MyVo vo = new MyVo();
+String variable = "a";
+
+Field field = vo.getClass().getDeclaredField(variable);
+// 如果字段是私有的，需要设置可访问性
+field.setAccessible(true);
+// 取值
+int value = (int) field.get(vo);
+System.out.println("Value of " + variable + ": " + value);
+
+// 设置值
+field.set(vo, 10);
+System.out.println("New value of " + variable + ": " + field.get(vo));
+----------------
