@@ -749,6 +749,8 @@ git branch -r | grep -v '\->' | while read remote; do git branch --track "${remo
 git remote set-url origin git@47.111.235.96:qxn/c.git//修改远端路径
 git push -u origin --tags//推送所有tag
 git push -u origin --all//推送所有分支
+
+git push -u origin main && git push -u origin --tags && git push -u origin --all
 --------------
 gitlab版本回滚
 git reset --hard 3628164
