@@ -746,9 +746,9 @@ git切换远端仓库
 一次拉取所有远端分支到本地
 git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
 2.删除原仓库，新建仓库
-git remote set-url origin git@47.111.235.96:qxn/c.git//修改远端路径
-git push -u origin --tags//推送所有tag
-git push -u origin --all//推送所有分支
+git remote set-url origin git@47.111.235.96:qxn/c.git //修改远端路径
+git push -u origin --tags //推送所有tag
+git push -u origin --all //推送所有分支
 
 git push -u origin main && git push -u origin --tags && git push -u origin --all
 --------------
@@ -783,4 +783,41 @@ ${b##origin/} 表示截取远程分支名中origin/后面的内容，例如：de
 git branch --track ${b##origin/} $b，类似于方法1的git branch dev origin/dev，–track参数是默认的，不加亦可。
 
 git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
+--------------
+历史错误提交过大文件到git记录中，使.git文件夹中pack文件过大，当项目超过100m，github就会阻止推送
+
+处理办法：
+
+项目根目录，识别出最大的三个文件
+git verify-pack -v .git/objects/pack/pack-*.idx | sort -k 3 -n | tail -3
+
+查询大文件的文件名称，如dev.zip
+git rev-list --objects --all | grep 3a773ec42c61f23a5f63c7bbfd319ec293c7b576
+
+清理提交记录中的大文件
+法1.用git原生的git filter-branch，慢
+
+法2.用BFG（推荐，速度快）
+将jar包下载到当前目录，windows可以用powershell
+wget https://repo1.maven.org/maven2/com/madgag/bfg/1.14.0/bfg-1.14.0.jar -O bfg.jar
+
+清理历史中的dev.zip
+java -jar bfg.jar --delete-files dev.zip your-vue-project
+
+进入仓库并强制Git回收空间
+cd your-vue-project
+git reflog expire --expire=now --all && git gc --prune=now --aggressive
+
+强制推送到 GitHub，如果之前已经推送过
+git push -u origin main && git push -u origin --force --tags && git push -u origin --force --all
+
+由于重写了历史，团队成员需要执行以下操作避免冲突：
+# 1. 备份本地修改
+git stash
+# 2. 删除本地仓库并重新克隆
+rm -rf your-vue-project
+git clone git@github.com:your-username/your-vue-project.git
+# 3. 恢复本地修改（如果有）
+cd your-vue-project
+git stash pop
 --------------
