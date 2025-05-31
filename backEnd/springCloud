@@ -81,28 +81,30 @@ sleuth 链路跟踪
 sleuth + zipkin 链路分析
 ---------------------
 OpenFeign调用
-调用方：
-1.OrderController
-@RequestMapping("/order")
 
-@Autowired
-private PriceFeignClient priceFeignClient;
-
-@RequestMapping("/getPrice.do")
-@ResponseBody
-public ExecuteResult getPrice(String orderId) {
-	ExecuteResult res = priceFeignClient.getPrice(orderId);
-	return res;
+被调用方Controller：
+1.PriceController 或 PriceFeignController
+@Controller
+@RequestMapping("/price")
+public class PriceController {
+    @RequestMapping("/getPrice")
+    @ResponseBody
+    public ExecuteResult getPrice(@RequestParam("orderId") String orderId){
+		PriceVo vo = super.findOne(orderId);
+        return ExecuteResult.create(vo);
+    }
 }
 
+调用方定义FeignClient：
 2.PriceFeignClient
-@FeignClient(value = "my-project-order", fallbackFactory = PriceFeignClientFallbackFactory.class)
+@FeignClient(value = "xx-project-serviceName", fallbackFactory = PriceFeignClientFallbackFactory.class)
 public interface PriceFeignClient {
     @RequestMapping("/price/price/getPrice.do")
     @ResponseBody
     ExecuteResult getPrice(@RequestParam("orderId") String orderId);
 }
 
+调用方定义FeignClientFallbackFactory：
 3.PriceFeignClientFallbackFactory
 调取失败，服务降级
 @Component
@@ -124,17 +126,18 @@ public class PriceFeignClientFallbackFactory implements FallbackFactory<PriceFei
     }
 }
 
-被调用方：
-4.PriceController 或 PriceFeignController
-@Controller
-@RequestMapping("/price")
-public class PriceController {
-    @RequestMapping("/getPrice")
-    @ResponseBody
-    public ExecuteResult getPrice(@RequestParam("orderId") String orderId){
-		PriceVo vo = super.findOne(orderId);
-        return ExecuteResult.create(vo);
-    }
+调用方调用FeignClient
+4.OrderController
+@RequestMapping("/order")
+
+@Autowired
+private PriceFeignClient priceFeignClient;
+
+@RequestMapping("/getPrice.do")
+@ResponseBody
+public ExecuteResult getPrice(String orderId) {
+	ExecuteResult res = priceFeignClient.getPrice(orderId);
+	return res;
 }
 ---------------------
 OpenFeign调用后，返回的是经过序列化的数据
