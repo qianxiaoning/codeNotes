@@ -393,7 +393,6 @@ public class DataopsProducer {
     /**
      * <简述> 发送手动运行消息
      * <详细描述>
-     * @author sunqiming
      * @param sms String 消息
     */
     public void sendManualOp(String sms) {

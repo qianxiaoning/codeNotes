@@ -8681,3 +8681,82 @@ System.out.println("Value of " + variable + ": " + value);
 field.set(vo, 10);
 System.out.println("New value of " + variable + ": " + field.get(vo));
 ----------------
+ioc 控制反转解释
+类写死
+public class Customer {
+    private final Meal meal = new Fish香肉丝(); // 硬编码依赖
+    
+    public void order() {
+        meal.serve(); // 只能吃固定套餐
+    }
+}
+
+通过构造增加入参，选择注入的类，将类不写死。好处各service不用改，只需改类方法就行，改一处
+public class Customer {
+    private final Meal meal; // 依赖抽象接口
+    
+    // 通过构造函数注入具体菜品（依赖注入）
+    public Customer(Meal meal) {
+        this.meal = meal;
+    }
+    
+    public void order() {
+        meal.serve(); // 面向接口点菜，不关心具体实现
+    }
+}
+-------
+抽象类
+强 IS-A 关系（强继承关系）
+类型继承（“属于”）
+猫（子类）IS-A 动物（父类）
+通过继承来强制类型，比如在框架里作为基类使用，强调类
+可以有字段和构造器，接口不行，接口不能包含实例字段，如果需要保存状态，就应该使用抽象类。
+public abstract class Shape {
+    protected int x, y; // 接口不行
+    protected String color;
+
+    public Shape(int x, int y, String color) { // 接口不行
+        this.x = x;
+        this.y = y;
+        this.color = color;
+    }
+
+    // 通用方法
+    public void move(int dx, int dy) {
+        this.x += dx;
+        this.y += dy;
+    }
+
+    // 抽象方法
+    public abstract double area();
+}
+
+接口
+HAS-A 关系
+成员包含（“拥有”）
+弱 HAS-A 关系：
+“图书馆（整体）HAS-A 图书（部分）”，图书可被借阅（脱离图书馆），或被多个图书馆收藏（聚合关系）。
+强 HAS-A 关系（对比）：
+“人（整体）HAS-A 心脏（部分）”，心脏无法独立于人存在（强组合关系，属于强 HAS-A）。
+让一个类同时具备日志记录和缓存功能，强调动作
+
+组合使用
+public class Circle extends Shape implements Drawable {
+    private double radius;
+
+    public Circle(int x, int y, String color, double radius) {
+        super(x, y, color); // 抽象类的代码复用能力，抽象类声明的基本字段
+        this.radius = radius;
+    }
+
+    @Override // 接口额外的行为扩展
+    public double area() {
+        return Math.PI * radius * radius;
+    }
+
+    @Override
+    public void draw() {
+        System.out.printf("Drawing Circle at (%d,%d) with radius %f%n", x, y, radius);
+    }
+}
+这样的设计既利用了抽象类的代码复用能力，又通过接口实现了额外的行为扩展。

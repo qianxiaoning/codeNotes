@@ -1715,7 +1715,7 @@ hadoop fs -du /user/hive/warehouse/table_a |awk ' { SUM += $1 } END { print SUM/
 解决办法：
 select count(*) from org1.ww limit 1;
 -------------
-简单大数据仓库分层表实例（教育场景）：
+简单大数据仓库分层表实例（教育场景）：重点
 ods原始层：
 CREATE TABLE `student`(
   `id` bigint, 
