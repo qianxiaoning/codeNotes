@@ -7923,7 +7923,7 @@ while (true) {
     }
 }
 
-例子：
+例子：（重点）
 ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("demo-pool-%d").build();
 ExecutorService threadPool = new ThreadPoolExecutor(10, 20,
         60L, TimeUnit.SECONDS,
@@ -8760,3 +8760,26 @@ public class Circle extends Shape implements Drawable {
     }
 }
 这样的设计既利用了抽象类的代码复用能力，又通过接口实现了额外的行为扩展。
+-----------
+构造函数
+public class Person {
+    private String name;
+    private int age;
+
+    // 构造函数
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+定义：
+名称与类名相同
+没有返回类型，连void也不能有。加了返回类型，就会被当作普通方法
+new时，自动调用
+
+作用：
+初始化对象属性
+执行初始化时要做的操作，如资源分配、配置加载
+
+构造函数私有化，用于单例模式
+-----------
