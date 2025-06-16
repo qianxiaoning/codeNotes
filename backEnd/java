@@ -8813,3 +8813,35 @@ new时，自动调用
 
 构造函数私有化，用于单例模式
 -----------
+锁和事务的顺序问题：
+
+锁应加在事务外面，确保事务提交后，数据库数据生效后，再解锁，保证别的线程读到正确数据
+
+否则，锁先释放，事务还没提交，数据库数据还没更新，别的线程拿到锁去读数据，会读到错误数据，破坏数据一致性
+
+正确示例：
+
+transfer();
+
+public void transfer(String fromUser, String toUser, double amount) {
+	try {
+		// 1. 先获取分布式锁
+		lockId = redisLockUtil.acquireLock(lockResource, 10, TimeUnit.SECONDS);
+		if (lockId == null) {
+			throw new RuntimeException("获取锁失败，稍后重试");
+		}
+		// 2. 在锁的保护下执行整个事务
+		doTransferInTransaction(fromUser, toUser, amount);
+	} finally {
+		// 3. 最后释放锁（确保事务已完成）
+		if (lockId != null) {
+			redisLockUtil.releaseLock(lockResource, lockId);
+		}
+	}
+}
+
+@Transactional(rollbackFor = Exception.class)
+public void doTransferInTransaction(String fromUser, String toUser, double amount) {
+	// 数据库的事务操作
+}
+-----------
