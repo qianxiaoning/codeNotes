@@ -1307,3 +1307,22 @@ springboot项目接入dameng 达梦数据库 问题
 druid接入达梦，启动报错
 解决办法：配置文件，spring.datasource.druid.filters去掉wall配置
 ------------
+mysql和oracle的结构层次区别：
+
+mysql：
+192.168.1.1:3306 root/root 有一个a数据库
+实例（服务器上MySQL的进程） → 数据库（逻辑容器）a → 表
+
+oracle：
+192.168.1.1:1521/a root/root
+实例（服务器上oracle的进程） → 数据库（物理文件）（服务名）a → 方案Schema（也叫模式，用户名=方案名，一个用户一个模式）root → 表
+
+比较：
+mysql：
+用户与数据库是独立概念，需对用户授权才能访问数据库。
+
+oracle：
+用户与方案绑定，用户创建的对象自动属于其方案。
+
+mysql的数据库的概念，类似于oracle的模式
+------------
