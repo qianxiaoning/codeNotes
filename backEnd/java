@@ -6524,7 +6524,7 @@ do.getId();//有值
 -----------------
 设计模式：
 
-工厂模式
+工厂模式Factory Method
 场景：
 1.函数接口
 2.定义函数
@@ -6645,6 +6645,130 @@ private FunctionFactory functionFactory;
 
 Function func = functionFactory.getFunctionByCode("add");
 BigDecimal value = func.calculate(Map);
+
+
+模板方法模式（Template Method）
+核心思想：定义一个操作中的算法骨架，统一有难度的操作或者固定流程，将一些步骤延迟到子类中实现，子类可以不改变算法的结构，即可重定义该算法的某些特定步骤。
+通过模板方法模式，可实现代码复用、隔离变化，并遵循开闭原则（对扩展开放，对修改关闭）。
+应用场景：框架设计（如 Servlet 生命周期、JUnit 测试流程）。
+
+示例1：
+AController -> AService -> 一个抽象类ATemplate，ATemplate里定义一个公共方法doXx，doXx里调用了a,b,c三个方法，并且这三个方法需要事务和锁，事务和锁写在doXx中，a,b,c三个方法设为ATemplate的抽象方法，交由多个子类继承ATemplate，由子类写a,b,c的具体逻辑
+
+将步骤顺序（如check->doAction->saveHistory）和重要程序（如事务、锁）在模板中固定好。check,doAction,saveHistory具体逻辑在子类完成。达到代码复用、保证核心逻辑不出错的目的。
+public abstract class ATemplate {
+	public void doLotShip(DTO dto) {
+		// transactionTemplate为事务实例，获取后写编程式事务
+		transactionTemplate.execute(status -> {
+            // 数据库行级锁
+			lock(dto);
+			// 数据库操作
+			check(dto);
+			doAction(dto);
+			saveHistory(dto);
+        });
+    }
+	protected abstract void check(DTO dto);
+	protected abstract void doAction(DTO dto);
+	protected abstract void saveHistory(DTO dto);
+}
+
+public class ATemplateImpl extends ATemplate {
+	@Override
+    protected void check(DTO dto) {
+        // 具体逻辑
+    }
+	@Override
+    protected void doAction(DTO dto) {
+        // 具体逻辑
+    }
+	@Override
+    protected void saveHistory(DTO dto) {
+        // 具体逻辑
+    }
+}
+
+
+示例2：
+一、抽象类：定义模板方法和抽象步骤
+// 抽象类：定义制作饮料的模板
+public abstract class BeverageMaker {
+    // 模板方法：定义制作饮料的算法骨架
+    public final void prepareBeverage() {
+        boilWater();      // 烧水（通用步骤）
+        brew();           // 冲泡（抽象方法，由子类实现）
+        pourInCup();      // 倒入杯中（通用步骤）
+        if (customerWantsCondiments()) {
+            addCondiments(); // 添加调料（钩子方法，默认实现可被覆盖）
+        }
+    }
+    // 通用步骤：具体方法（子类无需修改）
+    private void boilWater() {
+        System.out.println("煮沸水");
+    }
+    // 抽象方法：必须由子类实现
+    protected abstract void brew();
+    // 通用步骤：具体方法
+    private void pourInCup() {
+        System.out.println("倒入杯中");
+    }
+    // 抽象方法：必须由子类实现
+    protected abstract void addCondiments();
+    // 钩子方法（Hook Method）：子类可选择性覆盖
+    protected boolean customerWantsCondiments() {
+        return true; // 默认添加调料
+    }
+}
+
+二、具体子类：实现抽象方法
+咖啡类
+public class CoffeeMaker extends BeverageMaker {
+    @Override
+    protected void brew() {
+        System.out.println("冲泡咖啡粉");
+    }
+    @Override
+    protected void addCondiments() {
+        System.out.println("添加糖和牛奶");
+    }
+    // 覆盖钩子方法，自定义逻辑
+    @Override
+    protected boolean customerWantsCondiments() {
+        return askCustomer(); // 根据用户输入决定是否添加调料
+    }
+    private boolean askCustomer() {
+        // 实际项目中可能从用户输入获取
+        System.out.println("您想要添加糖和牛奶吗？(y/n)");
+        return true; // 简化示例，默认返回true
+    }
+}
+
+茶类
+public class TeaMaker extends BeverageMaker {
+    @Override
+    protected void brew() {
+        System.out.println("浸泡茶叶");
+    }
+    @Override
+    protected void addCondiments() {
+        System.out.println("添加柠檬");
+    }
+}
+
+调用：
+public class TemplateMethodDemo {
+    public static void main(String[] args) {
+        System.out.println("制作咖啡...");
+        BeverageMaker coffeeMaker = new CoffeeMaker();
+        coffeeMaker.prepareBeverage();
+
+        System.out.println("\n制作茶...");
+        BeverageMaker teaMaker = new TeaMaker();
+        teaMaker.prepareBeverage();
+    }
+}
+
+
 -----------------
 mybatisPlus对条件构造器的清除
 QueryWrapper.clear();
@@ -8815,7 +8939,21 @@ new时，自动调用
 -----------
 锁和事务的顺序问题：
 
-锁应加在事务外面，确保事务提交后，数据库数据生效后，再解锁，保证别的线程读到正确数据
+数据库锁应加在事务里面
+在数据库中，行级锁（如，SELECT ... FOR UPDATE）会在事务提交（COMMIT）或回滚（ROLLBACK）时释放。
+
+如果在事务外面，锁可能在 SQL 执行后立即释放，导致无法实现预期的并发控制。
+如：
+事务方法{
+	// 数据库行级锁
+	// dao操作1
+	// dao操作2
+	// dao操作3
+}
+
+
+
+线程锁和分布式锁应加在事务外面，确保事务提交后，数据库数据生效后，再解锁，保证别的线程读到正确数据
 
 否则，锁先释放，事务还没提交，数据库数据还没更新，别的线程拿到锁去读数据，会读到错误数据，破坏数据一致性
 
@@ -8844,4 +8982,7 @@ public void transfer(String fromUser, String toUser, double amount) {
 public void doTransferInTransaction(String fromUser, String toUser, double amount) {
 	// 数据库的事务操作
 }
+
+
+
 -----------
