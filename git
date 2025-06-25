@@ -821,3 +821,12 @@ git clone git@github.com:your-username/your-vue-project.git
 cd your-vue-project
 git stash pop
 --------------
+合并分支两种方法
+当前分支pro，将dev合并到pro
+
+将远端dev合并到本地pro
+git pull origin dev
+
+将本地dev合并到本地pro
+git merge dev
+--------------
