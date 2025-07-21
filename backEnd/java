@@ -8569,6 +8569,16 @@ public void xxx() {
     });
 }
 
+return transactionTemplate.execute(status -> {
+	BaseResult saveResult = xx();
+	if (!saveResult.isSuccess()) {
+		status.setRollbackOnly(); // 标记回滚，但是不会中断运行，等方法退出时回滚才会触发
+		return saveResult; // 需要手动return获取返回值，并中断方法运行，使回滚生效
+	}
+	// 如果方法无异常，不需要回滚，才进行下一个方法
+	return next();
+});
+
 2.2 PlatformTransactionManager（更底层）
 @Autowired
 private PlatformTransactionManager transactionManager;
