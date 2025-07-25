@@ -2804,3 +2804,238 @@ errorCaptured(err, vm, info) {
     return false;
 },
 ---------------------
+vue3
+
+vue3组件间传值方法：
+
+一、父 和 直接子 单向传值方法
+
+父：通过属性传值给子组件；子组件触发父的回调事件传值给父
+<template>
+  <!-- 通过属性传递数据给子组件 -->
+  <Child 
+    title="这是父组件的标题" 
+    :user="currentUser" 
+
+    @sendData="handleReceive" 
+    @update="handleUpdate" 
+  />
+</template>
+
+<script setup>
+import Child from './Child.vue'
+import { ref } from 'vue'
+const currentUser = ref({ name: '张三', age: 20 })
+
+const handleReceive = (msg, num) => {
+  console.log('接收子组件数据：', msg, num) // 输出：子组件的数据 123
+}
+const handleUpdate = (data) => {
+  console.log('接收更新信息：', data) // 输出：{ status: '完成' }
+}
+</script>
+
+子：通过defineProps接收父的值；通过defineEmits定义回调事件，emits触发回调事件入参传值给父
+<template>
+  <div>
+    <p>父组件传递的标题：{{ title }}</p>
+    <p>父组件传递的用户信息：{{ user.name }}</p>
+    <button @click="handleSend">向父组件传值</button>
+  </div>
+</template>
+
+<script setup>
+// 声明接收的 props（数组形式）
+const props = defineProps(['title', 'user'])
+
+// 更规范的写法（指定类型和默认值）
+const props = defineProps({
+  title: {
+    type: String,
+    required: true // 必传
+  },
+  user: {
+    type: Object,
+    default: () => ({ name: '默认用户' }) // 对象默认值需用函数返回
+  }
+})
+
+// 声明可以触发的事件
+const emits = defineEmits(['sendData', 'update'])
+
+const handleSend = () => {
+  // 触发事件并传递数据（可传多个参数）
+  emits('sendData', '子组件的数据', 123)
+  emits('update', { status: '完成' })
+}
+</script>
+
+二、父 和 直接子 双向绑定
+通过 v-model 实现父子组件数据的双向同步（本质是 props + 自定义事件的语法糖）。
+父
+<template>
+  <div>父组件的值：{{ message }}</div>
+  <!-- v-model 双向绑定 -->
+  <Child v-model="message" />
+</template>
+
+<script setup>
+import Child from './Child.vue'
+import { ref } from 'vue'
+
+const message = ref('初始值')
+</script>
+
+子
+<template>
+  <input 
+    type="text" 
+    :value="modelValue" 
+    @input="$emit('update:modelValue', $event.target.value)"
+  />
+</template>
+
+<script setup>
+// 接收父组件的 v-model 值（默认是 modelValue）
+const props = defineProps(['modelValue'])
+// 声明更新事件
+const emits = defineEmits(['update:modelValue'])
+</script>
+
+三、父 访问 子 ref + defineExpose
+子defineExpose暴露数据或方法
+父通过ref.value.xxx调用
+
+父
+<template>
+  <Child ref="childRef" />
+  <button @click="handleAccessChild">访问子组件</button>
+</template>
+
+<script setup>
+import Child from './Child.vue'
+import { ref } from 'vue'
+
+// 创建 ref 关联子组件
+const childRef = ref(null)
+
+const handleAccessChild = () => {
+  // 访问子组件暴露的数据
+  console.log('子组件count：', childRef.value.count)
+  // 调用子组件暴露的方法
+  childRef.value.add()
+}
+</script>
+
+子
+<script setup>
+import { ref } from 'vue'
+
+const count = ref(0)
+const add = () => { count.value++ }
+
+// 显式暴露需要被父组件访问的属性/方法
+defineExpose({
+  count,
+  add
+})
+</script>
+
+四、父 和 任意深度的子孙组件
+provide + inject
+
+父provide给子数据和回调方法，子inject通过回调方法给父传值
+
+父
+<template>
+  <div>父组件</div>
+  <Child1 />
+</template>
+
+<script setup>
+import { provide, ref } from 'vue'
+import Child1 from './Child1.vue'
+
+// 提供数据（可响应式）
+const message = ref('来自父组件的数据')
+provide('message', message)
+
+// 提供方法（子组件可调用以传递数据给父组件）
+const handleChildData = (data) => {
+  console.log('收到深层子组件的数据：', data)
+}
+provide('handleChildData', handleChildData)
+</script>
+
+子
+<template>
+  <div>
+    深层子组件：{{ message }}
+    <button @click="sendToParent">向父组件传值</button>
+  </div>
+</template>
+
+<script setup>
+import { inject } from 'vue'
+
+// 获取父组件提供的数据
+const message = inject('message')
+
+// 获取父组件提供的方法（用于向父组件传值）
+const handleChildData = inject('handleChildData')
+
+const sendToParent = () => {
+  handleChildData('来自深层子组件的数据')
+}
+</script>
+
+五、全局状态管理Pinia
+
+六、事件总线（mitt）
+任意组件 或者 兄弟 组件通信
+
+安装
+npm install mitt
+
+创建事件总线（eventBus.js）
+// eventBus.js
+import mitt from 'mitt'
+export default mitt()
+
+a组件（发送 / 监听事件）
+<script setup>
+import eventBus from './eventBus.js'
+
+// 监听b组件的事件
+eventBus.on('bEvent', (data) => {
+  console.log('收到b组件数据：', data)
+})
+// 向b组件发送事件
+const sendToB = () => {
+  eventBus.emit('aEvent', 'a组件的消息')
+}
+</script>
+
+b组件（发送 / 监听事件）
+<script setup>
+import eventBus from './eventBus.js'
+
+// 监听a组件的事件
+eventBus.on('aEvent', (data) => {
+  console.log('收到a组件消息：', data)
+})
+
+// 向a组件发送事件
+const sendToA = () => {
+  eventBus.emit('bEvent', 'b组件的消息')
+}
+</script>
+
+总结
+父子组件	props + 自定义事件
+父子双向绑定	v-model
+父需直接操作子组件	ref + defineExpose
+跨层级（深层嵌套）	provide + inject
+中大型项目全局共享	Pinia
+兄弟组件 / 无关系组件	mitt 事件总线
+---------------------
