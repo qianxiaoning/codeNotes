@@ -2806,6 +2806,18 @@ errorCaptured(err, vm, info) {
 ---------------------
 vue3
 
+vue3中ref和reactive使用场景
+本质上 reactive 是直接对对象本身进行响应式代理，
+而 ref 是通过 .value 包裹对象（本质是对 “对象的引用” 进行响应式追踪）
+
+所以修改对象或者数组属性的时候，ref需要额外加一层.value；reactive可以直接修改
+
+ref因为是直接引用，所以可以直接对整个变量重新赋值；reactive直接赋值的话会丢失响应式
+
+reactive的好处就是操作多层嵌套对象的时候更便捷，reactive可以做的，ref都能做
+
+
+
 vue3组件间传值方法：
 
 一、父 和 直接子 单向传值方法
