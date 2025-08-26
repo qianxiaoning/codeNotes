@@ -2640,3 +2640,15 @@ const isInArray = array.includes(s); // 返回 true 或 false
  
 console.log(isInArray); // 如果 s 在数组中，打印 true；否则打印 false
 -----------------------
+对象的静态的属性适合放在公共对象中，比如url；像params是会需要变动的属性，这个就不适合放在公共对象，当代码块中对params属性赋值时，容易造成浅复制，值被覆盖的情况
+const map = {
+    a: {
+      url: '/eqp/equipment',
+      params: {}
+    },
+    b: {
+      url: '/fac/area',
+      params: {}
+    }
+}
+-----------------------
