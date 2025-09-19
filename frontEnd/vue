@@ -3078,3 +3078,51 @@ watch和computed区别
 指的是函数或操作对其自身作用域之外的环境产生的影响。
 简单说，就是一段代码执行后，除了返回值之外，还 “额外” 做了其他事情，比如修改了外部变量、操作了 DOM、发送了网络请求、修改了 localStorage 等。
 ---------------------
+
+v-bind 动态绑定属性的指令
+
+原生属性可简写，如:class="xx"
+
+一次性绑定多个属性，此时v-bind不能省略， v-bind="object"
+
+<Parent v-bind="myAttr"></Parent>
+
+const myAttr = computed(() => {
+  return {
+    url: myHttp.list,
+    param: {
+        name: "张三"
+    },
+    query: {
+      objId: curObj.value?.serviceId
+    }
+  }
+})
+
+
+$attrs非props的属性传递
+
+index主页面，将属性绑定到Parent组件
+<Parent v-bind="myAttr"></Parent>
+
+const myAttr = computed(() => {
+  return {
+    url: myHttp.list,
+    param: {
+        name: "张三"
+    },
+    query: {
+      objId: curObj.value?.serviceId
+    }
+  }
+})
+
+Parent组件中引入子组件Son，$attrs自身的非props属性集合，再传递到Son组件中
+<Son v-bind="$attrs"></Son>
+
+son组件
+import { useAttrs } from 'vue'
+const selfAttr: any = useAttrs();
+console.log("selfAttr:", selfAttr);
+通过useAttrs直接获取自身的所有非props属性
+---------------------
