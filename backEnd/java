@@ -9005,23 +9005,31 @@ interface IdQueryStrategy {
 2.策略实现类
 class AQueryStrategy {
 }
-3.如果发现所有实现类都需要某个公共方法，避免实现类里重复写的问题，可以定义一个抽象类，作为基类
-public abstract class StrategySupport {
+3.如果发现所有实现类都需要某个公共方法，避免实现类里重复写的问题，可以定义一个抽象类，作为基类，实现接口
+public abstract class AbstractQueryStrategy implements IdQueryStrategy {
     /**
      * 工具方法 - 添加非空值到集合
      */
-    protected final void addIfNotNull(Set<String> set, String value) {
+    protected void addIfNotNull(Set<String> set, String value) {
         if (value != null && !value.trim().isEmpty()) {
             set.add(value);
         }
     }
 }
 4.让实现类继承这个类
-public class AQueryStrategy extends StrategySupport implements IdQueryStrategy {
+public class AQueryStrategy extends AbstractQueryStrategy {
     @Override
     public void apply(QueryDTO inDto, QueryDTO outDto) {
         // 直接使用父类方法
         addIfNotNull(outDto.getEqpIds(), entity.getEqpId());
     }
 }
+
+这里的AbstractQueryStrategy抽象基类实现IdQueryStrategy接口后，可以
+
+不实现任何接口方法	子类完全自由实现所有方法	各策略差异很大
+部分实现接口方法	子类在某些方法上受约束，其他方法自由	有部分公共逻辑
+完全实现接口方法	子类行为被严格约束，只能实现钩子方法	流程固定，只有细节差异
+
+如果抽象基类不实现IdQueryStrategy接口，实现类继承这个基类再实现接口，这个基类就只是提供工具方法支持，名字会类似abstract class StrategySupport，明确表示只是个工具类
 -----------
