@@ -8992,7 +8992,36 @@ public void transfer(String fromUser, String toUser, double amount) {
 public void doTransferInTransaction(String fromUser, String toUser, double amount) {
 	// 数据库的事务操作
 }
+-----------
+实现类继承abstract抽象基类，而不是普通类，禁止无意义的实例化
 
+定义接口
+写接口实现类
+如果要加一些公共支持的方法，父类用abstract抽象类，因为这个父类实例化没有意义，如果是普通类就能被实例化了，这里用抽象类，防止别人将父类单独实例化
 
-
+1.策略接口
+interface IdQueryStrategy {
+}
+2.策略实现类
+class AQueryStrategy {
+}
+3.如果发现所有实现类都需要某个公共方法，避免实现类里重复写的问题，可以定义一个抽象类，作为基类
+public abstract class StrategySupport {
+    /**
+     * 工具方法 - 添加非空值到集合
+     */
+    protected final void addIfNotNull(Set<String> set, String value) {
+        if (value != null && !value.trim().isEmpty()) {
+            set.add(value);
+        }
+    }
+}
+4.让实现类继承这个类
+public class AQueryStrategy extends StrategySupport implements IdQueryStrategy {
+    @Override
+    public void apply(QueryDTO inDto, QueryDTO outDto) {
+        // 直接使用父类方法
+        addIfNotNull(outDto.getEqpIds(), entity.getEqpId());
+    }
+}
 -----------
