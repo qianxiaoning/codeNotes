@@ -1,0 +1,50 @@
+-------------
+作为全栈开发，平时写java和vue，我需要ai帮我实现研发需求、改bug、写代码，有哪些工具、插件、软件、AI IDE可以使用？
+
+ai辅助编程
+
+trae
+cursor
+claude code
+
+Gemini
+
+一、IDE / 编辑器 内置的智能辅助
+1. GitHub Copilot
+Copilot Chat
+Codeium
+Amazon CodeWhisperer
+支持 VS Code / JetBrains 系列
+2. Tabnine
+3. Codeium
+阿里通义灵码
+JetBrains AI Assistant
+Codeium
+
+Google的Gemini3Pro
+Anthropic的Claude Sonnet4.5
+OpenAl的Codex5.1
+
+
+二、AI 助手 & 生产力工具
+1. ChatGPT 插件 for VS Code / JetBrains
+2. CodeGPT / AI 代码助手 插件
+VS Code/IDEA 插件
+
+augment code
+qoder
+qwen3-code
+kiro
+roocode
+
+Claude Code
+Cursor
+Trae
+Windsurf（Codeium 出的）
+JetBrains AI（官方）
+Continue.dev（开源）
+
+Claude 3（Opus/Sonnet）
+
+通义千问 / 文心一言 / 讯飞星火
+-------------
