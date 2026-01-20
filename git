@@ -6,8 +6,8 @@ git快捷入手（核心）
  二、升级
   $ git clone git://git.kernel.org/pub/scm/git/git.git
 二、设置用户名和email
-$ git config --global user.name "Your Name"
-$ git config --global user.email "email@example.com"
+$ git config --global user.name "Shon Qian"
+$ git config --global user.email "qianno.1@qq.com"
 三、本地仓库与github仓库的关联
  一、使电脑和github建立传输协议
   一、https
