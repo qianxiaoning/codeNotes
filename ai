@@ -3,57 +3,45 @@
 
 ai辅助编程
 
-trae
+推荐：
 cursor
+trae国内/国际版
+GitHub Copilot
 claude code
-
 Gemini
+Windsurf
 
-一、IDE / 编辑器 内置的智能辅助
-1. GitHub Copilot
-Copilot Chat
-Codeium
-Amazon CodeWhisperer
-支持 VS Code / JetBrains 系列
-2. Tabnine
-3. Codeium
-阿里通义灵码
-JetBrains AI Assistant
-Codeium
+一、AI IDE
+cursor
+trae国内/国际版
+Windsurf（Codeium 出的）
 
+二、编辑器插件/cli
+GitHub Copilot
+Claude Code
 Google的Gemini3Pro
 Anthropic的Claude Sonnet4.5
 OpenAl的Codex5.1
-
-
-二、AI 助手 & 生产力工具
-1. ChatGPT 插件 for VS Code / JetBrains
-2. CodeGPT / AI 代码助手 插件
-VS Code/IDEA 插件
-
+Copilot Chat
+ChatGPT 插件 for VS Code / JetBrains
+CodeGPT / AI 代码助手 插件
+Codeium
+Amazon CodeWhisperer
+Tabnine
+阿里通义灵码
+JetBrains AI Assistant
 augment code
 qoder
 qwen3-code
 kiro
 roocode
-
-Claude Code
-Cursor
-Trae
-Windsurf（Codeium 出的）
 JetBrains AI（官方）
 Continue.dev（开源）
-
 Claude 3（Opus/Sonnet）
-
 通义千问 / 文心一言 / 讯飞星火
-
 glm4.7   
 minimax
-
-gemini3pro 
 gpt5.2
-codeX
-
+Grok Code
 Amp Code/AmpCode Sourcegraph公司
 -------------
