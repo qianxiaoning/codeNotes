@@ -9033,3 +9033,19 @@ public class AQueryStrategy extends AbstractQueryStrategy {
 
 如果抽象基类不实现IdQueryStrategy接口，实现类继承这个基类再实现接口，这个基类就只是提供工具方法支持，名字会类似abstract class StrategySupport，明确表示只是个工具类
 -----------
+jar生产环境启动参数
+
+-Dname=xxx.jar 
+-Duser.timezone=Asia/Shanghai 
+-Xms512m 
+-Xmx2048m 
+-XX:MetaspaceSize=128m 
+-XX:MaxMetaspaceSize=512m 
+-XX:+HeapDumpOnOutOfMemoryError 
+-XX:+PrintGCDateStamps 
+-XX:+PrintGCDetails  
+-XX:+UseParallelGC 
+-XX:+UseParallelOldGC 
+-javaagent:xxx.jar 
+-jar xxx.jar
+-----------
