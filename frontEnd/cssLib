@@ -593,3 +593,206 @@ body {
   margin: var(--base-padding, 8px); /* 全局变量+默认值 */
 }
 -----------
+一键切换页面样式主题色
+
+1.css变量 + 切换自定义属性实现（推荐）
+html版：
+<!doctype html>
+<html lang="zh-CN" data-theme="default">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      /* 公共样式 */
+      * {
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease,
+          text-color 0.3s ease,
+          border-color 0.25s,
+          opacity 0.25s;
+      }
+      /* 属性选择器，定义相同的css变量名，指向不同的颜色 */
+      /* 默认主题色 */
+      :root[data-theme="default"] {
+        --primary-color: #ffffff;
+        --text-color: #000;
+      }
+      /* --- 暗黑主题 (Black) --- */
+      :root[data-theme="black"] {
+        --primary-color: #1a1a1a;
+        --text-color: #fff;
+      }
+      /* --- 蓝色主题 (Blue) --- */
+      :root[data-theme="blue"] {
+        --primary-color: #3498db;
+        --text-color: #8d3e75;
+      }
+      /* 组件样式 */
+      .card {
+        background-color: var(--primary-color);
+      }
+      p {
+        color: var(--text-color);
+      }
+    </style>
+  </head>
+  <body>
+    <button class="btn" onclick="switchTheme('default')">默认主题</button>
+    <button class="btn" onclick="switchTheme('black')">暗黑主题</button>
+    <button class="btn" onclick="switchTheme('blue')">蓝色主题</button>
+
+    <div class="card">
+      <p>当前主题色</p>
+    </div>
+
+    <script>
+      const THEME_STORAGE_KEY = "app_theme_preference";
+      function init() {
+        const themeName = localStorage.getItem(THEME_STORAGE_KEY);
+        switchTheme(themeName);
+      }
+      function switchTheme(themeName) {
+        if (!themeName) {
+          themeName = "default";
+        }
+        const root = document.documentElement;
+        // 通过给html添加data-theme属性，使不同的属性选择器样式生效，切换css变量的颜色
+        root.setAttribute("data-theme", themeName);
+        // 把主题保存到localStorage中，避免刷新后丢失
+        localStorage.setItem(THEME_STORAGE_KEY, themeName);
+      }
+      init();
+    </script>
+  </body>
+</html>
+
+vue3版：
+main.js:
+import { createApp } from 'vue'
+import './style.css' // 引入公共样式和主题样式
+import App from './App.vue'
+createApp(App).mount('#app')
+
+style.css:
+/* 公共样式 */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, text-color 0.3s ease, border-color 0.25s, opacity 0.25s;
+}
+/* 默认主题色 */
+:root[data-theme="default"] {
+  --primary-color: #ffffff;
+  --text-color: #000;
+}
+/* --- 暗黑主题 (Black) --- */
+:root[data-theme="black"] {
+  --primary-color: #1a1a1a;
+  --text-color: #fff;
+}
+/* --- 蓝色主题 (Blue) --- */
+:root[data-theme="blue"] {
+  --primary-color: #3498db;
+  --text-color: #8d3e75;
+}
+
+config.js:
+// 主题配置中心
+export const themes = {
+  // 默认主题 (绿色风格)
+  default: {
+    label: '默认',
+    color: '#42b883' // 仅用于 UI 按钮的颜色预览
+  },
+  // 黑色主题 (暗黑模式)
+  black: {
+    label: '暗黑',
+    color: '#1a1a1a'
+  },
+  // 蓝色主题 (商务风格)
+  blue: {
+    label: '蓝色',
+    color: '#3498db'
+  }
+}
+
+hooks/useTheme.js: // 主题切换钩子
+import { ref, onMounted } from 'vue'
+import { themes } from '../theme/config' // 引入主题配置
+const THEME_STORAGE_KEY = 'app_theme_preference' // 本地存储主题的键名
+export function useTheme() {
+  const currentTheme = ref('default') // 声明当前主题
+  const applyTheme = (themeName) => { // 声明应用主题函数
+    // 容错处理
+    if (!themes[themeName]) {
+      themeName = 'default'
+    }
+    const root = document.documentElement
+    // 通过给html添加data-theme属性，使不同的属性选择器样式生效，切换css变量的颜色
+    root.setAttribute('data-theme', themeName)
+    // 更新当前主题值
+    currentTheme.value = themeName
+    // 把主题保存到localStorage中，避免刷新后丢失
+    localStorage.setItem(THEME_STORAGE_KEY, themeName)
+  }
+  onMounted(() => {
+    // 初始化时，读取本地存储的主题并应用
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY)
+    applyTheme(savedTheme)
+  })
+  return {
+    // 钩子返回当前主题，主题列表，应用主题函数
+    currentTheme,
+    themes,
+    applyTheme
+  }
+}
+
+App.vue:
+<script setup>
+import { useTheme } from './hooks/useTheme' // 引入主题切换钩子
+const { currentTheme, themes, applyTheme } = useTheme() // 拿到钩子的当前主题，主题列表，应用主题函数
+</script>
+<template>
+  <button 
+    v-for="(theme, key) in themes" 
+    :key="key"
+    :class="{ active: currentTheme === key }" // 标明激活的按钮
+    @click="applyTheme(key)" // 使用钩子暴露的方法
+    :style="{ backgroundColor: theme.color }" // 拿到按钮颜色
+  >
+    {{ theme.label }}
+  </button>
+  <div class="block">
+    <p>实现原理：&lt;html data-theme="dark/blue"&gt;</p> // 实现原理：<html data-theme="dark/blue">
+  </div>
+</template>
+<style scoped>
+/* 组件样式 */
+.block {
+  background-color: var(--primary-color);
+}
+p {
+  color: var(--text-color);
+}
+button {
+  opacity: 0.5;
+  color: var(--text-color);
+}
+button.active { // 激活态样式
+  opacity: 1;
+}
+</style>
+------
+2.使用UI框架的换主题方法，如Element
+内部原理也是 CSS 变量
+:root {
+  --el-color-primary: #409eff;
+}
+JS 切换：
+document.documentElement.style.setProperty(
+  '--el-color-primary',
+  '#13c2c2'
+)
+所有按钮 / 表格 / 弹窗组件自动跟着变
+------
+3.less/sass预编译的切换主题色方法（不推荐）
+-----------
