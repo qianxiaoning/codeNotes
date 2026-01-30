@@ -523,20 +523,6 @@ white-space: pre-line;
 html识别文字时，保留换行符和多个空格（不然只会显示一个空格）
 white-space: pre
 -----------
-css自定义属性，级联变量（变量只能用作属性值）
---a: red;
-color: var(--a);
-
-定义全局变量
-:root{
-    --a: red;
-}
-
-局部变量
-p{
-    --a1: red;
-}
------------
 flex和grid布局区别
 flex是一维轴线布局
 grid是对容器内的项目，进行行和列二维布局，产生项目所在单元格
@@ -568,4 +554,42 @@ grid是对容器内的项目，进行行和列二维布局，产生项目所在�
     width: auto !important;
 }
 </style>
+-----------
+:root是 CSS 的一个伪类选择器
+
+指向的是文档的根元素，
+
+等价于<html>标签，但优先级比html选择器更高
+-----------
+css原生定义变量，引用变量，原生特性（Custom Properties），核心且规范的用法是作为属性值
+
+定义变量
+--开头（区分大小写）
+通常在:root伪类中定义全局变量（作用域覆盖整个文档），也可在任意选择器中定义局部变量
+
+/* 全局变量 - 作用于整个文档 */
+:root {
+  /* 尺寸变量 */
+  --base-padding: 16px;
+}
+
+/* 局部变量 - 仅作用于.box类 */
+.box {
+  --box-bg: #f5f5f5;
+}
+
+
+引用变量
+var()函数引用变量，还可设置默认值（当变量未定义时生效）
+
+/* 引用全局变量 */
+body {
+  padding: var(--base-padding);
+}
+
+/* 引用局部变量 + 默认值 */
+.box {
+  background-color: var(--box-bg, #ffffff); /* 若--box-bg未定义，使用#ffffff */
+  margin: var(--base-padding, 8px); /* 全局变量+默认值 */
+}
 -----------
