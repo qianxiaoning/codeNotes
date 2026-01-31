@@ -607,12 +607,15 @@ html版：
         transition:
           background-color 0.3s ease,
           color 0.3s ease,
-          text-color 0.3s ease,
           border-color 0.25s,
           opacity 0.25s;
       }
+      :root {
+        /* 公共样式部分 */
+        font-size: 20px;
+      }
       /* 属性选择器，定义相同的css变量名，指向不同的颜色 */
-      /* 默认主题色 */
+      /* 默认主题样式区 */
       :root[data-theme="default"] {
         --primary-color: #ffffff;
         --text-color: #000;
@@ -676,9 +679,14 @@ createApp(App).mount('#app')
 style.css:
 /* 公共样式 */
 * {
-  transition: background-color 0.3s ease, color 0.3s ease, text-color 0.3s ease, border-color 0.25s, opacity 0.25s;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.25s, opacity 0.25s;
 }
-/* 默认主题色 */
+:root {
+  /* 公共样式部分 */
+  font-size: 20px;
+}
+/* 属性选择器，定义相同的css变量名，指向不同的颜色 */
+/* 默认主题样式区 */
 :root[data-theme="default"] {
   --primary-color: #ffffff;
   --text-color: #000;
