@@ -49,4 +49,10 @@ Get-Process -Id $pids -ErrorAction SilentlyContinue |
 
 看某个服务详细信息
 Get-WmiObject Win32_Process -Filter "ProcessId=892" | Select-Object CommandLine | Format-List
+
+所有进程：按【专用内存】从大到小 + 显示文件路径
+Get-Process | Sort-Object -Property PrivateMemorySize -Descending | Select-Object -First 30 Id,Name,
+    @{Name="专用内存(MB)";Expression={[math]::Round([long]$_.PrivateMemorySize/1MB,2)}},
+    @{Name="工作集(MB)";Expression={[math]::Round([long]$_.WorkingSet/1MB,2)}},
+    @{Name="文件路径";Expression={$_.Path}} | Format-Table -AutoSize
 -----------------------
