@@ -1,4 +1,5 @@
-doc常用命令
+-----------------------
+dos命令
 
 c: 快速进入c盘
 dir 输出目录
@@ -34,3 +35,18 @@ taskkill /f /t /im java.exe
 
 删除有内容目录
 rd /s/q "xxx"
+-----------------------
+powershell命令
+
+看所有java服务
+Get-WmiObject Win32_Process | Where-Object { $_.CommandLine -like "*java*" } | Select ProcessId,CommandLine
+
+看多个服务占用内存数
+$pids = @(18396, 18272, 892, 23772)
+Get-Process -Id $pids -ErrorAction SilentlyContinue | 
+    Select-Object Id, Name, @{Name="WorkingSet(MB)"; Expression={[math]::Round($_.WorkingSet/1MB,2)}} |
+    Format-Table -AutoSize
+
+看某个服务详细信息
+Get-WmiObject Win32_Process -Filter "ProcessId=892" | Select-Object CommandLine | Format-List
+-----------------------
