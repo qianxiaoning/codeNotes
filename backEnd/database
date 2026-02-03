@@ -1631,3 +1631,37 @@ ext_remark VARCHAR(500) COMMENT '通用扩展备注，存储临时/低频的文�
 这是业务系统稳定性的分水岭。
 
 ------------
+查看数据库ddl记录
+
+1.查看自己运行的
+
+数据库管理工具，如dbeaver
+打开首选项-查询管理器-勾选元数据写入ddl-查看查询管理器
+
+2.查看数据库日志
+查询是否开启日志记录
+SHOW log_statement;
+
+查看配置文件位置
+SHOW config_file;
+
+在postgresql.conf中设置
+log_statement = 'ddl'
+
+重启服务
+systemctl restart postgresql
+
+确认 PostgreSQL 是否把日志写到文件 -> on
+SHOW logging_collector;
+
+查看文件路径
+SHOW data_directory;
+
+查看日志文件名
+SHOW log_directory;
+
+查看日志文件名
+SHOW log_filename;
+
+查看日志内容
+------------
