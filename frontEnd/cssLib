@@ -1,4 +1,4 @@
---------------------------------------------------------------------
+-----------
 flex布局
 /*flex布局*/
 .flex{display: flex;display: -webkit-flex;}
@@ -54,7 +54,7 @@ wrap层 flex fd-c height:100%
 浏览器中input标签有默认宽度 如169px
 在flex布局中，要先给input一个小宽度，如width:1px;就能正常使用flex布局了
 flex能把input拉宽，但是不能压缩
---------------------------------------------------------------------
+-----------
 /*专属重置样式*/
 body, ul, ol, dl, dd, h1, h2, h3, h4, h5, h6, p, form, fieldset, legend, input, textarea, select, button, th, td {
   margin:0;
@@ -63,62 +63,62 @@ body, ul, ol, dl, dd, h1, h2, h3, h4, h5, h6, p, form, fieldset, legend, input, 
 div,ul,li,a,p,span,i,h1,h2,h3,header,section,footer,nav,aside,article{
   box-sizing: border-box;
 }
---------------------------------------------------------------------
+-----------
 子元素设height:100%是获取不到靠兄弟元素撑开的，未设具体高度的父级的高度的。
 普通布局
 block属性的div设height:auto是div自身高度
 flex布局
 flex属性的div设height:auto可以自动获取未设具体高度的父级高度（被兄弟子元素撑开的父级）。
---------------------------------------------------------------------
+-----------
 box-shadow 边框阴影
 box-shadow: x轴位置 y轴位置 阴影距离 阴影发散度 阴影颜色 inset内部阴影
 x轴位置，y轴位置可负，表示坐标的两端
 inset内阴影，x和y坐标需要正负变换
 10px 10px 5px 20px pink inset
---------------------------------------------------------------------
+-----------
 css权重
 类，属性选择器和伪类选择器 权重相同都是10
 class，属性选择器[type=text]，伪类选择器比如 :hover,:focus等
---------------------------------------------------------------------
+-----------
 黄金分割
 0.618 约 w/h 5/3
---------------------------------------------------------------------
+-----------
 cursor光标
 /*放大光标*/
 .plus{cursor:zoom-in;}
 /*缩小光标*/
 .reduce{cursor:zoom-out;}
---------------------------------------------------------------------
+-----------
 禁止被选中 手机端表现为：不能长按复制
 -webkit-user-select:none;
 -moz-user-select:none;
 -ms-user-select:none;
 user-select:none; 
---------------------------------------------------------------------
+-----------
 //通过样式opacity和z-index来控制dom隐藏的另一种方式
 $(instance.rArrow).css({'opacity':'0','z-index':'-1'});
 避免和样式表里的display属性冲突
--------------------------------------------------------------------- 
+----------- 
 图片绝对居中术
 <div>
     <img src=''/>
 </div>
 div{position:relative;}
 img{position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;max-height:100%;max-width:100%;}
--------------------------------------------------------------------- 
+----------- 
 三角形 向上
 .triangle-up{ width: 0; height: 0;
 border-width: 0 50px 100px 50px;//设置四边框厚度，左右50，下100    
 border-color: black transparent;//四边框颜色，上下黑，左右没色
 border-style: solid;//四边框样式}
--------------------------------------------------------------------- 
+----------- 
 清除浮动 基于bt4
 .clearfix::after{display: block;content: " ";clear: both;}
--------------------------------------------------------------------- 
+----------- 
 现代浏览器直接支持css变量
 比如
 .a{--aaa:red;background:var(--aaa);}检测可行
--------------------------------------------------------------------- 
+----------- 
 css3 背景渐变
 线性渐变（初始上下）
 background: linear-gradient(red, blue);
@@ -127,15 +127,15 @@ background: radial-gradient(red, green, blue);
 添加角度
 background: linear-gradient(90deg, red, blue);
 透明度用rgba添加
--------------------------------------------------------------------- 
+----------- 
 display:元素的框的类型
--------------------------------------------------------------------- 
+----------- 
 background多图片,相隔
 <div style="background:url(image/x.png)no-repeat 0% 0%,
 url(image/x.png)no-repeat 10% 10%,
 url(image/x.png)no-repeat 20% 20%,
 url(image/x.png)no-repeat 30% 30%"></div>
--------------------------------------------------------------------- 
+----------- 
 去除inline-block元素间距方法 父元素设置font-size: 0;
 
 css的预处理器、后处理器
@@ -801,6 +801,38 @@ document.documentElement.style.setProperty(
   '#13c2c2'
 )
 所有按钮 / 表格 / 弹窗组件自动跟着变
-------
+-----------
 3.less/sass预编译的切换主题色方法（不推荐）
+-----------
+在sass,less文件里
+@import 'xxx'其它less文件
+-----------
+sass设函数
+
+sass常用的是scss文件
+-----------
+less可以设全局类，实现类似sass的效果
+如：
+
+unit转为rem单位
+.fs(@px) {
+  font-size: unit(@px / 37.5, rem);
+}
+.w(@px) {
+  width: unit(@px / 37.5, rem);
+}
+.h(@px) {
+  height: unit(@px / 37.5, rem);
+}
+
+less中calc会计算
+实现css的calc属性方式：
+width: calc(~'100% - 60px');
+-----------
+css原生支持样式嵌套 现代浏览器（Chrome 112+, Edge 112+, Firefox 117+）
+
+.parent {
+  color: blue;
+  & .child { color: red; }
+}
 -----------
