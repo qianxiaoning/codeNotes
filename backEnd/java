@@ -5468,11 +5468,11 @@ id是id专用映射
 
 result是自定义映射
 
-association是对一
+association是一对一
 用一个参数查询一个对象，赋值到vo的一个属性上，如把deptId查询Dept赋值到vo.dept属性上
 autoMapping="true"，自动映射对应字段
 
-collection是对多
+collection是一对多
 通过一个参数查询一个集合，赋值到vo的一个属性上，如把userId查询users_roles中间表得到roleIds，把roleIds赋值到vo.roleIds属性上
 
 association*,collection*后property值会被用掉
