@@ -1768,4 +1768,18 @@ JOIN blocking_locks blk ON bl.relation = blk.relation
 JOIN pg_stat_activity a1 ON bl.pid = a1.pid
 JOIN pg_stat_activity a2 ON blk.blocking_pid = a2.pid
 WHERE a1.datname = 'xxx';
+
+根据pid查询具体信息，如应用名
+SELECT 
+    pid,
+    usename,
+    datname,
+    application_name,
+    client_addr,
+    client_port,
+    backend_start,
+    state,
+    query
+FROM pg_stat_activity
+WHERE pid = 3982088;
 ------------
