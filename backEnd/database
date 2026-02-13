@@ -1774,7 +1774,7 @@ SELECT
     pid,
     usename,
     datname,
-    application_name,
+    application_name, // 应用名
     client_addr,
     client_port,
     backend_start,
@@ -1782,4 +1782,6 @@ SELECT
     query
 FROM pg_stat_activity
 WHERE pid = 3982088;
+如果找不到pid对应程序，直接把这个pid杀掉就可以解决问题了
+
 ------------
