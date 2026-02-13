@@ -1665,3 +1665,107 @@ SHOW log_filename;
 
 查看日志内容
 ------------
+mybatis resultMap和collection的使用
+
+<!-- 结果集映射：将扁平的查询结果映射为“用户-项目列表”的层级结构 -->
+<resultMap id="UserAndUnitsMap" type="com.els.common.core.domain.vo.UserAndUnits">
+	<!-- 主对象：用户基本信息 -->
+	<id property="account" column="account"/>
+	<result property="userName" column="user_name"/>
+	<result property="userType" column="user_type"/>
+	<!-- 集合映射：自动将多行结果中的项目信息聚合到 units 列表中 -->
+	<collection property="units" ofType="com.els.common.core.domain.vo.UnitBaseVO">
+		<id property="unitId" column="unit_id"/>
+		<result property="unitName" column="unit_name"/>
+	</collection>
+</resultMap>
+
+<!-- 查询苏州港用户及其关联的项目信息 -->
+<select id="selectSzgUserAndUnits" resultMap="UserAndUnitsMap">
+	SELECT
+	u.account,
+	u.user_name,
+	<!-- 根据角色判断用户类型：若拥有“安健环”角色则标记为“安健环”，否则为“苏州港用户” -->
+	CASE
+	WHEN EXISTS (SELECT 1 FROM ut_base_user_role ur2 JOIN ut_base_role r2 ON ur2.role_id = r2.id WHERE ur2.user_id = u.id AND r2.role_name = '安健环') THEN '安健环'
+	ELSE '苏州港用户'
+	END AS user_type,
+	<!-- 关联的项目信息 -->
+	unit.id AS unit_id,
+	unit.unit_name
+	FROM ut_base_user u
+	<!-- 左连接关联用户与项目关系表 -->
+	LEFT JOIN ut_base_user_re_unit ure ON u.id = ure.base_user_id
+	<!-- 左连接关联项目详情表：仅筛选指定 groupInfo 且状态正常的项目 -->
+	<!-- 注意：过滤条件放在 ON 子句中，确保即使无关联项目，用户记录依然能被查出 -->
+	LEFT JOIN ut_unit_base_info unit ON ure.unit_id = unit.id AND unit.groupinfo = #{groupInfo} AND unit.status = 1
+	WHERE u.org_code = #{orgCode}
+	AND u.is_delete = 0
+	ORDER BY u.create_date DESC, unit.unit_order ASC
+</select>
+------------
+慢sql锁阻塞 排查
+
+查看当前正在运行的连接，程序中止了，数据库连接不会停止
+
+SELECT 
+    pid, 
+    usename, 
+    datname, 
+    query_start, 
+    state, 
+    query 
+FROM pg_stat_activity 
+WHERE state != 'idle' 
+  AND query NOT ILIKE '%pg_stat_activity%'
+ORDER BY query_start ASC;
+
+终止单个异常会话（开始时间很早的）
+-- 替换成你查到的PID，比如 12345
+SELECT pg_terminate_backend(单个PID);
+
+-- 批量终止所有info_detail表的DELETE会话
+SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE state != 'idle' 
+  AND query ILIKE '%DELETE FROM info_detail%'
+  AND pid != pg_backend_pid(); -- 排除当前执行这条SQL的会话
+
+精准查目标表的锁
+SELECT
+    l.pid,
+    l.mode,
+    l.granted,
+    a.query,
+    a.query_start,
+    a.state
+FROM pg_locks l
+JOIN pg_stat_activity a ON l.pid = a.pid
+WHERE
+    l.relation = 'info_detail'::regclass  -- 你的目标表名
+    AND l.database = (SELECT oid FROM pg_database WHERE datname = 'xxx');
+
+查锁阻塞链（定位谁阻塞了谁）
+WITH blocked_locks AS (
+    SELECT pid, relation::regclass, mode FROM pg_locks WHERE granted = false
+),
+blocking_locks AS (
+    SELECT
+        l.pid AS blocking_pid,
+        l.relation::regclass,
+        l.mode
+    FROM pg_locks l
+    JOIN blocked_locks bl ON l.relation = bl.relation
+    WHERE l.granted = true
+)
+SELECT
+    bl.pid AS blocked_pid,
+    a1.query AS blocked_query,
+    blk.blocking_pid,
+    a2.query AS blocking_query
+FROM blocked_locks bl
+JOIN blocking_locks blk ON bl.relation = blk.relation
+JOIN pg_stat_activity a1 ON bl.pid = a1.pid
+JOIN pg_stat_activity a2 ON blk.blocking_pid = a2.pid
+WHERE a1.datname = 'xxx';
+------------
