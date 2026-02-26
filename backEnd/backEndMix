@@ -261,3 +261,27 @@ sftp只需要服务器上有ssh服务器，如OpenSSH服务器，就可以使用
 22端口
 Session session = jsch.getSession(user, host, port);
 ---------------
+Arthas 接口耗时诊断工具
+
+下载
+curl -O https://arthas.aliyun.com/arthas-boot.jar
+
+启动，然后选java进程
+java -jar arthas-boot.jar
+或者指定pid
+java -jar arthas-boot.jar <java pid>
+java -jar arthas-boot.jar 13696
+
+命令：
+trace 调用链路耗时的核心，能精准定位到每个方法的执行时间
+# 持续监控该接口耗时，跟踪getUserInfo方法，显示耗时>50ms的调用链路
+trace com.example.demo.controller.UserController getUserInfo '#cost > 50'
+# 保存结果
+trace com.example.demo.controller.UserController getUserInfo '#cost > 50' > trace_result.log
+
+monitor 实时监控方法的调用次数、成功 / 失败数、平均耗时、最大 / 最小耗时，适合长期观察
+
+watch 知道方法内具体代码行的耗时
+
+profiler 全局排查慢调用
+---------------

@@ -56,3 +56,7 @@ Get-Process | Sort-Object -Property PrivateMemorySize -Descending | Select-Objec
     @{Name="工作集(MB)";Expression={[math]::Round([long]$_.WorkingSet/1MB,2)}},
     @{Name="文件路径";Expression={$_.Path}} | Format-Table -AutoSize
 -----------------------
+tasklist | findstr java
+
+# 查看所有 Java 进程的 PID + 完整启动命令行（包含 Jar 包路径）
+wmic process where "name='java.exe'" get ProcessId,CommandLine /format:list
