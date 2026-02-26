@@ -274,10 +274,15 @@ java -jar arthas-boot.jar 13696
 
 命令：
 trace 调用链路耗时的核心，能精准定位到每个方法的执行时间
-# 持续监控该接口耗时，跟踪getUserInfo方法，显示耗时>50ms的调用链路
-trace com.example.demo.controller.UserController getUserInfo '#cost > 50'
-# 保存结果
-trace com.example.demo.controller.UserController getUserInfo '#cost > 50' > trace_result.log
+trace [options] class-pattern method-pattern [condition-express]
+class-pattern：要跟踪的类名
+method-pattern：要跟踪的方法名
+condition-express：可选的过滤条件（Ognl 表达式，如 #cost > 50 表示只显示耗时超过 50ms 的调用）
+
+# 持续监控getUserInfo方法，显示耗时>50ms的调用链路，跟踪 1 次调用，保存结果
+trace com.example.demo.controller.UserController getUserInfo '#cost > 50' -n 1 > trace_result.log
+# 监控Service方法
+trace com.els.system.service.AService getReport '#cost > 0'
 
 monitor 实时监控方法的调用次数、成功 / 失败数、平均耗时、最大 / 最小耗时，适合长期观察
 
