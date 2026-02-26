@@ -1708,6 +1708,9 @@ mybatis resultMap和collection的使用
 
 查看当前正在运行的连接，程序中止了，数据库连接不会停止
 
+基本
+SELECT * FROM pg_stat_activity WHERE state = 'active';  
+
 SELECT 
     pid, 
     usename, 
@@ -1977,4 +1980,59 @@ IO 成为瓶颈
 如
 WHERE unit_id = ?
 AND date BETWEEN ? AND ?
+------------
+查看sql执行计划，查看是否走索引，sql逻辑执行顺序
+EXPLAIN 
+select ...
+
+MySQL
+✅ 用上了：显示ref/range（MySQL），并显示具体的索引名称。
+❌ 没用上：显示 ALL（MySQL）。
+
+PostgreSQL
+✅ 用上了：显示Index Scan（PostgreSQL），并显示具体的索引名称。
+❌ 没用上：显示 Seq Scan（PostgreSQL，全表扫描）。
+------------
+可删除索引（满足任一即可）
+使用次数为 0：且观察周期足够长（如 1 个月以上），排除临时业务低谷。
+重复索引：联合索引包含了单列索引（如 (a,b) 索引存在时，a 索引就是冗余）。
+维护成本远大于收益：索引使用频率极低，但表的写入（INSERT/UPDATE/DELETE）频繁，每次写入都要更新索引，消耗资源。
+
+谨慎删除的索引
+使用次数低但关键：例如某些月度 / 季度报表查询会用到的索引，平时使用少但不可缺少。
+------------
+CONCURRENTLY PostgreSQL操作索引时不锁表
+
+CREATE INDEX CONCURRENTLY idx_user_id ON orders(user_id);
+
+DROP INDEX CONCURRENTLY idx_user_id;
+重建索引
+REINDEX INDEX CONCURRENTLY idx_user_id;
+------------
+检查索引使用情况
+
+PostgreSQL
+
+-- 查看所有索引的使用情况
+SELECT 
+  schemaname AS 模式名,
+  relname AS 表名,
+  indexrelname AS 索引名,
+  idx_scan AS 索引扫描次数,  -- 核心：索引被使用的次数
+  idx_tup_read AS 索引读取行数,
+  idx_tup_fetch AS 索引获取行数
+FROM pg_stat_user_indexes
+ORDER BY idx_scan ASC;  -- 按使用次数升序，优先看到未使用的索引
+
+-- 查看未被使用的索引
+SELECT 
+  schemaname,
+  relname,
+  indexrelname
+FROM pg_stat_user_indexes
+WHERE idx_scan = 0  -- 扫描次数为0
+  AND indexrelname NOT LIKE '%_pkey%';  -- 排除主键索引
+
+-- PostgreSQL 禁用索引
+ALTER INDEX 索引名 DISABLE;  
 ------------
