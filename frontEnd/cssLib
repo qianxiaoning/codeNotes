@@ -835,6 +835,13 @@ css原生支持样式嵌套 现代浏览器（Chrome 112+, Edge 112+, Firefox 11
   color: blue;
   & .child { color: red; }
 }
+
+/* <style scoped>下用深度选择器deep */
+.grandfather {
+    :deep(.el-table__body-wrapper) {
+        background-color: red;
+    }
+}
 -----------
 pointer-events: none; // 元素不能对鼠标事件做出反应
 使用场景：
