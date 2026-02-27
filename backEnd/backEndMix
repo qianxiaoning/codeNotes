@@ -286,9 +286,12 @@ trace com.example.demo.controller.UserController getUserInfo '#cost > 50' -n 1 >
 # 监控Service方法
 trace com.els.system.service.AService getReport '#cost > 0' -n 1 
 
+profiler 全局排查慢调用（Linux 和 macOS可用）
+直观地看到整个调用链上所有子孙方法的耗时占比
+profiler start
+profiler stop --format html
+
 monitor 实时监控方法的调用次数、成功 / 失败数、平均耗时、最大 / 最小耗时，适合长期观察
 
 watch 知道方法内具体代码行的耗时
-
-profiler 全局排查慢调用
 ---------------
