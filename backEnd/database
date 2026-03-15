@@ -2036,3 +2036,134 @@ WHERE idx_scan = 0  -- 扫描次数为0
 -- PostgreSQL 禁用索引
 ALTER INDEX 索引名 DISABLE;  
 ------------
+大数据量表-表分区具体步骤
+
+总步骤
+1 评估分区策略（时间分区）
+2 创建分区新表
+3 写迁移脚本（分批）
+4 开启双写或触发器
+5 迁移历史数据
+6 校验数据
+7 rename table 切换
+8 停止双写
+9 删除旧表
+
+重点步骤：
+老表：
+CREATE TABLE user_log (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT,
+    action VARCHAR(50),
+    create_time DATETIME,
+    INDEX idx_time(create_time),
+    INDEX idx_user(user_id)
+);
+建新表
+CREATE TABLE `user_log_new` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) DEFAULT NULL,
+  `action` varchar(50) DEFAULT NULL,
+  `create_time` datetime NOT NULL,
+  PRIMARY KEY (`id`,`create_time`),
+  KEY `idx_user` (`user_id`),
+  KEY `idx_create_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+PARTITION BY RANGE COLUMNS(`create_time`) (
+	-- 用python或者shell脚本生成分区语句
+  PARTITION `p202401` VALUES LESS THAN ('2024-02-01'),
+  PARTITION `p202402` VALUES LESS THAN ('2024-03-01'),
+  PARTITION `p202403` VALUES LESS THAN ('2024-04-01'),
+  PARTITION `pmax` VALUES LESS THAN MAXVALUE
+);
+
+迁移历史数据，分批迁移，避免锁表
+INSERT INTO user_log_p
+SELECT *
+FROM user_log
+WHERE id > 100000
+LIMIT 10000;
+
+当前数据双写
+业务层双写
+或者触发器
+CREATE TRIGGER trg_user_log_insert
+AFTER INSERT ON user_log
+FOR EACH ROW
+INSERT INTO user_log_p VALUES (NEW.id, NEW.user_id, NEW.action, NEW.create_time);
+
+校验数据
+1.总行数校验
+SELECT COUNT(*) FROM old_table;
+SELECT COUNT(*) FROM new_table;
+2.按时间分区校验
+SELECT DATE(create_time), COUNT(*)
+FROM old_table
+GROUP BY DATE(create_time);
+
+SELECT DATE(create_time), COUNT(*)
+FROM new_table
+GROUP BY DATE(create_time);
+3.checksum 校验（更严格）
+SELECT
+COUNT(*) ,
+SUM(id),
+SUM(user_id)
+FROM old_table;
+
+SELECT
+COUNT(*) ,
+SUM(id),
+SUM(user_id)
+FROM new_table;
+
+切换表
+RENAME TABLE
+user_log TO user_log_old,
+user_log_p TO user_log;
+
+以后新建分区
+ALTER TABLE user_log 
+REORGANIZE PARTITION pmax INTO (
+  PARTITION p202604 VALUES LESS THAN ('2026-05-01'),
+  PARTITION pmax VALUES LESS THAN MAXVALUE
+);
+
+重新统计
+ANALYZE TABLE user_log;
+
+查看分区数据行数
+SELECT PARTITION_NAME, TABLE_ROWS, PARTITION_DESCRIPTION
+FROM information_schema.PARTITIONS
+WHERE TABLE_SCHEMA = 'test'
+AND TABLE_NAME   = 'user_log';
+
+查看指定分区数据
+SELECT *
+FROM user_log
+PARTITION (pmax);
+
+验证查询是否按分区查询
+EXPLAIN PARTITIONS
+SELECT *
+FROM user_log
+WHERE create_time > '2026-02-01';
+
+跨分区查表、改表，mysql会自动跨分区执行，sql不变
+
+删除指定分区（注意：会把分区数据也删除！）
+ALTER TABLE user_log
+DROP PARTITION p202601;
+
+热数据：最近 1~3 年数据
+放MySQL在线数据库的分区表
+
+温数据：最近 3~10 年数据
+放MySQL归档数据库archive_db.user_log 或 ClickHouse
+
+冷数据：10年以上数据
+放对象存储 / 大数据
+导出成文件CSV / Parquet
+保存到：
+Hadoop, Hive, S3, OSS, HDFS
+------------
