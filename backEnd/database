@@ -2167,3 +2167,20 @@ DROP PARTITION p202601;
 保存到：
 Hadoop, Hive, S3, OSS, HDFS
 ------------
+1.数仓和传统数据库区别
+传统数据库（OLTP）支撑业务系统，高频写入，CRUD为主
+数据仓库（OLAP）支撑分析决策，批量导入，GROUP BY / 统计分析
+
+2.如何满足使用大数据仓库，但是也希望能够快速查询
+OLTP + OLAP 结合
+列式存储
+数据分层与预处理
+数据分区与索引
+物化视图
+向量化执行
+
+3.如何满足使用大数据仓库，但是也希望能够快速修改、删除、查询
+OLTP + OLAP 结合
+实时数仓：Apache Doris, StarRocks, ClickHouse（搭配更新引擎）
+数据湖/湖仓一体:Apache Iceberg, Apache Hudi, Delta Lake。
+------------
