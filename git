@@ -697,8 +697,14 @@ and the repository exists.
 git tag v1.0 打标签
 tag标签是某一时间点上的版本，和分支无关，类似于"不可编辑的分支"
 把本地代码push以后，1.在本地打tag 2.再把tag push，此tag会为此时间点上的版本
-
-较具体的git分支管理（gitflow流程）：
+--------------
+开发新功能、改线上紧急bug并行，最简分支设计：（推荐）
+固定分支：main(生产)、test(测试)、dev(开发)
+临时分支：feature-*（新功能）、hotfix-*（紧急修复）。GitLab、GitHub勾选 “Delete source branch when merge request is accepted”（合并后自动删除源分支）。
+新功能：dev → feature-* → test测试后 → main
+紧急 Bug：main → hotfix-* → test测试后 → main、dev
+--------------
+较具体的git分支管理（gitflow流程）：（较重）
 稳定分支：master
 开发分支：develop
 线上紧急bug，beta发：hotfix，生产环境发tagv1.1.1
