@@ -5455,33 +5455,6 @@ public JsonResult doInsertObject(@RequestBody RolesMenus rolesMenus) {
 	System.out.println(rolesMenus.getMenusIds());//Integer数组
 }
 -----------------
-mybatis鉴别器
-
-resultMap内容：
-必须按顺序写
-(constructor?,id*,result*,association*,collection*,discriminator?)
-
-javaType定义po类型
-ofType定义集合中类型
-
-id是id专用映射
-
-result是自定义映射
-
-association是一对一
-用一个参数查询一个对象，赋值到vo的一个属性上，如把deptId查询Dept赋值到vo.dept属性上
-autoMapping="true"，自动映射对应字段
-
-collection是一对多
-通过一个参数查询一个集合，赋值到vo的一个属性上，如把userId查询users_roles中间表得到roleIds，把roleIds赋值到vo.roleIds属性上
-
-association*,collection*后property值会被用掉
-得用id*,result*重新给property赋值
-
-insert和update时
-useGeneratedKeys="true"使用自动生成的主键值
-keyProperty="id" 将获取的主键值赋值给po类中的xx属性，通过setXx方法
------------------
 阿里分层领域模型规约：
 vo 视图层传递，controller和前端的入参出参，使用
 dto 服务层传递，微服务间service互相调用入参出参，或者没有do时，代替do存入表中，使用
@@ -6772,20 +6745,6 @@ public class TemplateMethodDemo {
 -----------------
 mybatisPlus对条件构造器的清除
 QueryWrapper.clear();
------------------
-mybatis resultMap传多个参数
-<select id="a" resultMap="aRM">
-	select a, b_b, c_c, d_d from xxx
-	where b_b = #{bb} and c_c = #{cc}
-</select>
-
-<resultMap id="aRM" type="xxx.vo">
-	<collection property="dtoProperty"
-				select="xxx.xxx"
-				column="{bb=b_b,cc=c_c,dd=d_d}">
-				<!-- column="{自定义入参名=查出来的表字段名}" -->
-	</collection>
-</resultMap>
 -----------------
 LambdaQueryWrapper
 LambdaQueryWrapper<Do> lambdaQw = new LambdaQueryWrapper<>();

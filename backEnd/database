@@ -1272,6 +1272,20 @@ force index强制索引
 4. 临时表
 5. 分区/分表
 ------------
+sql提效-EXISTS 替代 LEFT JOIN 
+
+条件：
+当只需要判断关联数据是否存在，
+而不需要从关联表中获取具体字段
+
+如找出“下过订单的用户”
+EXISTS > LEFT JOIN + DISTINCT
+
+找出不为空的记录
+EXISTS > LEFT JOIN ... WHERE ... IS NOT NULL
+
+此时，用EXISTS可以减少中间结果集大小，降低 IO 和 CPU 消耗
+------------
 mysql子查询
 子查询是嵌套在另一个 SELECT, INSERT, UPDATE, 或 DELETE查询的 SQL 查询
 子查询可以在 WHERE 子句中、FROM 子句或 SELECT 列表中出现。
@@ -1698,44 +1712,196 @@ SHOW log_filename;
 
 查看日志内容
 ------------
-mybatis resultMap和collection的使用
+mybatis鉴别器
 
-<!-- 结果集映射：将扁平的查询结果映射为“用户-项目列表”的层级结构 -->
-<resultMap id="UserAndUnitsMap" type="com.els.common.core.domain.vo.UserAndUnits">
-	<!-- 主对象：用户基本信息 -->
-	<id property="account" column="account"/>
-	<result property="userName" column="user_name"/>
-	<result property="userType" column="user_type"/>
-	<!-- 集合映射：自动将多行结果中的项目信息聚合到 units 列表中 -->
-	<collection property="units" ofType="com.els.common.core.domain.vo.UnitBaseVO">
-		<id property="unitId" column="unit_id"/>
-		<result property="unitName" column="unit_name"/>
-	</collection>
+resultMap内容：
+必须按顺序写
+(constructor?,id*,result*,association*,collection*,discriminator?)
+
+javaType定义po类型
+ofType定义集合中类型
+
+id是id专用映射
+
+result是自定义映射
+
+<association>是一对一，多对一
+
+<collection>是一对多
+
+insert和update时
+useGeneratedKeys="true"使用自动生成的主键值
+keyProperty="id" 将获取的主键值赋值给po类中的xx属性，通过setXx方法
+------------
+MyBatis<resultMap>定义 SQL 查询结果和 Java 对象之间的映射规则
+
+一、基础使用：字段映射
+// 实体类
+public class User {
+    private Integer userId;        // 和数据库字段名不一致
+    private String userName;       // 和数据库字段名不一致
+    private String phoneNumber;    // 和数据库字段名不一致
+    private Date createTime;       // 和数据库字段名不一致
+}
+-- 数据库表字段
+CREATE TABLE user (
+    id INT PRIMARY KEY,           -- 对应 userId
+    name VARCHAR(32),              -- 对应 userName
+    phone VARCHAR(11),             -- 对应 phoneNumber
+    created_at DATETIME            -- 对应 createTime
+);
+<!-- 1. 定义 resultMap -->
+<resultMap id="userMap" type="User">
+    <!-- 主键映射：使用 id 标签（有性能优化） -->
+    <id property="userId" column="id"/>
+    <!-- 普通字段映射：使用 result 标签 -->
+    <result property="userName" column="name"/>
+    <result property="phoneNumber" column="phone"/>
+    <result property="createTime" column="created_at"/>
+</resultMap>
+<!-- 2. 使用 resultMap -->
+<select id="getUserById" resultMap="userMap">
+    SELECT id, name, phone, created_at 
+    FROM user 
+    WHERE id = #{id}
+</select>
+
+二、关联映射：association 和 collection
+
+<collection> <association>正确用法
+
+❌ N+1 查询问题：嵌套查询（Nested Select） 
+在 <collection> 或 <association> 中使用 select="xxx" 属性去调用另一条 SQL。禁止
+
+✅ 提效做法：嵌套结果（Nested Results / JOIN 联表），自己写一条带有 LEFT JOIN 的 SQL，把所有字段一次性查出来（平铺的宽表），然后利用 resultMap 自动折叠。 优势 ：只需 1 次网络交互，把压力交给数据库的 JOIN 引擎。
+
+✅ <id> 标签不能漏写，作为分组和去重的 HashMap Key
+
+分页查询
+❌ <collection> + limit
+✅ <collection> + limit分两步走（分步 IN 查询）
+✅ <association> + limit
+
+<collection>一对多
+场景：查询所有部门及其员工
+// 部门实体（一方）
+public class Dept {
+    private Integer id;
+    private String name;
+    private List<Employee> employees;  // 一对多：部门下的员工列表
+}
+// 员工实体（多方）
+public class Employee {
+    private Integer id;
+    private String name;
+}
+<resultMap id="deptWithEmployeesMap" type="Dept">
+    <!-- 部门字段映射 -->
+    <id property="id" column="dept_id"/>
+    <result property="name" column="dept_name"/>
+    
+    <!-- collection：一对多关联，SQL 查询出的平铺数据后，将员工字段折叠成 List<Employee> -->
+    <collection property="employees" ofType="Employee">
+        <id property="id" column="emp_id"/>
+        <result property="name" column="emp_name"/>
+    </collection>
+</resultMap>
+<!-- 查询所有部门及其员工 -->
+<select id="findAllDeptsWithEmployees" resultMap="deptWithEmployeesMap">
+    SELECT 
+        d.id AS dept_id,
+        d.name AS dept_name,
+        e.id AS emp_id,
+        e.name AS emp_name
+    FROM dept d
+    LEFT JOIN employee e ON d.id = e.dept_id
+    ORDER BY d.id, e.id
+</select>
+
+<association>一对一
+场景：查询订单详情，包含用户地址（多级association）
+public class Order {
+    private Integer id;
+    private String orderNo;
+    private User user;           // 用户
+}
+public class User {
+    private Integer id;
+    private String username;
+    private Address address;      // 用户地址（一对一）
+}
+public class Address {
+    private Integer id;
+    private String province;
+    private String city;
+    private String detail;
+}
+<resultMap id="orderDetailMap" type="Order">
+    <id property="id" column="order_id"/>
+    
+    <!-- 第一级association：用户 -->
+    <association property="user" javaType="User">
+        <id property="id" column="user_id"/>
+        <result property="username" column="username"/>
+        
+        <!-- 第二级association：地址 -->
+        <association property="address" javaType="Address">
+            <id property="id" column="address_id"/>
+            <result property="province" column="province"/>
+            <result property="city" column="city"/>
+            <result property="detail" column="detail"/>
+        </association>
+    </association>
 </resultMap>
 
-<!-- 查询苏州港用户及其关联的项目信息 -->
-<select id="selectSzgUserAndUnits" resultMap="UserAndUnitsMap">
-	SELECT
-	u.account,
-	u.user_name,
-	<!-- 根据角色判断用户类型：若拥有“安健环”角色则标记为“安健环”，否则为“苏州港用户” -->
-	CASE
-	WHEN EXISTS (SELECT 1 FROM ut_base_user_role ur2 JOIN ut_base_role r2 ON ur2.role_id = r2.id WHERE ur2.user_id = u.id AND r2.role_name = '安健环') THEN '安健环'
-	ELSE '苏州港用户'
-	END AS user_type,
-	<!-- 关联的项目信息 -->
-	unit.id AS unit_id,
-	unit.unit_name
-	FROM ut_base_user u
-	<!-- 左连接关联用户与项目关系表 -->
-	LEFT JOIN ut_base_user_re_unit ure ON u.id = ure.base_user_id
-	<!-- 左连接关联项目详情表：仅筛选指定 groupInfo 且状态正常的项目 -->
-	<!-- 注意：过滤条件放在 ON 子句中，确保即使无关联项目，用户记录依然能被查出 -->
-	LEFT JOIN ut_unit_base_info unit ON ure.unit_id = unit.id AND unit.groupinfo = #{groupInfo} AND unit.status = 1
-	WHERE u.org_code = #{orgCode}
-	AND u.is_delete = 0
-	ORDER BY u.create_date DESC, unit.unit_order ASC
+<select id="getOrderDetail" resultMap="orderDetailMap">
+    SELECT
+        o.id AS order_id,
+        u.id AS user_id,
+        u.username,
+        a.id AS address_id,
+        a.province,
+        a.city,
+        a.detail
+    FROM `order` o
+    LEFT JOIN `user` u ON o.user_id = u.id
+    LEFT JOIN `address` a ON u.address_id = a.id
+    WHERE o.id = #{orderId}
 </select>
+
+三、继承与复用：extends
+public class BaseEntity {
+    private Integer id;
+    private Date createTime;
+    private Date updateTime;
+}
+public class User extends BaseEntity {
+    private String username;
+    private String phone;
+    private String email;
+}
+<!-- 1. 定义基础映射 -->
+<resultMap id="baseMap" type="BaseEntity">
+    <id property="id" column="id"/>
+    <result property="createTime" column="create_time"/>
+    <result property="updateTime" column="update_time"/>
+</resultMap>
+<!-- 2. 继承基础映射，添加子类字段 -->
+<resultMap id="userMap" type="User" extends="baseMap">
+    <result property="username" column="username"/>
+    <result property="phone" column="phone"/>
+    <result property="email" column="email"/>
+</resultMap>
+<!-- 3. 使用 -->
+<select id="getUser" resultMap="userMap">
+    SELECT id, username, phone, email, create_time, update_time
+    FROM user
+    WHERE id = #{id}
+</select>
+
+四、构造函数映射：constructor
+
+五、类型处理器：typeHandler
 ------------
 慢sql锁阻塞 排查
 
