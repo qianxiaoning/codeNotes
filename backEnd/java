@@ -9103,3 +9103,33 @@ springboot启动全过程
 一句话总结：
 - Java（Spring Boot）项目启动不是“直接 new 一堆对象”，而是：
    先建容器和配置环境，再做条件化自动装配，最后统一实例化与依赖注入，并启动 Web 容器对外服务 。
+-----------
+@Autowired 和 @Resource区别
+核心区别：@Autowired 默认按类型， @Resource 默认按名称。
+
+来源不同
+@Resource：Java 官方标准（JSR-250），所有框架通用
+@Autowired：Spring 专属，只能在 Spring 里用
+
+装配规则不同
+- @Autowired ：先按 类型 找 Bean；若有多个同类型，再结合字段名或 @Qualifier 精确指定。
+- @Resource ：先按 名称 （name）找；找不到再按类型匹配（常见实现行为）。
+
+配合注解
+- @Autowired 常配 @Qualifier("beanName") 解决多实现冲突。
+- @Resource(name="beanName") 直接指定 Bean 名。
+
+注入位置
+- @Autowired ：字段、setter、构造器都常用（构造器注入最推荐）。
+- @Resource ：常用于字段/setter。
+
+什么场景必须用 @Resource，不用 @Autowired？
+想按名称优先注入，不想按类型
+@Autowired 天生按类型找
+@Resource 默认按名字匹配，更稳定、不容易冲突
+
+跨框架、非 Spring 项目、需要通用性
+@Autowired 是 Spring 专属注解，换框架就失效
+@Resource 是 Java 标准注解，所有支持 DI 的框架都能用
+→ 项目追求通用性、可移植性时用 @Resource
+-----------
