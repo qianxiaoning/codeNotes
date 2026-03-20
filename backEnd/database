@@ -2391,7 +2391,7 @@ OLTP + OLAP 结合
 4.拆解和隔离测试
 5.数据库连接IDE工具
 
-数据库加异常捕获（定位具体哪一行）
+2.数据库加异常捕获（定位具体哪一行）
 
 MySQL 示例：
 DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
