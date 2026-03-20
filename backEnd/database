@@ -2383,3 +2383,42 @@ OLTP + OLAP 结合
 实时数仓：Apache Doris, StarRocks, ClickHouse（搭配更新引擎）
 数据湖/湖仓一体:Apache Iceberg, Apache Hudi, Delta Lake。
 ------------
+数据库存储过程（长sql）报错卡顿分析 方式
+
+1.看具体的错误信息
+2.数据库加异常捕获语句
+3.“打桩输出法” (类似 print 调试)
+4.拆解和隔离测试
+5.数据库连接IDE工具
+
+数据库加异常捕获（定位具体哪一行）
+
+MySQL 示例：
+DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+BEGIN
+    SELECT 'error occurred', v_id;
+END;
+
+PostgreSQL（强大）示例：
+
+BEGIN
+    -- 逻辑
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'error: %', SQLERRM;
+END;
+
+DO $$
+DECLARE
+    v_id INT := 100;
+BEGIN
+    -- 模拟异常
+    IF v_id = 100 THEN
+        RAISE EXCEPTION 'v_id cannot be 100';
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        -- 打印异常信息
+        RAISE NOTICE 'Exception: %', SQLERRM;
+END $$;
+------------
