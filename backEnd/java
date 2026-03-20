@@ -9054,3 +9054,52 @@ jar生产环境启动参数（ai查解析含义，可让ai优化）
 -javaagent:xxx.jar 
 -jar xxx.jar
 -----------
+springboot启动全过程
+1.先由 SpringApplication.run 完成引导；
+
+2.再加载配置环境（yml、环境变量、profile）；
+
+3.然后创建并刷新 IoC 容器，完成自动装配和依赖注入；
+
+4.最后启动内嵌 Tomcat 对外提供服务。
+其中核心是 refresh 阶段，它会完成 Bean 的注册、实例化、注入和生命周期回调，应用最终进入可用状态。”
+
+主线记： 引导启动 → 读取配置 → 容器刷新 → 自动装配 → Bean注入 → Web容器启动 。
+1.JVM 启动
+- 加载主类，执行 main() 。
+
+2.SpringApplication.run() 引导
+- 推断应用类型（Servlet / Reactive / None）。
+- 加载启动监听器、初始化器（ ApplicationListener / ApplicationContextInitializer ）。
+
+3.准备 Environment（配置体系）
+- 组装配置源：命令行参数、环境变量、 application.yml 、外部配置中心等。
+- 解析 spring.profiles.active ，决定激活哪些配置。
+
+4.创建 ApplicationContext
+- Web 项目一般创建 AnnotationConfigServletWebServerApplicationContext 。
+
+5.加载 BeanDefinition（装配前的“注册表”）
+- 处理 @ComponentScan 、 @Configuration 、 @Import ，把候选 Bean 先注册成定义。
+
+6.refresh()（核心阶段）
+- 调用各种 BeanFactoryPostProcessor 、 BeanPostProcessor 。
+- 完成自动装配、实例化单例 Bean、依赖注入、生命周期回调。
+
+7.启动 WebServer
+- 内嵌 Tomcat/Jetty/Undertow 启动并绑定端口。
+
+8.执行 Runner
+- CommandLineRunner / ApplicationRunner 执行，应用进入“可用”状态。
+
+“装配”是怎么发生的
+- 手动装配
+  - @Bean 、 @Component 、 @Service 、 @Repository 。
+- 自动装配（Spring Boot核心）
+  - @SpringBootApplication 里包含 @EnableAutoConfiguration 。
+  - Boot 根据 classpath、配置项、条件注解（ @ConditionalOnClass / @ConditionalOnMissingBean 等）决定是否装配某个组件。
+  - Boot 2 常见入口是 spring.factories ；Boot 3 主要是 AutoConfiguration.imports 。
+
+一句话总结：
+- Java（Spring Boot）项目启动不是“直接 new 一堆对象”，而是：
+   先建容器和配置环境，再做条件化自动装配，最后统一实例化与依赖注入，并启动 Web 容器对外服务 。
