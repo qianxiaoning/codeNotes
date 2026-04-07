@@ -1249,6 +1249,8 @@ LEFT JOIN b
   AND b.条件 = ? // 左表写在on里，不会起过滤作用，因为left join；右表条件写在on里可以起到过滤作用，所以右表条件写在on里，减少关联数据量，提升性能
 WHERE a.条件 = ?
 
+inner join，两表条件写在on和where效果一样，为了语义化，除了关联条件，其他条件都建议写在where里面
+
 索引建法
 INDEX idx_a_where (a_condition);
 INDEX idx_b_join_on (a_id, b_condition);
