@@ -1254,7 +1254,7 @@ INDEX idx_a_where (a_condition);
 INDEX idx_b_join_on (a_id, b_condition);
 
 优化顺序（重点）
-1.WHERE a.条件 = ?，缩小驱动表，谁过滤后更小 → 谁做驱动表
+1.WHERE a.条件 = ?，缩小驱动表（left join左表，right join就是右表），谁过滤后更小 → 谁做驱动表
 2.被驱动表的过滤条件写在on里面，关联时直接过滤，减少关联数据量，不生成临时表，且可以走索引(a_id, b_condition);
 3.被驱动表 b 必须建联合索引idx(关联字段, 过滤字段, 查询字段)，示例：idx(a_id, status, name)，建查询字段为了索引覆盖
 4.大表严禁 LEFT JOIN 后再 ORDER BY
