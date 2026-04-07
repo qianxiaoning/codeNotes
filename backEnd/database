@@ -1241,12 +1241,12 @@ Optimize table tableName;
 ------------
 两张大数据量表left join查询优化
 
-最优写法：
+最优写法：（重点）
 SELECT ...
 FROM a
 LEFT JOIN b
   ON a.id = b.a_id
-  AND b.条件 = ?
+  AND b.条件 = ? // 左表写在on里，不会起过滤作用，因为left join；右表条件写在on里可以起到过滤作用，所以右表条件写在on里，减少关联数据量，提升性能
 WHERE a.条件 = ?
 
 索引建法
