@@ -742,3 +742,6 @@ sed -n '123406,123506p' app.log
 只取第一个命中点上下50行（一步到位）
 line=$(grep -n "2026-03-10 01:00:00" app.log | head -1 | cut -d: -f1); sed -n "$((line-50)),$((line+50))p" app.log
 ---------------
+grep在当前目录下所有文件中，查找关键字，返回关键字所在行
+grep whatYouSearch *
+---------------
