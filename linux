@@ -744,4 +744,11 @@ line=$(grep -n "2026-03-10 01:00:00" app.log | head -1 | cut -d: -f1); sed -n "$
 ---------------
 grep在当前目录下所有文件中，查找关键字，返回关键字所在行
 grep whatYouSearch *
+
+查找匹配行After 50行
+grep -A 50 'xx' xx.log
+查找匹配行Before 50行
+grep -B 50 'xx' xx.log
+查找匹配行上下各50行（-C = --context）
+grep -C 50 'xx' xx.log
 ---------------
