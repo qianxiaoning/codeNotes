@@ -45,3 +45,20 @@ gpt5.2
 Grok Code
 Amp Code/AmpCode Sourcegraph公司
 -------------
+opencode常用命令
+
+列出所有会话session
+opencode session list
+
+将会话导出成文件，cmd导出中文不会乱码
+cmd /c "opencode export ses_xx > session.json"
+
+将会话导入opencode
+opencode import session.json
+
+从某次会话继续
+opencode -s <sessionID>
+
+继续上次会话
+opencode -c
+-------------
