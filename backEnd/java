@@ -9133,3 +9133,9 @@ springboot启动全过程
 @Resource 是 Java 标准注解，所有支持 DI 的框架都能用
 → 项目追求通用性、可移植性时用 @Resource
 -----------
+通过SpringContextUtil.getBean动态获取类，调对应重写的方法，类似工厂函数
+// 调用各类的处理方法
+((BaseMqSyncService) SpringContextUtil.getBean(receive.getServiceName())).consume(receive);
+receive.getServiceName() // xxxService
+XxxService里的consume()方法
+-----------
