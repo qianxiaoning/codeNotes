@@ -53,7 +53,9 @@ opencode session list
 将会话导出成文件，cmd导出中文不会乱码
 cmd /c "opencode export ses_xx > session.json"
 
-将会话导入opencode
+开启新会话，让ai读取session.json上下文文件，然后继续处理问题
+
+将会话导入opencode（局限性不用）
 opencode import session.json
 
 从某次会话继续
