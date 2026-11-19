@@ -9139,3 +9139,139 @@ springboot启动全过程
 receive.getServiceName() // xxxService
 XxxService里的consume()方法
 -----------
+catch异常和事务回滚的关系：先看是否共享事务，再看异常是否经过事务代理，最后看事务是否已经被标记回滚。catch 本身既不执行回滚，也不能清除已有的回滚状态。
+
+Spring 声明式事务，数据库错误以 PostgreSQL 为例。假设事务注解正常生效，同一线程、同一数据源，内层有事务时通过另一个 Spring Bean 调用，默认传播方式为 REQUIRED。
+
+1. 捕获异常与事务回滚
+普通业务异常被方法内部 catch 捕获并正常返回，通常不会触发回滚。 前提是事务未被其他逻辑标记为回滚。
+@Transactional(rollbackFor = Exception.class)
+public void process() {
+    try {
+        saveA();
+        throw new RuntimeException("业务校验失败");
+    } catch (Exception ex) {
+        log.error("处理失败", ex);
+        // 不再抛出，也不标记回滚：A 可能提交。
+    }
+}
+如果需要记录日志并回滚，可以继续抛出异常，或者显式标记回滚：
+catch (Exception ex) {
+    log.error("处理失败", ex);
+    throw new RuntimeException("处理失败", ex);
+    // 异常离开事务方法，事务代理根据回滚规则执行回滚。
+}
+catch (Exception ex) {
+    log.error("处理失败", ex);
+    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+    return;
+    // 标记当前事务只能回滚。
+}
+
+数据库错误也能被 catch 捕获，但捕获异常不能恢复数据库事务状态。 PostgreSQL 在事务内执行 SQL 出错后，通常会使当前事务进入失败状态，无法正常提交，需要回滚事务或回滚到事先建立的保存点。
+@Transactional
+public void process() {
+    try {
+        executeInvalidSql();
+    } catch (Exception ex) {
+        log.error("SQL执行失败", ex);
+        // Java 异常已捕获，但 PostgreSQL 当前事务通常已经失败。
+    }
+}
+因此这类 PostgreSQL 事务内 SQL 错误会导致本次事务不能正常提交。 不能推广成所有数据库、所有数据库相关异常都必然如此。
+
+
+2. 内外层事务与 Catch 位置
+默认 REQUIRED 下，内层有事务注解时通常参与外层事务；内层没有事务注解时，其数据库操作通常也使用外层事务。 区别在于内层有没有事务拦截器处理异常。
+下面只讨论普通 Java 业务异常，且没有数据库错误、显式回滚标记或更深层事务影响：
+
+【情况一】
+内层配置：无事务注解
+异常处理：内层捕获，不再抛出
+事务结果：整体通常提交，内层修改也提交。
+
+【情况二】
+内层配置：无事务注解
+异常处理：异常抛到外层，外层方法内部捕获，不再抛出
+事务结果：整体通常提交，内层修改也提交。
+
+【情况三】
+内层配置：REQUIRED（默认传播方式）
+异常处理：内层方法内部捕获，不再抛出
+事务结果：整体通常提交，内层修改也提交。
+
+【情况四】
+内层配置：REQUIRED（默认传播方式）
+异常处理：异常离开内层，外层方法内部捕获，不再抛出
+事务结果：内层事务代理先标记共享事务回滚，最终整体回滚；
+          外层提交时通常抛出 UnexpectedRollbackException。
+
+【情况五】
+内层配置：无事务注解或 REQUIRED
+异常处理：异常最终离开外层事务方法，且符合回滚规则
+事务结果：整体回滚。
+
+示例一：内层无事务注解，外层捕获，通常整体提交。
+// 异常未经过内层事务拦截器，又被外层内部捕获。
+// 没有其他回滚原因时，A、B 都提交。
+@Transactional
+public void outer() {
+    saveA();
+
+    try {
+        innerService.inner();
+    } catch (Exception ex) {
+        log.error("内层失败", ex);
+    }
+}
+
+public void inner() {
+    saveB();
+    throw new RuntimeException("业务异常");
+}
+
+
+示例二：内层有 REQUIRED，外层捕获，整体仍回滚。
+// 异常离开 inner → 内层事务代理标记回滚 → 外层才捕获。
+// A、B 都回滚，外层提交时通常抛 UnexpectedRollbackException。
+@Transactional
+public void outer() {
+    saveA();
+
+    try {
+        innerService.inner();
+    } catch (Exception ex) {
+        log.error("内层失败", ex);
+        // 此时共享事务已经被标记为 rollback-only。
+    }
+}
+@Transactional // 默认 REQUIRED，与外层共享事务
+public void inner() {
+    saveB();
+    throw new RuntimeException("业务异常");
+}
+
+
+示例三：内层自己捕获，通常整体提交。
+// 异常没有离开 inner，内层事务代理看到正常返回。
+// 没有其他回滚原因时，A、B 都提交。
+@Transactional
+public void outer() {
+    saveA();
+    innerService.inner();
+}
+
+@Transactional
+public void inner() {
+    try {
+        saveB();
+        throw new RuntimeException("业务异常");
+    } catch (Exception ex) {
+        log.error("内层失败", ex);
+    }
+}
+
+
+如果内层使用独立事务 REQUIRES_NEW，异常离开内层方法后由外层捕获，则内层事务回滚，外层事务仍可提交。如果异常继续离开外层方法，外层也可能按自己的回滚规则回滚。
+记住判断顺序：先看是否共享事务，再看异常是否经过事务代理，最后看事务是否已经被标记回滚。catch 本身既不执行回滚，也不能清除已有的回滚状态。
+-----------
